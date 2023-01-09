@@ -6,7 +6,9 @@
 # * https://r-pkgs.org/tests.html
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
+# nolint start
 library(testthat)
-library(readepi)
+library(epidemics)
+# nolint end
 
-test_check("readepi")
+test_check("epidemics")

@@ -16,9 +16,15 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/epidemics-package.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/read_stuff.html</loc>
+    <loc>/reference/initial_conditions.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sir_desolve.html</loc>
   </url>
 </urlset>

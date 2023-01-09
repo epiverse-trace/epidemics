@@ -1,6 +1,8 @@
 url: ~
 template:
   bootstrap: 5
+  bslib:
+    font_weight_base : 300
   includes:
     in_header: |
       <!-- Google tag (gtag.js) -->

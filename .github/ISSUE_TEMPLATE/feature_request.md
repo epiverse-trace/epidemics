@@ -1,16 +1,16 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest a feature to be added to this package
 title: ''
 labels: ''
 assignees: ''
 
 ---
-
+  
 **Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+A clear and concise description of what the problem is. E.g. "When passing arguments as [...]"
 
-**Describe the solution you'd like**
+**Describe the solution you would like**
 A clear and concise description of what you want to happen.
 
 **Additional context**

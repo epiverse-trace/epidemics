@@ -7,7 +7,7 @@ test_that("SIR deSolve model returns data.table with correct form", {
   )
   expect_identical(
     colnames(output),
-    c("time", "state", "proportion")
+    c("time", "variable", "value")
   )
   expect_snapshot(
     head(output)
@@ -28,7 +28,7 @@ test_that("SIR deSolve model is statistically correct", {
     times = time_seq,
     initial_conditions(p_initially_infected = 0.0)
   )
-  final_size <- sum(output[state == "R", ][["proportion"]])
+  final_size <- sum(output[variable == "R", ][["value"]])
   expect_identical(
     final_size, 0.0
   )
@@ -39,8 +39,8 @@ test_that("SIR deSolve model is statistically correct", {
     initial_conditions(p_initially_infected = 0.01),
     parms = c(beta = 0.1, gamma = 0.0)
   )
-  recovered <- data.table::last(output[state == "R", ][["proportion"]])
-  infected <- data.table::last(output[state == "I", ][["proportion"]])
+  recovered <- data.table::last(output[variable == "R", ][["value"]])
+  infected <- data.table::last(output[variable == "I", ][["value"]])
   expect_identical(
     infected, 1.0,
     tolerance = 1e-5

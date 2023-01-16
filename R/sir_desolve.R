@@ -46,7 +46,7 @@ sir_desolve <- function(times = seq(0, 200, length.out = 2001),
   # get data in tidy format
   data.table::melt(
     sir_out,
-    id.vars = "time", value.name = "proportion", variable.name = "state"
+    id.vars = "time", value.name = "value", variable.name = "variable"
   )
 }
 

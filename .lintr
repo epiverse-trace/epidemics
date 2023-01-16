@@ -9,3 +9,4 @@ linters: linters_with_tags(
     # Use minimum R declared in DESCRIPTION or fall back to current R version
     backport_linter(if (length(x <- etdev::extract_min_r_version())) x else getRversion())
   )
+exclusions: list("R/RcppExports.R")

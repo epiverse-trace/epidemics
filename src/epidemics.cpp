@@ -8,6 +8,8 @@
 //' @description An initial implementation of an SIR epidemic simulation.
 //' @param option A string giving the simulation option.
 //' @param parameters A named list of parameters to the simulation.
+//' @examples
+//' epi_demic(make_parameters_sir_stochastic())
 //' @export
 // [[Rcpp::export]]
 Rcpp::DataFrame epi_demic(const Rcpp::List &parameters,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{epi_demic}
 \alias{epi_demic}
-\title{Stochastic SIR epidemic simulation}
+\title{Stochastic, continuous time SIR epidemic simulation}
 \usage{
 epi_demic(parameters, option = "sir_stochastic")
 }
@@ -12,5 +12,8 @@ epi_demic(parameters, option = "sir_stochastic")
 \item{option}{A string giving the simulation option.}
 }
 \description{
-Some description.
+An initial implementation of an SIR epidemic simulation.
+}
+\examples{
+epi_demic(make_parameters_sir_stochastic())
 }

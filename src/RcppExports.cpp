@@ -13,22 +13,21 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// epi_demic
-Rcpp::DataFrame epi_demic(const Rcpp::List& parameters, const Rcpp::String& option);
-static SEXP _epidemics_epi_demic_try(SEXP parametersSEXP, SEXP optionSEXP) {
+// sir_stochastic
+Rcpp::List sir_stochastic(const Rcpp::List& parameters);
+static SEXP _epidemics_sir_stochastic_try(SEXP parametersSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type parameters(parametersSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::String& >::type option(optionSEXP);
-    rcpp_result_gen = Rcpp::wrap(epi_demic(parameters, option));
+    rcpp_result_gen = Rcpp::wrap(sir_stochastic(parameters));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _epidemics_epi_demic(SEXP parametersSEXP, SEXP optionSEXP) {
+RcppExport SEXP _epidemics_sir_stochastic(SEXP parametersSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_epidemics_epi_demic_try(parametersSEXP, optionSEXP));
+        rcpp_result_gen = PROTECT(_epidemics_sir_stochastic_try(parametersSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -53,20 +52,20 @@ RcppExport SEXP _epidemics_epi_demic(SEXP parametersSEXP, SEXP optionSEXP) {
 static int _epidemics_RcppExport_validate(const char* sig) { 
     static std::set<std::string> signatures;
     if (signatures.empty()) {
-        signatures.insert("Rcpp::DataFrame(*epi_demic)(const Rcpp::List&,const Rcpp::String&)");
+        signatures.insert("Rcpp::List(*.sir_stochastic)(const Rcpp::List&)");
     }
     return signatures.find(sig) != signatures.end();
 }
 
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP _epidemics_RcppExport_registerCCallable() { 
-    R_RegisterCCallable("epidemics", "_epidemics_epi_demic", (DL_FUNC)_epidemics_epi_demic_try);
+    R_RegisterCCallable("epidemics", "_epidemics_.sir_stochastic", (DL_FUNC)_epidemics_sir_stochastic_try);
     R_RegisterCCallable("epidemics", "_epidemics_RcppExport_validate", (DL_FUNC)_epidemics_RcppExport_validate);
     return R_NilValue;
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_epidemics_epi_demic", (DL_FUNC) &_epidemics_epi_demic, 2},
+    {"_epidemics_sir_stochastic", (DL_FUNC) &_epidemics_sir_stochastic, 1},
     {"_epidemics_RcppExport_registerCCallable", (DL_FUNC) &_epidemics_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
 };

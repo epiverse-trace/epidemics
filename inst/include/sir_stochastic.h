@@ -10,71 +10,37 @@
 // Enable C++14 via this plugin (Rcpp 0.10.3 or later)
 // [[Rcpp::plugins(cpp14)]]
 
+// [[Rcpp::interfaces(r, cpp)]]
+
 /// @brief Function to normalise a vector by a maximum value.
 /// @param vec A numeric vector.
 /// @param N The maximum value of the numeric vector.
 /// @return A vector scaled between 0 and 1 by the maximum allowed value.
-std::vector<float> normalise_vec(const std::vector<float> &vec,
-                                 const float &N) {
-  std::vector<float> normalised_vec = vec;
-  for (size_t i = 0; i < vec.size(); i++) {
-    normalised_vec[i] = vec[i] / N;
-  }
-  return normalised_vec;
+Rcpp::NumericVector normalise_vec(Rcpp::NumericVector &vec, const float &N) {
+  return vec / N;
 }
 
-/// @brief Function to make a long-format dataframe of epidemic data.
-/// @param S A vector of susceptibles at each time point.
-/// @param I A vector of infected individuals at each time point.
-/// @param R A vector of recovered individuals at each time point.
-/// @param time A vector of time points.
-/// @return A data frame with columns 'time', 'value', and 'variable'.
-Rcpp::DataFrame tidy_epidemic_data(const std::vector<float> &S,
-                                   const std::vector<float> &I,
-                                   const std::vector<float> &R,
-                                   const std::vector<float> &time) {
-  // prepare vectors for time etc.
-  std::vector<float> value, v_time;
-
-  // prepare variables
-  Rcpp::CharacterVector variable =
-      Rcpp::rep(Rcpp::CharacterVector({"S", "I", "R"}), time.size());
-
-  // prepare time and values
-  for (size_t i = 0; i < time.size(); i++) {
-    value.push_back(S[i]);
-    value.push_back(I[i]);
-    value.push_back(R[i]);
-    for (size_t j = 0; j < 3; j++) {
-      v_time.push_back(time[i]);
-    }
-  }
-
-  return Rcpp::DataFrame::create(Rcpp::Named("time") = v_time,
-                                 Rcpp::Named("variable") = variable,
-                                 Rcpp::Named("value") = value);
-}
-
-/// @brief Function for a continuous-time, stochastic SIR epidemic.
-/// @param beta Transmission rate \eqn{beta}.
-/// @param gamma Recovery rate \eqn{gamma}.
-/// @param N Total number of individuals in the population.
-/// @param S0 The number of individuals initially susceptible to infection.
-/// @param I0 The number of individuals initially infected by the pathogen.
-/// @param R0 The number of individuals already recovered from infection and
-/// which cannot be infected again.
-/// @param tf The final timepoint in the model.
-/// @return A data frame of each time point and the proportion of each
-/// class at that time point, in long format.
-Rcpp::DataFrame sir_stochastic(const float &beta, const float &gamma,
-                               const float &N, const float &S0, const float &I0,
-                               const float &R0, const float &tf) {
+//' @title Function for a continuous-time, stochastic SIR epidemic.
+//'
+//' @param beta Transmission rate \eqn{beta}.
+//' @param gamma Recovery rate \eqn{gamma}.
+//' @param N Total number of individuals in the population.
+//' @param S0 The number of individuals initially susceptible to infection.
+//' @param I0 The number of individuals initially infected by the pathogen.
+//' @param R0 The number of individuals already recovered from infection and
+//' which cannot be infected again.
+//' @param tf The final timepoint in the model.
+//' @return A data frame of each time point and the proportion of each
+//' class at that time point, in long format.
+Rcpp::List sir_stochastic_(const float &beta, const float &gamma,
+                           const float &N, const float &S0, const float &I0,
+                           const float &R0, const float &tf) {
   float t = 0.0;
   float S = S0;
   float I = I0;
   float R = R0;
   // created as numeric although these are integers
-  std::vector<float> vec_times, vec_susceptible, vec_infected, vec_recovered;
+  Rcpp::NumericVector vec_times, vec_susceptible, vec_infected, vec_recovered;
 
   // prepare pf, time increment, and r // Clarification required
   float pf1, pf2, pf, dt, r;
@@ -113,9 +79,11 @@ Rcpp::DataFrame sir_stochastic(const float &beta, const float &gamma,
                                  // individuals are infected
 
   // create output data
-  return tidy_epidemic_data(normalise_vec(vec_susceptible, N),
-                            normalise_vec(vec_infected, N),
-                            normalise_vec(vec_recovered, N), vec_times);
+  return Rcpp::List::create(
+      Rcpp::Named("S") = normalise_vec(vec_susceptible, N),
+      Rcpp::Named("I") = normalise_vec(vec_infected, N),
+      Rcpp::Named("R") = normalise_vec(vec_recovered, N),
+      Rcpp::Named("time") = vec_times);
 }
 
 #endif  // INST_INCLUDE_SIR_STOCHASTIC_H_

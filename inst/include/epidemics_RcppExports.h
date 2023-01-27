@@ -24,17 +24,17 @@ namespace epidemics {
         }
     }
 
-    inline Rcpp::DataFrame epi_demic(const Rcpp::List& parameters, const Rcpp::String& option = "sir_stochastic") {
-        typedef SEXP(*Ptr_epi_demic)(SEXP,SEXP);
-        static Ptr_epi_demic p_epi_demic = NULL;
-        if (p_epi_demic == NULL) {
-            validateSignature("Rcpp::DataFrame(*epi_demic)(const Rcpp::List&,const Rcpp::String&)");
-            p_epi_demic = (Ptr_epi_demic)R_GetCCallable("epidemics", "_epidemics_epi_demic");
+    inline Rcpp::List _sir_stochastic(const Rcpp::List& parameters) {
+        typedef SEXP(*Ptr__sir_stochastic)(SEXP);
+        static Ptr__sir_stochastic p__sir_stochastic = NULL;
+        if (p__sir_stochastic == NULL) {
+            validateSignature("Rcpp::List(*_sir_stochastic)(const Rcpp::List&)");
+            p__sir_stochastic = (Ptr__sir_stochastic)R_GetCCallable("epidemics", "_epidemics__sir_stochastic");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_epi_demic(Shield<SEXP>(Rcpp::wrap(parameters)), Shield<SEXP>(Rcpp::wrap(option)));
+            rcpp_result_gen = p__sir_stochastic(Shield<SEXP>(Rcpp::wrap(parameters)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -42,7 +42,7 @@ namespace epidemics {
             throw Rcpp::LongjumpException(rcpp_result_gen);
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<Rcpp::DataFrame >(rcpp_result_gen);
+        return Rcpp::as<Rcpp::List >(rcpp_result_gen);
     }
 
 }

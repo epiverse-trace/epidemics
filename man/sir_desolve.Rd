@@ -4,41 +4,34 @@
 \alias{sir_desolve}
 \title{SIR epidemic model using 'deSolve'}
 \usage{
-sir_desolve(
-  times = seq(0, 200, length.out = 2001),
-  init = initial_conditions(p_initially_infected = 0.01),
-  parms = c(beta = 0.1, gamma = 0.05)
-)
+sir_desolve(beta, gamma, S, I, R, times)
 }
 \arguments{
-\item{times}{A sequence of timepoints at which to solve for the proportion of
-the population in each state (susceptible, infected, or recovered).}
+\item{beta}{Transmission rate \eqn{beta}.}
 
-\item{init}{The initial conditions of the population: a named vector with the
-proportions of the population in each state ("S": susceptible, "I": infected,
-or "R": recovered).
-Can be easily constructed using the helper function [\code{\link[=initial_conditions]{initial_conditions()}}].}
+\item{gamma}{Recovery rate \eqn{gamma}.}
 
-\item{parms}{The infection parameters in the form of a named vector with an
-element "beta" for the rate of transmission \eqn{\beta}, and "gamma" for the
-rate of recovery of infected individuals \eqn{\gamma}. Formally, both
-\eqn{beta} and \eqn{gamma} are the rate parameters of separate exponential
-distributions.}
+\item{S}{The proportion of individuals initially susceptible to infection.}
+
+\item{I}{The proportion of individuals initially infected by the pathogen.}
+
+\item{R}{The proportion of individuals already recovered from infection
+which cannot be infected again.}
+
+\item{times}{A sequence of timepoints at which to solve for the proportion of}
 }
 \value{
-A data table with the proportion of the population in the
+A list with the proportion of the population in the
 susceptible, infected, and recovered states at each time point in \code{times}.
-The data are returned in tidy format, and have \eqn{3T} rows, where \eqn{T}
-is the number of timepoints.
 }
 \description{
 SIR epidemic model using 'deSolve'
 }
 \examples{
-library(epidemics)
-sir_desolve(
-  times = seq(0, 100, length.out = 100),
-  init = initial_conditions(p_initially_infected = 0.01),
-  parms = c(beta = 0.5, gamma = 0.05)
+data <- sir_desolve(
+  beta = 0.1, gamma = 0.05, S = 0.99, I = 0.01, R = 0.0,
+  times = seq(0, 100, 0.1)
 )
+
+str(data)
 }

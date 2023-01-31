@@ -6,7 +6,7 @@
 \alias{epidemics-package}
 \title{epidemics: Model Epidemics}
 \description{
-Model epidemics using susceptible-infectious-recovered models.
+Model epidemics using susceptible-infectious-recovered (SIR) and related models.
 }
 \seealso{
 Useful links:

@@ -1,0 +1,28 @@
+# GitHub Action to run cpplint recursively on all pushes and pull requests
+# https://github.com/cpplint/GitHub-Action-for-cpplint
+
+on:
+  push:
+    paths: "src/**"
+  pull_request:
+    branches:
+      - "*"
+
+name: Cpp-lint-check
+
+jobs:
+  cpplint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v2
+      - run: pip install cpplint
+      - run: cpplint --exclude="src/RcppExports.cpp" src/*.cpp
+      - run: cpplint --exclude="inst/include/epidemics*.h" inst/include/*.h
+
+  cppcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: sudo apt-get install cppcheck
+      - run: cppcheck -i src/RcppExports.cpp --enable=style --error-exitcode=1 src

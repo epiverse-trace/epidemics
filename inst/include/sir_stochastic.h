@@ -16,7 +16,7 @@
 /// @param vec A numeric vector.
 /// @param N The maximum value of the numeric vector.
 /// @return A vector scaled between 0 and 1 by the maximum allowed value.
-Rcpp::NumericVector normalise_vec(Rcpp::NumericVector &vec, const float &N) {
+Rcpp::NumericVector normalise_vec(Rcpp::NumericVector &vec, const float &N) { // NOLINT
   return vec / N;
 }
 

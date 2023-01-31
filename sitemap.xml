@@ -16,13 +16,22 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/dot-sir_stochastic.html</loc>
+  </url>
+  <url>
+    <loc>/reference/epi_demic.html</loc>
+  </url>
+  <url>
+    <loc>/reference/epi_list_to_df.html</loc>
+  </url>
+  <url>
     <loc>/reference/epidemics-package.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/initial_conditions.html</loc>
+    <loc>/reference/make_parameters_sir.html</loc>
   </url>
   <url>
     <loc>/reference/sir_desolve.html</loc>

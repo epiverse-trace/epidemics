@@ -53,67 +53,57 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sir_desolve</span><span class="op">(</span></span>
-<span>  times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span>, length.out <span class="op">=</span> <span class="fl">2001</span><span class="op">)</span>,</span>
-<span>  init <span class="op">=</span> <span class="fu"><a href="initial_conditions.html">initial_conditions</a></span><span class="op">(</span>p_initially_infected <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span>,</span>
-<span>  parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.1</span>, gamma <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sir_desolve</span><span class="op">(</span><span class="va">beta</span>, <span class="va">gamma</span>, <span class="va">S</span>, <span class="va">I</span>, <span class="va">R</span>, <span class="va">times</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>times</dt>
-<dd><p>A sequence of timepoints at which to solve for the proportion of
-the population in each state (susceptible, infected, or recovered).</p></dd>
+    <dl><dt>beta</dt>
+<dd><p>Transmission rate \(beta\).</p></dd>
 
 
-<dt>init</dt>
-<dd><p>The initial conditions of the population: a named vector with the
-proportions of the population in each state ("S": susceptible, "I": infected,
-or "R": recovered).
-Can be easily constructed using the helper function [<code><a href="initial_conditions.html">initial_conditions()</a></code>].</p></dd>
+<dt>gamma</dt>
+<dd><p>Recovery rate \(gamma\).</p></dd>
 
 
-<dt>parms</dt>
-<dd><p>The infection parameters in the form of a named vector with an
-element "beta" for the rate of transmission \(\beta\), and "gamma" for the
-rate of recovery of infected individuals \(\gamma\). Formally, both
-\(beta\) and \(gamma\) are the rate parameters of separate exponential
-distributions.</p></dd>
+<dt>S</dt>
+<dd><p>The proportion of individuals initially susceptible to infection.</p></dd>
+
+
+<dt>I</dt>
+<dd><p>The proportion of individuals initially infected by the pathogen.</p></dd>
+
+
+<dt>R</dt>
+<dd><p>The proportion of individuals already recovered from infection
+which cannot be infected again.</p></dd>
+
+
+<dt>times</dt>
+<dd><p>A sequence of timepoints at which to solve for the proportion of</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A data table with the proportion of the population in the
-susceptible, infected, and recovered states at each time point in <code>times</code>.
-The data are returned in tidy format, and have \(3T\) rows, where \(T\)</p>
-
-
-<p>is the number of timepoints.</p>
+<p>A list with the proportion of the population in the
+susceptible, infected, and recovered states at each time point in <code>times</code>.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">sir_desolve</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, length.out <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  init <span class="op">=</span> <span class="fu"><a href="initial_conditions.html">initial_conditions</a></span><span class="op">(</span>p_initially_infected <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.5</span>, gamma <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">sir_desolve</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  beta <span class="op">=</span> <span class="fl">0.1</span>, gamma <span class="op">=</span> <span class="fl">0.05</span>, S <span class="op">=</span> <span class="fl">0.99</span>, I <span class="op">=</span> <span class="fl">0.01</span>, R <span class="op">=</span> <span class="fl">0.0</span>,</span></span>
+<span class="r-in"><span>  times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">0.1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            time state proportion</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:   0.000000     S  0.9900000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:   1.010101     S  0.9837094</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:   2.020202     S  0.9739625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:   3.030303     S  0.9590074</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:   4.040404     S  0.9363926</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 296:  95.959596     R  0.9857767</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 297:  96.969697     R  0.9864747</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 298:  97.979798     R  0.9871383</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 299:  98.989899     R  0.9877692</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 300: 100.000000     R  0.9883691</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ time: num [1:1001] 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ S   : num [1:1001] 0.99 0.99 0.99 0.99 0.99 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ I   : num [1:1001] 0.01 0.01 0.0101 0.0101 0.0102 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ R   : num [1:1001] 0.00 5.01e-05 1.00e-04 1.51e-04 2.02e-04 ...</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -27,7 +27,8 @@ test_that("SIR deSolve model is statistically correct", {
     final_size, 0.0
   )
 
-  # check that setting gamma = 0 leads to all individuals in the I class, i.e., no recoveries
+  # check that setting gamma = 0 leads to all individuals in the I class,
+  # i.e., no recoveries
   parameters$I <- 0.01
   parameters$gamma <- 0.0
   output <- do.call(sir_desolve, parameters)

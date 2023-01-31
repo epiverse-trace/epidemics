@@ -22,11 +22,11 @@ Run an SIR epidemic model.
 }
 \examples{
 epi_demic(
- option = "stochastic",
- parameters = make_parameters_sir(option = "stochastic")
+  option = "stochastic",
+  parameters = make_parameters_sir(option = "stochastic")
 )
 epi_demic(
- option = "deterministic",
- parameters = make_parameters_sir(option = "deterministic")
+  option = "deterministic",
+  parameters = make_parameters_sir(option = "deterministic")
 )
 }

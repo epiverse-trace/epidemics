@@ -8,14 +8,14 @@
 #'
 #' @return A data frame in tidy (long) format with the columns `time`, `S`, `I`
 #' and `R` for the proportions of individuals infected at each time point.
-#' @examples 
+#' @examples
 #' epi_demic(
-#'  option = "stochastic",
-#'  parameters = make_parameters_sir(option = "stochastic")
+#'   option = "stochastic",
+#'   parameters = make_parameters_sir(option = "stochastic")
 #' )
 #' epi_demic(
-#'  option = "deterministic",
-#'  parameters = make_parameters_sir(option = "deterministic")
+#'   option = "deterministic",
+#'   parameters = make_parameters_sir(option = "deterministic")
 #' )
 #' @export
 epi_demic <- function(option = c("stochastic", "deterministic"),
@@ -32,13 +32,14 @@ epi_demic <- function(option = c("stochastic", "deterministic"),
 #'
 #' @param x The output of an SIR model. Must have the list elements, as vectors,
 #' `time`, `S`, `I`, and `R`.
-#' @keywords internal 
+#' @keywords internal
 #' @return A data frame in tidy (long) format with the columns `time`, `S`, `I`
 #' and `R` for the proportions of individuals infected at each time point.
 epi_list_to_df <- function(x) {
+  classes <- rep(c("S", "I", "R"), each = length(x$time))
   data <- data.frame(
     time = rep(x$time, 3),
-    variable = rep(c("S", "I", "R"), each = length(x$time)),
+    variable = classes,
     value = c(x$S, x$I, x$R)
   )
 

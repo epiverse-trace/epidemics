@@ -4,7 +4,7 @@
 #' @param option Either "stochastic" or "deterministic".
 #'
 #' @description Function to make convenient parameters.
-#' @examples 
+#' @examples
 #' make_parameters_sir(option = "stochastic")
 #' make_parameters_sir(option = "deterministic")
 #' @export

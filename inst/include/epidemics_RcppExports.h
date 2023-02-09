@@ -24,17 +24,17 @@ namespace epidemics {
         }
     }
 
-    inline Rcpp::List _sir_stochastic(const Rcpp::List& parameters) {
-        typedef SEXP(*Ptr__sir_stochastic)(SEXP);
-        static Ptr__sir_stochastic p__sir_stochastic = NULL;
-        if (p__sir_stochastic == NULL) {
-            validateSignature("Rcpp::List(*_sir_stochastic)(const Rcpp::List&)");
-            p__sir_stochastic = (Ptr__sir_stochastic)R_GetCCallable("epidemics", "_epidemics__sir_stochastic");
+    inline Rcpp::List run_sir_stochastic(const Rcpp::List& parameters) {
+        typedef SEXP(*Ptr_run_sir_stochastic)(SEXP);
+        static Ptr_run_sir_stochastic p_run_sir_stochastic = NULL;
+        if (p_run_sir_stochastic == NULL) {
+            validateSignature("Rcpp::List(*run_sir_stochastic)(const Rcpp::List&)");
+            p_run_sir_stochastic = (Ptr_run_sir_stochastic)R_GetCCallable("epidemics", "_epidemics_run_sir_stochastic");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__sir_stochastic(Shield<SEXP>(Rcpp::wrap(parameters)));
+            rcpp_result_gen = p_run_sir_stochastic(Shield<SEXP>(Rcpp::wrap(parameters)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

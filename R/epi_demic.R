@@ -23,7 +23,7 @@ epi_demic <- function(option = c("stochastic", "deterministic"),
   option <- match.arg(arg = option, several.ok = FALSE)
   data <- switch(option,
     deterministic = do.call(sir_desolve, parameters),
-    stochastic = .sir_stochastic(parameters)
+    stochastic = run_sir_stochastic(parameters)
   )
   epi_list_to_df(data)
 }

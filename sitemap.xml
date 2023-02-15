@@ -16,9 +16,6 @@
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/reference/dot-sir_stochastic.html</loc>
-  </url>
-  <url>
     <loc>/reference/epi_demic.html</loc>
   </url>
   <url>
@@ -32,6 +29,9 @@
   </url>
   <url>
     <loc>/reference/make_parameters_sir.html</loc>
+  </url>
+  <url>
+    <loc>/reference/run_sir_stochastic.html</loc>
   </url>
   <url>
     <loc>/reference/sir_desolve.html</loc>

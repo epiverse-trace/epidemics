@@ -5,8 +5,8 @@
 #' @description An initial implementation of an SIR epidemic simulation.
 #' @param parameters A named list of parameters to the simulation.
 #'
-.sir_stochastic <- function(parameters) {
-    .Call(`_epidemics_sir_stochastic`, parameters)
+run_sir_stochastic <- function(parameters) {
+    .Call(`_epidemics_run_sir_stochastic`, parameters)
 }
 
 # Register entry points for exported C++ functions

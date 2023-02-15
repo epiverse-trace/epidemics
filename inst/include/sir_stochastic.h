@@ -10,31 +10,30 @@
 // Enable C++14 via this plugin (Rcpp 0.10.3 or later)
 // [[Rcpp::plugins(cpp14)]]
 
-// [[Rcpp::interfaces(r, cpp)]]
+namespace epidemics {
 
-/// @brief Function to normalise a vector by a maximum value.
+/// @brief Normalise a vector by a maximum value.
 /// @param vec A numeric vector.
 /// @param N The maximum value of the numeric vector.
 /// @return A vector scaled between 0 and 1 by the maximum allowed value.
-Rcpp::NumericVector normalise_vec(Rcpp::NumericVector &vec, const float &N) { // NOLINT
+inline Rcpp::NumericVector normalise_vec(Rcpp::NumericVector &vec,  // NOLINT
+                                         const float &N) {          // NOLINT
   return vec / N;
 }
 
-//' @title Function for a continuous-time, stochastic SIR epidemic.
-//'
-//' @param beta Transmission rate \eqn{beta}.
-//' @param gamma Recovery rate \eqn{gamma}.
-//' @param N Total number of individuals in the population.
-//' @param S0 The number of individuals initially susceptible to infection.
-//' @param I0 The number of individuals initially infected by the pathogen.
-//' @param R0 The number of individuals already recovered from infection and
-//' which cannot be infected again.
-//' @param tf The final timepoint in the model.
-//' @return A data frame of each time point and the proportion of each
-//' class at that time point, in long format.
-Rcpp::List sir_stochastic_(const float &beta, const float &gamma,
-                           const float &N, const float &S0, const float &I0,
-                           const float &R0, const float &tf) {
+// Appended to the traditional function definition is the `inline` keyword.
+/// @brief Run a stochastic, continuous time SIR model.
+/// @param beta The transmission rate.
+/// @param gamma The recovery rate.
+/// @param N The total population size.
+/// @param S0 The number initially susceptible.
+/// @param I0 The number initially infected.
+/// @param R0 The number initially already recovered from infection.
+/// @param tf The maximum simulation time.
+inline Rcpp::List sir_stochastic(const float &beta, const float &gamma,
+                                 const float &N, const float &S0,
+                                 const float &I0, const float &R0,
+                                 const float &tf) {
   float t = 0.0;
   float S = S0;
   float I = I0;
@@ -85,5 +84,6 @@ Rcpp::List sir_stochastic_(const float &beta, const float &gamma,
       Rcpp::Named("R") = normalise_vec(vec_recovered, N),
       Rcpp::Named("time") = vec_times);
 }
+}  // namespace epidemics
 
 #endif  // INST_INCLUDE_SIR_STOCHASTIC_H_

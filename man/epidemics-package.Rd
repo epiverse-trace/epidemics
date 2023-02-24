@@ -4,9 +4,9 @@
 \name{epidemics-package}
 \alias{epidemics}
 \alias{epidemics-package}
-\title{epidemics: Model Epidemics}
+\title{epidemics: Model Epidemics with Compartmental Models}
 \description{
-Model epidemics using susceptible-infectious-recovered (SIR) and related models.
+Model epidemics using compartmental models.
 }
 \seealso{
 Useful links:
@@ -19,6 +19,12 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Pratik Gupte \email{pratik.gupte@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5294-7819}{ORCID}) [copyright holder]
+
+Authors:
+\itemize{
+  \item Rosalind Eggo \email{rosalind.eggo@lshtm.ac.uk} (\href{https://orcid.org/0000-0002-0362-6717}{ORCID}) [copyright holder]
+  \item Edwin Van Leeuwen \email{edwin.vanleeuwen@ukhsa.gov.uk} (\href{https://orcid.org/0000-0002-2383-5305}{ORCID}) [copyright holder]
+}
 
 }
 \keyword{internal}

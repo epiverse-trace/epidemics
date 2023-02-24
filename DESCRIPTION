@@ -1,5 +1,5 @@
 Package: epidemics
-Title: Model Epidemics  
+Title: Model Epidemics with Compartmental Models
 Version: 0.1.0
 Authors@R: 
     c(
@@ -9,9 +9,23 @@ Authors@R:
             role = c("aut", "cre", "cph"),
             email = "pratik.gupte@lshtm.ac.uk",
             comment = c(ORCID = "https://orcid.org/0000-0001-5294-7819")
+        ),
+        person(
+            given = "Rosalind",
+            family = "Eggo",
+            role = c("aut", "cph"),
+            email = "rosalind.eggo@lshtm.ac.uk",
+            comment = c(ORCID = "https://orcid.org/0000-0002-0362-6717")
+        ),
+        person(
+            given = "Edwin",
+            family = "Van Leeuwen",
+            role = c("aut", "cph"),
+            email = "edwin.vanleeuwen@ukhsa.gov.uk",
+            comment = c(ORCID = "https://orcid.org/0000-0002-2383-5305")
         )
     )
-Description: Model epidemics using susceptible-infectious-recovered (SIR) and related models.
+Description: Model epidemics using compartmental models.
 License: MIT + file LICENSE
 URL: https://github.com/epiverse-trace/epidemics, https://epiverse-trace.github.io/epidemics/
 BugReports: https://github.com/epiverse-trace/epidemics/issues
@@ -19,12 +33,17 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Imports:
+    checkmate,
     data.table,
     deSolve,
-    Rcpp
 Suggests: 
+    bookdown,
     covr,
+    ggplot2,
+    knitr,
+    rmarkdown,
+    scales,
+    socialmixr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-LinkingTo: 
-    Rcpp
+VignetteBuilder: knitr

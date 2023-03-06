@@ -23,7 +23,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/epidemics.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -60,28 +63,33 @@
           
           <code><a href="epi_demic.html">epi_demic()</a></code> 
         </dt>
-        <dd>Run an SIR epidemic model.</dd>
+        <dd>Model an SIRV epidemic</dd>
       </dl><dl><dt>
           
-          <code><a href="make_parameters_sir.html">make_parameters_sir()</a></code> 
+          <code><a href="intervention.html">intervention()</a></code> 
         </dt>
-        <dd>Make convenient parameters</dd>
+        <dd>Construct a new intervention for an epidemic model</dd>
       </dl><dl><dt>
           
-          <code><a href="run_sir_stochastic.html">run_sir_stochastic()</a></code> 
+          <code><a href="is_intervention.html">is_intervention()</a></code> 
         </dt>
-        <dd>Stochastic, continuous time SIR epidemic simulation</dd>
+        <dd>Check whether an object is an <code>intervention</code></dd>
       </dl><dl><dt>
           
-          <code><a href="sir_desolve.html">sir_desolve()</a></code> 
+          <code><a href="is_population.html">is_population()</a></code> 
         </dt>
-        <dd>SIR epidemic model using 'deSolve'</dd>
+        <dd>Check whether an object is a <code>population</code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="population.html">population()</a></code> 
+        </dt>
+        <dd>Construct a new population for an epidemic model</dd>
       </dl></div>
   </main></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Pratik Gupte.</p>
+  <p></p><p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen.</p>
 </div>
 
 <div class="pkgdown-footer-right">

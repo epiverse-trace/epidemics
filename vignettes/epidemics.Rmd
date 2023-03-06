@@ -59,7 +59,7 @@ Prepare initial conditions for each age group.
 ```{r}
 # initial conditions: 0-20 are more infected than other groups
 initial_conditions <- rbind(
-  c(S = 0.9999, I = 0.0001, R = 0, V = 0),
+  c(S = 0.99999, I = 0.00001, R = 0, V = 0),
   c(S = 0.99999, I = 0.00001, R = 0, V = 0),
   c(S = 0.99999, I = 0.00001, R = 0, V = 0)
 )
@@ -106,8 +106,8 @@ close_schools
 # run an epidemic model
 output <- epi_demic(
   population = new_pop,
-  infectious_period = rep(10, 3), # age-specific infectious periods are similar
-  R0 = c(1.3, 1.2, 1.2), # higher R0 in younger ages
+  infectious_period = rep(6, 3), # age-specific infectious periods are similar
+  R0 = c(1.2, 1.2, 1.2), # same R0 in all ages
   intervention = close_schools,
   nu = rep(0, 3), # no vaccination
   t_max = 800,

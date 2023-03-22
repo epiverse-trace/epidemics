@@ -6,6 +6,7 @@
 \usage{
 epi_demic(
   population,
+  model = "default",
   R0 = 1.5,
   infectious_period = 7,
   intervention,
@@ -20,6 +21,8 @@ epi_demic(
 \item{population}{An object of the \code{population} class, which holds a
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See \code{\link[=population]{population()}}.}
+
+\item{model}{Epidemic model function.}
 
 \item{R0}{The reproductive number of the infection. May be a single number or
 a vector of the same length as the number of demographic groups.}

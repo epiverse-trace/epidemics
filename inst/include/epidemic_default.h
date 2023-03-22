@@ -12,7 +12,7 @@
 #include <iostream>
 #include <vector>
 
-#include <boost/numeric/odeint.hpp>
+#include <boost/numeric/odeint.hpp> 
 #include "ode_tools.h"
 // clang-format on
 
@@ -28,10 +28,11 @@ struct epidemic_default {
 
   void operator()(odetools::state_type const& x, odetools::state_type& dxdt,
                   const double t) {
-    dxdt[0] = -beta * x[0] * x[2];                    // -beta*S*I
-    dxdt[1] = (beta * x[0] * x[2]) - (alpha * x[1]);  // beta*S*I - alpha*E
-    dxdt[2] = (alpha * x[1]) - (gamma * x[2]);        // alpha*E - gamma*I
-    dxdt[3] = gamma * x[2];                           // gamma*I
+    dxdt.col(0) = -beta * x.col(0) * x.col(2);  // -beta*S*I
+    dxdt.col(1) = (beta * x.col(0) * x.col(2)) -
+                  (alpha * x.col(0));  // beta*S*I - alpha*E
+    dxdt.col(2) = (alpha * x.col(0)) - (gamma * x.col(2));  // alpha*E - gamma*I
+    dxdt.col(3) = gamma * x.col(2);                         // gamma*I
   }
 };
 

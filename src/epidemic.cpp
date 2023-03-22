@@ -9,6 +9,10 @@
 // [[Rcpp::depends(RcppEigen)]]
 
 //' @title An SIR model
+//' 
+//' @param init The initial conditions.
+//' @param beta The transmission rate \eqn{\beta}.
+//' @param gamma The recovery rate \eqn{\gamma}.
 //' @export
 // [[Rcpp::export]]
 Rcpp::List epidemic_default_cpp(const Eigen::VectorXd &init,

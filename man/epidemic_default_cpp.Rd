@@ -6,6 +6,13 @@
 \usage{
 epidemic_default_cpp(init, beta, gamma)
 }
+\arguments{
+\item{init}{The initial conditions.}
+
+\item{beta}{The transmission rate \eqn{\beta}.}
+
+\item{gamma}{The recovery rate \eqn{\gamma}.}
+}
 \description{
 An SIR model
 }

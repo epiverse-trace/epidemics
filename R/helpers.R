@@ -14,7 +14,9 @@ output_to_df <- function(l, compartments = c("S", "E", "I", "R")) {
       names(l) %in% c("x", "time")
   )
   n_col <- length(l[["x"]][[1]])
+  n_groups <- nrow(l[["x"]][[1]])
 
+  # data are in the form S_1->N, E_1->N, etc.
   data <- as.data.frame(
     matrix(
       unlist(l[["x"]]),
@@ -22,7 +24,7 @@ output_to_df <- function(l, compartments = c("S", "E", "I", "R")) {
       byrow = TRUE
     )
   )
-  colnames(data) <- compartments
+  colnames(data) <- do.call(paste0, expand.grid(compartments, seq(n_groups)))
   data$time <- l[["time"]]
 
   # return data

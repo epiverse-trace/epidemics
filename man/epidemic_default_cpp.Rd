@@ -2,12 +2,17 @@
 % Please edit documentation in R/RcppExports.R
 \name{epidemic_default_cpp}
 \alias{epidemic_default_cpp}
-\title{An SIR model}
+\title{Run an age-structured SEIR epidemic model}
 \usage{
 epidemic_default_cpp(init, beta, alpha, gamma, time_end = 200, increment = 0.1)
 }
 \arguments{
-\item{init}{The initial conditions.}
+\item{init}{The initial conditions, represented as a matrix, in which the
+rows \eqn{i} represent age or demographic groups, and columns \eqn{j}
+represent the proportions of each age group in the epidemiological
+compartment. Compartments are arranged in order: "S", "E", "I", and "R".
+Only three (3) age groups are currently supported, thus \code{init} must be
+a 4 \eqn{\times} 3 matrix.}
 
 \item{beta}{The transmission rate \eqn{\beta}.}
 
@@ -20,5 +25,5 @@ epidemic_default_cpp(init, beta, alpha, gamma, time_end = 200, increment = 0.1)
 \item{increment}{The increment time, defaults to 0.1.}
 }
 \description{
-An SIR model
+Run an age-structured SEIR epidemic model
 }

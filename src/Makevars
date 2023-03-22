@@ -1,0 +1,3 @@
+PKG_CXXFLAGS = -I../inst/include
+USE_CXX1X = true
+PKG_CXX_STD = CXX14

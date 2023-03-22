@@ -8,3 +8,4 @@
 ^\.lintr$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^formatcpp.sh

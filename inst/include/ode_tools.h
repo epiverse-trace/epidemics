@@ -20,10 +20,10 @@ namespace odetools {
 
 //[ rhs_function
 /* The type of container used to hold the state vector */
-template<size_t N>
+template <size_t N>
 using vector = Eigen::Matrix<double, 1, N>;
 
-typedef vector<3> state_type;
+typedef vector<4> state_type;  // for an SEIR model
 
 //[ integrate_observer
 struct observer {

@@ -21,15 +21,17 @@ namespace epidemics {
 
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_default {
-  const float beta, gamma;
+  const float beta, alpha, gamma;
   // npi, interv, pop
-  epidemic_default(float beta, float gamma) : beta(beta), gamma(gamma) {}
+  epidemic_default(float beta, float alpha, float gamma)
+      : beta(beta), alpha(alpha), gamma(gamma) {}
 
   void operator()(odetools::state_type const& x, odetools::state_type& dxdt,
                   const double t) {
-    dxdt[0] = -beta * x[0] * x[1];                // -beta*S*I
-    dxdt[1] = beta * x[0] * x[1] - gamma * x[1];  // beta*S*I - gamma*I
-    dxdt[2] = gamma * x[1];                       // gamma*I
+    dxdt[0] = -beta * x[0] * x[2];                    // -beta*S*I
+    dxdt[1] = (beta * x[0] * x[2]) - (alpha * x[1]);  // beta*S*I - alpha*E
+    dxdt[2] = (alpha * x[1]) - (gamma * x[2]);        // alpha*E - gamma*I
+    dxdt[3] = gamma * x[2];                           // gamma*I
   }
 };
 

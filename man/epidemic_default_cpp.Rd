@@ -4,14 +4,20 @@
 \alias{epidemic_default_cpp}
 \title{An SIR model}
 \usage{
-epidemic_default_cpp(init, beta, gamma)
+epidemic_default_cpp(init, beta, alpha, gamma, time_end = 200, increment = 0.1)
 }
 \arguments{
 \item{init}{The initial conditions.}
 
 \item{beta}{The transmission rate \eqn{\beta}.}
 
+\item{alpha}{The rate of transition from exposed to infectious \eqn{\alpha}.}
+
 \item{gamma}{The recovery rate \eqn{\gamma}.}
+
+\item{time_end}{The maximum time, defaults to 200.0.}
+
+\item{increment}{The increment time, defaults to 0.1.}
 }
 \description{
 An SIR model

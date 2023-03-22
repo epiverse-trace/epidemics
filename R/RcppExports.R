@@ -2,12 +2,15 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @title An SIR model
-#' 
+#'
 #' @param init The initial conditions.
 #' @param beta The transmission rate \eqn{\beta}.
+#' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 #' @param gamma The recovery rate \eqn{\gamma}.
+#' @param time_end The maximum time, defaults to 200.0.
+#' @param increment The increment time, defaults to 0.1.
 #' @export
-epidemic_default_cpp <- function(init, beta, gamma) {
-    .Call(`_epidemics_epidemic_default_cpp`, init, beta, gamma)
+epidemic_default_cpp <- function(init, beta, alpha, gamma, time_end = 200.0, increment = 0.1) {
+    .Call(`_epidemics_epidemic_default_cpp`, init, beta, alpha, gamma, time_end, increment)
 }
 

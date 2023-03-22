@@ -51,3 +51,6 @@ rsconnect/
 # macOS hidden files
 .DS_Store
 inst/doc
+
+# code to format C++ files
+formatcpp.sh

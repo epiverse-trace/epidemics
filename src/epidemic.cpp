@@ -9,19 +9,25 @@
 // [[Rcpp::depends(RcppEigen)]]
 
 //' @title An SIR model
-//' 
+//'
 //' @param init The initial conditions.
 //' @param beta The transmission rate \eqn{\beta}.
+//' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 //' @param gamma The recovery rate \eqn{\gamma}.
+//' @param time_end The maximum time, defaults to 200.0.
+//' @param increment The increment time, defaults to 0.1.
 //' @export
 // [[Rcpp::export]]
-Rcpp::List epidemic_default_cpp(const Eigen::VectorXd &init,
-                                const float &beta, const float &gamma) {
+Rcpp::List epidemic_default_cpp(
+    const Eigen::VectorXd &init, const float &beta, const float &alpha,
+    const float &gamma,
+    const double &time_end = 200.0,  // double required by boost solver
+    const double &increment = 0.1) {
   // initial conditions from input
   odetools::state_type x = init;
 
   // create a default epidemic with parameters
-  epidemics::epidemic_default this_model(beta, gamma);
+  epidemics::epidemic_default this_model(beta, alpha, gamma);
 
   //[ integrate_observ
   std::vector<odetools::state_type> x_vec;  // is a vector of double vectors
@@ -34,7 +40,7 @@ Rcpp::List epidemic_default_cpp(const Eigen::VectorXd &init,
       stepper;
 
   size_t steps = boost::numeric::odeint::integrate_const(
-      stepper, this_model, x, 0.0, 200.0, 0.1,
+      stepper, this_model, x, 0.0, time_end, increment,
       odetools::observer(x_vec, times));
 
   return Rcpp::List::create(Rcpp::Named("x") = Rcpp::wrap(x_vec),

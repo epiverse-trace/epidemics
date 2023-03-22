@@ -13,21 +13,24 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // epidemic_default_cpp
-Rcpp::List epidemic_default_cpp(const Eigen::VectorXd& init, const float& beta, const float& gamma);
-RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP initSEXP, SEXP betaSEXP, SEXP gammaSEXP) {
+Rcpp::List epidemic_default_cpp(const Eigen::VectorXd& init, const float& beta, const float& alpha, const float& gamma, const double& time_end, const double& increment);
+RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP initSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type init(initSEXP);
     Rcpp::traits::input_parameter< const float& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const float& >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< const float& >::type gamma(gammaSEXP);
-    rcpp_result_gen = Rcpp::wrap(epidemic_default_cpp(init, beta, gamma));
+    Rcpp::traits::input_parameter< const double& >::type time_end(time_endSEXP);
+    Rcpp::traits::input_parameter< const double& >::type increment(incrementSEXP);
+    rcpp_result_gen = Rcpp::wrap(epidemic_default_cpp(init, beta, alpha, gamma, time_end, increment));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_epidemics_epidemic_default_cpp", (DL_FUNC) &_epidemics_epidemic_default_cpp, 3},
+    {"_epidemics_epidemic_default_cpp", (DL_FUNC) &_epidemics_epidemic_default_cpp, 6},
     {NULL, NULL, 0}
 };
 

@@ -26,6 +26,7 @@
 #' maximum time.
 #' @param t_max The maximum number of timesteps over which to run the model.
 #' @param t_increment The size of the time increment.
+#' @param model Epidemic model function.
 #'
 #' @return A `data.frame` with the columns "time", "compartment", "age_group",
 #' "value". The comparments ar "susceptible", "infected", "recovered", and
@@ -64,6 +65,7 @@
 #'   t_increment = 1
 #' )
 epi_demic <- function(population,
+                      model = "default",
                       R0 = 1.5,
                       infectious_period = 7,
                       intervention,
@@ -136,47 +138,15 @@ epi_demic <- function(population,
   # define times
   times <- seq(0, t_max, by = t_increment)
 
-  # define a function to pass to lsoda
-  fn <- function(t, init, params) {
-    n_age <- nrow(params[["contact_matrix"]])
-
-    # operate only on the recovered and vaccinated
-    S_ <- init[seq(1, n_age)]
-    I_ <- init[seq(n_age + 1, 2 * n_age)]
-
-    # scale the contact matrix if within the intervention period
-    if (t >= params[["t_npi_begin"]] && t <= params[["t_npi_end"]]) {
-      contact_matrix_ <- params[["contact_matrix"]] *
-        (1 - params[["npi_contact_reduction"]])
-    } else {
-      contact_matrix_ <- params[["contact_matrix"]]
-    }
-
-    # define ODEs
-    # change in susceptibles
-    dS <- -(params[["beta"]] * S_) *
-      as.vector(contact_matrix_ %*% I_) - # infection
-      (params[["nu"]] * (t > (params[["t_vax_begin"]])) * S_) # vaccination
-
-    # change in infecteds/infectious-es
-    dI <- (params[["beta"]] * S_) *
-      as.vector(contact_matrix_ %*% I_) - # new infections
-      (params[["gamma"]] * I_) # new recoveries
-
-    # change in recovereds
-    dR <- params[["gamma"]] * I_ # new recoveries
-
-    # change in vaccinateds
-    dV <- params[["nu"]] * (t > params[["t_vax_begin"]]) * S_
-
-    # return a list
-    list(c(dS, dI, dR, dV))
-  }
+  # handle the model function
+  model_fn <- switch(model,
+    default = epidemic_default
+  )
 
   # solve the equations with deSolve for times 0 to t_vax_begin
   output <- deSolve::lsoda(
     init,
-    times = times, func = fn, parms = params
+    times = times, func = model_fn, parms = params
   )
 
   # return combined output

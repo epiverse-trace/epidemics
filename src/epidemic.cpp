@@ -1,16 +1,20 @@
 #include <Rcpp.h>
+#include <RcppEigen.h>
 #include <epidemics.h>
+
+#include <boost/numeric/odeint.hpp>
 
 // [[Rcpp::plugins(cpp14)]]
 // [[Rcpp::depends(BH)]]
+// [[Rcpp::depends(RcppEigen)]]
 
 //' @title An SIR model
 //' @export
 // [[Rcpp::export]]
-Rcpp::List epidemic_default_cpp(const Rcpp::NumericVector &init,
+Rcpp::List epidemic_default_cpp(const Eigen::VectorXd &init,
                                 const float &beta, const float &gamma) {
   // initial conditions from input
-  odetools::state_type x = Rcpp::as<std::vector<double> >(init);
+  odetools::state_type x = init;
 
   // create a default epidemic with parameters
   epidemics::epidemic_default this_model(beta, gamma);
@@ -20,7 +24,10 @@ Rcpp::List epidemic_default_cpp(const Rcpp::NumericVector &init,
   std::vector<double> times;
 
   // a controlled stepper for constant step sizes
-  boost::numeric::odeint::runge_kutta4<odetools::state_type> stepper;
+  boost::numeric::odeint::runge_kutta4<
+      odetools::state_type, double, odetools::state_type, double,
+      boost::numeric::odeint::vector_space_algebra>
+      stepper;
 
   size_t steps = boost::numeric::odeint::integrate_const(
       stepper, this_model, x, 0.0, 200.0, 0.1,

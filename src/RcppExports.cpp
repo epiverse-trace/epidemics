@@ -13,12 +13,12 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // epidemic_default_cpp
-Rcpp::List epidemic_default_cpp(const Eigen::VectorXd& init, const float& beta, const float& alpha, const float& gamma, const double& time_end, const double& increment);
+Rcpp::List epidemic_default_cpp(const Eigen::MatrixXd& init, const float& beta, const float& alpha, const float& gamma, const double& time_end, const double& increment);
 RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP initSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type init(initSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type init(initSEXP);
     Rcpp::traits::input_parameter< const float& >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< const float& >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< const float& >::type gamma(gammaSEXP);

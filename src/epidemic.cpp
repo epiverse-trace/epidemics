@@ -8,9 +8,14 @@
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppEigen)]]
 
-//' @title An SIR model
+//' @title Run an age-structured SEIR epidemic model
 //'
-//' @param init The initial conditions.
+//' @param init The initial conditions, represented as a matrix, in which the
+//' rows \eqn{i} represent age or demographic groups, and columns \eqn{j}
+//' represent the proportions of each age group in the epidemiological
+//' compartment. Compartments are arranged in order: "S", "E", "I", and "R".
+//' Only three (3) age groups are currently supported, thus `init` must be
+//' a 4 \eqn{\times} 3 matrix.
 //' @param beta The transmission rate \eqn{\beta}.
 //' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 //' @param gamma The recovery rate \eqn{\gamma}.
@@ -19,12 +24,12 @@
 //' @export
 // [[Rcpp::export]]
 Rcpp::List epidemic_default_cpp(
-    const Eigen::VectorXd &init, const float &beta, const float &alpha,
+    const Eigen::MatrixXd &init, const float &beta, const float &alpha,
     const float &gamma,
     const double &time_end = 200.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input
-  odetools::state_type x = init;
+  odetools::state_type x = init.array();
 
   // create a default epidemic with parameters
   epidemics::epidemic_default this_model(beta, alpha, gamma);
@@ -39,6 +44,7 @@ Rcpp::List epidemic_default_cpp(
       boost::numeric::odeint::vector_space_algebra>
       stepper;
 
+  // assign the output to a dummy variable
   size_t steps = boost::numeric::odeint::integrate_const(
       stepper, this_model, x, 0.0, time_end, increment,
       odetools::observer(x_vec, times));

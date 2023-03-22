@@ -2,6 +2,7 @@
 // Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #include "../inst/include/epidemics.h"
+#include <RcppEigen.h>
 #include <Rcpp.h>
 
 using namespace Rcpp;
@@ -12,12 +13,12 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // epidemic_default_cpp
-Rcpp::List epidemic_default_cpp(const Rcpp::NumericVector& init, const float& beta, const float& gamma);
+Rcpp::List epidemic_default_cpp(const Eigen::VectorXd& init, const float& beta, const float& gamma);
 RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP initSEXP, SEXP betaSEXP, SEXP gammaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type init(initSEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type init(initSEXP);
     Rcpp::traits::input_parameter< const float& >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< const float& >::type gamma(gammaSEXP);
     rcpp_result_gen = Rcpp::wrap(epidemic_default_cpp(init, beta, gamma));

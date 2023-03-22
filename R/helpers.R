@@ -1,0 +1,30 @@
+#' @title Convert [epidemic_default_cpp()] output to a data.frame
+#'
+#' @param l A list, the output of a call to [epidemic_default_cpp()].
+#' @param compartments A character vector of the compartment names.
+#' @return A data.frame with N+1 columns, where N is the number of compartments,
+#' with the additional column being "time".
+#' @export
+output_to_df <- function(l, compartments = c("S", "E", "I", "R")) {
+  # input checking
+  stopifnot(
+    "Error: `l` must be a list" =
+      is.list(l),
+    "Error: `l` must have names 'x' and 'time'" =
+      names(l) %in% c("x", "time")
+  )
+  n_col <- length(l[["x"]][[1]])
+
+  data <- as.data.frame(
+    matrix(
+      unlist(l[["x"]]),
+      ncol = n_col,
+      byrow = TRUE
+    )
+  )
+  colnames(data) <- compartments
+  data$time <- l[["time"]]
+
+  # return data
+  data
+}

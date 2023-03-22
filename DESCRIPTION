@@ -36,6 +36,7 @@ Imports:
     checkmate,
     data.table,
     deSolve,
+    Rcpp
 Suggests: 
     bookdown,
     covr,
@@ -47,3 +48,6 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp,
+    BH

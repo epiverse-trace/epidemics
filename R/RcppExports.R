@@ -2,6 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @title An SIR model
+#' 
+#' @param init The initial conditions.
+#' @param beta The transmission rate \eqn{\beta}.
+#' @param gamma The recovery rate \eqn{\gamma}.
 #' @export
 epidemic_default_cpp <- function(init, beta, gamma) {
     .Call(`_epidemics_epidemic_default_cpp`, init, beta, gamma)

@@ -36,7 +36,8 @@ Imports:
     checkmate,
     data.table,
     deSolve,
-    Rcpp
+    Rcpp,
+    RcppEigen
 Suggests: 
     bookdown,
     covr,

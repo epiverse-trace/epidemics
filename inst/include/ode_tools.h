@@ -4,15 +4,15 @@
 
 // [[Rcpp::plugins(cpp14)]]
 // [[Rcpp::depends(BH)]]
+// [[Rcpp::depends(RcppEigen)]]
 
 // clang-format off
 #include <Rcpp.h>
+#include <RcppEigen.h>
 
 #include <algorithm>
 #include <iostream>
 #include <vector>
-
-#include <boost/numeric/odeint.hpp>
 // clang-format on
 
 // add to namespace ode
@@ -20,7 +20,10 @@ namespace odetools {
 
 //[ rhs_function
 /* The type of container used to hold the state vector */
-typedef std::vector<double> state_type;
+template<size_t N>
+using vector = Eigen::Matrix<double, 1, N>;
+
+typedef vector<3> state_type;
 
 //[ integrate_observer
 struct observer {

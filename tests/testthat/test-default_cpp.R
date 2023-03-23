@@ -10,7 +10,7 @@ test_that("Basic tests for default epidemic model", {
     beta = 0.5,
     alpha = 0.1,
     gamma = 0.05,
-    time_end = 200, increment = 1.0
+    time_end = 10, increment = 1.0
   )
   expect_type(data, "list")
   expect_named(

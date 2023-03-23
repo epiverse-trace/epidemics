@@ -11,8 +11,8 @@ epidemic_default_cpp(init, beta, alpha, gamma, time_end = 200, increment = 0.1)
 rows \eqn{i} represent age or demographic groups, and columns \eqn{j}
 represent the proportions of each age group in the epidemiological
 compartment. Compartments are arranged in order: "S", "E", "I", and "R".
-Only three (3) age groups are currently supported, thus \code{init} must be
-a 4 \eqn{\times} 3 matrix.}
+Multiple (N) age groups are currently supported, thus \code{init} must be
+a \eqn{N \times 4} matrix.}
 
 \item{beta}{The transmission rate \eqn{\beta}.}
 

@@ -28,6 +28,8 @@ struct epidemic_default {
 
   void operator()(odetools::state_type const& x, odetools::state_type& dxdt,
                   const double t) {
+    // resize the dxdt vector to the dimensions of x
+    dxdt.resize(x.rows(), x.cols());
     dxdt.col(0) = -beta * x.col(0) * x.col(2);  // -beta*S*I
     dxdt.col(1) = (beta * x.col(0) * x.col(2)) -
                   (alpha * x.col(0));  // beta*S*I - alpha*E

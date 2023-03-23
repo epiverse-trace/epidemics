@@ -14,8 +14,8 @@
 //' rows \eqn{i} represent age or demographic groups, and columns \eqn{j}
 //' represent the proportions of each age group in the epidemiological
 //' compartment. Compartments are arranged in order: "S", "E", "I", and "R".
-//' Only three (3) age groups are currently supported, thus `init` must be
-//' a 4 \eqn{\times} 3 matrix.
+//' Multiple (N) age groups are currently supported, thus `init` must be
+//' a \eqn{N \times 4} matrix.
 //' @param beta The transmission rate \eqn{\beta}.
 //' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 //' @param gamma The recovery rate \eqn{\gamma}.
@@ -29,7 +29,7 @@ Rcpp::List epidemic_default_cpp(
     const double &time_end = 200.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input
-  odetools::state_type x = init.array();
+  odetools::state_type x = init;
 
   // create a default epidemic with parameters
   epidemics::epidemic_default this_model(beta, alpha, gamma);

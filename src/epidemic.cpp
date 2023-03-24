@@ -11,14 +11,9 @@
 
 //' @title Run an age-structured SEIR epidemic model
 //'
-//' @param init The initial conditions, represented as a matrix, in which the
-//' rows \eqn{i} represent age or demographic groups, and columns \eqn{j}
-//' represent the proportions of each age group in the epidemiological
-//' compartment. Compartments are arranged in order: "S", "E", "I", and "R".
-//' Multiple (N) age groups are currently supported, thus `init` must be
-//' a \eqn{N \times 4} matrix.
-//' @param contact_matrix A matrix whose elements \eqn{i,j} give the number of
-//' contacts between individuals of groups \eqn{i} and \eqn{j}.
+//' @param population An object of the `population` class, which holds a
+//' population contact matrix, a demography vector, and the initial conditions
+//' of each demographic group. See [population()].
 //' @param beta The transmission rate \eqn{\beta}.
 //' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 //' @param gamma The recovery rate \eqn{\gamma}.
@@ -27,15 +22,17 @@
 //' @export
 // [[Rcpp::export]]
 Rcpp::List epidemic_default_cpp(
-    const Eigen::MatrixXd &init, const Eigen::MatrixXd &contact_matrix,
-    const float &beta, const float &alpha, const float &gamma,
+    const Rcpp::List &population, const float &beta, const float &alpha,
+    const float &gamma,
     const double &time_end = 200.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input
-  odetools::state_type x = init;
+  odetools::state_type x = Eigen::MatrixXd(
+      Rcpp::as<Eigen::MatrixXd>(population["initial_conditions"]));
+  Eigen::MatrixXd cm(Rcpp::as<Eigen::MatrixXd>(population["contact_matrix"]));
 
   // create a default epidemic with parameters
-  epidemics::epidemic_default this_model(beta, alpha, gamma, contact_matrix);
+  epidemics::epidemic_default this_model(beta, alpha, gamma, cm);
 
   //[ integrate_observ
   std::vector<odetools::state_type> x_vec;  // is a vector of double vectors

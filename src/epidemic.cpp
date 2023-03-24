@@ -19,8 +19,7 @@
 //' @param gamma The recovery rate \eqn{\gamma}.
 //' @param time_end The maximum time, defaults to 200.0.
 //' @param increment The increment time, defaults to 0.1.
-//' @export
-// [[Rcpp::export]]
+// [[Rcpp::export(name=".epidemic_default_cpp")]]
 Rcpp::List epidemic_default_cpp(
     const Rcpp::List &population, const float &beta, const float &alpha,
     const float &gamma,

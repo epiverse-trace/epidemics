@@ -4,15 +4,19 @@
 \alias{epidemic_default_cpp}
 \title{Run an age-structured SEIR epidemic model}
 \usage{
-epidemic_default_cpp(init, beta, alpha, gamma, time_end = 200, increment = 0.1)
+epidemic_default_cpp(
+  population,
+  beta,
+  alpha,
+  gamma,
+  time_end = 200,
+  increment = 0.1
+)
 }
 \arguments{
-\item{init}{The initial conditions, represented as a matrix, in which the
-rows \eqn{i} represent age or demographic groups, and columns \eqn{j}
-represent the proportions of each age group in the epidemiological
-compartment. Compartments are arranged in order: "S", "E", "I", and "R".
-Multiple (N) age groups are currently supported, thus \code{init} must be
-a \eqn{N \times 4} matrix.}
+\item{population}{An object of the \code{population} class, which holds a
+population contact matrix, a demography vector, and the initial conditions
+of each demographic group. See \code{\link[=population]{population()}}.}
 
 \item{beta}{The transmission rate \eqn{\beta}.}
 

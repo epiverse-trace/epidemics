@@ -1,12 +1,25 @@
+# Basic tests to check for functionality
+# Prepare some initial objects
+init <- rbind(
+  c(0.98, 0.01, 0.01, 0.0),
+  c(0.9, 0.09, 0.01, 0.0),
+  c(0.95, 0.04, 0.01, 0.0)
+)
+contact_matrix <- matrix(1.0, nrow = 3, ncol = 3)
+contact_matrix <- contact_matrix / rowSums(contact_matrix)
+diag(contact_matrix) <- rep(1.0, nrow(contact_matrix))
+
+p <- population(
+  contact_matrix = contact_matrix,
+  demography_vector = rep(10, 3),
+  initial_conditions = init
+)
+
 test_that("Basic tests for default epidemic model", {
   # create initial conditions
-  init <- rbind(
-    c(0.98, 0.01, 0.01, 0.0),
-    c(0.9, 0.09, 0.01, 0.0),
-    c(0.95, 0.04, 0.01, 0.0)
-  )
+
   data <- epidemic_default_cpp(
-    init = init,
+    population = p,
     beta = 0.5,
     alpha = 0.1,
     gamma = 0.05,
@@ -24,14 +37,8 @@ test_that("Basic tests for default epidemic model", {
 })
 
 test_that("Basic tests for data collection helper", {
-  # create initial conditions
-  init <- rbind(
-    c(0.98, 0.01, 0.01, 0.0),
-    c(0.9, 0.09, 0.01, 0.0),
-    c(0.95, 0.04, 0.01, 0.0)
-  )
   data <- epidemic_default_cpp(
-    init = init,
+    population = p,
     beta = 0.5,
     alpha = 0.1,
     gamma = 0.05,

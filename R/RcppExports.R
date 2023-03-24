@@ -3,19 +3,16 @@
 
 #' @title Run an age-structured SEIR epidemic model
 #'
-#' @param init The initial conditions, represented as a matrix, in which the
-#' rows \eqn{i} represent age or demographic groups, and columns \eqn{j}
-#' represent the proportions of each age group in the epidemiological
-#' compartment. Compartments are arranged in order: "S", "E", "I", and "R".
-#' Multiple (N) age groups are currently supported, thus `init` must be
-#' a \eqn{N \times 4} matrix.
+#' @param population An object of the `population` class, which holds a
+#' population contact matrix, a demography vector, and the initial conditions
+#' of each demographic group. See [population()].
 #' @param beta The transmission rate \eqn{\beta}.
 #' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 #' @param gamma The recovery rate \eqn{\gamma}.
 #' @param time_end The maximum time, defaults to 200.0.
 #' @param increment The increment time, defaults to 0.1.
 #' @export
-epidemic_default_cpp <- function(init, beta, alpha, gamma, time_end = 200.0, increment = 0.1) {
-    .Call(`_epidemics_epidemic_default_cpp`, init, beta, alpha, gamma, time_end, increment)
+epidemic_default_cpp <- function(population, beta, alpha, gamma, time_end = 200.0, increment = 0.1) {
+    .Call(`_epidemics_epidemic_default_cpp`, population, beta, alpha, gamma, time_end, increment)
 }
 

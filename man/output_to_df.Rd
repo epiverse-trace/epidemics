@@ -2,12 +2,15 @@
 % Please edit documentation in R/helpers.R
 \name{output_to_df}
 \alias{output_to_df}
-\title{Convert \code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}} output to a data.frame}
+\title{Convert epidemic model output to a data.frame}
 \usage{
-output_to_df(l, compartments = c("S", "E", "I", "R"))
+output_to_df(
+  l,
+  compartments = c("susceptible", "exposed", "infectious", "recovered")
+)
 }
 \arguments{
-\item{l}{A list, the output of a call to \code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}}.}
+\item{l}{A list, usually the output of a call to \code{\link[=.epidemic_default_cpp]{.epidemic_default_cpp()}}.}
 
 \item{compartments}{A character vector of the compartment names.}
 }
@@ -16,5 +19,5 @@ A data.frame with N+1 columns, where N is the number of compartments,
 with the additional column being "time".
 }
 \description{
-Convert \code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}} output to a data.frame
+Convert epidemic model output to a data.frame
 }

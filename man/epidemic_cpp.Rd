@@ -2,7 +2,7 @@
 % Please edit documentation in R/epidemic_cpp.R
 \name{epidemic_cpp}
 \alias{epidemic_cpp}
-\title{Model an SIRV epidemic}
+\title{Model an SEIR epidemic}
 \usage{
 epidemic_cpp(
   population,

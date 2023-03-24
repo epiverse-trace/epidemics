@@ -23,11 +23,11 @@ namespace epidemics {
 
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_default {
-  const float beta, alpha, gamma;
+  const Eigen::VectorXd beta, alpha, gamma;
   const Eigen::MatrixXd contact_matrix;
   // npi, interv, pop
-  epidemic_default(float beta, float alpha, float gamma,
-                   Eigen::MatrixXd contact_matrix)
+  epidemic_default(const Eigen::VectorXd beta, const Eigen::VectorXd alpha,
+                   const Eigen::VectorXd gamma, Eigen::MatrixXd contact_matrix)
       : beta(beta),
         alpha(alpha),
         gamma(gamma),
@@ -41,7 +41,7 @@ struct epidemic_default {
 
     // compartmental equations
     dxdt.col(0) =
-        -beta * x.col(0) * (contact_matrix * x.col(2));  // -beta*S*contacts*I
+        -(beta * x.col(0)) * (contact_matrix * x.col(2));  // -beta*S*contacts*I
     dxdt.col(1) = (beta * x.col(0) * (contact_matrix * x.col(2))) -
                   (alpha * x.col(1));  // beta*S*contacts*I - alpha*E
     dxdt.col(2) = (alpha * x.col(1)) - (gamma * x.col(2));  // alpha*E - gamma*I

@@ -32,20 +32,19 @@ struct epidemic_default {
         alpha(alpha),
         gamma(gamma),
         contact_matrix(contact_matrix) {}
-  // NOLINTBEGIN
-  void operator()(const odetools::state_type& x, odetools::state_type& dxdt,
-                  const double t) {
-    // NOLINTEND
 
+  void operator()(const odetools::state_type& x,
+                  odetools::state_type& dxdt,  // NOLINT
+                  const double t) {
     // resize the dxdt vector to the dimensions of x
     dxdt.resize(x.rows(), x.cols());
 
     // compartmental equations
     dxdt.col(0) =
         -beta * x.col(0) * (contact_matrix * x.col(2));  // -beta*S*contacts*I
-    dxdt.col(1) = (beta * x.col(0) * x.col(2)) -
-                  (alpha * x.col(0));  // beta*S*I - alpha*E
-    dxdt.col(2) = (alpha * x.col(0)) - (gamma * x.col(2));  // alpha*E - gamma*I
+    dxdt.col(1) = (beta * x.col(0) * (contact_matrix * x.col(2))) -
+                  (alpha * x.col(1));  // beta*S*contacts*I - alpha*E
+    dxdt.col(2) = (alpha * x.col(1)) - (gamma * x.col(2));  // alpha*E - gamma*I
     dxdt.col(3) = gamma * x.col(2);                         // gamma*I
   }
 };

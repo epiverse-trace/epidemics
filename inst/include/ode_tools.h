@@ -27,7 +27,8 @@ struct observer {
   std::vector<state_type> &m_states;
   std::vector<double> &m_times;
 
-  observer(std::vector<state_type> &states, std::vector<double> &times)
+  observer(std::vector<state_type> &states,  // NOLINT
+           std::vector<double> &times)       // NOLINT
       : m_states(states), m_times(times) {}
 
   void operator()(const state_type &x, double t) {

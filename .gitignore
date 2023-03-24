@@ -54,3 +54,4 @@ inst/doc
 
 # code to format C++ files
 formatcpp.sh
+lintcpp.sh

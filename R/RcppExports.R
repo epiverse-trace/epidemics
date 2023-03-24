@@ -11,8 +11,7 @@
 #' @param gamma The recovery rate \eqn{\gamma}.
 #' @param time_end The maximum time, defaults to 200.0.
 #' @param increment The increment time, defaults to 0.1.
-#' @export
-epidemic_default_cpp <- function(population, beta, alpha, gamma, time_end = 200.0, increment = 0.1) {
+.epidemic_default_cpp <- function(population, beta, alpha, gamma, time_end = 200.0, increment = 0.1) {
     .Call(`_epidemics_epidemic_default_cpp`, population, beta, alpha, gamma, time_end, increment)
 }
 

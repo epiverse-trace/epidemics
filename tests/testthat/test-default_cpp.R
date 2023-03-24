@@ -1,12 +1,24 @@
 # Basic tests to check for functionality
+# Prepare contact matrix and demography vector
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+contact_matrix <- t(contact_data$matrix)
+demography_vector <- contact_data$demography$population
+
 # Prepare some initial objects
 population <- population(
   name = "UK population",
-  contact_matrix = matrix(1),
-  demography_vector = 67e6,
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
   initial_conditions = matrix(
     c(0.9999, 0.0001, 0, 0),
-    nrow = 1, ncol = 4
+    nrow = 3, ncol = 4,
+    byrow = TRUE
   )
 )
 
@@ -27,15 +39,16 @@ test_that("Output of default epidemic model", {
 
   # check for output type and contents
   expect_s3_class(data, "data.table")
-  expect_length(data, ncol(population$initial_conditions) + 1L) # comp and time
+  expect_length(data, length(population$initial_conditions) + 1L)
 
   # check for all positive values within the range 0 and total population size
   expect_true(
     all(
-      vapply(subset(data, select = -time), FUN = function(x) {
-        all(x >= 0 & x <= sum(population$demography_vector))
-      },
-      FUN.VALUE = TRUE
+      vapply(subset(data, select = -time),
+        FUN = function(x) {
+          all(x >= 0 & x <= sum(population$demography_vector))
+        },
+        FUN.VALUE = TRUE
       )
     )
   )

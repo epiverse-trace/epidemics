@@ -4,15 +4,17 @@
 
 // [[Rcpp::plugins(cpp14)]]
 // [[Rcpp::depends(BH)]]
+// [[Rcpp::depends(RcppEigen)]]
 
 // clang-format off
 #include <Rcpp.h>
+#include <RcppEigen.h>
 
 #include <algorithm>
 #include <iostream>
 #include <vector>
 
-#include <boost/numeric/odeint.hpp> 
+#include <boost/numeric/odeint.hpp>
 #include "ode_tools.h"
 // clang-format on
 
@@ -22,15 +24,25 @@ namespace epidemics {
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_default {
   const float beta, alpha, gamma;
+  const Eigen::MatrixXd contact_matrix;
   // npi, interv, pop
-  epidemic_default(float beta, float alpha, float gamma)
-      : beta(beta), alpha(alpha), gamma(gamma) {}
-
-  void operator()(odetools::state_type const& x, odetools::state_type& dxdt,
+  epidemic_default(float beta, float alpha, float gamma,
+                   Eigen::MatrixXd contact_matrix)
+      : beta(beta),
+        alpha(alpha),
+        gamma(gamma),
+        contact_matrix(contact_matrix) {}
+  // NOLINTBEGIN
+  void operator()(const odetools::state_type& x, odetools::state_type& dxdt,
                   const double t) {
+    // NOLINTEND
+
     // resize the dxdt vector to the dimensions of x
     dxdt.resize(x.rows(), x.cols());
-    dxdt.col(0) = -beta * x.col(0) * x.col(2);  // -beta*S*I
+
+    // compartmental equations
+    dxdt.col(0) =
+        -beta * x.col(0) * (contact_matrix * x.col(2));  // -beta*S*contacts*I
     dxdt.col(1) = (beta * x.col(0) * x.col(2)) -
                   (alpha * x.col(0));  // beta*S*I - alpha*E
     dxdt.col(2) = (alpha * x.col(0)) - (gamma * x.col(2));  // alpha*E - gamma*I

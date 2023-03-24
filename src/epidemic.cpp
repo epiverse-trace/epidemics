@@ -1,3 +1,4 @@
+// Copyright 2023 'epidemics' authors. See repository licence in LICENSE.md.
 #include <Rcpp.h>
 #include <RcppEigen.h>
 #include <epidemics.h>
@@ -16,6 +17,8 @@
 //' compartment. Compartments are arranged in order: "S", "E", "I", and "R".
 //' Multiple (N) age groups are currently supported, thus `init` must be
 //' a \eqn{N \times 4} matrix.
+//' @param contact_matrix A matrix whose elements \eqn{i,j} give the number of
+//' contacts between individuals of groups \eqn{i} and \eqn{j}.
 //' @param beta The transmission rate \eqn{\beta}.
 //' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 //' @param gamma The recovery rate \eqn{\gamma}.
@@ -24,15 +27,15 @@
 //' @export
 // [[Rcpp::export]]
 Rcpp::List epidemic_default_cpp(
-    const Eigen::MatrixXd &init, const float &beta, const float &alpha,
-    const float &gamma,
+    const Eigen::MatrixXd &init, const Eigen::MatrixXd &contact_matrix,
+    const float &beta, const float &alpha, const float &gamma,
     const double &time_end = 200.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input
   odetools::state_type x = init;
 
   // create a default epidemic with parameters
-  epidemics::epidemic_default this_model(beta, alpha, gamma);
+  epidemics::epidemic_default this_model(beta, alpha, gamma, contact_matrix);
 
   //[ integrate_observ
   std::vector<odetools::state_type> x_vec;  // is a vector of double vectors
@@ -44,10 +47,10 @@ Rcpp::List epidemic_default_cpp(
       boost::numeric::odeint::vector_space_algebra>
       stepper;
 
-  // assign the output to a dummy variable
-  size_t steps = boost::numeric::odeint::integrate_const(
-      stepper, this_model, x, 0.0, time_end, increment,
-      odetools::observer(x_vec, times));
+  // run the function without assignment
+  boost::numeric::odeint::integrate_const(stepper, this_model, x, 0.0, time_end,
+                                          increment,
+                                          odetools::observer(x_vec, times));
 
   return Rcpp::List::create(Rcpp::Named("x") = Rcpp::wrap(x_vec),
                             Rcpp::Named("time") = Rcpp::wrap(times));

@@ -27,7 +27,7 @@ inline Eigen::MatrixXd intervention_on_cm(const Eigen::MatrixXd &cm,
   // check inputs here
   if (contact_reduction.size() != cm.rows()) {
     Rcpp::stop(
-        "Error: Intervention must have the same number of elements as rows in "
+        "Intervention must have the same number of elements as rows in "
         "the contact matrix (demo. groups.)\n");
   }
 
@@ -44,7 +44,8 @@ inline bool is_intervention_active(const double &t,
   const double time_begin = intervention["time_begin"];
   const double time_end = intervention["time_end"];
   // input checking on intervention
-  return (t >= time_begin && t <= time_end);
+  bool intervention_active = t >= time_begin && t <= time_end;
+  return intervention_active;
 }
 
 }  // namespace intervention

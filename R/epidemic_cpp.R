@@ -81,7 +81,7 @@ epidemic_cpp <- function(population,
   # check that compartments sum to 1.0
   checkmate::assert_numeric(
     apply(population$initial_condition, 1, sum),
-    lower = 1.0, upper = 1.0
+    lower = 1.0 - 1e-6, upper = 1.0 + 1e-6 # specify tolerance manually
   )
   # more input checking to be added
 

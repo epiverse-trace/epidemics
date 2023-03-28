@@ -1,0 +1,204 @@
+---
+title: "Epidemic modelling with Rcpp"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Epidemic modelling with Rcpp}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+```{r setup}
+library(epidemics)
+library(data.table)
+library(ggplot2)
+library(stringr)
+```
+
+## Prepare population and initial conditions
+
+Prepare population and contact data.
+
+```{r}
+# load contact and population data from socialmixr::polymod
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+
+# prepare contact matrix
+contact_matrix <- t(contact_data$matrix)
+
+# prepare the demography vector
+demography_vector <- contact_data$demography$population
+names(demography_vector) <- rownames(contact_matrix)
+
+# view contact matrix and demography
+contact_matrix
+
+demography_vector
+```
+
+Prepare initial conditions for each age group.
+
+```{r}
+# initial conditions
+initial_i <- 1e-6
+initial_conditions <- c(
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0
+)
+
+# build for all age groups
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+
+# assign rownames for clarity
+rownames(initial_conditions) <- rownames(contact_matrix)
+
+# view initial conditions
+initial_conditions
+```
+
+Prepare a population as a `population` class object.
+
+```{r}
+uk_population <- population(
+  name = "UK",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+
+uk_population
+```
+
+## Prepare pathogen parameters
+
+```{r}
+# Prepare epidemiological parameters
+r0 <- rep(1.5, nrow(contact_matrix))
+preinfectious_period <- rep(3, nrow(contact_matrix))
+infectious_period <- rep(7, nrow(contact_matrix))
+```
+
+## Prepare interventions
+
+Prepare an intervention to simulate school closures.
+
+```{r}
+# prepare an intervention with a differential effect on age groups
+close_schools <- intervention(
+  name = "School closure",
+  time_begin = 200,
+  time_end = 300,
+  contact_reduction = c(0.5, 0.001, 0.001)
+)
+
+close_schools
+```
+
+## Run epidemic model
+
+```{r}
+# run an epidemic model using `epidemic_cpp`
+output <- epidemic_cpp(
+  population = uk_population,
+  r0 = r0,
+  preinfectious_period = preinfectious_period,
+  infectious_period = infectious_period,
+  intervention = close_schools,
+  time_end = 600, increment = 1.0
+)
+```
+
+## Prepare data and visualise infections
+
+```{r}
+# make long format data
+data <- melt(
+  output[, .SD, .SDcols = names(output) %like% "infectious|exposed|time"],
+  id.vars = "time"
+)
+
+# extract age group and compartment
+data[, c("compartment", "age_group") := list(
+  str_extract(variable, "(\\w+)(?=_)"),
+  str_extract(variable, "\\d{1}")
+)]
+
+# assign age groups
+age_groups <- data.table(
+  age_group = as.character(seq_along(demography_vector)),
+  age_group_name = names(demography_vector)
+)
+
+data <- merge(data, age_groups)
+```
+
+Plot epidemic over time, showing only the number of individuals in the exposed and infected compartments.
+
+```{r}
+# plot figure of epidemic curve
+ggplot(
+  data,
+  aes(
+    x = time,
+    y = value,
+    col = age_group_name,
+    linetype = compartment
+  )
+) +
+  geom_line() +
+  annotate(
+    geom = "rect",
+    xmin = close_schools$time_begin,
+    xmax = close_schools$time_end,
+    ymin = 0, ymax = 500e3,
+    fill = alpha("red", alpha = 0.2),
+    lty = "dashed"
+  ) +
+  annotate(
+    geom = "text",
+    x = mean(c(close_schools$time_begin, close_schools$time_end)),
+    y = 400e3,
+    angle = 90,
+    label = "School closure"
+  ) +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  expand_limits(
+    y = c(0, 500e3)
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    linetype = "Compartment",
+    y = "Individuals"
+  )
+```

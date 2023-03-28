@@ -14,6 +14,11 @@
 #' course of the epidemic, with a start and end time, and age-specific effect
 #' on contacts. See [intervention()].
 #' @param increment The increment time, defaults to 0.1.
+#' @return A two element list, where the first element is a list of matrices
+#' whose elements correspond to the numbers of individuals in each compartment
+#' as specified in the initial conditions matrix (see [population()]).
+#' The second list element is a vector of timesteps.
+#' @keywords internal
 .epidemic_default_cpp <- function(population, beta, alpha, gamma, intervention, time_end = 200.0, increment = 0.1) {
     .Call(`_epidemics_epidemic_default_cpp`, population, beta, alpha, gamma, intervention, time_end, increment)
 }

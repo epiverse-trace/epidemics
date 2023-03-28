@@ -111,3 +111,18 @@ validate_intervention <- function(object) {
 is_intervention <- function(object) {
   inherits(object, "intervention")
 }
+
+#' Generate a null intervention
+#'
+#' @param population A `population` object with a `contact_matrix` member.
+#'
+#' @return An intervention that has no effect on contacts, with start and end
+#' times set to 0.0
+#' @export
+no_intervention <- function(population) {
+  checkmate::assert_class(population, "population")
+  intervention(
+    name = "no_intervention", time_begin = 0, time_end = 0,
+    contact_reduction = rep(0.0, times = nrow(population$contact_matrix))
+  )
+}

@@ -10,8 +10,11 @@
 #' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 #' @param gamma The recovery rate \eqn{\gamma}.
 #' @param time_end The maximum time, defaults to 200.0.
+#' @param intervention A non-pharamaceutical intervention applied during the
+#' course of the epidemic, with a start and end time, and age-specific effect
+#' on contacts. See [intervention()].
 #' @param increment The increment time, defaults to 0.1.
-.epidemic_default_cpp <- function(population, beta, alpha, gamma, time_end = 200.0, increment = 0.1) {
-    .Call(`_epidemics_epidemic_default_cpp`, population, beta, alpha, gamma, time_end, increment)
+.epidemic_default_cpp <- function(population, beta, alpha, gamma, intervention, time_end = 200.0, increment = 0.1) {
+    .Call(`_epidemics_epidemic_default_cpp`, population, beta, alpha, gamma, intervention, time_end, increment)
 }
 

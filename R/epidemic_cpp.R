@@ -17,6 +17,8 @@
 #' of the same length as the number of demographic groups.
 #' @param infectious_period The mean infections period. Must be a vector of the
 #' same length as the number of demographic groups.
+#' @param intervention A non-pharmaceutical intervention applied to the
+#' population during the epidemic. See [intervention()].
 #' @param time_end The maximum number of timesteps over which to run the model.
 #' @param increment The size of the time increment.
 #'
@@ -27,7 +29,7 @@
 #'
 #' @examples
 #' # create a population
-#' population <- population(
+#' uk_population <- population(
 #'   name = "UK population",
 #'   contact_matrix = matrix(1),
 #'   demography_vector = 67e6,
@@ -39,10 +41,11 @@
 #'
 #' # run epidemic simulation
 #' epidemic_cpp(
-#'   population = population,
-#'   r0 = rep(1.5, nrow(population$contact_matrix)),
-#'   preinfectious_period = rep(3, nrow(population$contact_matrix)),
-#'   infectious_period = rep(7, nrow(population$contact_matrix)),
+#'   population = uk_population,
+#'   r0 = rep(1.5, nrow(uk_population$contact_matrix)),
+#'   preinfectious_period = rep(3, nrow(uk_population$contact_matrix)),
+#'   infectious_period = rep(7, nrow(uk_population$contact_matrix)),
+#'   intervention = no_intervention(uk_population),
 #'   time_end = 200,
 #'   increment = 1
 #' )
@@ -50,6 +53,7 @@ epidemic_cpp <- function(population,
                          r0 = 1.5,
                          preinfectious_period = 3,
                          infectious_period = 7,
+                         intervention,
                          time_end = 200,
                          increment = 1) {
 
@@ -72,7 +76,7 @@ epidemic_cpp <- function(population,
   # check that compartment sizes are numerics
   checkmate::assert_matrix(population$initial_conditions,
     mode = "numeric",
-    ncols = 4L # hardocoded
+    ncols = 4L # hardcoded for the present
   )
   # check that compartments sum to 1.0
   checkmate::assert_numeric(
@@ -100,6 +104,7 @@ epidemic_cpp <- function(population,
     beta = beta,
     alpha = alpha,
     gamma = gamma,
+    intervention = intervention,
     time_end = time_end, increment = increment
   )
 

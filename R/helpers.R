@@ -27,8 +27,10 @@ output_to_df <- function(l, compartments = c(
       byrow = TRUE
     )
   )
-  colnames(data) <- do.call(
-    paste0, expand.grid(compartments, seq(n_groups))
+  colnames(data) <- sprintf(
+    "%s_%i",
+    rep(compartments, each = n_groups),
+    rep(seq_len(n_groups), times = length(compartments))
   )
   data$time <- l[["time"]]
 

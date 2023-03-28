@@ -33,6 +33,13 @@ on contacts. See \code{\link[=intervention]{intervention()}}.}
 
 \item{increment}{The increment time, defaults to 0.1.}
 }
+\value{
+A two element list, where the first element is a list of matrices
+whose elements correspond to the numbers of individuals in each compartment
+as specified in the initial conditions matrix (see \code{\link[=population]{population()}}).
+The second list element is a vector of timesteps.
+}
 \description{
 Run an age-structured SEIR epidemic model
 }
+\keyword{internal}

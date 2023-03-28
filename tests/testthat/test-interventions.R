@@ -67,3 +67,26 @@ test_that("Epidemic model with intervention", {
     final_size
   )
 })
+
+# Test for errors on wrong intervention formulation
+# prepare a basic intervention
+badly_formed_intervention <- intervention(
+  name = "close_schools",
+  time_begin = 100, time_end = 150,
+  contact_reduction = c(0.2, 0.0, 0.2) # too many values, 2 needed, 3 given
+)
+
+test_that("Error on poorly specified intervention", {
+  # expect failure for poorly specified intervention
+  expect_error(
+    epidemic_cpp(
+      population = uk_population,
+      r0 = r0,
+      preinfectious_period = preinfectious_period,
+      infectious_period = infectious_period,
+      intervention = badly_formed_intervention,
+      time_end = 200, increment = 1.0
+    ),
+    regexp = "(Intervention must have)|(number of elements)|(contact matrix)"
+  )
+})

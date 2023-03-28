@@ -28,7 +28,7 @@ preinfectious_period <- rep(3, nrow(uk_population$contact_matrix))
 infectious_period <- rep(7, nrow(uk_population$contact_matrix))
 
 test_that("Output of default epidemic model", {
-  # run model on data
+  # run epidemic model
   data <- epidemic_cpp(
     population = uk_population,
     r0 = r0,
@@ -59,6 +59,18 @@ test_that("Output of default epidemic model", {
   expect_identical(
     sum(subset(data[1, ], select = -time)),
     sum(subset(tail(data, 1L), select = -time)),
+    tolerance = 1e-6
+  )
+
+  # check that all age groups in the simulation are the same
+  # size as the demography vector
+  final_state <- matrix(
+    unlist(subset(tail(data, 1), select = -time)),
+    nrow = nrow(contact_matrix)
+  )
+  expect_identical(
+    rowSums(final_state),
+    uk_population$demography_vector,
     tolerance = 1e-6
   )
 })
@@ -94,5 +106,170 @@ test_that("Larger R0 leads to larger final size in default epidemic model", {
   expect_gt(
     final_sizes["r0_high"],
     final_sizes["r0_low"]
+  )
+})
+
+# Tests that require uniform contact matrices
+# create a dummy population with a uniform contact matrix
+# Prepare some initial objects
+dummy_contact_matrix <- t(matrix(
+  1, 2, 2,
+  byrow = TRUE
+))
+dummy_demography_vector <- 10e6 * c(0.5, 0.5)
+
+dummy_population <- population(
+  name = "dummy population",
+  contact_matrix = dummy_contact_matrix,
+  demography_vector = dummy_demography_vector,
+  initial_conditions = matrix(
+    c(1 - 1e-6, 1e-6 * 0.9, 1e-6 * 0.1, 0),
+    nrow = nrow(dummy_contact_matrix), ncol = 4,
+    byrow = TRUE
+  )
+)
+
+# prepare parameters
+r0 <- rep(1.5, nrow(dummy_population$contact_matrix))
+preinfectious_period <- rep(3, nrow(dummy_population$contact_matrix))
+infectious_period <- rep(7, nrow(dummy_population$contact_matrix))
+
+test_that("Identical population sizes lead to identical final size", {
+  data <- epidemic_cpp(
+    population = dummy_population,
+    r0 = r0,
+    preinfectious_period = preinfectious_period,
+    infectious_period = infectious_period,
+    intervention = no_intervention(dummy_population),
+    time_end = 200, increment = 0.1
+  )
+
+  final_sizes <- unname(
+    unlist(
+      subset(
+        tail(data, 1),
+        select = grepl("recovered", colnames(data), fixed = TRUE)
+      )
+    )
+  )
+
+  # both groups have same final size
+  expect_identical(
+    final_sizes[1], final_sizes[2],
+    tolerance = 1e-6
+  )
+})
+
+test_that("Group with lower preinfectious period has larger final size", {
+  # make a temporary pre-infectious period vector
+  # lower values mean quicker transition from E => I
+  preinfectious_period <- c(3, 1.2)
+
+  data <- epidemic_cpp(
+    population = dummy_population,
+    r0 = r0,
+    preinfectious_period = preinfectious_period,
+    infectious_period = infectious_period,
+    intervention = no_intervention(dummy_population),
+    time_end = 200, increment = 0.1
+  )
+
+  final_sizes <- unname(
+    unlist(
+      subset(
+        tail(data, 1),
+        select = grepl("recovered", colnames(data), fixed = TRUE)
+      )
+    )
+  )
+
+  # both groups have same final size
+  expect_gt(
+    final_sizes[2], final_sizes[1]
+  )
+})
+
+test_that("Group with lower infectious period has larger final size", {
+  # make a temporary pre-infectious period vector
+  # lower values mean quicker transition from I => R
+  infectious_period <- c(7, 5)
+
+  data <- epidemic_cpp(
+    population = dummy_population,
+    r0 = r0,
+    preinfectious_period = preinfectious_period,
+    infectious_period = infectious_period,
+    intervention = no_intervention(dummy_population),
+    time_end = 200, increment = 0.1
+  )
+
+  final_sizes <- unlist(
+    subset(
+      tail(data, 1),
+      select = grepl("recovered", colnames(data), fixed = TRUE)
+    )
+  )
+
+  # group 2 must have a larger final size
+  expect_gt(
+    final_sizes[2], final_sizes[1]
+  )
+
+  # calculate individuals still infected and check that
+  # lower infectious period leads to fewer current infections
+  current_infections <- unlist(
+    subset(
+      tail(data, 1),
+      select = grepl("infect", colnames(data), fixed = TRUE)
+    )
+  )
+  expect_lt(
+    current_infections[2], current_infections[1]
+  )
+})
+
+test_that("Group with more contacts has larger final size and infections", {
+  # make a temporary contact matrix
+  # group 1 has more contacts
+  contact_matrix <- matrix(
+    c(12, 2, 1, 3),
+    nrow = nrow(dummy_contact_matrix),
+    ncol = ncol(dummy_contact_matrix),
+    byrow = TRUE
+  )
+  # add to dummy pop
+  dummy_population$contact_matrix <- contact_matrix
+
+  data <- epidemic_cpp(
+    population = dummy_population,
+    r0 = r0,
+    preinfectious_period = preinfectious_period,
+    infectious_period = infectious_period,
+    intervention = no_intervention(dummy_population),
+    time_end = 200, increment = 0.1
+  )
+
+  final_sizes <- unlist(
+    subset(
+      tail(data, 1),
+      select = grepl("recovered", colnames(data), fixed = TRUE)
+    )
+  )
+
+  # group 1 with more contacts has higher final size
+  expect_gt(
+    final_sizes[1], final_sizes[2]
+  )
+
+  # calculate individuals still infected and check that
+  # group with more contacts has more current infections
+  current_infections <- unlist(
+    subset(
+      tail(data, 1),
+      select = grepl("infect", colnames(data), fixed = TRUE)
+    )
+  )
+  expect_gt(
+    current_infections[1], current_infections[2]
   )
 })

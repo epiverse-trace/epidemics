@@ -24,8 +24,8 @@
 //' @param increment The increment time, defaults to 0.1.
 // [[Rcpp::export(name=".epidemic_default_cpp")]]
 Rcpp::List epidemic_default_cpp(
-    const Rcpp::List &population, const Eigen::VectorXd &beta,
-    const Eigen::VectorXd &alpha, const Eigen::VectorXd &gamma,
+    const Rcpp::List &population, const Eigen::ArrayXd &beta,
+    const Eigen::ArrayXd &alpha, const Eigen::ArrayXd &gamma,
     const Rcpp::List &intervention,
     const double &time_end = 200.0,  // double required by boost solver
     const double &increment = 0.1) {

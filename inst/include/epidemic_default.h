@@ -24,12 +24,12 @@ namespace epidemics {
 
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_default {
-  const Eigen::VectorXd beta, alpha, gamma;
+  const Eigen::ArrayXd beta, alpha, gamma;
   const Eigen::MatrixXd contact_matrix;
   const Rcpp::List intervention;
   // npi, interv, pop
-  epidemic_default(const Eigen::VectorXd beta, const Eigen::VectorXd alpha,
-                   const Eigen::VectorXd gamma,
+  epidemic_default(const Eigen::ArrayXd beta, const Eigen::ArrayXd alpha,
+                   const Eigen::ArrayXd gamma,
                    const Eigen::MatrixXd contact_matrix,
                    const Rcpp::List intervention)
       : beta(beta),
@@ -50,12 +50,19 @@ struct epidemic_default {
       cm = intervention::intervention_on_cm(contact_matrix, intervention);
     }
 
-    // compartmental equations
-    dxdt.col(0) = -(beta * x.col(0)) * (cm * x.col(2));  // -beta*S*contacts*I
-    dxdt.col(1) = (beta * x.col(0) * (cm * x.col(2))) -
-                  (alpha * x.col(1));  // beta*S*contacts*I - alpha*E
-    dxdt.col(2) = (alpha * x.col(1)) - (gamma * x.col(2));  // alpha*E - gamma*I
-    dxdt.col(3) = gamma * x.col(2);                         // gamma*I
+    // NB: Casting initial conditions matrix columns to arrays is necessary
+    // for correct group-specific coefficient multiplications
+
+    // compartmental transitions without accounting for contacts
+    Eigen::VectorXd sToE = beta * x.col(0).array() * x.col(2).array();
+    Eigen::VectorXd eToI = alpha * x.col(1).array();
+    Eigen::VectorXd iToR = gamma * x.col(2).array();
+
+    // compartmental changes accounting for contacts (for dS and dE)
+    dxdt.col(0) = -cm * sToE;                          // -contacts * β*S*I
+    dxdt.col(1) = (cm * sToE).array() - eToI.array();  // β*S*contacts*I - α*E
+    dxdt.col(2) = eToI.array() - iToR.array();         // α*E - γ*I
+    dxdt.col(3) = iToR;                                // γ*I
   }
 };
 

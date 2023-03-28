@@ -9,6 +9,7 @@
   beta,
   alpha,
   gamma,
+  intervention,
   time_end = 200,
   increment = 0.1
 )
@@ -23,6 +24,10 @@ of each demographic group. See \code{\link[=population]{population()}}.}
 \item{alpha}{The rate of transition from exposed to infectious \eqn{\alpha}.}
 
 \item{gamma}{The recovery rate \eqn{\gamma}.}
+
+\item{intervention}{A non-pharamaceutical intervention applied during the
+course of the epidemic, with a start and end time, and age-specific effect
+on contacts. See \code{\link[=intervention]{intervention()}}.}
 
 \item{time_end}{The maximum time, defaults to 200.0.}
 

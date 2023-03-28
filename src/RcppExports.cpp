@@ -13,8 +13,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // epidemic_default_cpp
-Rcpp::List epidemic_default_cpp(const Rcpp::List& population, const Eigen::VectorXd& beta, const Eigen::VectorXd& alpha, const Eigen::VectorXd& gamma, const double& time_end, const double& increment);
-RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP populationSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
+Rcpp::List epidemic_default_cpp(const Rcpp::List& population, const Eigen::VectorXd& beta, const Eigen::VectorXd& alpha, const Eigen::VectorXd& gamma, const Rcpp::List& intervention, const double& time_end, const double& increment);
+RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP populationSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP interventionSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -22,15 +22,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type intervention(interventionSEXP);
     Rcpp::traits::input_parameter< const double& >::type time_end(time_endSEXP);
     Rcpp::traits::input_parameter< const double& >::type increment(incrementSEXP);
-    rcpp_result_gen = Rcpp::wrap(epidemic_default_cpp(population, beta, alpha, gamma, time_end, increment));
+    rcpp_result_gen = Rcpp::wrap(epidemic_default_cpp(population, beta, alpha, gamma, intervention, time_end, increment));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_epidemics_epidemic_default_cpp", (DL_FUNC) &_epidemics_epidemic_default_cpp, 6},
+    {"_epidemics_epidemic_default_cpp", (DL_FUNC) &_epidemics_epidemic_default_cpp, 7},
     {NULL, NULL, 0}
 };
 

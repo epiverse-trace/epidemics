@@ -18,11 +18,15 @@
 //' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 //' @param gamma The recovery rate \eqn{\gamma}.
 //' @param time_end The maximum time, defaults to 200.0.
+//' @param intervention A non-pharamaceutical intervention applied during the
+//' course of the epidemic, with a start and end time, and age-specific effect
+//' on contacts. See [intervention()].
 //' @param increment The increment time, defaults to 0.1.
 // [[Rcpp::export(name=".epidemic_default_cpp")]]
 Rcpp::List epidemic_default_cpp(
     const Rcpp::List &population, const Eigen::VectorXd &beta,
     const Eigen::VectorXd &alpha, const Eigen::VectorXd &gamma,
+    const Rcpp::List &intervention,
     const double &time_end = 200.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input
@@ -31,7 +35,7 @@ Rcpp::List epidemic_default_cpp(
   Eigen::MatrixXd cm(Rcpp::as<Eigen::MatrixXd>(population["contact_matrix"]));
 
   // create a default epidemic with parameters
-  epidemics::epidemic_default this_model(beta, alpha, gamma, cm);
+  epidemics::epidemic_default this_model(beta, alpha, gamma, cm, intervention);
 
   //[ integrate_observ
   std::vector<odetools::state_type> x_vec;  // is a vector of double vectors

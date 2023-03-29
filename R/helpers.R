@@ -7,7 +7,8 @@
 #' @export
 output_to_df <- function(l, compartments = c(
                            "susceptible", "exposed",
-                           "infectious", "recovered"
+                           "infectious", "recovered",
+                           "vaccinated"
                          )) {
   # input checking
   stopifnot(

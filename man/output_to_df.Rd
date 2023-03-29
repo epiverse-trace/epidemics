@@ -6,7 +6,7 @@
 \usage{
 output_to_df(
   l,
-  compartments = c("susceptible", "exposed", "infectious", "recovered")
+  compartments = c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
 )
 }
 \arguments{

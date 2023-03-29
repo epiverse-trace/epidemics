@@ -10,6 +10,9 @@ epidemic_cpp(
   preinfectious_period = 3,
   infectious_period = 7,
   intervention,
+  nu,
+  t_vax_begin,
+  t_vax_end,
   time_end = 200,
   increment = 1
 )
@@ -31,14 +34,23 @@ same length as the number of demographic groups.}
 \item{intervention}{A non-pharmaceutical intervention applied to the
 population during the epidemic. See \code{\link[=intervention]{intervention()}}.}
 
+\item{nu}{The vaccination rate \eqn{\nu}. Must be a
+vector of the same length as the number of demographic groups.}
+
+\item{t_vax_begin}{The time at which vaccination begins. Must be a vector,
+with each element giving the time of vaccination starting for each age group.}
+
+\item{t_vax_end}{The time at which vaccination end. Must be a vector,
+with each element giving the time of vaccination ending for each age group.}
+
 \item{time_end}{The maximum number of timesteps over which to run the model.}
 
 \item{increment}{The size of the time increment.}
 }
 \value{
 A \code{data.frame} with the columns "time", "compartment", "age_group",
-"value". The comparments are "susceptible", "exposed", "infectious", and
-"recovered".
+"value". The comparments are "susceptible", "exposed", "infectious",
+"recovered", and "vaccinated".
 }
 \description{
 Function for a deterministic susceptible-infectious-recovered
@@ -68,6 +80,9 @@ epidemic_cpp(
   preinfectious_period = rep(3, nrow(uk_population$contact_matrix)),
   infectious_period = rep(7, nrow(uk_population$contact_matrix)),
   intervention = no_intervention(uk_population),
+  nu = rep(1e-4, nrow(uk_population$contact_matrix)),
+  t_vax_begin = rep(50, nrow(uk_population$contact_matrix)),
+  t_vax_end = rep(100, nrow(uk_population$contact_matrix)),
   time_end = 200,
   increment = 1
 )

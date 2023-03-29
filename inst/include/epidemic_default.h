@@ -54,15 +54,13 @@ struct epidemic_default {
     // for correct group-specific coefficient multiplications
 
     // compartmental transitions without accounting for contacts
-    Eigen::VectorXd sToE = beta * x.col(0).array() * x.col(2).array();
-    Eigen::VectorXd eToI = alpha * x.col(1).array();
-    Eigen::VectorXd iToR = gamma * x.col(2).array();
+    Eigen::ArrayXd sToE = beta * x.col(0).array() * x.col(2).array();
+    Eigen::ArrayXd eToI = alpha * x.col(1).array();
+    Eigen::ArrayXd iToR = gamma * x.col(2).array();
 
     // compartmental changes accounting for contacts (for dS and dE)
-    dxdt.col(0) = -cm * sToE;                          // -contacts * β*S*I
-    dxdt.col(1) = (cm * sToE).array() - eToI.array();  // β*S*contacts*I - α*E
-    dxdt.col(2) = eToI.array() - iToR.array();         // α*E - γ*I
-    dxdt.col(3) = iToR;                                // γ*I
+    dxdt.col(0) = -(cm * sToE.matrix()).array() - sToV;  // -contacts * β*S*I
+    dxdt.col(1) = (cm * sToE.matrix()).array() - eToI;  // β*S*contacts*I - α*E
   }
 };
 

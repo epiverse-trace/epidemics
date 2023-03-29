@@ -19,12 +19,18 @@
 #' same length as the number of demographic groups.
 #' @param intervention A non-pharmaceutical intervention applied to the
 #' population during the epidemic. See [intervention()].
+#' @param nu The vaccination rate \eqn{\nu}. Must be a
+#' vector of the same length as the number of demographic groups.
+#' @param t_vax_begin The time at which vaccination begins. Must be a vector,
+#' with each element giving the time of vaccination starting for each age group.
+#' @param t_vax_end The time at which vaccination end. Must be a vector,
+#' with each element giving the time of vaccination ending for each age group.
 #' @param time_end The maximum number of timesteps over which to run the model.
 #' @param increment The size of the time increment.
 #'
 #' @return A `data.frame` with the columns "time", "compartment", "age_group",
-#' "value". The comparments are "susceptible", "exposed", "infectious", and
-#' "recovered".
+#' "value". The comparments are "susceptible", "exposed", "infectious",
+#' "recovered", and "vaccinated".
 #' @export
 #'
 #' @examples
@@ -46,6 +52,9 @@
 #'   preinfectious_period = rep(3, nrow(uk_population$contact_matrix)),
 #'   infectious_period = rep(7, nrow(uk_population$contact_matrix)),
 #'   intervention = no_intervention(uk_population),
+#'   nu = rep(1e-4, nrow(uk_population$contact_matrix)),
+#'   t_vax_begin = rep(50, nrow(uk_population$contact_matrix)),
+#'   t_vax_end = rep(100, nrow(uk_population$contact_matrix)),
 #'   time_end = 200,
 #'   increment = 1
 #' )
@@ -54,6 +63,8 @@ epidemic_cpp <- function(population,
                          preinfectious_period = 3,
                          infectious_period = 7,
                          intervention,
+                         nu,
+                         t_vax_begin, t_vax_end,
                          time_end = 200,
                          increment = 1) {
 
@@ -76,7 +87,7 @@ epidemic_cpp <- function(population,
   # check that compartment sizes are numerics
   checkmate::assert_matrix(population$initial_conditions,
     mode = "numeric",
-    ncols = 4L # hardcoded for the present
+    ncols = 5L # hardcoded for the present
   )
   # check that compartments sum to 1.0
   checkmate::assert_numeric(
@@ -97,6 +108,7 @@ epidemic_cpp <- function(population,
   gamma <- 1.0 / infectious_period
   alpha <- 1.0 / preinfectious_period
   beta <- r0 / infectious_period
+  # nu is already prepared
 
   # RUN EPIDEMIC MODEL #
   output <- .epidemic_default_cpp(
@@ -105,6 +117,7 @@ epidemic_cpp <- function(population,
     alpha = alpha,
     gamma = gamma,
     intervention = intervention,
+    nu = nu, t_vax_begin = t_vax_begin, t_vax_end = t_vax_end,
     time_end = time_end, increment = increment
   )
 

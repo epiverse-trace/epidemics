@@ -17,6 +17,7 @@
 #include <boost/numeric/odeint.hpp>
 #include "ode_tools.h"
 #include "intervention.h"
+#include "vaccination.h"
 // clang-format on
 
 // add to namespace epidemics
@@ -24,17 +25,22 @@ namespace epidemics {
 
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_default {
-  const Eigen::ArrayXd beta, alpha, gamma;
+  const Eigen::ArrayXd beta, alpha, gamma, nu, t_vax_begin, t_vax_end;
   const Eigen::MatrixXd contact_matrix;
   const Rcpp::List intervention;
   // npi, interv, pop
   epidemic_default(const Eigen::ArrayXd beta, const Eigen::ArrayXd alpha,
-                   const Eigen::ArrayXd gamma,
+                   const Eigen::ArrayXd gamma, const Eigen::ArrayXd nu,
+                   const Eigen::ArrayXd t_vax_begin,
+                   const Eigen::ArrayXd t_vax_end,
                    const Eigen::MatrixXd contact_matrix,
                    const Rcpp::List intervention)
       : beta(beta),
         alpha(alpha),
         gamma(gamma),
+        nu(nu),
+        t_vax_begin(t_vax_begin),
+        t_vax_end(t_vax_end),
         contact_matrix(contact_matrix),
         intervention(intervention) {}
 
@@ -57,10 +63,16 @@ struct epidemic_default {
     Eigen::ArrayXd sToE = beta * x.col(0).array() * x.col(2).array();
     Eigen::ArrayXd eToI = alpha * x.col(1).array();
     Eigen::ArrayXd iToR = gamma * x.col(2).array();
+    Eigen::ArrayXd sToV =
+        vaccination::current_nu(nu, t_vax_begin, t_vax_end, t) *
+        x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)
     dxdt.col(0) = -(cm * sToE.matrix()).array() - sToV;  // -contacts * β*S*I
     dxdt.col(1) = (cm * sToE.matrix()).array() - eToI;  // β*S*contacts*I - α*E
+    dxdt.col(2) = eToI - iToR;                          // α*E - γ*I
+    dxdt.col(3) = iToR;                                 // γ*I
+    dxdt.col(4) = sToV;                                 // ν*S
   }
 };
 

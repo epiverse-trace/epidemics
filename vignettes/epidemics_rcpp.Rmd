@@ -57,7 +57,7 @@ Prepare initial conditions for each age group.
 # initial conditions
 initial_i <- 1e-6
 initial_conditions <- c(
-  S = 1 - initial_i, E = 0, I = initial_i, R = 0
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
 )
 
 # build for all age groups
@@ -112,6 +112,14 @@ close_schools <- intervention(
 close_schools
 ```
 
+## Prepare vaccination
+
+```{r}
+nu <- c(0.0001, 0.0001, 0.0001)
+t_vax_begin <- rep(100, nrow(contact_matrix))
+t_vax_end <- rep(250, nrow(contact_matrix))
+```
+
 ## Run epidemic model
 
 ```{r}
@@ -122,6 +130,8 @@ output <- epidemic_cpp(
   preinfectious_period = preinfectious_period,
   infectious_period = infectious_period,
   intervention = close_schools,
+  nu = nu,
+  t_vax_begin = t_vax_begin, t_vax_end = t_vax_end,
   time_end = 600, increment = 1.0
 )
 ```
@@ -131,7 +141,8 @@ output <- epidemic_cpp(
 ```{r}
 # make long format data
 data <- melt(
-  output[, .SD, .SDcols = names(output) %like% "infectious|exposed|time"],
+  output[, .SD, .SDcols = names(output) %like%
+    "infectious|exposed|vaccinated|time"],
   id.vars = "time"
 )
 

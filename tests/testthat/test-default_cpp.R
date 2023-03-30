@@ -16,8 +16,8 @@ uk_population <- population(
   contact_matrix = contact_matrix,
   demography_vector = demography_vector,
   initial_conditions = matrix(
-    c(0.9999, 0.0001, 0, 0),
-    nrow = nrow(contact_matrix), ncol = 4,
+    c(0.9999, 0.0001, 0, 0, 0),
+    nrow = nrow(contact_matrix), ncol = 5L,
     byrow = TRUE
   )
 )
@@ -92,7 +92,6 @@ test_that("Larger R0 leads to larger final size in default epidemic model", {
         r0 = r0_,
         preinfectious_period = preinfectious_period,
         infectious_period = infectious_period,
-        intervention = no_intervention(uk_population),
         time_end = 10, increment = 1.0
       )
     }
@@ -123,8 +122,8 @@ dummy_population <- population(
   contact_matrix = dummy_contact_matrix,
   demography_vector = dummy_demography_vector,
   initial_conditions = matrix(
-    c(1 - 1e-6, 1e-6 * 0.9, 1e-6 * 0.1, 0),
-    nrow = nrow(dummy_contact_matrix), ncol = 4,
+    c(1 - 1e-6, 1e-6 * 0.9, 1e-6 * 0.1, 0, 0),
+    nrow = nrow(dummy_contact_matrix), ncol = 5L,
     byrow = TRUE
   )
 )
@@ -140,7 +139,6 @@ test_that("Identical population sizes lead to identical final size", {
     r0 = r0,
     preinfectious_period = preinfectious_period,
     infectious_period = infectious_period,
-    intervention = no_intervention(dummy_population),
     time_end = 200, increment = 0.1
   )
 
@@ -170,7 +168,6 @@ test_that("Group with lower preinfectious period has larger final size", {
     r0 = r0,
     preinfectious_period = preinfectious_period,
     infectious_period = infectious_period,
-    intervention = no_intervention(dummy_population),
     time_end = 200, increment = 0.1
   )
 
@@ -199,7 +196,6 @@ test_that("Group with lower infectious period has larger final size", {
     r0 = r0,
     preinfectious_period = preinfectious_period,
     infectious_period = infectious_period,
-    intervention = no_intervention(dummy_population),
     time_end = 200, increment = 0.1
   )
 
@@ -245,7 +241,6 @@ test_that("Group with more contacts has larger final size and infections", {
     r0 = r0,
     preinfectious_period = preinfectious_period,
     infectious_period = infectious_period,
-    intervention = no_intervention(dummy_population),
     time_end = 200, increment = 0.1
   )
 

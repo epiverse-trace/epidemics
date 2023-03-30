@@ -16,8 +16,8 @@ uk_population <- population(
   contact_matrix = contact_matrix,
   demography_vector = demography_vector,
   initial_conditions = matrix(
-    c(0.9999, 0.00005, 0.00005, 0),
-    nrow = 2, ncol = 4,
+    c(0.9999, 0.00005, 0.00005, 0, 0),
+    nrow = 2, ncol = 5L,
     byrow = TRUE
   )
 )

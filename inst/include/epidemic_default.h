@@ -18,6 +18,7 @@
 #include "ode_tools.h"
 #include "intervention.h"
 #include "vaccination.h"
+#include "population.h"
 // clang-format on
 
 // add to namespace epidemics
@@ -25,24 +26,21 @@ namespace epidemics {
 
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_default {
-  const Eigen::ArrayXd beta, alpha, gamma, nu, t_vax_begin, t_vax_end;
+  const Eigen::ArrayXd beta, alpha, gamma, nu;
+  const Rcpp::List population, intervention, vaccination;
   const Eigen::MatrixXd contact_matrix;
-  const Rcpp::List intervention;
   // npi, interv, pop
   epidemic_default(const Eigen::ArrayXd beta, const Eigen::ArrayXd alpha,
-                   const Eigen::ArrayXd gamma, const Eigen::ArrayXd nu,
-                   const Eigen::ArrayXd t_vax_begin,
-                   const Eigen::ArrayXd t_vax_end,
-                   const Eigen::MatrixXd contact_matrix,
-                   const Rcpp::List intervention)
+                   const Eigen::ArrayXd gamma, const Rcpp::List population,
+                   const Rcpp::List intervention, const Rcpp::List vaccination)
       : beta(beta),
         alpha(alpha),
         gamma(gamma),
-        nu(nu),
-        t_vax_begin(t_vax_begin),
-        t_vax_end(t_vax_end),
-        contact_matrix(contact_matrix),
-        intervention(intervention) {}
+        nu(vaccination::get_nu(vaccination)),
+        population(population),
+        intervention(intervention),
+        vaccination(vaccination),
+        contact_matrix(population::get_contact_matrix(population)) {}
 
   void operator()(const odetools::state_type& x,
                   odetools::state_type& dxdt,  // NOLINT
@@ -56,6 +54,9 @@ struct epidemic_default {
       cm = intervention::intervention_on_cm(contact_matrix, intervention);
     }
 
+    // get current vaccination rate
+    Eigen::ArrayXd current_nu = vaccination::current_nu(nu, vaccination, t);
+
     // NB: Casting initial conditions matrix columns to arrays is necessary
     // for correct group-specific coefficient multiplications
 
@@ -63,9 +64,7 @@ struct epidemic_default {
     Eigen::ArrayXd sToE = beta * x.col(0).array() * x.col(2).array();
     Eigen::ArrayXd eToI = alpha * x.col(1).array();
     Eigen::ArrayXd iToR = gamma * x.col(2).array();
-    Eigen::ArrayXd sToV =
-        vaccination::current_nu(nu, t_vax_begin, t_vax_end, t) *
-        x.col(0).array();
+    Eigen::ArrayXd sToV = current_nu * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)
     dxdt.col(0) = -(cm * sToE.matrix()).array() - sToV;  // -contacts * β*S*I

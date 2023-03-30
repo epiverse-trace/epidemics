@@ -17,6 +17,9 @@ epidemic_cpp(
 )
 }
 \arguments{
+\item{model}{A string for the epidemic model. The only currently supported
+option is "default", for the default SEIR-V model.}
+
 \item{population}{An object of the \code{population} class, which holds a
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See \code{\link[=population]{population()}}.}

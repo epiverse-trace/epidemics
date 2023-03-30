@@ -11,6 +11,8 @@
 #' Also allows for group-specific initial proportions in each model compartment,
 #' as well as group-specific vaccination start dates and vaccination rates.
 #'
+#' @param model A string for the epidemic model. The only currently supported
+#' option is "default", for the default SEIR-V model.
 #' @param population An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
 #' of each demographic group. See [population()].

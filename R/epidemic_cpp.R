@@ -1,7 +1,10 @@
-#' Model an SEIR epidemic
+#' Model an epidemic
 #'
-#' @description Function for a deterministic susceptible-infectious-recovered
-#' model with an optional vaccination component.
+#' @description Simulate an epidemic using a deterministic, compartmental
+#' epidemic model from the package's library of epidemic models.
+#' The only option currently available is a SEIR-V model, with the compartments
+#' "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
+#'
 #' Allows heterogeneity in social contact patterns, the demography distribution,
 #' and key epidemiological parameters: the reproductive number \eqn{R_0}, and
 #' the infectious period \eqn{1/\gamma}.
@@ -52,7 +55,8 @@
 #'   time_end = 200,
 #'   increment = 1
 #' )
-epidemic_cpp <- function(population,
+epidemic_cpp <- function(model = "default",
+                         population,
                          r0 = 1.5,
                          preinfectious_period = 3,
                          infectious_period = 7,
@@ -108,8 +112,16 @@ epidemic_cpp <- function(population,
   beta <- r0 / infectious_period
   # nu is passed through vaccination class
 
+  # select epidemic model from library
+  # currently supports only a single SEIRV model
+  # handle the model function
+  model <- match.arg(arg = model, several.ok = FALSE)
+  model_fn <- switch(model,
+    default = .epidemic_default_cpp
+  )
+
   # RUN EPIDEMIC MODEL #
-  output <- .epidemic_default_cpp(
+  output <- model_fn(
     population = population,
     beta = beta,
     alpha = alpha,

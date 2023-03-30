@@ -13,8 +13,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // epidemic_default_cpp
-Rcpp::List epidemic_default_cpp(const Rcpp::List& population, const Eigen::ArrayXd& beta, const Eigen::ArrayXd& alpha, const Eigen::ArrayXd& gamma, const Rcpp::List& intervention, const Eigen::ArrayXd& nu, const Eigen::ArrayXd& t_vax_begin, const Eigen::ArrayXd& t_vax_end, const double& time_end, const double& increment);
-RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP populationSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP interventionSEXP, SEXP nuSEXP, SEXP t_vax_beginSEXP, SEXP t_vax_endSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
+Rcpp::List epidemic_default_cpp(const Rcpp::List& population, const Eigen::ArrayXd& beta, const Eigen::ArrayXd& alpha, const Eigen::ArrayXd& gamma, const Rcpp::List& intervention, const Rcpp::List& vaccination, const double& time_end, const double& increment);
+RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP populationSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP interventionSEXP, SEXP vaccinationSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,18 +23,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::ArrayXd& >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< const Eigen::ArrayXd& >::type gamma(gammaSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type intervention(interventionSEXP);
-    Rcpp::traits::input_parameter< const Eigen::ArrayXd& >::type nu(nuSEXP);
-    Rcpp::traits::input_parameter< const Eigen::ArrayXd& >::type t_vax_begin(t_vax_beginSEXP);
-    Rcpp::traits::input_parameter< const Eigen::ArrayXd& >::type t_vax_end(t_vax_endSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type vaccination(vaccinationSEXP);
     Rcpp::traits::input_parameter< const double& >::type time_end(time_endSEXP);
     Rcpp::traits::input_parameter< const double& >::type increment(incrementSEXP);
-    rcpp_result_gen = Rcpp::wrap(epidemic_default_cpp(population, beta, alpha, gamma, intervention, nu, t_vax_begin, t_vax_end, time_end, increment));
+    rcpp_result_gen = Rcpp::wrap(epidemic_default_cpp(population, beta, alpha, gamma, intervention, vaccination, time_end, increment));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_epidemics_epidemic_default_cpp", (DL_FUNC) &_epidemics_epidemic_default_cpp, 10},
+    {"_epidemics_epidemic_default_cpp", (DL_FUNC) &_epidemics_epidemic_default_cpp, 8},
     {NULL, NULL, 0}
 };
 

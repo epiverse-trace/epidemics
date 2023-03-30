@@ -21,12 +21,10 @@
 //' @param intervention A non-pharamaceutical intervention applied during the
 //' course of the epidemic, with a start and end time, and age-specific effect
 //' on contacts. See [intervention()].
-//' @param nu The vaccination rate \eqn{\nu}. Must be a
-//' vector of the same length as the number of demographic groups.
-//' @param t_vax_begin The time at which vaccination begins. Must be a vector,
-//' each element giving the time of vaccination starting for each age group.
-//' @param t_vax_end The time at which vaccination end. Must be a vector,
-//' with each element giving the time of vaccination ending for each age group.
+//' @param vaccination A vaccination regime followed during the
+//' course of the epidemic, with a start and end time, and age-specific effect
+//' on the transition of individuals from susceptible to vaccinated.
+//' See [vaccination()].
 //' @param increment The increment time, defaults to 0.1.
 //' @return A two element list, where the first element is a list of matrices
 //' whose elements correspond to the numbers of individuals in each compartment
@@ -37,21 +35,18 @@
 Rcpp::List epidemic_default_cpp(
     const Rcpp::List &population, const Eigen::ArrayXd &beta,
     const Eigen::ArrayXd &alpha, const Eigen::ArrayXd &gamma,
-    const Rcpp::List &intervention, const Eigen::ArrayXd &nu,
-    const Eigen::ArrayXd &t_vax_begin, const Eigen::ArrayXd &t_vax_end,
+    const Rcpp::List &intervention, const Rcpp::List &vaccination,
     const double &time_end = 200.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input
-  odetools::state_type x = Eigen::MatrixXd(
-      Rcpp::as<Eigen::MatrixXd>(population["initial_conditions"]));
-  Eigen::MatrixXd cm(Rcpp::as<Eigen::MatrixXd>(population["contact_matrix"]));
+  odetools::state_type x = odetools::initial_state_from_pop(population);
 
   // create a default epidemic with parameters
-  epidemics::epidemic_default this_model(beta, alpha, gamma, nu, t_vax_begin,
-                                         t_vax_end, cm, intervention);
+  epidemics::epidemic_default this_model(beta, alpha, gamma, population,
+                                         intervention, vaccination);
 
-  //[ integrate_observ
-  std::vector<odetools::state_type> x_vec;  // is a vector of double vectors
+  // prepare storage containers for the observer
+  std::vector<odetools::state_type> x_vec;  // is a vector of MatrixXd
   std::vector<double> times;
 
   // a controlled stepper for constant step sizes

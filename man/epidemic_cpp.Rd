@@ -2,9 +2,10 @@
 % Please edit documentation in R/epidemic_cpp.R
 \name{epidemic_cpp}
 \alias{epidemic_cpp}
-\title{Model an SEIR epidemic}
+\title{Model an epidemic}
 \usage{
 epidemic_cpp(
+  model = "default",
   population,
   r0 = 1.5,
   preinfectious_period = 3,
@@ -47,8 +48,11 @@ A \code{data.frame} with the columns "time", "compartment", "age_group",
 "recovered", and "vaccinated".
 }
 \description{
-Function for a deterministic susceptible-infectious-recovered
-model with an optional vaccination component.
+Simulate an epidemic using a deterministic, compartmental
+epidemic model from the package's library of epidemic models.
+The only option currently available is a SEIR-V model, with the compartments
+"susceptible", "exposed", "infectious", "recovered", and "vaccinated".
+
 Allows heterogeneity in social contact patterns, the demography distribution,
 and key epidemiological parameters: the reproductive number \eqn{R_0}, and
 the infectious period \eqn{1/\gamma}.

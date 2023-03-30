@@ -9,10 +9,6 @@
 // clang-format off
 #include <Rcpp.h>
 #include <RcppEigen.h>
-
-#include <algorithm>
-#include <iostream>
-#include <vector>
 // clang-format on
 
 // add to namespace ode

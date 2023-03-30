@@ -10,10 +10,6 @@
 #include <Rcpp.h>
 #include <RcppEigen.h>
 
-#include <algorithm>
-#include <iostream>
-#include <vector>
-
 #include <boost/numeric/odeint.hpp>
 #include "ode_tools.h"
 #include "intervention.h"

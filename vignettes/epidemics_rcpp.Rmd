@@ -130,8 +130,6 @@ output <- epidemic_cpp(
   preinfectious_period = preinfectious_period,
   infectious_period = infectious_period,
   intervention = close_schools,
-  nu = nu,
-  t_vax_begin = t_vax_begin, t_vax_end = t_vax_end,
   time_end = 600, increment = 1.0
 )
 ```

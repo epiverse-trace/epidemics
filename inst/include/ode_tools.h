@@ -36,6 +36,17 @@ struct observer {
     m_times.push_back(t);
   }
 };
+
+/// @brief Prepare a state_type object from population initial conditions
+/// @param population An object of the R S3 class `population`, which is
+/// handled as an Rcpp List.
+/// @return A `state_type` Eigen::MatriXd that corresponds to population initial
+/// conditions.
+inline state_type initial_state_from_pop(const Rcpp::List &population) {
+  // TODO(pratikunterwegs): input checking here
+  return Eigen::MatrixXd(
+      Rcpp::as<Eigen::MatrixXd>(population["initial_conditions"]));
+}
 //]
 
 }  // namespace odetools

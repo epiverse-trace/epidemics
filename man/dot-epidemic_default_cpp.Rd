@@ -10,9 +10,7 @@
   alpha,
   gamma,
   intervention,
-  nu,
-  t_vax_begin,
-  t_vax_end,
+  vaccination,
   time_end = 200,
   increment = 0.1
 )
@@ -32,14 +30,10 @@ of each demographic group. See \code{\link[=population]{population()}}.}
 course of the epidemic, with a start and end time, and age-specific effect
 on contacts. See \code{\link[=intervention]{intervention()}}.}
 
-\item{nu}{The vaccination rate \eqn{\nu}. Must be a
-vector of the same length as the number of demographic groups.}
-
-\item{t_vax_begin}{The time at which vaccination begins. Must be a vector,
-each element giving the time of vaccination starting for each age group.}
-
-\item{t_vax_end}{The time at which vaccination end. Must be a vector,
-with each element giving the time of vaccination ending for each age group.}
+\item{vaccination}{A vaccination regime followed during the
+course of the epidemic, with a start and end time, and age-specific effect
+on the transition of individuals from susceptible to vaccinated.
+See \code{\link[=vaccination]{vaccination()}}.}
 
 \item{time_end}{The maximum time, defaults to 200.0.}
 

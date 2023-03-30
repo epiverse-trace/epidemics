@@ -1,12 +1,10 @@
 ---
-title: "Epidemic modelling with Rcpp"
+title: "Modelling a vaccination campaign"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Epidemic modelling with Rcpp}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{modelling_vaccination}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -15,7 +13,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-
 
 ```{r setup}
 library(epidemics)
@@ -34,7 +31,7 @@ polymod <- socialmixr::polymod
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
-  age.limits = c(0, 20, 40),
+  age.limits = c(0, 20, 65),
   symmetric = TRUE
 )
 
@@ -44,11 +41,6 @@ contact_matrix <- t(contact_data$matrix)
 # prepare the demography vector
 demography_vector <- contact_data$demography$population
 names(demography_vector) <- rownames(contact_matrix)
-
-# view contact matrix and demography
-contact_matrix
-
-demography_vector
 ```
 
 Prepare initial conditions for each age group.
@@ -69,9 +61,6 @@ initial_conditions <- rbind(
 
 # assign rownames for clarity
 rownames(initial_conditions) <- rownames(contact_matrix)
-
-# view initial conditions
-initial_conditions
 ```
 
 Prepare a population as a `population` class object.
@@ -83,8 +72,6 @@ uk_population <- population(
   demography_vector = demography_vector,
   initial_conditions = initial_conditions
 )
-
-uk_population
 ```
 
 ## Prepare pathogen parameters
@@ -96,6 +83,23 @@ preinfectious_period <- rep(3, nrow(contact_matrix))
 infectious_period <- rep(7, nrow(contact_matrix))
 ```
 
+## Prepare a vaccination campaign
+
+Prepare a vaccination campaign targeting individuals aged over 65.
+
+```{r}
+# prepare a vaccination object
+vaccinate_elders <- vaccination(
+  name = "vaccinate elders",
+  time_begin = rep(100, nrow(contact_matrix)),
+  time_end = rep(250, nrow(contact_matrix)),
+  nu = c(0.0001, 0.0001, 0.0001)
+)
+
+# view vaccination object
+vaccinate_elders
+```
+
 ## Run epidemic model
 
 ```{r}
@@ -105,6 +109,7 @@ output <- epidemic_cpp(
   r0 = r0,
   preinfectious_period = preinfectious_period,
   infectious_period = infectious_period,
+  vaccination = vaccinate_elders,
   time_end = 600, increment = 1.0
 )
 ```
@@ -115,7 +120,7 @@ output <- epidemic_cpp(
 # make long format data
 data <- melt(
   output[, .SD, .SDcols = names(output) %like%
-    "infectious|exposed|time"],
+    "infectious|exposed|vaccinated|time"],
   id.vars = "time"
 )
 
@@ -134,7 +139,7 @@ age_groups <- data.table(
 data <- merge(data, age_groups)
 ```
 
-Plot epidemic over time, showing only the number of individuals in the exposed and infected compartments.
+Plot epidemic over time, showing only the number of individuals in the exposed, infected, and vaccinated compartments.
 
 ```{r}
 # plot figure of epidemic curve

@@ -1,12 +1,10 @@
 ---
-title: "Epidemic modelling with Rcpp"
+title: "Modelling interventions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Epidemic modelling with Rcpp}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{modelling_interventions}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  chunk_output_type: console
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -15,7 +13,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-
 
 ```{r setup}
 library(epidemics)
@@ -44,11 +41,6 @@ contact_matrix <- t(contact_data$matrix)
 # prepare the demography vector
 demography_vector <- contact_data$demography$population
 names(demography_vector) <- rownames(contact_matrix)
-
-# view contact matrix and demography
-contact_matrix
-
-demography_vector
 ```
 
 Prepare initial conditions for each age group.
@@ -69,9 +61,6 @@ initial_conditions <- rbind(
 
 # assign rownames for clarity
 rownames(initial_conditions) <- rownames(contact_matrix)
-
-# view initial conditions
-initial_conditions
 ```
 
 Prepare a population as a `population` class object.
@@ -83,8 +72,6 @@ uk_population <- population(
   demography_vector = demography_vector,
   initial_conditions = initial_conditions
 )
-
-uk_population
 ```
 
 ## Prepare pathogen parameters
@@ -96,6 +83,23 @@ preinfectious_period <- rep(3, nrow(contact_matrix))
 infectious_period <- rep(7, nrow(contact_matrix))
 ```
 
+## Prepare an intervention
+
+Prepare an intervention to simulate school closures.
+
+```{r}
+# prepare an intervention with a differential effect on age groups
+close_schools <- intervention(
+  name = "School closure",
+  time_begin = 200,
+  time_end = 300,
+  contact_reduction = c(0.5, 0.001, 0.001)
+)
+
+# examine the intervention object
+close_schools
+```
+
 ## Run epidemic model
 
 ```{r}
@@ -105,6 +109,7 @@ output <- epidemic_cpp(
   r0 = r0,
   preinfectious_period = preinfectious_period,
   infectious_period = infectious_period,
+  intervention = close_schools,
   time_end = 600, increment = 1.0
 )
 ```
@@ -148,6 +153,21 @@ ggplot(
   )
 ) +
   geom_line() +
+  annotate(
+    geom = "rect",
+    xmin = close_schools$time_begin,
+    xmax = close_schools$time_end,
+    ymin = 0, ymax = 500e3,
+    fill = alpha("red", alpha = 0.2),
+    lty = "dashed"
+  ) +
+  annotate(
+    geom = "text",
+    x = mean(c(close_schools$time_begin, close_schools$time_end)),
+    y = 400e3,
+    angle = 90,
+    label = "School closure"
+  ) +
   scale_y_continuous(
     labels = scales::comma
   ) +

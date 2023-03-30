@@ -19,12 +19,10 @@
 #' same length as the number of demographic groups.
 #' @param intervention A non-pharmaceutical intervention applied to the
 #' population during the epidemic. See [intervention()].
-#' @param nu The vaccination rate \eqn{\nu}. Must be a
-#' vector of the same length as the number of demographic groups.
-#' @param t_vax_begin The time at which vaccination begins. Must be a vector,
-#' with each element giving the time of vaccination starting for each age group.
-#' @param t_vax_end The time at which vaccination end. Must be a vector,
-#' with each element giving the time of vaccination ending for each age group.
+#' @param vaccination A vaccination regime followed during the
+#' course of the epidemic, with a start and end time, and age-specific effect
+#' on the transition of individuals from susceptible to vaccinated.
+#' See [vaccination()].
 #' @param time_end The maximum number of timesteps over which to run the model.
 #' @param increment The size of the time increment.
 #'
@@ -40,21 +38,17 @@
 #'   contact_matrix = matrix(1),
 #'   demography_vector = 67e6,
 #'   initial_conditions = matrix(
-#'     c(0.9999, 0.0001, 0, 0),
-#'     nrow = 1, ncol = 4
+#'     c(0.9999, 0.0001, 0, 0, 0),
+#'     nrow = 1, ncol = 5L
 #'   )
 #' )
 #'
-#' # run epidemic simulation
+#' # run epidemic simulation with no vaccination or intervention
 #' epidemic_cpp(
 #'   population = uk_population,
 #'   r0 = rep(1.5, nrow(uk_population$contact_matrix)),
 #'   preinfectious_period = rep(3, nrow(uk_population$contact_matrix)),
 #'   infectious_period = rep(7, nrow(uk_population$contact_matrix)),
-#'   intervention = no_intervention(uk_population),
-#'   nu = rep(1e-4, nrow(uk_population$contact_matrix)),
-#'   t_vax_begin = rep(50, nrow(uk_population$contact_matrix)),
-#'   t_vax_end = rep(100, nrow(uk_population$contact_matrix)),
 #'   time_end = 200,
 #'   increment = 1
 #' )
@@ -62,14 +56,18 @@ epidemic_cpp <- function(population,
                          r0 = 1.5,
                          preinfectious_period = 3,
                          infectious_period = 7,
-                         intervention,
-                         nu,
-                         t_vax_begin, t_vax_end,
+                         intervention = no_intervention(population),
+                         vaccination = no_vaccination(population),
                          time_end = 200,
                          increment = 1) {
 
-  # some basic input checking
+  # some basic input checking for custom classes
   checkmate::assert_class(population, "population")
+  checkmate::assert_class(intervention, "intervention")
+  checkmate::assert_class(vaccination, "vaccination")
+
+  # input checking on pathogen parameters
+  # TODO: move to combined check function for all custom classes
   checkmate::assert_numeric(
     r0,
     lower = 0, finite = TRUE,
@@ -94,7 +92,7 @@ epidemic_cpp <- function(population,
     apply(population$initial_condition, 1, sum),
     lower = 1.0 - 1e-6, upper = 1.0 + 1e-6 # specify tolerance manually
   )
-  # more input checking to be added
+  # TODO: more input checking to be added
 
   # scale contact matrix and initial conditions within the population
   population$contact_matrix <- population$contact_matrix /
@@ -108,7 +106,7 @@ epidemic_cpp <- function(population,
   gamma <- 1.0 / infectious_period
   alpha <- 1.0 / preinfectious_period
   beta <- r0 / infectious_period
-  # nu is already prepared
+  # nu is passed through vaccination class
 
   # RUN EPIDEMIC MODEL #
   output <- .epidemic_default_cpp(
@@ -117,7 +115,7 @@ epidemic_cpp <- function(population,
     alpha = alpha,
     gamma = gamma,
     intervention = intervention,
-    nu = nu, t_vax_begin = t_vax_begin, t_vax_end = t_vax_end,
+    vaccination = vaccination,
     time_end = time_end, increment = increment
   )
 

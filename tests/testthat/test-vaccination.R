@@ -60,7 +60,7 @@ test_that("Epidemic model with vaccination", {
   total_vaccinated <- unlist(
     subset(
       tail(data_vaccination, 1),
-      select = grepl("vaccinated", colnames(data_vaccination))
+      select = grepl("vaccinated", colnames(data_vaccination), fixed = TRUE)
     )
   )
   expect_identical(
@@ -79,13 +79,13 @@ test_that("Epidemic model with vaccination", {
   final_size_vaccination <- unlist(
     subset(
       tail(data_vaccination, 1),
-      select = grepl("recovered", colnames(data_vaccination))
+      select = grepl("recovered", colnames(data_vaccination), fixed = TRUE)
     )
   )
   final_size_default <- unlist(
     subset(
       tail(data, 1),
-      select = grepl("recovered", colnames(data_vaccination))
+      select = grepl("recovered", colnames(data_vaccination), fixed = TRUE)
     )
   )
 

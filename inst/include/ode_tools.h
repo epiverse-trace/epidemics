@@ -10,8 +10,6 @@
 #include <Rcpp.h>
 #include <RcppEigen.h>
 
-#include <algorithm>
-#include <iostream>
 #include <vector>
 // clang-format on
 

@@ -13,6 +13,9 @@
 
 // paths relative to this file
 #include "ode_tools.h"
+#include "population.h"
+#include "intervention.h"
+#include "vaccination.h"
 #include "epidemic_default.h"  // paths must be relative to this file
 
 #endif  // epidemics_epidemics_H_

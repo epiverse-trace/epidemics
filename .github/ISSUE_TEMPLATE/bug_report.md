@@ -12,7 +12,7 @@ assignees: ''
 Please place an "x" in all the boxes that apply
 ---------------------------------------------
   
-- [ ] I have the most recent version of finalsize and R
+- [ ] I have the most recent version of epidemics and R
 - [ ] I have found a bug
 - [ ] I have a [reproducible example](https://reprex.tidyverse.org/articles/reprex-dos-and-donts.html)
 - [ ] I want to request a new feature

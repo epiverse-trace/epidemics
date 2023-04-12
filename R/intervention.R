@@ -90,6 +90,13 @@ validate_intervention <- function(object) {
         "name", "time_begin", "time_end", "contact_reduction"
       ) %in% attributes(object)$names)
   )
+
+  # check intervention class members
+  checkmate::assert_string(object$name, na.ok = TRUE)
+  checkmate::assert_number(object$time_begin, lower = 0, finite = TRUE)
+  checkmate::assert_number(object$time_end, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(object$contact_reduction)
+
   invisible(object)
 }
 

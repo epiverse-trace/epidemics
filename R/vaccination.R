@@ -94,7 +94,13 @@ validate_vaccination <- function(object) {
         "name", "time_begin", "time_end", "nu"
       ) %in% attributes(object)$names)
   )
-  # other checks to be added here
+
+  # other checks for the vaccination object
+  checkmate::assert_string(object$name, na.ok = TRUE)
+  checkmate::assert_numeric(object$time_begin, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(object$time_end, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(object$nu, finite = TRUE)
+
   invisible(object)
 }
 

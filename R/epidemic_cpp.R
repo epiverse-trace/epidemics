@@ -78,14 +78,12 @@ epidemic_cpp <- function(model = "default",
     r0,
     lower = 0, finite = TRUE,
     # check for as many values as age groups
-    min.len = nrow(population$contact_matrix),
-    max.len = nrow(population$contact_matrix)
+    len = nrow(population$contact_matrix)
   )
   checkmate::assert_numeric(
     infectious_period,
     lower = 0, upper = time_end, finite = TRUE,
-    min.len = nrow(population$contact_matrix),
-    max.len = nrow(population$contact_matrix)
+    len = nrow(population$contact_matrix)
   )
 
   # check that compartment sizes are numerics

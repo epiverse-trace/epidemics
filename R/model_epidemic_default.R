@@ -8,7 +8,7 @@
 #' @return A list with numeric elements, giving the status of each compartment.
 #' @keywords internal
 #'
-epidemic_default <- function(t, init, params) {
+epidemic_default <- function(t, y, params) {
   n_age <- nrow(params[["contact_matrix"]])
 
   # operate only on the recovered and vaccinated

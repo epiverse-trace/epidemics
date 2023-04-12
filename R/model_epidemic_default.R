@@ -2,7 +2,7 @@
 #' SIR-V epidemic model.
 #'
 #' @param t The times.
-#' @param init The initial conditions.
+#' @param y The conditions of the epidemiological compartments.
 #' @param params The parameters.
 #'
 #' @return A list with numeric elements, giving the status of each compartment.
@@ -12,8 +12,8 @@ epidemic_default <- function(t, y, params) {
   n_age <- nrow(params[["contact_matrix"]])
 
   # operate only on the recovered and vaccinated
-  S_ <- init[seq(1, n_age)]
-  I_ <- init[seq(n_age + 1, 2 * n_age)]
+  S_ <- y[seq(1, n_age)]
+  I_ <- y[seq(n_age + 1, 2 * n_age)]
 
   # scale the contact matrix if within the intervention period
   if (t >= params[["t_npi_begin"]] && t <= params[["t_npi_end"]]) {

@@ -29,7 +29,7 @@
 #' @param model Epidemic model function.
 #'
 #' @return A `data.frame` with the columns "time", "compartment", "age_group",
-#' "value". The comparments ar "susceptible", "infected", "recovered", and
+#' "value". The compartments are "susceptible", "infected", "recovered", and
 #' "vaccinated".
 #' @export
 #'
@@ -159,7 +159,7 @@ epi_demic <- function(population,
   output_v <- unlist(as.vector(output[, -1]))
 
   # make long form data
-  data <- data.table::data.table(
+  data <- data.frame(
     time = rep(times, n_age_groups * 4),
     compartment = compartment,
     age_group = age_group,

@@ -2,7 +2,7 @@
 title: "Modelling interventions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{modelling_interventions}
+  %\VignetteIndexEntry{Modelling interventions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -117,6 +117,9 @@ output <- epidemic_cpp(
 ## Prepare data and visualise infections
 
 ```{r}
+# convert data to a data.table
+setDT(output)
+
 # make long format data
 data <- melt(
   output[, .SD, .SDcols = names(output) %like%

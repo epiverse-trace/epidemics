@@ -34,13 +34,13 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Imports:
     checkmate,
-    data.table,
     deSolve,
     Rcpp,
     RcppEigen
 Suggests: 
     bookdown,
     covr,
+    data.table,
     ggplot2,
     knitr,
     rmarkdown,

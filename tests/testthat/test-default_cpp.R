@@ -30,6 +30,7 @@ infectious_period <- rep(7, nrow(uk_population$contact_matrix))
 test_that("Output of default epidemic model", {
   # run epidemic model
   data <- epidemic_cpp(
+    model = "default",
     population = uk_population,
     r0 = r0,
     intervention = no_intervention(uk_population),
@@ -39,7 +40,7 @@ test_that("Output of default epidemic model", {
   )
 
   # check for output type and contents
-  expect_s3_class(data, "data.table")
+  expect_s3_class(data, "data.frame")
   expect_length(data, length(uk_population$initial_conditions) + 1L)
 
   # check for all positive values within the range 0 and total population size

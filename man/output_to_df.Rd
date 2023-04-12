@@ -15,8 +15,8 @@ output_to_df(
 \item{compartments}{A character vector of the compartment names.}
 }
 \value{
-A data.frame with N+1 columns, where N is the number of compartments,
-with the additional column being "time".
+A \code{data.frame} with N+1 columns, where N is the number of
+compartments, with the additional column being "time".
 }
 \description{
 Convert epidemic model output to a data.frame

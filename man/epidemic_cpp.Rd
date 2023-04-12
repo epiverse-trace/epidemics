@@ -4,46 +4,14 @@
 \alias{epidemic_cpp}
 \title{Model an epidemic}
 \usage{
-epidemic_cpp(
-  model = "default",
-  population,
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7,
-  intervention = no_intervention(population),
-  vaccination = no_vaccination(population),
-  time_end = 200,
-  increment = 1
-)
+epidemic_cpp(model = "default", ...)
 }
 \arguments{
 \item{model}{A string for the epidemic model. The only currently supported
 option is "default", for the default SEIR-V model.}
 
-\item{population}{An object of the \code{population} class, which holds a
-population contact matrix, a demography vector, and the initial conditions
-of each demographic group. See \code{\link[=population]{population()}}.}
-
-\item{r0}{The reproductive number of the infection. Must be a vector of the
-same length as the number of demographic groups.}
-
-\item{preinfectious_period}{The mean infections period. Must be a vector
-of the same length as the number of demographic groups.}
-
-\item{infectious_period}{The mean infections period. Must be a vector of the
-same length as the number of demographic groups.}
-
-\item{intervention}{A non-pharmaceutical intervention applied to the
-population during the epidemic. See \code{\link[=intervention]{intervention()}}.}
-
-\item{vaccination}{A vaccination regime followed during the
-course of the epidemic, with a start and end time, and age-specific effect
-on the transition of individuals from susceptible to vaccinated.
-See \code{\link[=vaccination]{vaccination()}}.}
-
-\item{time_end}{The maximum number of timesteps over which to run the model.}
-
-\item{increment}{The size of the time increment.}
+\item{...}{Arguments to the model specified by \code{model}. See \strong{Details} for
+more on the supported arguments.}
 }
 \value{
 A \code{data.frame} with the columns "time", "compartment", "age_group",
@@ -62,6 +30,28 @@ the infectious period \eqn{1/\gamma}.
 Also allows for group-specific initial proportions in each model compartment,
 as well as group-specific vaccination start dates and vaccination rates.
 }
+\details{
+Arguments passed in \code{...} that are required for the default moedl:
+\itemize{
+\item \code{population} An object of the \code{population} class, which holds a
+population contact matrix, a demography vector, and the initial conditions
+of each demographic group. See \code{\link[=population]{population()}}.
+\item \code{r0} The reproductive number of the infection. Must be a vector of the
+same length as the number of demographic groups.
+\item \code{preinfectious_period} The mean infections period. Must be a vector
+of the same length as the number of demographic groups.
+\item \code{infectious_period} The mean infections period. Must be a vector of the
+same length as the number of demographic groups.
+\item \code{intervention} A non-pharmaceutical intervention applied to the
+population during the epidemic. See \code{\link[=intervention]{intervention()}}.
+\item \code{vaccination} A vaccination regime followed during the
+course of the epidemic, with a start and end time, and age-specific effect
+on the transition of individuals from susceptible to vaccinated.
+See \code{\link[=vaccination]{vaccination()}}.
+\item \code{time_end} The maximum number of timesteps over which to run the model.
+\item \code{increment} The size of the time increment.
+}
+}
 \examples{
 # create a population
 uk_population <- population(
@@ -76,6 +66,7 @@ uk_population <- population(
 
 # run epidemic simulation with no vaccination or intervention
 epidemic_cpp(
+  model = "default",
   population = uk_population,
   r0 = rep(1.5, nrow(uk_population$contact_matrix)),
   preinfectious_period = rep(3, nrow(uk_population$contact_matrix)),

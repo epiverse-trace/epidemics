@@ -4,12 +4,12 @@
 \alias{epidemic_default}
 \title{SIR-V epidemic model.}
 \usage{
-epidemic_default(t, init, params)
+epidemic_default(t, y, params)
 }
 \arguments{
 \item{t}{The times.}
 
-\item{init}{The initial conditions.}
+\item{y}{The conditions of the epidemiological compartments.}
 
 \item{params}{The parameters.}
 }

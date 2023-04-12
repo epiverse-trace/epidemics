@@ -112,6 +112,9 @@ output <- epidemic_cpp(
 ## Prepare data and visualise infections
 
 ```{r}
+# convert data to a data.table
+setDT(output)
+
 # make long format data
 data <- melt(
   output[, .SD, .SDcols = names(output) %like%

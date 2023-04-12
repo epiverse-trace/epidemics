@@ -120,11 +120,6 @@ output <- epi_demic(
 ```{r}
 # rename age groups
 age_groups <- rownames(contact_matrix)
-output[, age_group := fcase(
-  age_group == 1, age_groups[1],
-  age_group == 2, age_groups[2],
-  age_group == 3, age_groups[3]
-)]
 ```
 
 Plot infections over time.
@@ -132,11 +127,11 @@ Plot infections over time.
 ```{r fig.width=4, fig.height=3}
 # plot figure of epidemic curve
 ggplot(
-  output[compartment == "infected", ],
+  output[output$compartment == "infected", ],
   aes(
     x = time,
     y = value,
-    col = age_group,
+    col = as.factor(age_group),
     group = interaction(compartment, age_group)
   )
 ) +
@@ -161,7 +156,8 @@ ggplot(
   ) +
   scale_colour_brewer(
     palette = "Dark2",
-    name = "Age group"
+    name = "Age group",
+    labels = age_groups
   ) +
   expand_limits(
     y = c(0, 250e3)

@@ -9,7 +9,18 @@
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppEigen)]]
 
-//' @title Run an age-structured SEIR epidemic model
+//' @title Run an age-structured SEIR-V epidemic model
+//'
+//' @description A compartmental model with an optional non-pharmaceutical
+//' intervention and an optional vaccination regime. Allows heterogeneity in
+//' social contact patterns, and variable sizes of demographic groups.
+//' Also allows for group-specific initial proportions in each model
+//' compartment, as well as group-specific vaccination start dates and
+//' vaccination rates, and also group-specific effects of implementing a
+//' non-pharmaceutical intervention.
+//' The model only allows for single, population-wide rates of
+//' transition between the 'susceptible' and 'exposed' compartments, between the
+//' 'exposed' and 'infectious' compartments, and in the recovery rate.
 //'
 //' @param population An object of the `population` class, which holds a
 //' population contact matrix, a demography vector, and the initial conditions
@@ -33,9 +44,9 @@
 //' @keywords internal
 // [[Rcpp::export(name=".epidemic_default_cpp")]]
 Rcpp::List epidemic_default_cpp(
-    const Rcpp::List &population, const Eigen::ArrayXd &beta,
-    const Eigen::ArrayXd &alpha, const Eigen::ArrayXd &gamma,
-    const Rcpp::List &intervention, const Rcpp::List &vaccination,
+    const Rcpp::List &population, const double &beta, const double &alpha,
+    const double &gamma, const Rcpp::List &intervention,
+    const Rcpp::List &vaccination,
     const double &time_end = 200.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input

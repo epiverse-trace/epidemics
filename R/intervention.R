@@ -58,6 +58,14 @@ intervention <- function(name = NA_character_,
   checkmate::assert_number(time_end, lower = 0, finite = TRUE)
   checkmate::assert_numeric(contact_reduction)
 
+  # print message if time end is not before time begin
+  # but allow it nonetheless
+  if (!(time_end > time_begin)) {
+    message(
+      "Intervention: `time_end` is not greater than `time_begin`"
+    )
+  }
+
   # call scenario constructor
   intervention_ <- new_intervention(
     name = name,

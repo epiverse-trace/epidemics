@@ -125,3 +125,11 @@ test_that("Epidemic model with vaccination", {
     all(final_size_vaccination < final_size_default)
   )
 })
+
+# expect that no vaccination prints a message
+test_that("Bad vaccination schedule prints a message", {
+  expect_message(
+    no_vaccination(uk_population),
+    regexp = "(time_end)*(not greater than)*(time_begin)"
+  )
+})

@@ -32,16 +32,13 @@ check_args_default <- function(mod_args) {
 
   # input checking on pathogen parameters
   # TODO: move to combined check function for all custom classes
-  checkmate::assert_numeric(
+  checkmate::assert_number(
     mod_args$r0,
-    lower = 0, finite = TRUE,
-    # check for as many values as age groups
-    len = nrow(mod_args$population$contact_matrix)
+    lower = 0, finite = TRUE
   )
-  checkmate::assert_numeric(
+  checkmate::assert_number(
     mod_args$infectious_period,
-    lower = 0, finite = TRUE,
-    len = nrow(mod_args$population$contact_matrix)
+    lower = 0, finite = TRUE
   )
 
   # check that compartment sizes are numerics

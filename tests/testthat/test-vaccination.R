@@ -35,6 +35,38 @@ elder_vaccination <- vaccination(
   nu = c(0, 0, 1e-4)
 )
 
+# test the vaccination has expected structure
+test_that("Vaccination is correctly initialised", {
+  expect_s3_class(elder_vaccination, "vaccination")
+  expect_named(
+    elder_vaccination,
+    c("name", "time_begin", "time_end", "nu")
+  )
+  expect_type(
+    elder_vaccination$name, "character"
+  )
+  expect_length(
+    elder_vaccination$name, 1L
+  )
+  expect_type(
+    elder_vaccination$time_end, "double"
+  )
+  expect_type(
+    elder_vaccination$time_begin, "double"
+  )
+  expect_type(
+    elder_vaccination$nu, "double"
+  )
+  expect_length(
+    elder_vaccination$time_end,
+    length(elder_vaccination$time_begin)
+  )
+  expect_length(
+    elder_vaccination$nu,
+    length(elder_vaccination$time_begin)
+  )
+})
+
 # run model with vaccination
 data_vaccination <- epidemic_cpp(
   population = uk_population,

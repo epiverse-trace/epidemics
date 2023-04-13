@@ -4,9 +4,9 @@
 #' @param name String for the name of the intervention.
 #' @param time_begin Single number for the start time of the intervention.
 #' @param time_end Single number for the end time of the intervention.
-#' @param contact_reduction Single number, or a vector of the same length as the
-#' number of demographic groups, which gives the overall or group-specific
-#' proportion reduction in contacts respectively.
+#' @param contact_reduction A vector of the same length as the
+#' number of demographic groups in the target population, which gives the
+#' overall or group-specific proportion reduction in contacts respectively.
 #'
 #' @return An `intervention` class object.
 #' @keywords internal
@@ -32,9 +32,9 @@ new_intervention <- function(name = NA_character_,
 #' @param name String for the name of the intervention.
 #' @param time_begin Single number for the start time of the intervention.
 #' @param time_end Single number for the end time of the intervention.
-#' @param contact_reduction Single number, or a vector of the same length as the
-#' number of demographic groups, which gives the overall or group-specific
-#' proportion reduction in contacts respectively.
+#' @param contact_reduction A vector of the same length as the
+#' number of demographic groups in the target population, which gives the
+#' overall or group-specific proportion reduction in contacts respectively.
 #'
 #' @return An object of the `intervention` S3 class.
 #' @export

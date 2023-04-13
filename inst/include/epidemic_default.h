@@ -22,13 +22,14 @@ namespace epidemics {
 
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_default {
-  const Eigen::ArrayXd beta, alpha, gamma, nu;
+  const double beta, alpha, gamma;
+  const Eigen::ArrayXd nu;
   const Rcpp::List population, intervention, vaccination;
   const Eigen::MatrixXd contact_matrix;
   // npi, interv, pop
-  epidemic_default(const Eigen::ArrayXd beta, const Eigen::ArrayXd alpha,
-                   const Eigen::ArrayXd gamma, const Rcpp::List population,
-                   const Rcpp::List intervention, const Rcpp::List vaccination)
+  epidemic_default(const double beta, const double alpha, const double gamma,
+                   const Rcpp::List population, const Rcpp::List intervention,
+                   const Rcpp::List vaccination)
       : beta(beta),
         alpha(alpha),
         gamma(gamma),
@@ -54,20 +55,20 @@ struct epidemic_default {
     Eigen::ArrayXd current_nu = vaccination::current_nu(nu, vaccination, t);
 
     // NB: Casting initial conditions matrix columns to arrays is necessary
-    // for correct group-specific coefficient multiplications
+    // for vectorised operations
 
     // compartmental transitions without accounting for contacts
-    Eigen::ArrayXd sToE = beta * x.col(0).array() * x.col(2).array();
+    Eigen::ArrayXd sToE = beta * x.col(0).array() * (cm * x.col(2)).array();
     Eigen::ArrayXd eToI = alpha * x.col(1).array();
     Eigen::ArrayXd iToR = gamma * x.col(2).array();
     Eigen::ArrayXd sToV = current_nu * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)
-    dxdt.col(0) = -(cm * sToE.matrix()).array() - sToV;  // -contacts * β*S*I
-    dxdt.col(1) = (cm * sToE.matrix()).array() - eToI;  // β*S*contacts*I - α*E
-    dxdt.col(2) = eToI - iToR;                          // α*E - γ*I
-    dxdt.col(3) = iToR;                                 // γ*I
-    dxdt.col(4) = sToV;                                 // ν*S
+    dxdt.col(0) = -sToE - sToV;  // -β*S*contacts*I - ν*S
+    dxdt.col(1) = sToE - eToI;   // β*S*contacts*I - α*E
+    dxdt.col(2) = eToI - iToR;   // α*E - γ*I
+    dxdt.col(3) = iToR;          // γ*I
+    dxdt.col(4) = sToV;          // ν*S
   }
 };
 

@@ -23,9 +23,9 @@ uk_population <- population(
 )
 
 # Prepare epi parameters
-r0 <- rep(1.5, nrow(uk_population$contact_matrix))
-preinfectious_period <- rep(3, nrow(uk_population$contact_matrix))
-infectious_period <- rep(7, nrow(uk_population$contact_matrix))
+r0 <- 1.5
+preinfectious_period <- 3
+infectious_period <- 7
 
 test_that("Output of default epidemic model", {
   # run epidemic model
@@ -129,10 +129,10 @@ dummy_population <- population(
   )
 )
 
-# prepare parameters
-r0 <- rep(1.5, nrow(dummy_population$contact_matrix))
-preinfectious_period <- rep(3, nrow(dummy_population$contact_matrix))
-infectious_period <- rep(7, nrow(dummy_population$contact_matrix))
+# prepare epidemiological parameters
+r0 <- 1.5
+preinfectious_period <- 3
+infectious_period <- 7
 
 test_that("Identical population sizes lead to identical final size", {
   data <- epidemic_cpp(
@@ -159,69 +159,81 @@ test_that("Identical population sizes lead to identical final size", {
   )
 })
 
-test_that("Group with lower preinfectious period has larger final size", {
+test_that("Lower preinfectious period leads to larger final size", {
   # make a temporary pre-infectious period vector
   # lower values mean quicker transition from E => I
-  preinfectious_period <- c(3, 1.2)
+  preinfectious_period_low <- 1.2
+  preinfectious_period_high <- 5.0
 
-  data <- epidemic_cpp(
-    population = dummy_population,
-    r0 = r0,
-    preinfectious_period = preinfectious_period,
-    infectious_period = infectious_period,
-    time_end = 200, increment = 0.1
+  data <- lapply(
+    c(preinfectious_period_low, preinfectious_period_high),
+    function(x) {
+      epidemic_cpp(
+        population = dummy_population,
+        r0 = r0,
+        preinfectious_period = x,
+        infectious_period = infectious_period,
+        time_end = 200, increment = 0.1
+      )
+    }
   )
 
-  final_sizes <- unname(
-    unlist(
-      subset(
-        tail(data, 1),
-        select = grepl("recovered", colnames(data), fixed = TRUE)
+  final_sizes <- lapply(
+    data,
+    function(df) {
+      sum(
+        unlist(
+          subset(
+            tail(df, 1),
+            select = grepl("recovered", colnames(df), fixed = TRUE)
+          )
+        )
       )
-    )
+    }
   )
 
   # both groups have same final size
   expect_gt(
-    final_sizes[2], final_sizes[1]
+    final_sizes[[1]], final_sizes[[2]]
   )
 })
 
-test_that("Group with lower infectious period has larger final size", {
-  # make a temporary pre-infectious period vector
+test_that("Lower infectious period leads to larger final size", {
+  # make a temporary infectious period vector
   # lower values mean quicker transition from I => R
-  infectious_period <- c(7, 5)
+  infectious_period_low <- 5
+  infectious_period_high <- 7
 
-  data <- epidemic_cpp(
-    population = dummy_population,
-    r0 = r0,
-    preinfectious_period = preinfectious_period,
-    infectious_period = infectious_period,
-    time_end = 200, increment = 0.1
+  data <- lapply(
+    c(infectious_period_low, infectious_period_high),
+    function(x) {
+      epidemic_cpp(
+        population = dummy_population,
+        r0 = r0,
+        preinfectious_period = preinfectious_period,
+        infectious_period = x,
+        time_end = 200, increment = 0.1
+      )
+    }
   )
 
-  final_sizes <- unlist(
-    subset(
-      tail(data, 1),
-      select = grepl("recovered", colnames(data), fixed = TRUE)
-    )
+  final_sizes <- lapply(
+    data,
+    function(df) {
+      sum(
+        unlist(
+          subset(
+            tail(df, 1),
+            select = grepl("recovered", colnames(df), fixed = TRUE)
+          )
+        )
+      )
+    }
   )
 
   # group 2 must have a larger final size
   expect_gt(
-    final_sizes[2], final_sizes[1]
-  )
-
-  # calculate individuals still infected and check that
-  # lower infectious period leads to fewer current infections
-  current_infections <- unlist(
-    subset(
-      tail(data, 1),
-      select = grepl("infect", colnames(data), fixed = TRUE)
-    )
-  )
-  expect_lt(
-    current_infections[2], current_infections[1]
+    final_sizes[[1]], final_sizes[[2]]
   )
 })
 

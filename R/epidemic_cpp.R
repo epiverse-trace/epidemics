@@ -5,32 +5,34 @@
 #' The only option currently available is a SEIR-V model, with the compartments
 #' "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
 #'
-#' Allows heterogeneity in social contact patterns, the demography distribution,
-#' and key epidemiological parameters: the reproductive number \eqn{R_0}, and
-#' the infectious period \eqn{1/\gamma}.
-#' Also allows for group-specific initial proportions in each model compartment,
-#' as well as group-specific vaccination start dates and vaccination rates.
-#'
 #' @param model A string for the epidemic model. The only currently supported
 #' option is "default", for the default SEIR-V model.
 #' @param ... Arguments to the model specified by `model`. See **Details** for
 #' more on the supported arguments.
 #'
 #' @return A `data.frame` with the columns "time", "compartment", "age_group",
-#' "value". The compartments are "susceptible", "exposed", "infectious",
-#' "recovered", and "vaccinated".
+#' "value". The compartments correspond to the compartments of the model
+#' chosen with `model`.
+#' The current default model has the compartments "susceptible", "exposed",
+#' "infectious", "recovered", and "vaccinated".
 #' @export
 #'
 #' @details Arguments passed in `...` that are required for the default moedl:
 #' - `population` An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
 #' of each demographic group. See [population()].
-#' - `r0` The reproductive number of the infection. Must be a vector of the
-#' same length as the number of demographic groups.
-#' - `preinfectious_period` The mean infections period. Must be a vector
-#' of the same length as the number of demographic groups.
-#' - `infectious_period` The mean infections period. Must be a vector of the
-#' same length as the number of demographic groups.
+#' - `r0` The reproductive number of the infection, \eqn{R_0}.
+#' Must be a number or a vector of numbers of the same length as the number of
+#' demographic groups, depending on the model being implemented.
+#' The 'default' model requires a single number.
+#' - `preinfectious_period` The mean infectious period.
+#' Must be a number or a vector of numbers of the same length as the number of
+#' demographic groups, depending on the model being implemented.
+#' The 'default' model requires a single number.
+#' - `infectious_period` The mean infections period.
+#' Must be a number or a vector of numbers of the same length as the number of
+#' demographic groups, depending on the model being implemented.
+#' The 'default' model requires a single number.
 #' - `intervention` A non-pharmaceutical intervention applied to the
 #' population during the epidemic. See [intervention()].
 #' - `vaccination` A vaccination regime followed during the
@@ -56,9 +58,9 @@
 #' epidemic_cpp(
 #'   model = "default",
 #'   population = uk_population,
-#'   r0 = rep(1.5, nrow(uk_population$contact_matrix)),
-#'   preinfectious_period = rep(3, nrow(uk_population$contact_matrix)),
-#'   infectious_period = rep(7, nrow(uk_population$contact_matrix)),
+#'   r0 = 1.5,
+#'   preinfectious_period = 3,
+#'   infectious_period = 7,
 #'   time_end = 200,
 #'   increment = 1
 #' )

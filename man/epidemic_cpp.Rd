@@ -15,20 +15,16 @@ more on the supported arguments.}
 }
 \value{
 A \code{data.frame} with the columns "time", "compartment", "age_group",
-"value". The comparments are "susceptible", "exposed", "infectious",
-"recovered", and "vaccinated".
+"value". The compartments correspond to the compartments of the model
+chosen with \code{model}.
+The current default model has the compartments "susceptible", "exposed",
+"infectious", "recovered", and "vaccinated".
 }
 \description{
 Simulate an epidemic using a deterministic, compartmental
 epidemic model from the package's library of epidemic models.
 The only option currently available is a SEIR-V model, with the compartments
 "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
-
-Allows heterogeneity in social contact patterns, the demography distribution,
-and key epidemiological parameters: the reproductive number \eqn{R_0}, and
-the infectious period \eqn{1/\gamma}.
-Also allows for group-specific initial proportions in each model compartment,
-as well as group-specific vaccination start dates and vaccination rates.
 }
 \details{
 Arguments passed in \code{...} that are required for the default moedl:
@@ -36,12 +32,18 @@ Arguments passed in \code{...} that are required for the default moedl:
 \item \code{population} An object of the \code{population} class, which holds a
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See \code{\link[=population]{population()}}.
-\item \code{r0} The reproductive number of the infection. Must be a vector of the
-same length as the number of demographic groups.
-\item \code{preinfectious_period} The mean infections period. Must be a vector
-of the same length as the number of demographic groups.
-\item \code{infectious_period} The mean infections period. Must be a vector of the
-same length as the number of demographic groups.
+\item \code{r0} The reproductive number of the infection, \eqn{R_0}.
+Must be a number or a vector of numbers of the same length as the number of
+demographic groups, depending on the model being implemented.
+The 'default' model requires a single number.
+\item \code{preinfectious_period} The mean infectious period.
+Must be a number or a vector of numbers of the same length as the number of
+demographic groups, depending on the model being implemented.
+The 'default' model requires a single number.
+\item \code{infectious_period} The mean infections period.
+Must be a number or a vector of numbers of the same length as the number of
+demographic groups, depending on the model being implemented.
+The 'default' model requires a single number.
 \item \code{intervention} A non-pharmaceutical intervention applied to the
 population during the epidemic. See \code{\link[=intervention]{intervention()}}.
 \item \code{vaccination} A vaccination regime followed during the
@@ -68,9 +70,9 @@ uk_population <- population(
 epidemic_cpp(
   model = "default",
   population = uk_population,
-  r0 = rep(1.5, nrow(uk_population$contact_matrix)),
-  preinfectious_period = rep(3, nrow(uk_population$contact_matrix)),
-  infectious_period = rep(7, nrow(uk_population$contact_matrix)),
+  r0 = 1.5,
+  preinfectious_period = 3,
+  infectious_period = 7,
   time_end = 200,
   increment = 1
 )

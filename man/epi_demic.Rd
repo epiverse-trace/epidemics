@@ -49,7 +49,7 @@ maximum time.}
 }
 \value{
 A \code{data.frame} with the columns "time", "compartment", "age_group",
-"value". The comparments ar "susceptible", "infected", "recovered", and
+"value". The compartments are "susceptible", "infected", "recovered", and
 "vaccinated".
 }
 \description{

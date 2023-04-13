@@ -34,7 +34,40 @@ close_schools <- intervention(
   contact_reduction = c(0.2, 0.0)
 )
 
-test_that("Epidemic model with intervention", {
+# test the intervention has expected structure
+test_that("Intervention is correctly initialised", {
+  expect_s3_class(close_schools, "intervention")
+  expect_named(
+    close_schools, c("name", "time_begin", "time_end", "contact_reduction")
+  )
+  expect_type(
+    close_schools$name, "character"
+  )
+  expect_length(
+    close_schools$name, 1L
+  )
+  expect_type(
+    close_schools$time_begin, "double"
+  )
+  expect_length(
+    close_schools$time_begin, 1L
+  )
+  expect_type(
+    close_schools$time_end, "double"
+  )
+  expect_length(
+    close_schools$time_end, 1L
+  )
+  expect_type(
+    close_schools$contact_reduction, "double"
+  )
+  expect_length(
+    close_schools$contact_reduction,
+    nrow(contact_matrix)
+  )
+})
+
+test_that("Intervention reduces final size", {
   # run model with intervention
   data_intervention <- epidemic_cpp(
     population = uk_population,
@@ -88,5 +121,27 @@ test_that("Error on poorly specified intervention", {
       time_end = 200, increment = 1.0
     ),
     regexp = "(Intervention must have)|(number of elements)|(contact matrix)"
+  )
+})
+
+test_that("Null intervention is correctly initialised", {
+  null_intervention <- no_intervention(uk_population)
+  # expect message as time end and time start are identical
+  expect_message(
+    {
+      no_intervention(uk_population)
+    },
+    regexp = "(time_end)*(not greater than)*(time_begin)"
+  )
+  expect_identical(
+    null_intervention$time_begin, null_intervention$time_end
+  )
+
+  expect_type(
+    null_intervention$contact_reduction, "double"
+  )
+  expect_length(
+    null_intervention$contact_reduction,
+    nrow(uk_population$contact_matrix)
   )
 })

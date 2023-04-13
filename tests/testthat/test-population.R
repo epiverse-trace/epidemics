@@ -34,6 +34,32 @@ half_population <- population(
   )
 )
 
+# test the population has expected structure
+test_that("Population is correctly initialised", {
+  expect_s3_class(uk_population, "population")
+  expect_named(
+    uk_population,
+    c("name", "contact_matrix", "demography_vector", "initial_conditions")
+  )
+  expect_type(
+    uk_population$name, "character"
+  )
+  expect_length(
+    uk_population$name, 1L
+  )
+  expect_type(
+    uk_population$contact_matrix, "double"
+  )
+  expect_identical(
+    nrow(uk_population$contact_matrix),
+    length(uk_population$demography_vector)
+  )
+  expect_identical(
+    nrow(uk_population$initial_conditions),
+    nrow(uk_population$contact_matrix)
+  )
+})
+
 # Prepare epi parameters
 r0 <- rep(1.5, nrow(contact_matrix))
 preinfectious_period <- rep(3, nrow(contact_matrix))

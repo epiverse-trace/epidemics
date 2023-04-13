@@ -13,15 +13,15 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // epidemic_default_cpp
-Rcpp::List epidemic_default_cpp(const Rcpp::List& population, const Eigen::ArrayXd& beta, const Eigen::ArrayXd& alpha, const Eigen::ArrayXd& gamma, const Rcpp::List& intervention, const Rcpp::List& vaccination, const double& time_end, const double& increment);
+Rcpp::List epidemic_default_cpp(const Rcpp::List& population, const double& beta, const double& alpha, const double& gamma, const Rcpp::List& intervention, const Rcpp::List& vaccination, const double& time_end, const double& increment);
 RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP populationSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP interventionSEXP, SEXP vaccinationSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type population(populationSEXP);
-    Rcpp::traits::input_parameter< const Eigen::ArrayXd& >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const Eigen::ArrayXd& >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< const Eigen::ArrayXd& >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const double& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const double& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const double& >::type gamma(gammaSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type intervention(interventionSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type vaccination(vaccinationSEXP);
     Rcpp::traits::input_parameter< const double& >::type time_end(time_endSEXP);

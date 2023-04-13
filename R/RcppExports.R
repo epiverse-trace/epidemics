@@ -4,10 +4,10 @@
 #' @title Run an age-structured SEIR-V epidemic model
 #'
 #' @description A compartmental model with an optional non-pharmaceutical
-#' intervention and an optional vaccination regime. Allows heterogeneity in 
+#' intervention and an optional vaccination regime. Allows heterogeneity in
 #' social contact patterns, and variable sizes of demographic groups.
-#' Also allows for group-specific initial proportions in each model 
-#' compartment, as well as group-specific vaccination start dates and 
+#' Also allows for group-specific initial proportions in each model
+#' compartment, as well as group-specific vaccination start dates and
 #' vaccination rates, and also group-specific effects of implementing a
 #' non-pharmaceutical intervention.
 #' The model only allows for single, population-wide rates of

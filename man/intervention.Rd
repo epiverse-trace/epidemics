@@ -13,9 +13,9 @@ intervention(name = NA_character_, time_begin, time_end, contact_reduction)
 
 \item{time_end}{Single number for the end time of the intervention.}
 
-\item{contact_reduction}{Single number, or a vector of the same length as the
-number of demographic groups, which gives the overall or group-specific
-proportion reduction in contacts respectively.}
+\item{contact_reduction}{A vector of the same length as the
+number of demographic groups in the target population, which gives the
+overall or group-specific proportion reduction in contacts respectively.}
 }
 \value{
 An object of the \code{intervention} S3 class.

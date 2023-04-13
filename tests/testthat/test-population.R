@@ -61,9 +61,9 @@ test_that("Population is correctly initialised", {
 })
 
 # Prepare epi parameters
-r0 <- rep(1.5, nrow(contact_matrix))
-preinfectious_period <- rep(3, nrow(contact_matrix))
-infectious_period <- rep(7, nrow(contact_matrix))
+r0 <- 1.5
+preinfectious_period <- 3
+infectious_period <- 7
 
 # run model with different populations
 data_full_pop <- epidemic_cpp(

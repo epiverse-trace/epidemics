@@ -62,6 +62,13 @@ vaccination <- function(name = NA_character_,
   checkmate::assert_numeric(time_end, lower = 0, finite = TRUE)
   checkmate::assert_numeric(nu, finite = TRUE)
 
+  # message if any vaccinations' intervals are badly formed
+  if (any(time_end <= time_begin)) {
+    message(
+      "Vaccination: some `time_end`s are not greater than `time_begin`s"
+    )
+  }
+
   # call scenario constructor
   vaccination_ <- new_vaccination(
     name = name,

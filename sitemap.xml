@@ -13,7 +13,16 @@
     <loc>/articles/epidemics.html</loc>
   </url>
   <url>
+    <loc>/articles/epidemics_rcpp.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/articles/modelling_interventions.html</loc>
+  </url>
+  <url>
+    <loc>/articles/modelling_vaccination.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
@@ -22,7 +31,19 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/check_args_default.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-epidemic_default_cpp.html</loc>
+  </url>
+  <url>
     <loc>/reference/epi_demic.html</loc>
+  </url>
+  <url>
+    <loc>/reference/epidemic_cpp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/epidemic_default.html</loc>
   </url>
   <url>
     <loc>/reference/epidemics-package.html</loc>
@@ -40,6 +61,24 @@
     <loc>/reference/is_population.html</loc>
   </url>
   <url>
+    <loc>/reference/is_vaccination.html</loc>
+  </url>
+  <url>
+    <loc>/reference/no_intervention.html</loc>
+  </url>
+  <url>
+    <loc>/reference/no_vaccination.html</loc>
+  </url>
+  <url>
+    <loc>/reference/output_to_df.html</loc>
+  </url>
+  <url>
     <loc>/reference/population.html</loc>
+  </url>
+  <url>
+    <loc>/reference/prepare_args_default.html</loc>
+  </url>
+  <url>
+    <loc>/reference/vaccination.html</loc>
   </url>
 </urlset>

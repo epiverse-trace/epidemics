@@ -15,7 +15,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">epidemics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,14 @@
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/epidemics_rcpp.html">Epidemic modelling with Rcpp</a>
+    <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
+    <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
+  </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -66,6 +74,11 @@
         <dd>Model an SIRV epidemic</dd>
       </dl><dl><dt>
           
+          <code><a href="epidemic_cpp.html">epidemic_cpp()</a></code> 
+        </dt>
+        <dd>Model an epidemic</dd>
+      </dl><dl><dt>
+          
           <code><a href="intervention.html">intervention()</a></code> 
         </dt>
         <dd>Construct a new intervention for an epidemic model</dd>
@@ -81,9 +94,34 @@
         <dd>Check whether an object is a <code>population</code></dd>
       </dl><dl><dt>
           
+          <code><a href="is_vaccination.html">is_vaccination()</a></code> 
+        </dt>
+        <dd>Check whether an object is a <code>vaccination</code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="no_intervention.html">no_intervention()</a></code> 
+        </dt>
+        <dd>Generate a null intervention</dd>
+      </dl><dl><dt>
+          
+          <code><a href="no_vaccination.html">no_vaccination()</a></code> 
+        </dt>
+        <dd>Generate a null vaccination</dd>
+      </dl><dl><dt>
+          
+          <code><a href="output_to_df.html">output_to_df()</a></code> 
+        </dt>
+        <dd>Convert epidemic model output to a data.frame</dd>
+      </dl><dl><dt>
+          
           <code><a href="population.html">population()</a></code> 
         </dt>
         <dd>Construct a new population for an epidemic model</dd>
+      </dl><dl><dt>
+          
+          <code><a href="vaccination.html">vaccination()</a></code> 
+        </dt>
+        <dd>Construct a new vaccination regime for an epidemic model</dd>
       </dl></div>
   </main></div>
 

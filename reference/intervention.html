@@ -15,7 +15,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">epidemics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,14 @@
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/epidemics_rcpp.html">Epidemic modelling with Rcpp</a>
+    <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
+    <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
+  </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -74,9 +82,9 @@
 
 
 <dt>contact_reduction</dt>
-<dd><p>Single number, or a vector of the same length as the
-number of demographic groups, which gives the overall or group-specific
-proportion reduction in contacts respectively.</p></dd>
+<dd><p>A vector of the same length as the
+number of demographic groups in the target population, which gives the
+overall or group-specific proportion reduction in contacts respectively.</p></dd>
 
 </dl></div>
     <div class="section level2">

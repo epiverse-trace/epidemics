@@ -41,9 +41,6 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
-  <a class="nav-link" href="../articles/epidemics.html">Get started</a>
-</li>
-<li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="active nav-item dropdown">
@@ -183,8 +180,8 @@
 <h2 id="run-epidemic-model">Run epidemic model<a class="anchor" aria-label="anchor" href="#run-epidemic-model"></a>
 </h2>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># run an epidemic model using `epidemic_cpp`</span></span>
-<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_cpp.html">epidemic_cpp</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># run an epidemic model using `epidemic`</span></span>
+<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  r0 <span class="op">=</span> <span class="va">r0</span>,</span>
 <span>  preinfectious_period <span class="op">=</span> <span class="va">preinfectious_period</span>,</span>

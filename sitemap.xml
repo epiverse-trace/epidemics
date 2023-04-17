@@ -10,9 +10,6 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/articles/epidemics.html</loc>
-  </url>
-  <url>
     <loc>/articles/epidemics_rcpp.html</loc>
   </url>
   <url>
@@ -37,13 +34,7 @@
     <loc>/reference/dot-epidemic_default_cpp.html</loc>
   </url>
   <url>
-    <loc>/reference/epi_demic.html</loc>
-  </url>
-  <url>
-    <loc>/reference/epidemic_cpp.html</loc>
-  </url>
-  <url>
-    <loc>/reference/epidemic_default.html</loc>
+    <loc>/reference/epidemic.html</loc>
   </url>
   <url>
     <loc>/reference/epidemics-package.html</loc>

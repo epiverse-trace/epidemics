@@ -1,7 +1,7 @@
 
 #' Check arguments to default epidemic function
 #' @keywords internal
-check_args_default <- function(mod_args) {
+.check_args_epidemic_default <- function(mod_args) {
   # check that arguments list has expected names
   checkmate::assert_names(
     names(mod_args),
@@ -60,7 +60,7 @@ check_args_default <- function(mod_args) {
 
 #' Prepare arguments to default epidemic function
 #' @keywords internal
-prepare_args_default <- function(mod_args) {
+.prepare_args_epidemic_default <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
   # scale the contact matrix by the maximum real eigenvalue
   mod_args$population$contact_matrix <-

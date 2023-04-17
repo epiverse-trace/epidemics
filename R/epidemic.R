@@ -5,8 +5,8 @@
 #' The only option currently available is a SEIR-V model, with the compartments
 #' "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
 #'
-#' @param model A string for the epidemic model. The only currently supported
-#' option is "default", for the default SEIR-V model.
+#' @param model_name A string for the epidemic model. The only currently
+#' supported option is "default", for the default SEIR-V model.
 #' @param ... Arguments to the model specified by `model`. See **Details** for
 #' more on the supported arguments.
 #'
@@ -18,7 +18,7 @@
 #' @export
 #'
 #' @details Arguments passed in `...` may differ depending on the model
-#' specified in `model`. The default model (`model = "default"`) takes the
+#' specified in `model`. The default model (`model_name = "default"`) takes the
 #' following arguments.
 #' - `population` An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
@@ -59,7 +59,7 @@
 #'
 #' # run epidemic simulation with no vaccination or intervention
 #' epidemic(
-#'   model = "default",
+#'   model_name = "default",
 #'   population = uk_population,
 #'   r0 = 1.5,
 #'   preinfectious_period = 3,
@@ -67,29 +67,43 @@
 #'   time_end = 200,
 #'   increment = 1
 #' )
-epidemic <- function(model = "default", ...) {
-
-  # collect model arguments passed as `...`
-  model_arguments <- list(...)
+epidemic <- function(model_name = "default", ...) {
 
   # select epidemic model from library
   # currently supports only a single SEIRV model
   # handle the arguments check and prep functions, and the model function
-  model <- match.arg(arg = model, several.ok = FALSE)
+  model_name <- match.arg(arg = model_name, several.ok = FALSE)
+
+  # collect model arguments passed as `...`
+  model_arguments <- list(...)
 
   # prepare model arguments while checking them
-  args_check_fn <- switch(model,
-    default = check_args_default
+  args_check_fn <- read_from_library(
+    model_type = "epidemic",
+    model_name = model_name,
+    which_function = "model_args_checker"
   )
-  args_prep_fn <- switch(model,
-    default = prepare_args_default
+  args_prep_fn <- read_from_library(
+    model_type = "epidemic",
+    model_name = model_name,
+    which_function = "model_args_prepper"
   )
-  model_fn <- switch(model,
-    default = .epidemic_default_cpp
+  model_fn <- read_from_library(
+    model_type = "epidemic",
+    model_name = model_name,
+    which_function = "model_function"
   )
 
   # prepare and check model arguments #
-  model_arguments <- args_prep_fn(args_check_fn(model_arguments))
+  model_arguments <- do.call(
+    args_prep_fn,
+    list(
+      do.call(
+        args_check_fn,
+        list(model_arguments)
+      )
+    )
+  )
 
   # RUN EPIDEMIC MODEL #
   output <- do.call(

@@ -4,11 +4,11 @@
 \alias{epidemic}
 \title{Model an epidemic}
 \usage{
-epidemic(model = "default", ...)
+epidemic(model_name = "default", ...)
 }
 \arguments{
-\item{model}{A string for the epidemic model. The only currently supported
-option is "default", for the default SEIR-V model.}
+\item{model_name}{A string for the epidemic model. The only currently
+supported option is "default", for the default SEIR-V model.}
 
 \item{...}{Arguments to the model specified by \code{model}. See \strong{Details} for
 more on the supported arguments.}
@@ -28,7 +28,7 @@ The only option currently available is a SEIR-V model, with the compartments
 }
 \details{
 Arguments passed in \code{...} may differ depending on the model
-specified in \code{model}. The default model (\code{model = "default"}) takes the
+specified in \code{model}. The default model (\code{model_name = "default"}) takes the
 following arguments.
 \itemize{
 \item \code{population} An object of the \code{population} class, which holds a
@@ -71,7 +71,7 @@ uk_population <- population(
 
 # run epidemic simulation with no vaccination or intervention
 epidemic(
-  model = "default",
+  model_name = "default",
   population = uk_population,
   r0 = 1.5,
   preinfectious_period = 3,

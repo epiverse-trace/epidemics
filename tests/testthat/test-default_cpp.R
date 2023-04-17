@@ -30,7 +30,7 @@ infectious_period <- 7
 test_that("Output of default epidemic model", {
   # run epidemic model
   data <- epidemic(
-    model = "default",
+    model_name = "default",
     population = uk_population,
     r0 = r0,
     intervention = no_intervention(uk_population),

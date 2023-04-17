@@ -1,5 +1,5 @@
 Package: epidemics
-Title: Model Epidemics with Compartmental Models
+Title: A Library of Epidemic Compartmental Models
 Version: 0.0.0.9000
 Authors@R: 
     c(
@@ -34,7 +34,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Imports:
     checkmate,
-    deSolve,
     Rcpp,
     RcppEigen
 Suggests: 

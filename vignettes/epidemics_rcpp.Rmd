@@ -99,8 +99,8 @@ infectious_period <- 7
 ## Run epidemic model
 
 ```{r}
-# run an epidemic model using `epidemic_cpp`
-output <- epidemic_cpp(
+# run an epidemic model using `epidemic`
+output <- epidemic(
   population = uk_population,
   r0 = r0,
   preinfectious_period = preinfectious_period,

@@ -66,7 +66,7 @@ preinfectious_period <- 3
 infectious_period <- 7
 
 # run model with different populations
-data_full_pop <- epidemic_cpp(
+data_full_pop <- epidemic(
   population = uk_population,
   r0 = r0,
   preinfectious_period = preinfectious_period,
@@ -74,7 +74,7 @@ data_full_pop <- epidemic_cpp(
   time_end = 200, increment = 1.0
 )
 
-data_half_pop <- epidemic_cpp(
+data_half_pop <- epidemic(
   population = half_population,
   r0 = r0,
   preinfectious_period = preinfectious_period,

@@ -17,7 +17,9 @@
 #' "infectious", "recovered", and "vaccinated".
 #' @export
 #'
-#' @details Arguments passed in `...` that are required for the default moedl:
+#' @details Arguments passed in `...` may differ depending on the model
+#' specified in `model`. The default model (`model = "default"`) takes the
+#' following arguments.
 #' - `population` An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
 #' of each demographic group. See [population()].
@@ -34,11 +36,12 @@
 #' demographic groups, depending on the model being implemented.
 #' The 'default' model requires a single number.
 #' - `intervention` A non-pharmaceutical intervention applied to the
-#' population during the epidemic. See [intervention()].
+#' population during the epidemic. See [intervention()]. This is an optional
+#' argument in the default model.
 #' - `vaccination` A vaccination regime followed during the
 #' course of the epidemic, with a start and end time, and age-specific effect
 #' on the transition of individuals from susceptible to vaccinated.
-#' See [vaccination()].
+#' See [vaccination()]. This is an optional argument in the default model.
 #' - `time_end` The maximum number of timesteps over which to run the model.
 #' - `increment` The size of the time increment.
 #'
@@ -55,7 +58,7 @@
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' epidemic_cpp(
+#' epidemic(
 #'   model = "default",
 #'   population = uk_population,
 #'   r0 = 1.5,
@@ -64,7 +67,7 @@
 #'   time_end = 200,
 #'   increment = 1
 #' )
-epidemic_cpp <- function(model = "default", ...) {
+epidemic <- function(model = "default", ...) {
 
   # collect model arguments passed as `...`
   model_arguments <- list(...)

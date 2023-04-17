@@ -68,7 +68,7 @@ test_that("Vaccination is correctly initialised", {
 })
 
 # run model with vaccination
-data_vaccination <- epidemic_cpp(
+data_vaccination <- epidemic(
   population = uk_population,
   r0 = r0,
   preinfectious_period = preinfectious_period,
@@ -78,7 +78,7 @@ data_vaccination <- epidemic_cpp(
 )
 
 # run model without vaccination
-data <- epidemic_cpp(
+data <- epidemic(
   population = uk_population,
   r0 = r0,
   preinfectious_period = preinfectious_period,

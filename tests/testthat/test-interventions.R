@@ -69,7 +69,7 @@ test_that("Intervention is correctly initialised", {
 
 test_that("Intervention reduces final size", {
   # run model with intervention
-  data_intervention <- epidemic_cpp(
+  data_intervention <- epidemic(
     population = uk_population,
     r0 = r0,
     preinfectious_period = preinfectious_period,
@@ -79,7 +79,7 @@ test_that("Intervention reduces final size", {
   )
 
   # run model without intervention
-  data <- epidemic_cpp(
+  data <- epidemic(
     population = uk_population,
     r0 = r0,
     preinfectious_period = preinfectious_period,
@@ -112,7 +112,7 @@ badly_formed_intervention <- intervention(
 test_that("Error on poorly specified intervention", {
   # expect failure for poorly specified intervention
   expect_error(
-    epidemic_cpp(
+    epidemic(
       population = uk_population,
       r0 = r0,
       preinfectious_period = preinfectious_period,

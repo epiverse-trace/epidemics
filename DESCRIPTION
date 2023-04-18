@@ -1,5 +1,5 @@
 Package: epidemics
-Title: A Library of Epidemic Compartmental Models
+Title: A Library of Compartmental Epidemic Scenario Models
 Version: 0.0.0.9000
 Authors@R: 
     c(

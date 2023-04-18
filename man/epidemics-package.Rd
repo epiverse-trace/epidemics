@@ -4,7 +4,7 @@
 \name{epidemics-package}
 \alias{epidemics}
 \alias{epidemics-package}
-\title{epidemics: A Library of Epidemic Compartmental Models}
+\title{epidemics: A Library of Compartmental Epidemic Scenario Models}
 \description{
 Model epidemics using compartmental models.
 }

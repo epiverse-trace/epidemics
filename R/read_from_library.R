@@ -13,8 +13,8 @@
 #'
 #' @keywords internal
 read_from_library <- function(model_type = "epidemic",
-                                 model_name = "default",
-                                 which_function = "model_function") {
+                              model_name = "default",
+                              which_function = "model_function") {
 
   # input checking
   checkmate::assert_string(model_type)
@@ -36,11 +36,11 @@ read_from_library <- function(model_type = "epidemic",
   )
 
   fn <- model_library[
-    model_library$model_type == model_type &&
-      model_library$model_name == model_name
+    model_library$model_type == model_type &
+      model_library$model_name == model_name,
   ][[which_function]]
 
-  if (is.null(fn)) {
+  if (length(fn) == 0L) {
     stop(
       sprintf(
         "No model named '%s' of the type '%s' found; ",

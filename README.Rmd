@@ -39,7 +39,7 @@ _{{ packagename }}_ relies on [Eigen](https://gitlab.com/libeigen/eigen) via [{R
 The current development version of _finalsize_ can be installed from _{{ packagename }}_ from [GitHub](https://github.com/) using the `pak` package:
 
 ```r
-install.packages("pak")
+if(!require("pak")) install.packages("pak")
 pak::pak("{{ gh_repo }}")
 ```
 

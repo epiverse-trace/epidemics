@@ -28,10 +28,16 @@
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/reference/check_args_default.html</loc>
+    <loc>/reference/add_to_library.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-check_args_epidemic_default.html</loc>
   </url>
   <url>
     <loc>/reference/dot-epidemic_default_cpp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-prepare_args_epidemic_default.html</loc>
   </url>
   <url>
     <loc>/reference/epidemic.html</loc>
@@ -55,6 +61,9 @@
     <loc>/reference/is_vaccination.html</loc>
   </url>
   <url>
+    <loc>/reference/model_library.html</loc>
+  </url>
+  <url>
     <loc>/reference/no_intervention.html</loc>
   </url>
   <url>
@@ -67,7 +76,7 @@
     <loc>/reference/population.html</loc>
   </url>
   <url>
-    <loc>/reference/prepare_args_default.html</loc>
+    <loc>/reference/read_from_library.html</loc>
   </url>
   <url>
     <loc>/reference/vaccination.html</loc>

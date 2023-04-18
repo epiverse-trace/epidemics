@@ -1,5 +1,6 @@
 ---
 output: github_document
+bibliography: vignettes/references.json
 link-citations: true
 ---
 
@@ -12,10 +13,18 @@ knitr::opts_chunk$set(
 )
 ```
 
-# {{ packagename }}: Model epidemics
+# _{{ packagename }}_: A library of compartmental epidemic scenario models
 <!-- <img src="man/figures/logo.png" align="right" width="130"/> -->
 
-_{{ packagename }}_ is intended to provide functions to model epidemic outbreaks. This package is still a work in progress, and most functions are placeholders.
+_{{ packagename }}_ is an R package that provides an easy interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted infections such as influenza, Covid-19, or respiratory syncytial virus (RSV).
+
+_{{ packagename }}_ currently provides a single model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates.
+
+_{{ packagename }}_ implements methods outlined in @bjornstad2020 and @bjornstad2020a.
+
+The models in _{{ packagename }}_ can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions
+
+_{{ packagename }}_ relies on [Eigen](https://gitlab.com/libeigen/eigen) via [{RcppEigen}](https://cran.r-project.org/web/packages/RcppEigen/index.html), and on [Boost Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html) via [{BH}](https://cran.r-project.org/web/packages/BH/index.html), and is developed at the [Centre for the Mathematical Modelling of Infectious Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases) at the London School of Hygiene and Tropical Medicine as part of the [Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
 
 <!-- badges: start -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -27,14 +36,24 @@ _{{ packagename }}_ is intended to provide functions to model epidemic outbreaks
 
 ## Installation
 
-You can install the development version of _{{ packagename }}_ from [GitHub](https://github.com/) with:
+The current development version of _finalsize_ can be installed from _{{ packagename }}_ from [GitHub](https://github.com/) using the `pak` package:
 
 ```r
-# install.packages("remotes")
-remotes::install_github("{{ gh_repo }}")
+install.packages("pak")
+pak::pak("{{ gh_repo }}")
 ```
 
-## Help 
+## Quick start
+
+_{{ packagename }}_ provides the single function ...
+
+Here, an example using ...
+
+## Package vignettes
+
+More details on how to use _{{ packagename }}_ can be found in the [online documentation as package vignettes](https://epiverse-trace.github.io/{{ packagename }}/), under "Articles".
+
+## Help
 
 To report a bug please open an [issue](https://github.com/{{ gh_repo }}/issues/new/choose).
 
@@ -45,3 +64,5 @@ Contributions to _{{ packagename }}_ are welcomed. Please follow the [package co
 ## Code of conduct
 
 Please note that the _{{ packagename }}_ project is released with a [Contributor Code of Conduct](https://github.com/epiverse-trace/.github/blob/main/CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
+
+## References

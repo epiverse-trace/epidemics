@@ -9,6 +9,7 @@
 # nolint start
 library(testthat)
 library(epidemics)
+library(jsonlite)
 # nolint end
 
 test_check("epidemics")

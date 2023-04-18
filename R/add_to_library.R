@@ -32,6 +32,9 @@ add_to_library <- function(model_type = "epidemic",
   checkmate::assert_string(model_type)
   checkmate::assert_string(model_name)
 
+  # read in model library
+  model_library <- model_library()
+
   # check whether there is already a model of this name
   stopifnot(
     "Model library already has a model of this name - choose another name" =
@@ -80,7 +83,7 @@ add_to_library <- function(model_type = "epidemic",
   )
   message(
     sprintf(
-      "Adding model '%s' type model named '%s' to the model library.",
+      "Adding '%s' type model named '%s' to the model library.\n",
       model_type, model_name
     ),
     "Please check that this is correct before commiting your changes."

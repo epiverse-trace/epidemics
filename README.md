@@ -59,9 +59,111 @@ pak::pak("epiverse-trace/epidemics")
 
 ## Quick start
 
-*epidemics* provides the single function …
+Here we show an example of using *epidemics* to model an epidemic in the
+U.K. population with an $R_0$ similar to that of pandemic influenza,
+with heterogeneity in social contacts among different age groups, and
+with the implementation of school closures to dampen the spread of the
+infection.
 
-Here, an example using …
+``` r
+# load epidemics
+library(epidemics)
+library(ggplot2)
+library(data.table)
+```
+
+Prepare the social contact pattern for a population (here, the U.K
+population), divided into three age groups: 0 – 19, 20 – 39, and 40+.
+
+``` r
+# load contact and population data from socialmixr::polymod
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+
+# prepare contact matrix
+contact_matrix <- t(contact_data$matrix)
+
+# prepare the demography vector
+demography_vector <- contact_data$demography$population
+names(demography_vector) <- rownames(contact_matrix)
+```
+
+Prepare the initial conditions for the population by age group — here,
+one in every million individuals is infected at the start of the
+epidemic (for a total of about 60 infections).
+
+``` r
+# initial conditions: one in every 1 million is infected
+initial_i <- 1e-6
+initial_conditions <- c(
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
+)
+
+# build for all age groups
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+rownames(initial_conditions) <- rownames(contact_matrix)
+```
+
+Prepare an object of the class `<population>`, using the function
+`population()`.
+
+``` r
+# prepare the population to model as affected by the epidemic
+uk_population <- population(
+  name = "UK",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+```
+
+Define an intervention to close schools for two months. This
+intervention mostly only affects individuals in the age range 0 – 19,
+and reduces their contacts by 50%, reducing the contacts of other age
+groups by 1%. This is an object of the class `<intervention>`, created
+using the function `intervention()`.
+
+``` r
+# an intervention to close schools
+close_schools <- intervention(
+  time_begin = 200,
+  time_end = 260,
+  contact_reduction = c(0.5, 0.01, 0.01)
+)
+```
+
+Run the default epidemic model, using the function `epidemic()`. We
+assume an $R_0$ of 1.5 which is similar to pandemic influenza, an
+infectious period of 7 days, and a pre-infectious period of 3 days.
+
+``` r
+# run an epidemic model using `epidemic()`
+output <- epidemic(
+  model = "default",
+  population = uk_population,
+  r0 = 1.5,
+  preinfectious_period = 3,
+  infectious_period = 7,
+  intervention = close_schools,
+  time_end = 600, increment = 1.0
+)
+```
+
+Visualise the development of individuals in the “infectious” compartment
+over model time. Note that these curves represent the number of
+individuals that are infectious, and not the number of newly infectious
+individuals.
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
 ## Package vignettes
 

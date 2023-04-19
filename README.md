@@ -16,8 +16,8 @@ contacts, and a vaccination regime with group-specific start and end
 dates.
 
 *epidemics* implements methods outlined in Bjørnstad et al.
-([2020b](#ref-bjornstad2020)) and Bjørnstad et al.
-([2020a](#ref-bjornstad2020a)).
+([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
+([2020b](#ref-bjornstad2020)).
 
 The models in *epidemics* can help provide rough estimates of the course
 of epidemics, and the effectiveness of pharmaceutical and
@@ -50,7 +50,7 @@ status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.
 ## Installation
 
 The current development version of *finalsize* can be installed from
-*epidemics* from [GitHub](https://github.com/) using the `pak` package:
+*epidemics* from [GitHub](https://github.com/) using the `pak` package.
 
 ``` r
 if(!require("pak")) install.packages("pak")

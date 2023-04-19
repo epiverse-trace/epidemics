@@ -37,10 +37,6 @@ jobs:
  
       - name: Compile the readme
         run: |
-          tf <- list.files(
-            pattern = "Readme.Rmd", ignore.case = TRUE,
-            full.names = TRUE
-          )
           writeLines(
             knitr::knit_expand(
               "README.Rmd", 

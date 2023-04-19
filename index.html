@@ -6,12 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="Model epidemics using compartmental models.">
-<title>A Library of Epidemic Compartmental Models • epidemics</title>
+<title>A Library of Compartmental Epidemic Scenario Models • epidemics</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A Library of Epidemic Compartmental Models">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A Library of Compartmental Epidemic Scenario Models">
 <meta property="og:description" content="Model epidemics using compartmental models.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -71,19 +71,102 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="epidemics-model-epidemics">epidemics: Model epidemics<a class="anchor" aria-label="anchor" href="#epidemics-model-epidemics"></a>
+<div class="page-header"><h1 id="epidemics-a-library-of-compartmental-epidemic-scenario-models">
+<em>epidemics</em>: A library of compartmental epidemic scenario models<a class="anchor" aria-label="anchor" href="#epidemics-a-library-of-compartmental-epidemic-scenario-models"></a>
 </h1></div>
 <!-- <img src="man/figures/logo.png" align="right" width="130"/> -->
-<p><em>epidemics</em> is intended to provide functions to model epidemic outbreaks. This package is still a work in progress, and most functions are placeholders.</p>
+<p><em>epidemics</em> is an R package that provides an easy interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted infections such as influenza, Covid-19, or respiratory syncytial virus (RSV).</p>
+<p><em>epidemics</em> currently provides a single model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates.</p>
+<p><em>epidemics</em> implements methods outlined in Bjørnstad et al. (<a href="#ref-bjornstad2020a">2020a</a>) and Bjørnstad et al. (<a href="#ref-bjornstad2020">2020b</a>).</p>
+<p>The models in <em>epidemics</em> can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions</p>
+<p><em>epidemics</em> relies on <a href="https://gitlab.com/libeigen/eigen" class="external-link">Eigen</a> via <a href="https://cran.r-project.org/web/packages/RcppEigen/index.html" class="external-link">{RcppEigen}</a>, and on <a href="https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html" class="external-link">Boost Odeint</a> via <a href="https://cran.r-project.org/web/packages/BH/index.html" class="external-link">{BH}</a>, and is developed at the <a href="https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases" class="external-link">Centre for the Mathematical Modelling of Infectious Diseases</a> at the London School of Hygiene and Tropical Medicine as part of the <a href="https://data.org/initiatives/epiverse/" class="external-link">Epiverse-TRACE initiative</a>.</p>
 <!-- badges: start -->
 
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of <em>epidemics</em> from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>The current development version of <em>finalsize</em> can be installed from <em>epidemics</em> from <a href="https://github.com/" class="external-link">GitHub</a> using the <code>pak</code> package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"epiverse-trace/epidemics"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://pak.r-lib.org/" class="external-link">"pak"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="http://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"epiverse-trace/epidemics"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+</h2>
+<p>Here we show an example of using <em>epidemics</em> to model an epidemic in the U.K. population with an <span class="math inline"><em>R</em><sub>0</sub></span> similar to that of pandemic influenza, with heterogeneity in social contacts among different age groups, and with the implementation of school closures to dampen the spread of the infection.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># load epidemics</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></code></pre></div>
+<p>Prepare the social contact pattern for a population (here, the U.K population), divided into three age groups: 0 – 19, 20 – 39, and 40+.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
+<span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
+<span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
+<span>  <span class="va">polymod</span>,</span>
+<span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
+<span>  age.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
+<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># prepare contact matrix</span></span>
+<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># prepare the demography vector</span></span>
+<span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
+<p>Prepare the initial conditions for the population by age group — here, one in every million individuals is infected at the start of the epidemic (for a total of about 60 infections).</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># initial conditions: one in every 1 million is infected</span></span>
+<span><span class="va">initial_i</span> <span class="op">&lt;-</span> <span class="fl">1e-6</span></span>
+<span><span class="va">initial_conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  S <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">initial_i</span>, E <span class="op">=</span> <span class="fl">0</span>, I <span class="op">=</span> <span class="va">initial_i</span>, R <span class="op">=</span> <span class="fl">0</span>, V <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># build for all age groups</span></span>
+<span><span class="va">initial_conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="va">initial_conditions</span>,</span>
+<span>  <span class="va">initial_conditions</span>,</span>
+<span>  <span class="va">initial_conditions</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
+<p>Prepare an object of the class <code>&lt;population&gt;</code>, using the function <code><a href="reference/population.html">population()</a></code>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># prepare the population to model as affected by the epidemic</span></span>
+<span><span class="va">uk_population</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/population.html">population</a></span><span class="op">(</span></span>
+<span>  name <span class="op">=</span> <span class="st">"UK"</span>,</span>
+<span>  contact_matrix <span class="op">=</span> <span class="va">contact_matrix</span>,</span>
+<span>  demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
+<span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Define an intervention to close schools for two months. This intervention mostly only affects individuals in the age range 0 – 19, and reduces their contacts by 50%, reducing the contacts of other age groups by 1%. This is an object of the class <code>&lt;intervention&gt;</code>, created using the function <code><a href="reference/intervention.html">intervention()</a></code>.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># an intervention to close schools</span></span>
+<span><span class="va">close_schools</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/intervention.html">intervention</a></span><span class="op">(</span></span>
+<span>  time_begin <span class="op">=</span> <span class="fl">200</span>,</span>
+<span>  time_end <span class="op">=</span> <span class="fl">260</span>,</span>
+<span>  contact_reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Run the default epidemic model, using the function <code><a href="reference/epidemic.html">epidemic()</a></code>. We assume an <span class="math inline"><em>R</em><sub>0</sub></span> of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># run an epidemic model using `epidemic()`</span></span>
+<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
+<span>  model <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
+<span>  r0 <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>  preinfectious_period <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  infectious_period <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  intervention <span class="op">=</span> <span class="va">close_schools</span>,</span>
+<span>  time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Visualise the development of individuals in the “infectious” compartment over model time. Note that these curves represent the number of individuals that are infectious, and not the number of newly infectious individuals.</p>
+<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="package-vignettes">Package vignettes<a class="anchor" aria-label="anchor" href="#package-vignettes"></a>
+</h2>
+<p>More details on how to use <em>epidemics</em> can be found in the <a href="https://epiverse-trace.github.io/epidemics/" class="external-link">online documentation as package vignettes</a>, under “Articles”.</p>
 </div>
 <div class="section level2">
 <h2 id="help">Help<a class="anchor" aria-label="anchor" href="#help"></a>
@@ -99,6 +182,18 @@
 <h2 id="code-of-conduct">Code of conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
 </h2>
 <p>Please note that the <em>epidemics</em> project is released with a <a href="https://github.com/epiverse-trace/.github/blob/main/CODE_OF_CONDUCT.md" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-bjornstad2020a" class="csl-entry">
+Bjørnstad, Ottar N., Katriona Shea, Martin Krzywinski, and Naomi Altman. 2020a. “Modeling Infectious Epidemics.” <em>Nature Methods</em> 17 (5): 455–56. <a href="https://doi.org/10.1038/s41592-020-0822-z" class="external-link uri">https://doi.org/10.1038/s41592-020-0822-z</a>.
+</div>
+<div id="ref-bjornstad2020" class="csl-entry">
+———. 2020b. “The SEIRS Model for Infectious Disease Dynamics.” <em>Nature Methods</em> 17 (6): 557–58. <a href="https://doi.org/10.1038/s41592-020-0856-2" class="external-link uri">https://doi.org/10.1038/s41592-020-0856-2</a>.
+</div>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

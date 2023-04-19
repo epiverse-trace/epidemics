@@ -38,7 +38,7 @@ _{{ packagename }}_ relies on [Eigen](https://gitlab.com/libeigen/eigen) via [{R
 
 ## Installation
 
-The current development version of _finalsize_ can be installed from _{{ packagename }}_ from [GitHub](https://github.com/) using the `pak` package:
+The current development version of _finalsize_ can be installed from _{{ packagename }}_ from [GitHub](https://github.com/) using the `pak` package.
 
 ```r
 if(!require("pak")) install.packages("pak")

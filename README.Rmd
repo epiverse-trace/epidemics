@@ -22,7 +22,7 @@ _{{ packagename }}_ is an R package that provides an easy interface to a library
 
 _{{ packagename }}_ currently provides a single model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates.
 
-_{{ packagename }}_ implements methods outlined in @bjornstad2020 and @bjornstad2020a.
+_{{ packagename }}_ implements methods outlined in @bjornstad2020a and @bjornstad2020.
 
 The models in _{{ packagename }}_ can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions
 

@@ -2,6 +2,7 @@
 
 export(add_to_library)
 export(epidemic)
+export(epidemic_size)
 export(intervention)
 export(is_intervention)
 export(is_population)

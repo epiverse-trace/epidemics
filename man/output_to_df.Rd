@@ -2,22 +2,32 @@
 % Please edit documentation in R/helpers.R
 \name{output_to_df}
 \alias{output_to_df}
-\title{Convert epidemic model output to a data.frame}
+\title{Return ODE model output as a data.table}
 \usage{
-output_to_df(
-  l,
-  compartments = c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
-)
+output_to_df(output, model_arguments, compartments)
 }
 \arguments{
-\item{l}{A list, usually the output of a call to \code{\link[=.epidemic_default_cpp]{.epidemic_default_cpp()}}.}
+\item{output}{The model output, which must be a two element list (for
+epidemic) models, with the names "x" and "time", where "x" represents the
+condition of each compartment at each timestep in "time".}
 
-\item{compartments}{A character vector of the compartment names.}
+\item{model_arguments}{A list containing the model arguments passed to
+\code{\link[=epidemic]{epidemic()}}. This is scanned for information on the population passed to
+the model, which must be a \code{population} object; see \code{\link[=population]{population()}}.
+The \code{population} object is used to generate the names of the demographic
+groups, if these are named.}
+
+\item{compartments}{A vector for the model compartment names.}
 }
 \value{
-A \code{data.frame} with N+1 columns, where N is the number of
-compartments, with the additional column being "time".
+A \code{data.table} with the columns "compartment", "demography_group",
+"value", and "time"; these specify the epidemiological compartment, the
+name of the demography group, the number of individuals of that group in the
+compartment, and the model timestep, respectively.
+Names for the demographic groups are generated if no names are provided in
+the \code{population} object; these are of the form "demo_group_X".
 }
 \description{
-Convert epidemic model output to a data.frame
+Return ODE model output as a data.table
 }
+\keyword{internal}

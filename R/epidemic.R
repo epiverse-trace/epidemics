@@ -81,17 +81,22 @@ epidemic <- function(model_name = "default", ...) {
   args_check_fn <- read_from_library(
     model_type = "epidemic",
     model_name = model_name,
-    which_function = "model_args_checker"
+    what = "model_args_checker"
   )
   args_prep_fn <- read_from_library(
     model_type = "epidemic",
     model_name = model_name,
-    which_function = "model_args_prepper"
+    what = "model_args_prepper"
   )
   model_fn <- read_from_library(
     model_type = "epidemic",
     model_name = model_name,
-    which_function = "model_function"
+    what = "model_function"
+  )
+  compartments <- read_from_library(
+    model_type = "epidemic",
+    model_name = model_name,
+    what = "compartments"
   )
 
   # prepare and check model arguments #
@@ -112,5 +117,5 @@ epidemic <- function(model_name = "default", ...) {
   )
 
   # return combined output
-  output_to_df(output)
+  output_to_df(output, model_arguments, compartments)
 }

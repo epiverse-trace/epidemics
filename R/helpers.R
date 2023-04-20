@@ -30,14 +30,17 @@ output_to_df <- function(output, model_arguments, compartments) {
     all.missing = FALSE, unique = TRUE
   )
 
-  if ("population" %in% names(model_arguments)) {
-    names_demo_groups <- rownames(model_arguments$population$contact_matrix)
-    if (is.null(names_demo_groups)) {
-      names_demo_groups <- sprintf(
-        "demo_group_%i",
-        seq_len(nrow(model_arguments$population$contact_matrix))
-      )
-    }
+  # check whether there is a `population` in the model arguments
+  stopifnot(
+    "No `population` object found in the model, please check model arguments" =
+      "population" %in% names(model_arguments)
+  )
+  names_demo_groups <- rownames(model_arguments$population$contact_matrix)
+  if (is.null(names_demo_groups)) {
+    names_demo_groups <- sprintf(
+      "demo_group_%i",
+      seq_len(nrow(model_arguments$population$contact_matrix))
+    )
   }
 
   # count groups and timesteps to generate vectors of compartment and demo

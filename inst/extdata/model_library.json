@@ -1,1 +1,1 @@
-[{"model_type":"epidemic","model_name":"default","model_function":".epidemic_default_cpp","model_args_checker":".check_args_epidemic_default","model_args_prepper":".prepare_args_epidemic_default"}]
+[{"model_type":"epidemic","model_name":"default","model_function":".epidemic_default_cpp","model_args_checker":".check_args_epidemic_default","model_args_prepper":".prepare_args_epidemic_default","compartments":["susceptible","exposed","infectious","recovered","vaccinated"]}]

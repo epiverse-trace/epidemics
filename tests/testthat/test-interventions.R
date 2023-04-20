@@ -90,10 +90,8 @@ test_that("Intervention reduces final size", {
 
   # expect that intervention reduces epidemic final size
   # test only for a single group, to which intervention is applied
-  final_size_intervention <- subset(tail(data_intervention, 1L),
-    select = recovered_1
-  )
-  final_size <- subset(tail(data, 1L), select = recovered_1)
+  final_size_intervention <- epidemic_size(data_intervention, by_group = FALSE)
+  final_size <- epidemic_size(data, by_group = FALSE)
 
   expect_lt(
     final_size_intervention,

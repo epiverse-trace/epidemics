@@ -7,4 +7,6 @@
       1   epidemic    default .epidemic_default_cpp .check_args_epidemic_default
                     model_args_prepper
       1 .prepare_args_epidemic_default
+                                                   compartments
+      1 susceptible, exposed, infectious, recovered, vaccinated
 

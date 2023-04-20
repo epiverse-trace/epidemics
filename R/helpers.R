@@ -58,9 +58,76 @@ output_to_df <- function(output, model_arguments, compartments) {
     time = rep(output$time, each = n_groups * length(compartments))
   )
 }
-  )
-  data$time <- l[["time"]]
 
-  # return data
-  data
+#' Get the epidemic size
+#'
+#' Gets the size of the epidemic at any stage between the start and the end.
+#' This is calculated as the number of individuals _recovered_ from infection
+#' at that stage of the epidemic. This function can be used to calculate the
+#' _final size_ of the epidemic, by setting `stage = 1.0` (the default).
+#' The function allows for the calculation of epidemic sizes by demographic
+#' group as well as the total epidemic size.
+#'
+#' @param data A `data.table` (or `data.frame`) of model output, typically
+#' the output of [epidemic()].
+#' @param stage The stage of the epidemic at which to return the epidemic size;
+#' here, 0.0 represents the initial conditions of the epidemic, while 1.0
+#' represents the end of the epidemic and the values returned represent the
+#' _final size_ of the epidemic.
+#' @param by_group A logical representing whether the epidemic size should be
+#' returned by demographic group, or whether a single population-wide value is
+#' returned.
+#'
+#' @return A single number when `by_group = FALSE`, or a vector of numbers of
+#' the same length as the number of demographic groups when `by_group = TRUE`.
+#' @export
+#'
+#' @examples
+#' # create a population
+#' uk_population <- population(
+#'   name = "UK population",
+#'   contact_matrix = matrix(1),
+#'   demography_vector = 67e6,
+#'   initial_conditions = matrix(
+#'     c(0.9999, 0.0001, 0, 0, 0),
+#'     nrow = 1, ncol = 5L
+#'   )
+#' )
+#'
+#' # run epidemic simulation with no vaccination or intervention
+#' data <- epidemic(
+#'   model_name = "default",
+#'   population = uk_population,
+#'   r0 = 1.5,
+#'   preinfectious_period = 3,
+#'   infectious_period = 7,
+#'   time_end = 200,
+#'   increment = 1
+#' )
+#'
+#' # get the final epidemic size
+#' epidemic_size(data)
+#'
+#' # get the epidemic size at the halfway point
+#' epidemic_size(data, stage = 0.5)
+epidemic_size <- function(data, stage = 1.0, by_group = TRUE) {
+  # input checking for data
+  checkmate::assert_data_table(data)
+  checkmate::assert_logical(by_group)
+  checkmate::assert_number(stage, lower = 0.0, upper = 1.0, finite = TRUE)
+
+  stopifnot(
+    "No 'recovered' compartment found in `data`, check model compartments" =
+      "recovered" %in% unique(data$compartment)
+  )
+
+  # get final numbers recovered - operate on data.table as though data.frame
+  final_recovered <- data[data$compartment == "recovered" &
+    data$time == round(max(data$time) * stage, 2), ]
+
+  if (by_group) {
+    final_recovered[["value"]]
+  } else {
+    sum(final_recovered[["value"]])
+  }
 }

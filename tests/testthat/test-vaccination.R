@@ -89,37 +89,25 @@ data <- epidemic(
 test_that("Epidemic model with vaccination", {
 
   # expect that only the last age group is vaccinated
-  total_vaccinated <- unlist(
-    subset(
-      tail(data_vaccination, 1),
-      select = grepl("vaccinated", colnames(data_vaccination), fixed = TRUE)
-    )
-  )
+  total_vaccinated <- data_vaccination[data_vaccination$compartment ==
+    "vaccinated" & data_vaccination$time ==
+    max(data_vaccination$time), ]$value
+
   expect_identical(
     total_vaccinated[seq(2)], rep(0.0, 2),
     ignore_attr = TRUE
   )
   expect_gt(
-    total_vaccinated["vaccinated_3"], 0.0
+    total_vaccinated[3L], 0.0
   )
   expect_true(
-    all(total_vaccinated["vaccinated_3"] > total_vaccinated[seq(2)])
+    all(total_vaccinated[3L] > total_vaccinated[seq(2)])
   )
 
   # expect that vaccination reduces epidemic final size
   # test for the overall population
-  final_size_vaccination <- unlist(
-    subset(
-      tail(data_vaccination, 1),
-      select = grepl("recovered", colnames(data_vaccination), fixed = TRUE)
-    )
-  )
-  final_size_default <- unlist(
-    subset(
-      tail(data, 1),
-      select = grepl("recovered", colnames(data_vaccination), fixed = TRUE)
-    )
-  )
+  final_size_vaccination <- epidemic_size(data_vaccination)
+  final_size_default <- epidemic_size(data)
 
   expect_true(
     all(final_size_vaccination < final_size_default)

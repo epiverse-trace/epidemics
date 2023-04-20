@@ -23,7 +23,7 @@ uk_population <- population(
 )
 
 # Prepare epi parameters
-r0 <- 1.5
+r0 <- 3
 preinfectious_period <- 3
 infectious_period <- 7
 
@@ -40,33 +40,32 @@ test_that("Output of default epidemic model", {
   )
 
   # check for output type and contents
-  expect_s3_class(data, "data.frame")
-  expect_length(data, length(uk_population$initial_conditions) + 1L)
+  expect_s3_class(data, "data.table")
+  expect_length(data, 4L)
+  expect_named(
+    data, c("compartment", "demography_group", "value", "time"),
+    ignore.order = TRUE
+  )
 
   # check for all positive values within the range 0 and total population size
   expect_true(
     all(
-      vapply(subset(data, select = -time),
-        FUN = function(x) {
-          all(x >= 0 & x <= sum(uk_population$demography_vector))
-        },
-        FUN.VALUE = TRUE
-      )
+      data$value >= 0 & data$value <= sum(uk_population$demography_vector)
     )
   )
 
   # check for identical numbers of individuals at start and end
   # Note only valid for models without births and deaths
   expect_identical(
-    sum(subset(data[1, ], select = -time)),
-    sum(subset(tail(data, 1L), select = -time)),
+    sum(data[data$time == min(data$time), ]$value),
+    sum(data[data$time == max(data$time), ]$value),
     tolerance = 1e-6
   )
 
   # check that all age groups in the simulation are the same
   # size as the demography vector
   final_state <- matrix(
-    unlist(subset(tail(data, 1), select = -time)),
+    unlist(data[data$time == max(data$time), ]$value),
     nrow = nrow(contact_matrix)
   )
   expect_identical(
@@ -99,13 +98,11 @@ test_that("Larger R0 leads to larger final size in default epidemic model", {
   )
 
   # get final size as total recoveries
-  final_sizes <- lapply(data, tail, 1)
-  final_sizes <- vapply(final_sizes, `[[`, FUN.VALUE = 1, "recovered_1")
+  final_sizes <- lapply(data, epidemic_size)
 
   # test for effect of R0
-  expect_gt(
-    final_sizes["r0_high"],
-    final_sizes["r0_low"]
+  expect_true(
+    all(final_sizes[["r0_high"]] > final_sizes[["r0_low"]])
   )
 })
 
@@ -143,14 +140,7 @@ test_that("Identical population sizes lead to identical final size", {
     time_end = 200, increment = 0.1
   )
 
-  final_sizes <- unname(
-    unlist(
-      subset(
-        tail(data, 1),
-        select = grepl("recovered", colnames(data), fixed = TRUE)
-      )
-    )
-  )
+  final_sizes <- epidemic_size(data)
 
   # both groups have same final size
   expect_identical(
@@ -178,23 +168,11 @@ test_that("Lower preinfectious period leads to larger final size", {
     }
   )
 
-  final_sizes <- lapply(
-    data,
-    function(df) {
-      sum(
-        unlist(
-          subset(
-            tail(df, 1),
-            select = grepl("recovered", colnames(df), fixed = TRUE)
-          )
-        )
-      )
-    }
-  )
+  final_sizes <- lapply(data, epidemic_size)
 
   # both groups have same final size
-  expect_gt(
-    final_sizes[[1]], final_sizes[[2]]
+  expect_true(
+    all(final_sizes[[1]] > final_sizes[[2]])
   )
 })
 
@@ -217,23 +195,11 @@ test_that("Lower infectious period leads to larger final size", {
     }
   )
 
-  final_sizes <- lapply(
-    data,
-    function(df) {
-      sum(
-        unlist(
-          subset(
-            tail(df, 1),
-            select = grepl("recovered", colnames(df), fixed = TRUE)
-          )
-        )
-      )
-    }
-  )
+  final_sizes <- lapply(data, epidemic_size)
 
   # group 2 must have a larger final size
-  expect_gt(
-    final_sizes[[1]], final_sizes[[2]]
+  expect_true(
+    all(final_sizes[[1]] > final_sizes[[2]])
   )
 })
 
@@ -257,12 +223,7 @@ test_that("Group with more contacts has larger final size and infections", {
     time_end = 200, increment = 0.1
   )
 
-  final_sizes <- unlist(
-    subset(
-      tail(data, 1),
-      select = grepl("recovered", colnames(data), fixed = TRUE)
-    )
-  )
+  final_sizes <- epidemic_size(data)
 
   # group 1 with more contacts has higher final size
   expect_gt(
@@ -271,12 +232,8 @@ test_that("Group with more contacts has larger final size and infections", {
 
   # calculate individuals still infected and check that
   # group with more contacts has more current infections
-  current_infections <- unlist(
-    subset(
-      tail(data, 1),
-      select = grepl("infect", colnames(data), fixed = TRUE)
-    )
-  )
+  current_infections <- data[data$compartment == "infectious" &
+    data$time == max(data$time), ]$value
   expect_gt(
     current_infections[1], current_infections[2]
   )

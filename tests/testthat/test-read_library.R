@@ -22,13 +22,13 @@ test_that("Reading functions from library", {
   model_function <- read_from_library(
     model_type = "epidemic",
     model_name = "default",
-    which_function = "model_function"
+    what = "model_function"
   )
 
   args_checker <- read_from_library(
     model_type = "epidemic",
     model_name = "default",
-    which_function = "model_args_checker"
+    what = "model_args_checker"
   )
 
   model_fn_manual <- ml_manual[
@@ -53,12 +53,19 @@ test_that("Reading functions from library", {
     args_checker_manual
   )
 
+  # test that the default model compartments are returned correctly
+  compartments_default <- read_from_library(what = "compartments")
+  expect_identical(
+    compartments_default,
+    unlist(ml_manual$compartments)
+  )
+
   # Test that requesting a model not in the library errors
   expect_error(
     read_from_library(
       model_type = "epidemic",
       model_name = "not-the-default",
-      which_function = "model_function"
+      what = "model_function"
     ),
     regexp = "(No model named)*(not-the-default)*(epidemic)*(check type-name)"
   )

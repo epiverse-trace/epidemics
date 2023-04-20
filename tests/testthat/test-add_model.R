@@ -9,7 +9,8 @@ test_that("Add model function and details to the library", {
   expect_message(
     add_to_library(
       model_type = "test-type",
-      model_name = "test-name"
+      model_name = "test-name",
+      compartments = c("S", "I", "R") # bad compartment names
     ),
     regexp = paste(
       "(Adding 'test-type' type model)*('test-name')*(model library)*",
@@ -22,11 +23,22 @@ test_that("Add model function and details to the library", {
   test_fn <- read_from_library(
     model_type = "test-type",
     model_name = "test-name",
-    which_function = "model_function"
+    what = "model_function"
   )
   expect_identical(
     test_fn,
     "test-type_test-name_cpp"
+  )
+
+  # check that the compartments exist
+  test_fn <- read_from_library(
+    model_type = "test-type",
+    model_name = "test-name",
+    what = "compartments"
+  )
+  expect_identical(
+    test_fn,
+    c("S", "I", "R")
   )
 })
 

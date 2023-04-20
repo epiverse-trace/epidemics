@@ -4,7 +4,7 @@
 \alias{add_to_library}
 \title{Add model functions to the model library}
 \usage{
-add_to_library(model_type = "epidemic", model_name = "default")
+add_to_library(model_type = "epidemic", model_name = "default", compartments)
 }
 \arguments{
 \item{model_type}{The model type, as a single word, lower case string.
@@ -15,6 +15,12 @@ to include "outbreak".}
 Please name your model informatively yet concisely - such as a pathogen name,
 author or institution name, or the name of a previous model implementation.
 Overall, the name should help users identify your model quickly and reliably.}
+
+\item{compartments}{The model compartments' names, as a single word, lower
+case string. Please use names that correspond to prevailing epidemiological
+naming conventions, and please check the model library for the names used
+in other models and consider re-using these names when naming the
+compartments in your own model.}
 }
 \value{
 No return type; updates the model library JSON file with the model

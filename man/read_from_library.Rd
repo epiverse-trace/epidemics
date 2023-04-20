@@ -7,7 +7,7 @@
 read_from_library(
   model_type = "epidemic",
   model_name = "default",
-  which_function = "model_function"
+  what = "model_function"
 )
 }
 \arguments{
@@ -19,7 +19,7 @@ outbreak models.}
 \item{model_name}{The model name. The only option currently available is
 "default", for the default epidemic compartmental SEIR-V model.}
 
-\item{which_function}{A string for the function requested, which may be one
+\item{what}{A string for the function requested, which may be one
 of "model_function", "model_args_checker", and "model_args_prepper". These
 correspond to functions that run the model, check its arguments, and prepare
 the arguments for the model function, respectively.}

@@ -22,12 +22,18 @@ model_library <- function() {
 #' Please name your model informatively yet concisely - such as a pathogen name,
 #' author or institution name, or the name of a previous model implementation.
 #' Overall, the name should help users identify your model quickly and reliably.
+#' @param compartments The model compartments' names, as a single word, lower
+#' case string. Please use names that correspond to prevailing epidemiological
+#' naming conventions, and please check the model library for the names used
+#' in other models and consider re-using these names when naming the
+#' compartments in your own model.
 #'
 #' @return No return type; updates the model library JSON file with the model
 #' type and name provided by the user.
 #' @export
 add_to_library <- function(model_type = "epidemic",
-                           model_name = "default") {
+                           model_name = "default",
+                           compartments) {
   # input checking
   checkmate::assert_string(model_type)
   checkmate::assert_string(model_name)
@@ -54,6 +60,7 @@ add_to_library <- function(model_type = "epidemic",
     ),
     stringsAsFactors = FALSE
   )
+  temp_library$compartments <- list(compartments)
 
   # read in the model library as a JSON file
   model_library <- jsonlite::read_json(

@@ -36,17 +36,16 @@ Imports:
     checkmate,
     Rcpp,
     RcppEigen,
-    jsonlite
+    jsonlite,
+    data.table
 Suggests: 
     bookdown,
     covr,
-    data.table,
     ggplot2,
     knitr,
     rmarkdown,
     scales,
     socialmixr,
-    stringr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr

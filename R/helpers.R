@@ -131,3 +131,40 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE) {
     sum(final_recovered[["value"]])
   }
 }
+
+#' Get new infections
+#'
+#' @param data
+#' @param compartments_from_susceptible
+#' @param by_group
+#'
+#' @importFrom data.table :=
+#' @importFrom data.table .SD
+#'
+#' @return
+#' @export
+new_infections <- function(data,
+                           compartments_from_susceptible = "vaccinated",
+                           by_group = TRUE) {
+  # input checking
+  # check that the column "susceptible" is found in data
+  # check that the columns <compartments from susceptible> are found
+
+  # cast data wide
+  data_ <- data.table::dcast(
+    data.table::copy(data),
+    time + demography_group ~ compartment,
+    value.var = "value"
+  )
+
+  data_[, new_infections := c(0, -diff(susceptible)) -
+    Reduce(`+`, lapply(.SD, function(x) {
+      c(0, diff(x))
+    })),
+  .SDcols = compartments_from_susceptible,
+  by = "demography_group"
+  ]
+
+  # return data
+  data_[]
+}

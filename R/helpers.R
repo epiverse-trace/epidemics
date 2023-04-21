@@ -64,19 +64,24 @@ output_to_df <- function(output, model_arguments, compartments) {
 
 #' Get the epidemic size
 #'
-#' Gets the size of the epidemic at any stage between the start and the end.
+#' Get the size of the epidemic at any stage between the start and the end.
 #' This is calculated as the number of individuals _recovered_ from infection
-#' at that stage of the epidemic. This function can be used to calculate the
-#' _final size_ of the epidemic, by setting `stage = 1.0` (the default).
+#' at that stage of the epidemic.
+#'
+#' This function can be used to calculate the
+#' _final size_ of the epidemic, by setting `stage = 1.0` (100% of model time;
+#' the default).
+#'
 #' The function allows for the calculation of epidemic sizes by demographic
 #' group as well as the total epidemic size.
 #'
 #' @param data A `data.table` (or `data.frame`) of model output, typically
 #' the output of [epidemic()].
 #' @param stage The stage of the epidemic at which to return the epidemic size;
-#' here, 0.0 represents the initial conditions of the epidemic, while 1.0
-#' represents the end of the epidemic and the values returned represent the
-#' _final size_ of the epidemic.
+#' here, 0.0 represents the initial conditions of the epidemic (0% of model time
+#' ), while 1.0 represents the end of the epidemic model (100% of model time).
+#' The values returned at `stage = 1.0` represent the _final size_ of the
+#' epidemic.
 #' @param by_group A logical representing whether the epidemic size should be
 #' returned by demographic group, or whether a single population-wide value is
 #' returned.

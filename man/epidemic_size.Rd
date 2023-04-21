@@ -11,9 +11,10 @@ epidemic_size(data, stage = 1, by_group = TRUE)
 the output of \code{\link[=epidemic]{epidemic()}}.}
 
 \item{stage}{The stage of the epidemic at which to return the epidemic size;
-here, 0.0 represents the initial conditions of the epidemic, while 1.0
-represents the end of the epidemic and the values returned represent the
-\emph{final size} of the epidemic.}
+here, 0.0 represents the initial conditions of the epidemic (0\% of model time
+), while 1.0 represents the end of the epidemic model (100\% of model time).
+The values returned at \code{stage = 1.0} represent the \emph{final size} of the
+epidemic.}
 
 \item{by_group}{A logical representing whether the epidemic size should be
 returned by demographic group, or whether a single population-wide value is
@@ -24,10 +25,15 @@ A single number when \code{by_group = FALSE}, or a vector of numbers of
 the same length as the number of demographic groups when \code{by_group = TRUE}.
 }
 \description{
-Gets the size of the epidemic at any stage between the start and the end.
+Get the size of the epidemic at any stage between the start and the end.
 This is calculated as the number of individuals \emph{recovered} from infection
-at that stage of the epidemic. This function can be used to calculate the
-\emph{final size} of the epidemic, by setting \code{stage = 1.0} (the default).
+at that stage of the epidemic.
+}
+\details{
+This function can be used to calculate the
+\emph{final size} of the epidemic, by setting \code{stage = 1.0} (100\% of model time;
+the default).
+
 The function allows for the calculation of epidemic sizes by demographic
 group as well as the total epidemic size.
 }

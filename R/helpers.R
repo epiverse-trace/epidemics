@@ -55,10 +55,10 @@ output_to_df <- function(output, model_arguments, compartments) {
 
   # return a data.table
   data.table::data.table(
-    compartment = vec_compartments,
+    time = rep(output$time, each = n_groups * length(compartments)),
     demography_group = vec_demo_groups,
-    value = unlist(output$x),
-    time = rep(output$time, each = n_groups * length(compartments))
+    compartment = vec_compartments,
+    value = unlist(output$x)
   )
 }
 

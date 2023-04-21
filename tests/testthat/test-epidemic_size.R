@@ -2,15 +2,18 @@
 # create initial conditions
 initial_conditions <- matrix(
   c(0.9999, 0.0001, 0, 0, 0), # note "infectious" are zero
-  nrow = 1, ncol = 5L
+  nrow = 2, ncol = 5L,
+  byrow = TRUE
 )
 colnames(initial_conditions) <- read_from_library(what = "compartments")
 
-# create a population
+# create a population where there are no contacts between groups
+# this helps test the expectation that the final size proportions
+# should be the same as the demographic group proportions
 uk_population <- population(
   name = "UK population",
-  contact_matrix = matrix(1),
-  demography_vector = 67e6,
+  contact_matrix = matrix(c(1, 0, 0, 1), 2, 2), # within group contacts only
+  demography_vector = 67e6 * c(0.4, 0.6),
   initial_conditions = initial_conditions
 )
 
@@ -36,16 +39,22 @@ test_that("Epidemic size functions", {
 
   # test the final size
   epidemic_final_size <- epidemic_size(data)
-  expect_equal(
+  expect_identical(
     epidemic_final_size,
-    data[data$compartment == "recovered" & data$time == max(data$time), ]$value,
-    ignore_attr = TRUE
+    data[data$compartment == "recovered" & data$time == max(data$time), ]$value
+  )
+
+  # expect that the final size proportion is the same as the demography prop.
+  expect_identical(
+    epidemic_final_size / sum(epidemic_final_size),
+    uk_population$demography_vector / sum(uk_population$demography_vector),
+    tolerance = 1e-6
   )
 
   # test that final size is greater than size at 50% epidemic time
   epidemic_half_size <- epidemic_size(data, stage = 0.5)
-  expect_gt(
-    epidemic_final_size, epidemic_half_size
+  expect_true(
+    all(epidemic_final_size > epidemic_half_size)
   )
 
   # test that by group FALSE returns a single value

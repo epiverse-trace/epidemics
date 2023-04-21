@@ -15,7 +15,7 @@ new_intervention <- function(name = NA_character_,
                              time_begin,
                              time_end,
                              contact_reduction) {
-  # create and return scenario class
+  # create and return intervention class
   structure(
     list(
       name = name,
@@ -66,7 +66,7 @@ intervention <- function(name = NA_character_,
     )
   }
 
-  # call scenario constructor
+  # call intervention constructor
   intervention_ <- new_intervention(
     name = name,
     time_begin = time_begin,
@@ -140,4 +140,57 @@ no_intervention <- function(population) {
     name = "no_intervention", time_begin = 0, time_end = 0,
     contact_reduction = rep(0.0, times = nrow(population$contact_matrix))
   )
+}
+
+#' Print a `intervention` object
+#'
+#' @param x A `intervention` object.
+#' @param ... Other parameters passed to [print()].
+#' @noRd
+#' @export
+print.intervention <- function(x, ...) {
+  format(x, ...)
+}
+
+#' Format a `intervention` object
+#'
+#' @param x A `intervention` object.
+#' @param ... Other arguments passed to [format()].
+#'
+#' @return None. Formats the `intervention` for printing.
+#' @keywords internal
+#' @noRd
+format.intervention <- function(x, ...) {
+
+  # validate the intervention object
+  validate_intervention(x)
+
+  # header
+  header <- "<intervention>"
+
+  # collect information on name
+  name <- ifelse(
+    is.na(x$name),
+    "NA",
+    glue::double_quote(x$name)
+  )
+  name <- glue::glue("intervention name: {name}")
+
+  # print to screen
+  writeLines(
+    c(
+      header,
+      name,
+      "Time begin:"
+    )
+  )
+  print(x$time_begin)
+
+  writeLines("Time end:")
+  print(x$time_end)
+
+  writeLines("Contact reduction:")
+  print(x$contact_reduction)
+
+  invisible(x)
 }

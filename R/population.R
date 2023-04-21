@@ -20,7 +20,7 @@ new_population <- function(name = NA_character_,
                            contact_matrix = matrix(),
                            demography_vector = numeric(),
                            initial_conditions = matrix()) {
-  # create and return scenario class
+  # create and return population class
   structure(
     list(
       name = name,
@@ -74,7 +74,7 @@ population <- function(name = NA_character_,
       nrow(initial_conditions) == nrow(contact_matrix)
   )
 
-  # call scenario constructor
+  # call population constructor
   population_ <- new_population(
     name = name,
     contact_matrix = contact_matrix,
@@ -82,10 +82,10 @@ population <- function(name = NA_character_,
     initial_conditions = initial_conditions
   )
 
-  # call scenario validator
+  # call population validator
   validate_population(object = population_)
 
-  # return scenario object
+  # return population object
   population_
 }
 
@@ -133,4 +133,78 @@ validate_population <- function(object) {
 #' is_population(new_pop)
 is_population <- function(object) {
   inherits(object, "population")
+}
+
+#' Print a `population` object
+#'
+#' @param x A `population` object.
+#' @param ... Other parameters passed to [print()].
+#' @noRd
+#' @export
+print.population <- function(x, ...) {
+  format(x, ...)
+}
+
+#' Format a `population` object
+#'
+#' @param x A `population` object.
+#' @param ... Other arguments passed to [format()].
+#'
+#' @return None. Formats the `population` for printing.
+#' @keywords internal
+#' @noRd
+format.population <- function(x, ...) {
+
+  # validate the population object
+  validate_population(x)
+
+  # header
+  header <- cli::style_bold("<population>")
+
+  # collect information on name
+  name <- ifelse(
+    is.na(x$name),
+    "NA",
+    glue::double_quote(x$name)
+  )
+  name <- glue::glue("Population name: {name}")
+
+  # copy demography vector
+  demography_vector <- x$demography_vector
+  contact_matrix <- x$contact_matrix
+
+  # demographic group names
+  if (is.null(names(x$demography_vector))) {
+    if (is.null(rownames(x$contact_matrix))) {
+      # assign names to demography vector and contacts
+      names(demography_vector) <-
+        glue::glue("Dem. grp. {seq_along(demography_vector)}")
+
+      rownames(contact_matrix) <-
+        glue::glue("Dem. grp. {seq_along(demography_vector)}:")
+      colnames(contact_matrix) <-
+        glue::glue("Dem. grp. {seq_along(demography_vector)}:")
+    } else {
+      names(demography_vector) <- rownames(x$contact_matrix)
+    }
+  }
+
+  # print to screen
+  writeLines(
+    c(
+      header,
+      name,
+      "Demography:"
+    )
+  )
+  print(
+    prettyNum(demography_vector, big.mark = ",", scientific = FALSE)
+  )
+
+  writeLines(
+    "Contact matrix:"
+  )
+  print(contact_matrix)
+
+  invisible(x)
 }

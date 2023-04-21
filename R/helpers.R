@@ -137,37 +137,95 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE) {
 
 #' Get new infections
 #'
-#' @param data
-#' @param compartments_from_susceptible
-#' @param by_group
+#' @param data A `data.table` (or `data.frame`) of model output, typically
+#' the output of [epidemic()].
+#' @param compartments_from_susceptible An optional argument, for a character
+#' vector of the names of model compartments into which individuals transition
+#' from the "susceptible" compartment, and which are not related to infection.
+#' A common example is a compartment for "vaccinated" individuals who are no
+#' longer susceptible, but who should also not be counted as infected.
 #'
 #' @importFrom data.table :=
 #' @importFrom data.table .SD
 #'
-#' @return
+#' @return A `data.table` with the same columns as `data`, but with the
+#' additional variable under `compartment`, "new_infections", resulting in
+#' additional rows.
 #' @export
+#' @examples
+#' # create a population
+#' uk_population <- population(
+#'   name = "UK population",
+#'   contact_matrix = matrix(1),
+#'   demography_vector = 67e6,
+#'   initial_conditions = matrix(
+#'     c(0.9999, 0.0001, 0, 0, 0),
+#'     nrow = 1, ncol = 5L
+#'   )
+#' )
+#'
+#' # run epidemic simulation with no vaccination or intervention
+#' data <- epidemic(
+#'   model_name = "default",
+#'   population = uk_population,
+#'   r0 = 1.5,
+#'   preinfectious_period = 3,
+#'   infectious_period = 7,
+#'   time_end = 200,
+#'   increment = 1
+#' )
+#'
+#' new_infections(data)
+#'
 new_infections <- function(data,
-                           compartments_from_susceptible = "vaccinated",
-                           by_group = TRUE) {
-  # input checking
-  # check that the column "susceptible" is found in data
-  # check that the columns <compartments from susceptible> are found
+                           compartments_from_susceptible) {
+  # input checking for class and susceptible compartment
+  checkmate::expect_data_table(data)
+  stopifnot(
+    "Compartment 'susceptible' not found in data, check compartment names." =
+      "susceptible" %in% unique(data$compartment)
+  )
 
-  # cast data wide
-  data_ <- data.table::dcast(
-    data.table::copy(data),
+  # check for compartments deriving from susceptible
+  if (!missing(compartments_from_susceptible)) {
+    checkmate::assert_character(
+      compartments_from_susceptible,
+      any.missing = FALSE
+    )
+    stopifnot(
+      "Compartments from 'susceptible' not all found in data, check names." =
+        all(compartments_from_susceptible %in% unique(data$compartment))
+    )
+  }
+
+  # cast data wide, this makes a copy
+  data <- data.table::dcast(
+    data,
     time + demography_group ~ compartment,
     value.var = "value"
   )
 
-  data_[, new_infections := c(0, -diff(susceptible)) -
-    Reduce(`+`, lapply(.SD, function(x) {
-      c(0, diff(x))
-    })),
-  .SDcols = compartments_from_susceptible,
-  by = "demography_group"
-  ]
+  # calculate new infections as the change in susceptibles -
+  # the change in susceptibles due to non-infection related transitions
+  # such as vaccination
+  if (missing(compartments_from_susceptible)) {
+    data[, new_infections := c(0, -diff(get("susceptible"))),
+      by = "demography_group"
+    ]
+  } else {
+    data[, new_infections := c(0, -diff(get("susceptible"))) -
+      Reduce(`+`, lapply(.SD, function(x) {
+        c(0, diff(x))
+      })),
+    .SDcols = compartments_from_susceptible,
+    by = "demography_group"
+    ]
+  }
 
-  # return data
-  data_[]
+  # return data in long format
+  data.table::melt(
+    data,
+    id.vars = c("time", "demography_group"),
+    variable.name = "compartment"
+  )
 }

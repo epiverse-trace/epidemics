@@ -43,6 +43,9 @@
     <loc>/reference/epidemic.html</loc>
   </url>
   <url>
+    <loc>/reference/epidemic_size.html</loc>
+  </url>
+  <url>
     <loc>/reference/epidemics-package.html</loc>
   </url>
   <url>
@@ -62,6 +65,9 @@
   </url>
   <url>
     <loc>/reference/model_library.html</loc>
+  </url>
+  <url>
+    <loc>/reference/new_infections.html</loc>
   </url>
   <url>
     <loc>/reference/no_intervention.html</loc>

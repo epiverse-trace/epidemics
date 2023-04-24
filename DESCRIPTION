@@ -37,7 +37,7 @@ Imports:
     Rcpp,
     RcppEigen,
     jsonlite,
-    data.table
+    data.table,
     glue
 Suggests: 
     bookdown,

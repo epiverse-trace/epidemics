@@ -145,3 +145,64 @@ no_vaccination <- function(population) {
     nu = rep(0.0, times = nrow(population$contact_matrix))
   )
 }
+
+#' Print a `vaccination` object
+#'
+#' @param x A `vaccination` object.
+#' @param ... Other parameters passed to [print()].
+#' @noRd
+#' @export
+print.vaccination <- function(x, ...) {
+  format(x, ...)
+}
+
+#' Format a `vaccination` object
+#'
+#' @param x A `vaccination` object.
+#' @param ... Other arguments passed to [format()].
+#'
+#' @return None. Formats the `vaccination` for printing.
+#' @keywords internal
+#' @noRd
+format.vaccination <- function(x, ...) {
+
+  # validate the vaccination object
+  validate_vaccination(x)
+
+  # header
+  header <- "<vaccination>"
+
+  # collect information on name
+  name <- ifelse(
+    is.na(x$name),
+    "NA",
+    glue::double_quote(x$name)
+  )
+  name <- glue::glue("Vaccination name: {name}")
+
+  # print to screen
+  writeLines(
+    c(
+      header,
+      name,
+      glue::glue(
+        "
+
+        Time begin:
+        {glue::glue_collapse(x$time_begin, sep = ', ')}
+        Time end:
+        {glue::glue_collapse(x$time_end, sep = ', ')}
+        "
+      )
+    )
+  )
+  print(
+    glue::glue(
+      "Vaccination rate:
+      {glue::glue_collapse(x$nu, sep = ', ')}
+      "
+    )
+  )
+
+  invisible(x)
+}

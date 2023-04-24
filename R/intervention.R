@@ -48,6 +48,7 @@ new_intervention <- function(name = NA_character_,
 #'   time_end = 80,
 #'   contact_reduction = c(0.5, 0.01) # reduces contacts differentially
 #' )
+#' close_schools
 intervention <- function(name = NA_character_,
                          time_begin,
                          time_end,

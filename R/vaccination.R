@@ -141,7 +141,9 @@ is_vaccination <- function(object) {
 no_vaccination <- function(population) {
   checkmate::assert_class(population, "population")
   vaccination(
-    name = "no_vaccination", time_begin = 0, time_end = 0,
+    name = "no_vaccination",
+    time_begin = rep(0.0, times = nrow(population$contact_matrix)),
+    time_end = rep(0.0, times = nrow(population$contact_matrix)),
     nu = rep(0.0, times = nrow(population$contact_matrix))
   )
 }

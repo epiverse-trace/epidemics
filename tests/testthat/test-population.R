@@ -34,6 +34,16 @@ half_population <- population(
   )
 )
 
+# snapshot test for printing
+test_that("Printing population class", {
+  expect_snapshot(uk_population)
+
+  # population with no rownames for the contact matrix
+  names(uk_population$demography_vector) <- NULL
+  rownames(uk_population$contact_matrix) <- NULL
+  expect_snapshot(uk_population)
+})
+
 # test the population has expected structure
 test_that("Population is correctly initialised", {
   expect_s3_class(uk_population, "population")

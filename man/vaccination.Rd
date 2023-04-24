@@ -34,4 +34,5 @@ childhood_vaccination <- vaccination(
   time_end = c(100, 100),
   nu = c(0.0001, 0.0) # over 5s never vaccinated
 )
+childhood_vaccination
 }

@@ -174,23 +174,29 @@ format.intervention <- function(x, ...) {
     "NA",
     glue::double_quote(x$name)
   )
-  name <- glue::glue("intervention name: {name}")
+  name <- glue::glue("Intervention name: {name}")
 
   # print to screen
   writeLines(
     c(
       header,
       name,
-      "Time begin:"
+      glue::glue(
+        "
+
+        Time begin: {x$time_begin}
+        Time end: {x$time_end}
+        "
+      )
     )
   )
-  print(x$time_begin)
-
-  writeLines("Time end:")
-  print(x$time_end)
-
-  writeLines("Contact reduction:")
-  print(x$contact_reduction)
+  print(
+    glue::glue(
+      "Contact reduction:
+      {glue::glue_collapse(x$contact_reduction, sep = ', ')}
+      "
+    )
+  )
 
   invisible(x)
 }

@@ -2,6 +2,7 @@
 
 S3method(print,intervention)
 S3method(print,population)
+S3method(print,vaccination)
 export(add_to_library)
 export(epidemic)
 export(epidemic_size)

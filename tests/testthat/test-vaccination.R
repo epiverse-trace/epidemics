@@ -35,6 +35,11 @@ elder_vaccination <- vaccination(
   nu = c(0, 0, 1e-4)
 )
 
+# snapshot test for printing
+test_that("Printing vaccination class", {
+  expect_snapshot(elder_vaccination)
+})
+
 # test the vaccination has expected structure
 test_that("Vaccination is correctly initialised", {
   expect_s3_class(elder_vaccination, "vaccination")

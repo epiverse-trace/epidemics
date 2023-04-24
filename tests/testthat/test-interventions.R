@@ -34,6 +34,11 @@ close_schools <- intervention(
   contact_reduction = c(0.2, 0.0)
 )
 
+# snapshot test for printing
+test_that("Printing intervention class", {
+  expect_snapshot(close_schools)
+})
+
 # test the intervention has expected structure
 test_that("Intervention is correctly initialised", {
   expect_s3_class(close_schools, "intervention")

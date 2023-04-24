@@ -17,7 +17,7 @@ new_vaccination <- function(name = NA_character_,
                             time_begin,
                             time_end,
                             nu) {
-  # create and return scenario class
+  # create and return vaccination class
   structure(
     list(
       name = name,
@@ -52,6 +52,7 @@ new_vaccination <- function(name = NA_character_,
 #'   time_end = c(100, 100),
 #'   nu = c(0.0001, 0.0) # over 5s never vaccinated
 #' )
+#' childhood_vaccination
 vaccination <- function(name = NA_character_,
                         time_begin,
                         time_end,
@@ -69,7 +70,7 @@ vaccination <- function(name = NA_character_,
     )
   }
 
-  # call scenario constructor
+  # call vaccination constructor
   vaccination_ <- new_vaccination(
     name = name,
     time_begin = time_begin,

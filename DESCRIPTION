@@ -38,6 +38,7 @@ Imports:
     RcppEigen,
     jsonlite,
     data.table
+    glue
 Suggests: 
     bookdown,
     covr,

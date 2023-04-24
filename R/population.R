@@ -159,7 +159,7 @@ format.population <- function(x, ...) {
   validate_population(x)
 
   # header
-  header <- cli::style_bold("<population>")
+  header <- "<population>"
 
   # collect information on name
   name <- ifelse(
@@ -170,41 +170,69 @@ format.population <- function(x, ...) {
   name <- glue::glue("Population name: {name}")
 
   # copy demography vector
-  demography_vector <- x$demography_vector
+  demography_print <- prettyNum(
+    x$demography_vector,
+    big.mark = ",", scientific = FALSE
+  )
+  demography_proportions <- round(
+    x$demography_vector / sum(x$demography_vector), 1
+  ) * 100.0
+
+  demography_print <- glue::glue(
+    "{demography_print} ({demography_proportions}%)"
+  )
+  names(demography_print) <- names(x$demography_vector)
+
   contact_matrix <- x$contact_matrix
 
   # demographic group names
-  if (is.null(names(x$demography_vector))) {
+  if (is.null(names(x$demography_print))) {
     if (is.null(rownames(x$contact_matrix))) {
       # assign names to demography vector and contacts
-      names(demography_vector) <-
-        glue::glue("Dem. grp. {seq_along(demography_vector)}")
-
+      demography_print <-
+        glue::glue(
+          "Dem. grp. {seq_along(demography_print)}: {demography_print}"
+        )
       rownames(contact_matrix) <-
-        glue::glue("Dem. grp. {seq_along(demography_vector)}:")
-      colnames(contact_matrix) <-
-        glue::glue("Dem. grp. {seq_along(demography_vector)}:")
+        glue::glue("Dem. grp. {seq_along(demography_print)}:")
+
+      if (is.null(colnames(contact_matrix))) {
+        colnames(contact_matrix) <-
+          glue::glue("Dem. grp. {seq_along(demography_print)}:")
+      }
     } else {
-      names(demography_vector) <- rownames(x$contact_matrix)
+      demography_print <-
+        glue::glue("{rownames(x$contact_matrix)}: {demography_print}")
+      colnames(contact_matrix) <- rownames(x$contact_matrix)
     }
   }
+
 
   # print to screen
   writeLines(
     c(
       header,
       name,
-      "Demography:"
+      glue::glue(
+        "
+
+        Demography:
+        "
+      )
     )
   )
   print(
-    prettyNum(demography_vector, big.mark = ",", scientific = FALSE)
+    demography_print
   )
+  print(
+    glue::glue(
+      "
 
-  writeLines(
-    "Contact matrix:"
+    Contact matrix:
+    "
+    )
   )
-  print(contact_matrix)
+  print(round(contact_matrix, 1))
 
   invisible(x)
 }

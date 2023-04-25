@@ -28,4 +28,4 @@ jobs:
       - uses: actions/checkout@v3
       - run: sudo apt-get install cppcheck
       - run: cppcheck --std=c++14 -i src/RcppExports.cpp --enable=performance,portability,warning,style --error-exitcode=1 src
-      - run: cppcheck --std=c++14 --language=c++ cppcheck --std=c++14 -i src/RcppExports.cpp --enable=performance,portability,warning,style --error-exitcode=1 src --error-exitcode=1 inst/include/*.h
+      - run: cppcheck --std=c++14 --language=c++ --enable=performance,portability,warning,style --error-exitcode=1 inst/include/*.h

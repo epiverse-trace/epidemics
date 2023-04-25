@@ -139,7 +139,8 @@ is_population <- function(object) {
 #'
 #' @param x A `population` object.
 #' @param ... Other parameters passed to [print()].
-#' @return None. Prints output.
+#' @return Invisibly returns the [`population`] object `x`.
+#' Called for printing side-effects.
 #' @export
 print.population <- function(x, ...) {
   format(x, ...)
@@ -150,7 +151,7 @@ print.population <- function(x, ...) {
 #' @param x A `population` object.
 #' @param ... Other arguments passed to [format()].
 #'
-#' @return Invisbily returns the [`population`] object `x`. Called for printing
+#' @return Invisibly returns the [`population`] object `x`. Called for printing
 #' side-effects.
 #' @keywords internal
 #' @noRd

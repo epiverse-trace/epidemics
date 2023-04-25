@@ -153,7 +153,8 @@ no_vaccination <- function(population) {
 #'
 #' @param x A `vaccination` object.
 #' @param ... Other parameters passed to [print()].
-#' @return None. Prints output.
+#' @return Invisibly returns the [`vaccination`] object `x`.
+#' Called for printing side-effects.
 #' @export
 print.vaccination <- function(x, ...) {
   format(x, ...)
@@ -164,7 +165,7 @@ print.vaccination <- function(x, ...) {
 #' @param x A `vaccination` object.
 #' @param ... Other arguments passed to [format()].
 #'
-#' @return Invisbily returns the [`vaccination`] object `x`.
+#' @return Invisibly returns the [`vaccination`] object `x`.
 #' Called for printing side-effects.
 #' @keywords internal
 #' @noRd

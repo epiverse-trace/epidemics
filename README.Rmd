@@ -135,19 +135,7 @@ output <- epidemic(
 Visualise the development of individuals in the "infectious" compartment over model time. Note that these curves represent the number of individuals that are infectious, and not the number of newly infectious individuals.
 
 ```{r echo=FALSE}
-# convert to data.table for manipulation
-setDT(output)
-
-# collect infectious compartments by age
-data_infectious <- output[, .SD,
-  .SDcols = names(output) %like% "infectious|time"
-]
-
-data_infectious <- melt(data_infectious, id.vars = "time")
-```
-
-```{r echo=FALSE}
-ggplot(data_infectious) +
+ggplot(output[compartment == "infectious", ]) +
   geom_vline(
     xintercept = c(close_schools$time_begin, close_schools$time_end),
     colour = "red",
@@ -163,7 +151,7 @@ ggplot(data_infectious) +
     vjust = "outward"
   ) +
   geom_line(
-    aes(time, value, colour = variable)
+    aes(time, value, colour = demography_group)
   ) +
   scale_colour_brewer(
     palette = "Dark2",

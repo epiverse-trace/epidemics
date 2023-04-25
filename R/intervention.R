@@ -147,7 +147,8 @@ no_intervention <- function(population) {
 #'
 #' @param x A `intervention` object.
 #' @param ... Other parameters passed to [print()].
-#' @return None. Prints output.
+#' @return Invisibly returns the [`intervention`] object `x`.
+#' Called for printing side-effects.
 #' @export
 print.intervention <- function(x, ...) {
   format(x, ...)
@@ -158,7 +159,7 @@ print.intervention <- function(x, ...) {
 #' @param x A `intervention` object.
 #' @param ... Other arguments passed to [format()].
 #'
-#' @return Invisbily returns the [`intervention`] object `x`.
+#' @return Invisibly returns the [`intervention`] object `x`.
 #' Called for printing side-effects.
 #' @keywords internal
 #' @noRd

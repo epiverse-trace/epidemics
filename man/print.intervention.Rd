@@ -12,7 +12,8 @@
 \item{...}{Other parameters passed to \code{\link[=print]{print()}}.}
 }
 \value{
-None. Prints output.
+Invisibly returns the \code{\link{intervention}} object \code{x}.
+Called for printing side-effects.
 }
 \description{
 Print a \code{intervention} object

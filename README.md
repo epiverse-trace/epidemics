@@ -60,9 +60,9 @@ pak::pak("epiverse-trace/epidemics")
 ## Quick start
 
 Here we show an example of using *epidemics* to model an epidemic in the
-U.K population with an $R_0$ similar to that of pandemic influenza, with
-heterogeneity in social contacts among different age groups, and with
-the implementation of school closures to dampen the spread of the
+U.K. population with an $R_0$ similar to that of pandemic influenza,
+with heterogeneity in social contacts among different age groups, and
+with the implementation of school closures to dampen the spread of the
 infection.
 
 ``` r
@@ -163,7 +163,7 @@ over model time. Note that these curves represent the number of
 individuals that are infectious, and not the number of newly infectious
 individuals.
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
 ## Package vignettes
 

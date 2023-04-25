@@ -32,5 +32,5 @@ close_schools <- intervention(
   time_end = 80,
   contact_reduction = c(0.5, 0.01) # reduces contacts differentially
 )
-close_schools 
+close_schools
 }

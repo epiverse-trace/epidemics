@@ -49,8 +49,8 @@ status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.
 
 ## Installation
 
-The current development version of *finalsize* can be installed from
-*epidemics* from [GitHub](https://github.com/) using the `pak` package.
+The current development version of *epidemics* from
+[GitHub](https://github.com/) using the `pak` package.
 
 ``` r
 if(!require("pak")) install.packages("pak")

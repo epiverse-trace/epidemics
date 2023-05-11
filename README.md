@@ -49,7 +49,7 @@ status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.
 
 ## Installation
 
-The current development version of *epidemics* from
+The current development version of *epidemics* can be installed from
 [GitHub](https://github.com/) using the `pak` package.
 
 ``` r

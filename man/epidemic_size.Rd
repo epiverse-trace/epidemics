@@ -49,13 +49,16 @@ uk_population <- population(
   )
 )
 
+# create an infection object
+pandemic_influenza <- infection(
+  r0 = 1.5, infectious_period = 7, preinfectious_period = 3
+)
+
 # run epidemic simulation with no vaccination or intervention
 data <- epidemic(
   model_name = "default",
   population = uk_population,
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7,
+  infection = pandemic_influenza,
   time_end = 200,
   increment = 1
 )

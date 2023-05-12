@@ -2,7 +2,7 @@
 % Please edit documentation in R/infection.R
 \name{infection}
 \alias{infection}
-\title{Construct a new infection for an epidemic model}
+\title{Prepare a new infection for an epidemic model}
 \usage{
 infection(name = NA_character_, r0, infectious_period, ...)
 }
@@ -28,7 +28,7 @@ of values.}
 An object of the \code{infection} S3 class.
 }
 \description{
-Construct a new infection for an epidemic model
+Prepare a new infection for an epidemic model
 }
 \examples{
 infection(

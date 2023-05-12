@@ -8,7 +8,7 @@
     type = "unique",
     must.include = c(
       "population",
-      "r0", "preinfectious_period", "infectious_period",
+      "infection",
       "time_end", "increment"
     )
   )
@@ -27,17 +27,21 @@
 
   # some basic input checking for custom classes
   checkmate::assert_class(mod_args$population, "population")
+  checkmate::assert_class(mod_args$infection, "infection")
   checkmate::assert_class(mod_args$intervention, "intervention")
   checkmate::assert_class(mod_args$vaccination, "vaccination")
 
   # input checking on pathogen parameters
-  # TODO: move to combined check function for all custom classes
   checkmate::assert_number(
-    mod_args$r0,
+    mod_args$infection$r0,
     lower = 0, finite = TRUE
   )
   checkmate::assert_number(
-    mod_args$infectious_period,
+    mod_args$infection$infectious_period,
+    lower = 0, finite = TRUE
+  )
+  checkmate::assert_number(
+    mod_args$infection$preinfectious_period,
     lower = 0, finite = TRUE
   )
 
@@ -78,15 +82,13 @@
       mod_args$population$demography_vector
 
   # calculate beta and gamma
-  mod_args$gamma <- 1.0 / mod_args$infectious_period
-  mod_args$alpha <- 1.0 / mod_args$preinfectious_period
-  mod_args$beta <- mod_args$r0 / mod_args$infectious_period
+  mod_args$gamma <- 1.0 / mod_args$infection$infectious_period
+  mod_args$alpha <- 1.0 / mod_args$infection$preinfectious_period
+  mod_args$beta <- mod_args$infection$r0 / mod_args$infection$infectious_period
   # nu is passed through vaccination class
 
-  # remove r0, infectious_period, and pre-infectious period
-  mod_args$r0 <- NULL
-  mod_args$infectious_period <- NULL
-  mod_args$preinfectious_period <- NULL
+  # remove infection object, as parameters are passed as alpha, beta, gamma
+  mod_args$infection <- NULL
 
   return(mod_args)
 }

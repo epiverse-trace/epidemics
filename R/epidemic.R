@@ -5,8 +5,19 @@
 #' The only option currently available is a SEIR-V model, with the compartments
 #' "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
 #'
+#' Each call to `epidemic()` must provide a `population` and an `infection`
+#' object, but all other arguments are flexible, and may be passed as `...`.
+#' See **Details** for more information.
+#'
 #' @param model_name A string for the epidemic model. The only currently
 #' supported option is "default", for the default SEIR-V model.
+#' @param population An object of the `population` class, which holds a
+#' population contact matrix, a demography vector, and the initial conditions
+#' of each demographic group. See [population()].
+#' @param infection An `infection` object created using [infection()]. Must
+#' have at least the basic reproductive number \eqn{R_0} of the infection, and
+#' the infectious period. Parameters required by other models can be found in
+#' the documentation for model functions.
 #' @param ... Arguments to the model specified by `model`. See **Details** for
 #' more on the supported arguments.
 #'
@@ -23,22 +34,25 @@
 #' - `population` An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
 #' of each demographic group. See [population()].
-#' - `r0` The reproductive number of the infection, \eqn{R_0}.
+#' - `infection` An `infection` class object giving parameters appropriate to
+#' an SEIR-V model. See [infection()]. The `infection` object must have the
+#' parameters:
+#'  - `r0` The reproductive number of the infection, \eqn{R_0}.
 #' Must be a number or a vector of numbers of the same length as the number of
 #' demographic groups, depending on the model being implemented.
 #' The 'default' model requires a single number.
-#' - `preinfectious_period` The mean infectious period.
+#'  - `preinfectious_period` The mean infectious period.
 #' Must be a number or a vector of numbers of the same length as the number of
 #' demographic groups, depending on the model being implemented.
 #' The 'default' model requires a single number.
-#' - `infectious_period` The mean infections period.
+#'  - `infectious_period` The mean infections period.
 #' Must be a number or a vector of numbers of the same length as the number of
 #' demographic groups, depending on the model being implemented.
 #' The 'default' model requires a single number.
-#' - `intervention` A non-pharmaceutical intervention applied to the
+#' - `intervention` An optional non-pharmaceutical intervention applied to the
 #' population during the epidemic. See [intervention()]. This is an optional
 #' argument in the default model.
-#' - `vaccination` A vaccination regime followed during the
+#' - `vaccination` An optional vaccination regime followed during the
 #' course of the epidemic, with a start and end time, and age-specific effect
 #' on the transition of individuals from susceptible to vaccinated.
 #' See [vaccination()]. This is an optional argument in the default model.
@@ -57,25 +71,33 @@
 #'   )
 #' )
 #'
+#' # specify the infection parameters
+#' pandemic_influenza <- infection(
+#'   r0 = 1.5, infectious_period = 7, preinfectious_period = 3
+#' )
+#'
 #' # run epidemic simulation with no vaccination or intervention
 #' epidemic(
 #'   model_name = "default",
 #'   population = uk_population,
-#'   r0 = 1.5,
-#'   preinfectious_period = 3,
-#'   infectious_period = 7,
+#'   infection = pandemic_influenza,
 #'   time_end = 200,
 #'   increment = 1
 #' )
-epidemic <- function(model_name = "default", ...) {
+epidemic <- function(model_name = "default",
+                     population,
+                     infection,
+                     ...) {
 
   # select epidemic model from library
   # currently supports only a single SEIRV model
   # handle the arguments check and prep functions, and the model function
   model_name <- match.arg(arg = model_name, several.ok = FALSE)
 
-  # collect model arguments passed as `...`
-  model_arguments <- list(...)
+  # collect population, infection, and model arguments passed as `...`
+  model_arguments <- list(
+    population = population, infection = infection, ...
+  )
 
   # prepare model arguments while checking them
   args_check_fn <- read_from_library(

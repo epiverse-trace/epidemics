@@ -1,6 +1,11 @@
 ---
 title: "Modelling a vaccination campaign"
-output: rmarkdown::html_vignette
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
 vignette: >
   %\VignetteIndexEntry{Modelling a vaccination campaign}
   %\VignetteEngine{knitr::rmarkdown}
@@ -10,7 +15,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  dpi = 150
 )
 ```
 
@@ -76,10 +82,12 @@ uk_population <- population(
 ## Prepare pathogen parameters
 
 ```{r}
-# Prepare epidemiological parameters
-r0 <- 1.5
-preinfectious_period <- 3
-infectious_period <- 7
+# Prepare epidemiological parameters as an infection object
+pandemic <- infection(
+  r0 = 1.5,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
 ```
 
 ## Prepare a vaccination campaign
@@ -105,9 +113,7 @@ vaccinate_elders
 # run an epidemic model using `epidemic`
 output <- epidemic(
   population = uk_population,
-  r0 = r0,
-  preinfectious_period = preinfectious_period,
-  infectious_period = infectious_period,
+  infection = pandemic,
   vaccination = vaccinate_elders,
   time_end = 600, increment = 1.0
 )
@@ -117,7 +123,7 @@ output <- epidemic(
 
 Plot epidemic over time, showing only the number of individuals in the exposed, infected, and vaccinated compartments.
 
-```{r}
+```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
 ggplot(
   output[compartment %in% c("exposed", "infectious")],

@@ -126,6 +126,27 @@ uk_population <- population(
 )
 ```
 
+Prepare an `<infection>` class object to store the parameters of the
+infection which is causing the epidemic which is being modelled.
+
+``` r
+# simulate a pandemic, with an R0,
+# an infectious period, and an pre-infectious period
+pandemic_influenza <- infection(
+  r0 = 1.5,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
+
+pandemic_influenza
+#> <infection>
+#> infection name: NA
+#> R0: 1.5
+#> Infectious period: 7
+#> Other infection parameters:
+#> "preinfectious_period"
+```
+
 Define an intervention to close schools for two months. This
 intervention mostly only affects individuals in the age range 0 – 19,
 and reduces their contacts by 50%, reducing the contacts of other age
@@ -141,6 +162,8 @@ close_schools <- intervention(
 )
 ```
 
+Prepare an infection
+
 Run the default epidemic model, using the function `epidemic()`. We
 assume an $R_0$ of 1.5 which is similar to pandemic influenza, an
 infectious period of 7 days, and a pre-infectious period of 3 days.
@@ -150,9 +173,7 @@ infectious period of 7 days, and a pre-infectious period of 3 days.
 output <- epidemic(
   model = "default",
   population = uk_population,
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7,
+  infection = pandemic_influenza,
   intervention = close_schools,
   time_end = 600, increment = 1.0
 )
@@ -163,7 +184,7 @@ over model time. Note that these curves represent the number of
 individuals that are infectious, and not the number of newly infectious
 individuals.
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
 ## Package vignettes
 

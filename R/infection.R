@@ -77,6 +77,13 @@ infection <- function(name = NA_character_,
     extra_args,
     types = numeric()
   )
+  # expect that all parameters have the same length
+  for (i in seq_along(extra_args)) {
+    stopifnot(
+      "Error: All infection parameters must be the same length!" =
+        length(extra_args[[i]]) == length(infectious_period)
+    )
+  }
 
   # call infection constructor
   infection_ <- new_infection(
@@ -115,6 +122,19 @@ validate_infection <- function(object) {
   checkmate::assert_string(object$name, na.ok = TRUE)
   checkmate::assert_number(object$r0, lower = 0, finite = TRUE)
   checkmate::assert_number(object$infectious_period, lower = 0, finite = TRUE)
+
+  # check for extra arguments
+  extra_args <- object[!names(object) %in% c(
+    "name", "r0", "infectious_period"
+  )]
+
+  # expect that all parameters have the same length
+  for (i in seq_along(extra_args)) {
+    stopifnot(
+      "Error: All infection parameters must be the same length!" =
+        length(extra_args[[i]]) == length(object$infectious_period)
+    )
+  }
 
   invisible(object)
 }

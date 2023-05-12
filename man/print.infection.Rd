@@ -2,7 +2,7 @@
 % Please edit documentation in R/infection.R
 \name{print.infection}
 \alias{print.infection}
-\title{Print a \code{infection} object}
+\title{Print an \code{infection} object}
 \usage{
 \method{print}{infection}(x, ...)
 }
@@ -16,5 +16,5 @@ Invisibly returns the \code{\link{infection}} object \code{x}.
 Called for printing side-effects.
 }
 \description{
-Print a \code{infection} object
+Print an \code{infection} object
 }

@@ -4,11 +4,20 @@
 \alias{epidemic}
 \title{Model an epidemic}
 \usage{
-epidemic(model_name = "default", ...)
+epidemic(model_name = "default", population, infection, ...)
 }
 \arguments{
 \item{model_name}{A string for the epidemic model. The only currently
 supported option is "default", for the default SEIR-V model.}
+
+\item{population}{An object of the \code{population} class, which holds a
+population contact matrix, a demography vector, and the initial conditions
+of each demographic group. See \code{\link[=population]{population()}}.}
+
+\item{infection}{An \code{infection} object created using \code{\link[=infection]{infection()}}. Must
+have at least the basic reproductive number \eqn{R_0} of the infection, and
+the infectious period. Parameters required by other models can be found in
+the documentation for model functions.}
 
 \item{...}{Arguments to the model specified by \code{model}. See \strong{Details} for
 more on the supported arguments.}
@@ -25,6 +34,10 @@ Simulate an epidemic using a deterministic, compartmental
 epidemic model from the package's library of epidemic models.
 The only option currently available is a SEIR-V model, with the compartments
 "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
+
+Each call to \code{epidemic()} must provide a \code{population} and an \code{infection}
+object, but all other arguments are flexible, and may be passed as \code{...}.
+See \strong{Details} for more information.
 }
 \details{
 Arguments passed in \code{...} may differ depending on the model
@@ -34,6 +47,9 @@ following arguments.
 \item \code{population} An object of the \code{population} class, which holds a
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See \code{\link[=population]{population()}}.
+\item \code{infection} An \code{infection} class object giving parameters appropriate to
+an SEIR-V model. See \code{\link[=infection]{infection()}}. The \code{infection} object must have the
+parameters:
 \item \code{r0} The reproductive number of the infection, \eqn{R_0}.
 Must be a number or a vector of numbers of the same length as the number of
 demographic groups, depending on the model being implemented.
@@ -46,10 +62,10 @@ The 'default' model requires a single number.
 Must be a number or a vector of numbers of the same length as the number of
 demographic groups, depending on the model being implemented.
 The 'default' model requires a single number.
-\item \code{intervention} A non-pharmaceutical intervention applied to the
+\item \code{intervention} An optional non-pharmaceutical intervention applied to the
 population during the epidemic. See \code{\link[=intervention]{intervention()}}. This is an optional
 argument in the default model.
-\item \code{vaccination} A vaccination regime followed during the
+\item \code{vaccination} An optional vaccination regime followed during the
 course of the epidemic, with a start and end time, and age-specific effect
 on the transition of individuals from susceptible to vaccinated.
 See \code{\link[=vaccination]{vaccination()}}. This is an optional argument in the default model.
@@ -69,13 +85,16 @@ uk_population <- population(
   )
 )
 
+# specify the infection parameters
+pandemic_influenza <- infection(
+  r0 = 1.5, infectious_period = 7, preinfectious_period = 3
+)
+
 # run epidemic simulation with no vaccination or intervention
 epidemic(
   model_name = "default",
   population = uk_population,
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7,
+  infection = pandemic_influenza,
   time_end = 200,
   increment = 1
 )

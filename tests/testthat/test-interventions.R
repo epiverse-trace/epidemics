@@ -22,10 +22,12 @@ uk_population <- population(
   )
 )
 
-# Prepare epi parameters
-r0 <- 1.5
-preinfectious_period <- 3
-infectious_period <- 7
+# Prepare epi parameters as an infection object
+pandemic <- infection(
+  r0 = 1.5,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
 
 # prepare a basic intervention
 close_schools <- intervention(
@@ -76,9 +78,7 @@ test_that("Intervention reduces final size", {
   # run model with intervention
   data_intervention <- epidemic(
     population = uk_population,
-    r0 = r0,
-    preinfectious_period = preinfectious_period,
-    infectious_period = infectious_period,
+    infection = pandemic,
     intervention = close_schools,
     time_end = 200, increment = 1.0
   )
@@ -86,9 +86,7 @@ test_that("Intervention reduces final size", {
   # run model without intervention
   data <- epidemic(
     population = uk_population,
-    r0 = r0,
-    preinfectious_period = preinfectious_period,
-    infectious_period = infectious_period,
+    infection = pandemic,
     intervention = no_intervention(uk_population),
     time_end = 200, increment = 1.0
   )
@@ -117,9 +115,7 @@ test_that("Error on poorly specified intervention", {
   expect_error(
     epidemic(
       population = uk_population,
-      r0 = r0,
-      preinfectious_period = preinfectious_period,
-      infectious_period = infectious_period,
+      infection = pandemic,
       intervention = badly_formed_intervention,
       time_end = 200, increment = 1.0
     ),

@@ -22,10 +22,12 @@ uk_population <- population(
   )
 )
 
-# Prepare epi parameters
-r0 <- 1.5
-preinfectious_period <- 3
-infectious_period <- 7
+# Prepare epi parameters as an infection object
+pandemic <- infection(
+  r0 = 1.5,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
 
 # prepare a basic vaccination regime
 elder_vaccination <- vaccination(
@@ -75,9 +77,7 @@ test_that("Vaccination is correctly initialised", {
 # run model with vaccination
 data_vaccination <- epidemic(
   population = uk_population,
-  r0 = r0,
-  preinfectious_period = preinfectious_period,
-  infectious_period = infectious_period,
+  infection = pandemic,
   vaccination = elder_vaccination,
   time_end = 200, increment = 1.0
 )
@@ -85,9 +85,7 @@ data_vaccination <- epidemic(
 # run model without vaccination
 data <- epidemic(
   population = uk_population,
-  r0 = r0,
-  preinfectious_period = preinfectious_period,
-  infectious_period = infectious_period,
+  infection = pandemic,
   time_end = 200, increment = 1.0
 )
 

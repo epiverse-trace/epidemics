@@ -23,19 +23,19 @@ uk_population <- population(
 )
 
 # Prepare epi parameters
-r0 <- 3
-preinfectious_period <- 3
-infectious_period <- 7
+pandemic <- infection(
+  r0 = 3,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
 
 test_that("Output of default epidemic model", {
   # run epidemic model
   data <- epidemic(
     model_name = "default",
     population = uk_population,
-    r0 = r0,
+    infection = pandemic,
     intervention = no_intervention(uk_population),
-    preinfectious_period = preinfectious_period,
-    infectious_period = infectious_period,
     time_end = 100, increment = 1.0
   )
 
@@ -77,21 +77,28 @@ test_that("Output of default epidemic model", {
 
 test_that("Larger R0 leads to larger final size in default epidemic model", {
   # prepare epidemic model runs with different R0 estimates
-  r0_list <- list(
-    r0_low = r0,
-    r0_high = r0 + 1.0
+  r0 <- 1.5
+  infection_list <- list(
+    infection_r0_low = infection(
+      r0 = r0,
+      preinfectious_period = 3,
+      infectious_period = 7
+    ),
+    infection_r0_high = infection(
+      r0 = r0 + 1.0,
+      preinfectious_period = 3,
+      infectious_period = 7
+    )
   )
 
   # get data
   data <- lapply(
-    r0_list,
-    function(r0_) {
+    infection_list,
+    function(infection_) {
       # run model on data
       data <- epidemic(
         population = uk_population,
-        r0 = r0_,
-        preinfectious_period = preinfectious_period,
-        infectious_period = infectious_period,
+        infection = infection_,
         time_end = 10, increment = 1.0
       )
     }
@@ -127,16 +134,16 @@ dummy_population <- population(
 )
 
 # prepare epidemiological parameters
-r0 <- 1.5
-preinfectious_period <- 3
-infectious_period <- 7
+pandemic <- infection(
+  r0 = 1.5,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
 
 test_that("Identical population sizes lead to identical final size", {
   data <- epidemic(
     population = dummy_population,
-    r0 = r0,
-    preinfectious_period = preinfectious_period,
-    infectious_period = infectious_period,
+    infection = pandemic,
     time_end = 200, increment = 0.1
   )
 
@@ -152,17 +159,25 @@ test_that("Identical population sizes lead to identical final size", {
 test_that("Lower preinfectious period leads to larger final size", {
   # make a temporary pre-infectious period vector
   # lower values mean quicker transition from E => I
-  preinfectious_period_low <- 1.2
-  preinfectious_period_high <- 5.0
+  infection_list <- list(
+    infection(
+      r0 = 1.5,
+      preinfectious_period = 1.2,
+      infectious_period = 7
+    ),
+    infection(
+      r0 = 1.5,
+      preinfectious_period = 5,
+      infectious_period = 7
+    )
+  )
 
   data <- lapply(
-    c(preinfectious_period_low, preinfectious_period_high),
-    function(x) {
+    infection_list,
+    function(infection_) {
       epidemic(
         population = dummy_population,
-        r0 = r0,
-        preinfectious_period = x,
-        infectious_period = infectious_period,
+        infection = infection_,
         time_end = 200, increment = 0.1
       )
     }
@@ -179,17 +194,25 @@ test_that("Lower preinfectious period leads to larger final size", {
 test_that("Lower infectious period leads to larger final size", {
   # make a temporary infectious period vector
   # lower values mean quicker transition from I => R
-  infectious_period_low <- 5
-  infectious_period_high <- 7
+  infection_list <- list(
+    infection(
+      r0 = 1.5,
+      preinfectious_period = 3,
+      infectious_period = 5
+    ),
+    infection(
+      r0 = 1.5,
+      preinfectious_period = 3,
+      infectious_period = 7
+    )
+  )
 
   data <- lapply(
-    c(infectious_period_low, infectious_period_high),
-    function(x) {
+    infection_list,
+    function(infection_) {
       epidemic(
         population = dummy_population,
-        r0 = r0,
-        preinfectious_period = preinfectious_period,
-        infectious_period = x,
+        infection = infection_,
         time_end = 200, increment = 0.1
       )
     }
@@ -217,9 +240,7 @@ test_that("Group with more contacts has larger final size and infections", {
 
   data <- epidemic(
     population = dummy_population,
-    r0 = r0,
-    preinfectious_period = preinfectious_period,
-    infectious_period = infectious_period,
+    infection = pandemic,
     time_end = 200, increment = 0.1
   )
 

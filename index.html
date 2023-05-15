@@ -140,28 +140,44 @@
 <span>  demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
 <span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Define an intervention to close schools for two months. This intervention mostly only affects individuals in the age range 0 – 19, and reduces their contacts by 50%, reducing the contacts of other age groups by 1%. This is an object of the class <code>&lt;intervention&gt;</code>, created using the function <code><a href="reference/intervention.html">intervention()</a></code>.</p>
+<p>Prepare an <code>&lt;infection&gt;</code> class object to store the parameters of the infection which is causing the epidemic which is being modelled.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># simulate a pandemic, with an R0,</span></span>
+<span><span class="co"># an infectious period, and an pre-infectious period</span></span>
+<span><span class="va">pandemic_influenza</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/infection.html">infection</a></span><span class="op">(</span></span>
+<span>  r0 <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>  preinfectious_period <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  infectious_period <span class="op">=</span> <span class="fl">7</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">pandemic_influenza</span></span>
+<span><span class="co">#&gt; &lt;infection&gt;</span></span>
+<span><span class="co">#&gt; infection name: NA</span></span>
+<span><span class="co">#&gt; R0: 1.5</span></span>
+<span><span class="co">#&gt; Infectious period: 7</span></span>
+<span><span class="co">#&gt; Other infection parameters:</span></span>
+<span><span class="co">#&gt; "preinfectious_period"</span></span></code></pre></div>
+<p>Define an intervention to close schools for two months. This intervention mostly only affects individuals in the age range 0 – 19, and reduces their contacts by 50%, reducing the contacts of other age groups by 1%. This is an object of the class <code>&lt;intervention&gt;</code>, created using the function <code><a href="reference/intervention.html">intervention()</a></code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># an intervention to close schools</span></span>
 <span><span class="va">close_schools</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  time_begin <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">260</span>,</span>
 <span>  contact_reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>Prepare an infection</p>
 <p>Run the default epidemic model, using the function <code><a href="reference/epidemic.html">epidemic()</a></code>. We assume an <span class="math inline"><em>R</em><sub>0</sub></span> of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run an epidemic model using `epidemic()`</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
 <span>  model <span class="op">=</span> <span class="st">"default"</span>,</span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  r0 <span class="op">=</span> <span class="fl">1.5</span>,</span>
-<span>  preinfectious_period <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  infectious_period <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  infection <span class="op">=</span> <span class="va">pandemic_influenza</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="va">close_schools</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Visualise the development of individuals in the “infectious” compartment over model time. Note that these curves represent the number of individuals that are infectious, and not the number of newly infectious individuals.</p>
-<p><img src="reference/figures/README-unnamed-chunk-8-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="package-vignettes">Package vignettes<a class="anchor" aria-label="anchor" href="#package-vignettes"></a>

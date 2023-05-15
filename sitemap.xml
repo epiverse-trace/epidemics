@@ -52,7 +52,13 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/infection.html</loc>
+  </url>
+  <url>
     <loc>/reference/intervention.html</loc>
+  </url>
+  <url>
+    <loc>/reference/is_infection.html</loc>
   </url>
   <url>
     <loc>/reference/is_intervention.html</loc>
@@ -80,6 +86,9 @@
   </url>
   <url>
     <loc>/reference/population.html</loc>
+  </url>
+  <url>
+    <loc>/reference/print.infection.html</loc>
   </url>
   <url>
     <loc>/reference/print.intervention.html</loc>

@@ -71,8 +71,6 @@
 </nav><div class="container template-article">
 
 
-
-
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Modelling interventions</h1>
@@ -84,15 +82,15 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
-<div class="section level2">
+</details><div class="section level2">
 <h2 id="prepare-population-and-initial-conditions">Prepare population and initial conditions<a class="anchor" aria-label="anchor" href="#prepare-population-and-initial-conditions"></a>
 </h2>
 <p>Prepare population and contact data.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
 <span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
@@ -110,8 +108,8 @@
 <span><span class="co"># prepare the demography vector</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
-<p>Prepare initial conditions for each age group.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+</details><p>Prepare initial conditions for each age group.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># initial conditions</span></span>
 <span><span class="va">initial_i</span> <span class="op">&lt;-</span> <span class="fl">1e-6</span></span>
 <span><span class="va">initial_conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -127,29 +125,33 @@
 <span></span>
 <span><span class="co"># assign rownames for clarity</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
-<p>Prepare a population as a <code>population</code> class object.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+</details><p>Prepare a population as a <code>population</code> class object.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">uk_population</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/population.html">population</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"UK"</span>,</span>
 <span>  contact_matrix <span class="op">=</span> <span class="va">contact_matrix</span>,</span>
 <span>  demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
 <span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+</details>
 </div>
 <div class="section level2">
 <h2 id="prepare-pathogen-parameters">Prepare pathogen parameters<a class="anchor" aria-label="anchor" href="#prepare-pathogen-parameters"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Prepare epidemiological parameters</span></span>
-<span><span class="va">r0</span> <span class="op">&lt;-</span> <span class="fl">1.5</span></span>
-<span><span class="va">preinfectious_period</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
-<span><span class="va">infectious_period</span> <span class="op">&lt;-</span> <span class="fl">7</span></span></code></pre></div>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Prepare epidemiological parameters as an infection object</span></span>
+<span><span class="va">pandemic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infection.html">infection</a></span><span class="op">(</span></span>
+<span>  r0 <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>  preinfectious_period <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  infectious_period <span class="op">=</span> <span class="fl">7</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</details>
 </div>
 <div class="section level2">
 <h2 id="prepare-an-intervention">Prepare an intervention<a class="anchor" aria-label="anchor" href="#prepare-an-intervention"></a>
 </h2>
 <p>Prepare an intervention to simulate school closures.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># prepare an intervention with a differential effect on age groups</span></span>
 <span><span class="va">close_schools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"School closure"</span>,</span>
@@ -167,28 +169,27 @@
 <span><span class="co">#&gt; Time end: 300</span></span>
 <span><span class="co">#&gt; Contact reduction:</span></span>
 <span><span class="co">#&gt; 0.5, 0.001, 0.001</span></span></code></pre></div>
+</details>
 </div>
 <div class="section level2">
 <h2 id="run-epidemic-model">Run epidemic model<a class="anchor" aria-label="anchor" href="#run-epidemic-model"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run an epidemic model using `epidemic`</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  r0 <span class="op">=</span> <span class="va">r0</span>,</span>
-<span>  preinfectious_period <span class="op">=</span> <span class="va">preinfectious_period</span>,</span>
-<span>  infectious_period <span class="op">=</span> <span class="va">infectious_period</span>,</span>
+<span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="va">close_schools</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Vaccination: some `time_end`s are not greater than `time_begin`s</span></span></code></pre></div>
+</details>
 </div>
 <div class="section level2">
 <h2 id="prepare-data-and-visualise-infections">Prepare data and visualise infections<a class="anchor" aria-label="anchor" href="#prepare-data-and-visualise-infections"></a>
 </h2>
-<p>Plot epidemic over time, showing only the number of individuals in
-the exposed and infected compartments.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>Plot epidemic over time, showing only the number of individuals in the exposed and infected compartments.</p>
+<details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot figure of epidemic curve</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">output</span><span class="op">[</span><span class="va">compartment</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exposed"</span>, <span class="st">"infectious"</span><span class="op">)</span><span class="op">]</span>,</span>
@@ -237,7 +238,7 @@ the exposed and infected compartments.</p>
 <span>    linetype <span class="op">=</span> <span class="st">"Compartment"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Individuals"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="modelling_interventions_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+</details><p><img src="modelling_interventions_files/figure-html/unnamed-chunk-8-1.png"><!-- --></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

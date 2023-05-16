@@ -1,7 +1,7 @@
 
 # *epidemics*: A library of compartmental epidemic scenario models
 
-<!-- <img src="man/figures/logo.png" align="right" width="130"/> -->
+<img src="man/figures/logo.png" align="right" width="130"/>
 
 *epidemics* is an R package that provides an easy interface to a library
 of compartmental models that can help to model epidemic scenarios for

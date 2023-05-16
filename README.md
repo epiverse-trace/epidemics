@@ -1,7 +1,19 @@
 
-# *epidemics*: A library of compartmental epidemic scenario models
+# *epidemics*: A library of compartmental epidemic scenario models <img src="man/figures/logo.png" align="right" width="130"/>
 
-<img src="man/figures/logo.png" align="right" width="130"/>
+<!-- badges: start -->
+
+[![License:
+MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![R-CMD-check](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/epiverse-trace/epidemics/branch/main/graph/badge.svg)](https://app.codecov.io/gh/epiverse-trace/epidemics?branch=main)
+[![Project Status: WIP – Initial development is in progress, but there
+has not yet been a stable, usable release suitable for the
+public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.org/package=epidemics)
+<!-- badges: end -->
 
 *epidemics* is an R package that provides an easy interface to a library
 of compartmental models that can help to model epidemic scenarios for
@@ -32,20 +44,6 @@ is developed at the [Centre for the Mathematical Modelling of Infectious
 Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases)
 at the London School of Hygiene and Tropical Medicine as part of the
 [Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
-
-<!-- badges: start -->
-
-[![License:
-MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![R-CMD-check](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml)
-[![Codecov test
-coverage](https://codecov.io/gh/epiverse-trace/epidemics/branch/main/graph/badge.svg)](https://app.codecov.io/gh/epiverse-trace/epidemics?branch=main)
-[![Project Status: WIP – Initial development is in progress, but there
-has not yet been a stable, usable release suitable for the
-public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.org/package=epidemics)
-<!-- badges: end -->
 
 ## Installation
 

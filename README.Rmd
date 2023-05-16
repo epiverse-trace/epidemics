@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# _{{ packagename }}_: A library of compartmental epidemic scenario models <img src="man/figures/logo.png" align="right" width="130"/>
+# _{{ packagename }}_: A library of compartmental epidemic scenario models <img src="man/figures/logo.svg" align="right" width="130"/>
 
 <!-- badges: start -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)

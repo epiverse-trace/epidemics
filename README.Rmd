@@ -15,8 +15,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-# _{{ packagename }}_: A library of compartmental epidemic scenario models
-<img src="man/figures/logo.png" align="right" width="130"/>
+# _{{ packagename }}_: A library of compartmental epidemic scenario models <img src="man/figures/logo.png" align="right" width="130"/>
+
+<!-- badges: start -->
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![R-CMD-check](https://github.com/{{ gh_repo }}/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/{{ gh_repo }}/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/{{ gh_repo }}/branch/main/graph/badge.svg)](https://app.codecov.io/gh/{{ gh_repo }}?branch=main)
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![CRAN status](https://www.r-pkg.org/badges/version/{{ packagename }})](https://CRAN.R-project.org/package={{ packagename }})
+<!-- badges: end -->
 
 _{{ packagename }}_ is an R package that provides an easy interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted infections such as influenza, Covid-19, or respiratory syncytial virus (RSV).
 
@@ -27,14 +34,6 @@ _{{ packagename }}_ implements methods outlined in @bjornstad2020a and @bjornsta
 The models in _{{ packagename }}_ can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions
 
 _{{ packagename }}_ relies on [Eigen](https://gitlab.com/libeigen/eigen) via [{RcppEigen}](https://cran.r-project.org/web/packages/RcppEigen/index.html), and on [Boost Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html) via [{BH}](https://cran.r-project.org/web/packages/BH/index.html), and is developed at the [Centre for the Mathematical Modelling of Infectious Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases) at the London School of Hygiene and Tropical Medicine as part of the [Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
-
-<!-- badges: start -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![R-CMD-check](https://github.com/{{ gh_repo }}/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/{{ gh_repo }}/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/{{ gh_repo }}/branch/main/graph/badge.svg)](https://app.codecov.io/gh/{{ gh_repo }}?branch=main)
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![CRAN status](https://www.r-pkg.org/badges/version/{{ packagename }})](https://CRAN.R-project.org/package={{ packagename }})
-<!-- badges: end -->
 
 ## Installation
 

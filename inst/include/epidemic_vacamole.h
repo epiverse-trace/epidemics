@@ -1,10 +1,15 @@
 // Copyright 2023 'epidemics' authors. See repository licence in LICENSE.md.
+/*
+    Adapted from the Vacamole model developed by Kylie Ainslie et al. at the
+    National Institute for Public Health and the Environment (RIVM),
+    The Netherlands, during the Covid-19 pandemic.
+    Source code for the original Vacamole model was developed at:
+    https://github.com/kylieainslie/vacamole
+    and the model is described in Eurosurveillance at:
+    https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090
+*/
 #ifndef INST_INCLUDE_EPIDEMIC_VACAMOLE_H_
 #define INST_INCLUDE_EPIDEMIC_VACAMOLE_H_
-
-// [[Rcpp::plugins(cpp14)]]
-// [[Rcpp::depends(BH)]]
-// [[Rcpp::depends(RcppEigen)]]
 
 // clang-format off
 #include <Rcpp.h>

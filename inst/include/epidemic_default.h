@@ -2,10 +2,6 @@
 #ifndef INST_INCLUDE_EPIDEMIC_DEFAULT_H_
 #define INST_INCLUDE_EPIDEMIC_DEFAULT_H_
 
-// [[Rcpp::plugins(cpp14)]]
-// [[Rcpp::depends(BH)]]
-// [[Rcpp::depends(RcppEigen)]]
-
 // clang-format off
 #include <Rcpp.h>
 #include <RcppEigen.h>

@@ -84,7 +84,7 @@
 #'   time_end = 200,
 #'   increment = 1
 #' )
-epidemic <- function(model_name = "default",
+epidemic <- function(model_name = c("default", "vacamole"),
                      population,
                      infection,
                      ...) {

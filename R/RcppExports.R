@@ -38,3 +38,62 @@
     .Call(`_epidemics_epidemic_default_cpp`, population, beta, alpha, gamma, intervention, vaccination, time_end, increment)
 }
 
+#' @title Run the RIVM Vacamole model
+#'
+#' @description Vacamole is a deterministic, compartmental epidemic model built
+#' by Kylie Ainslie and others at RIVM, the Dutch Public Health Institute for
+#' the Covid-19 pandemic, with a focus on scenario modelling for
+#' hospitalisation and vaccination.
+#' Model code: https://github.com/kylieainslie/vacamole
+#' Manuscript describing the model and its application:
+#' https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090
+#'
+#' @details The original model has 8 conceptual compartments - four
+#' epidemiological compartments (SEIR), three hospitalisation compartments
+#' (H, ICU, ICU2H), and death - see the manuscript in Eurosurveillance.
+#' Only infected individuals can enter the hospitalisation or death
+#' compartments.
+#' Vacamole was implemented as a standalone R package, and some versions have
+#' been used to generate scenarios for the ECDC Covid-19 Scenario Hub.
+#'
+#' Individuals from the susceptible compartment may be vaccinated partially
+#' or fully (assuming a two dose regimen), with only the second dose reducing
+#' their probability of being infected, and of being hospitalised or dying.
+#'
+#' @param population An object of the `population` class, which holds a
+#' population contact matrix, a demography vector, and the initial conditions
+#' of each demographic group. See [population()].
+#' @param beta The transmission rate \eqn{\beta} at which unvaccinated and
+#' partially vaccinated individuals are infected by the disease.
+#' @param beta_v The transmission rate \eqn{\beta_V} at which individuals who
+#' have received two vaccine doses are infected by the disease.
+#' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
+#' This is common to fully susceptible, partially vaccinated, and fully
+#' vaccinated individuals (where fully vaccinated represents two doses).
+#' @param omega The mortality rate of fully susceptible and partially
+#' vaccinated and unprotected individuals.
+#' @param omega_v The mortality rate of individuals who are protected by
+#' vaccination.
+#' @param eta The hospitalisation rate of fully susceptible and partially
+#' vaccinated and unprotected individuals.
+#' @param eta_v The hospitalisation rate of individuals who are protected by
+#' vaccination.
+#' @param gamma The recovery rate \eqn{\gamma}.
+#' @param time_end The maximum time, defaults to 200.0.
+#' @param intervention A non-pharamaceutical intervention applied during the
+#' course of the epidemic, with a start and end time, and age-specific effect
+#' on contacts. See [intervention()].
+#' @param vaccination A vaccination regime followed during the
+#' course of the epidemic, with a group- and dose-specific start and end time,
+#' and age-specific rates of delivery of first and second doses.
+#' See [vaccination()].
+#' @param increment The increment time, defaults to 0.1.
+#' @return A two element list, where the first element is a list of matrices
+#' whose elements correspond to the numbers of individuals in each compartment
+#' as specified in the initial conditions matrix (see [population()]).
+#' The second list element is a vector of timesteps.
+#' @keywords internal
+.epidemic_vacamole_cpp <- function(population, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, intervention, vaccination, time_end = 200.0, increment = 0.1) {
+    .Call(`_epidemics_epidemic_vacamole_cpp`, population, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, intervention, vaccination, time_end, increment)
+}
+

@@ -19,7 +19,8 @@ uk_population <- population(
 # add a vaccination regime
 vax_time_begin <- 50
 vaccination <- vaccination(
-  time_begin = vax_time_begin, time_end = 200, nu = 0.0005
+  time_begin = matrix(vax_time_begin),
+  time_end = matrix(200), nu = matrix(0.0005)
 )
 
 # prepare infection parameters as infection object

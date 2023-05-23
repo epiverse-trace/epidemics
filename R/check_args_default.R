@@ -15,13 +15,17 @@
 
   # add null intervention and vaccination if these are missing
   if (!"intervention" %in% names(mod_args)) {
-    mod_args$intervention <- no_intervention(
-      mod_args$population
+    suppressMessages(
+      mod_args$intervention <- no_intervention(
+        mod_args$population
+      )
     )
   }
   if (!"vaccination" %in% names(mod_args)) {
-    mod_args$vaccination <- no_vaccination(
-      mod_args$population
+    suppressMessages(
+      mod_args$vaccination <- no_vaccination(
+        mod_args$population
+      )
     )
   }
 

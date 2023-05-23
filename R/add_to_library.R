@@ -51,12 +51,12 @@ add_to_library <- function(model_type = "epidemic",
   temp_library <- data.frame(
     model_type = model_type,
     model_name = model_name,
-    model_function = sprintf("%s_%s_cpp", model_type, model_name),
+    model_function = sprintf(".%s_%s_cpp", model_type, model_name),
     model_args_checker = sprintf(
-      ".check_args_%s_%s_cpp", model_type, model_name
+      ".check_args_%s_%s", model_type, model_name
     ),
     model_args_prepper = sprintf(
-      ".prepare_args_%s_%s_cpp", model_type, model_name
+      ".prepare_args_%s_%s", model_type, model_name
     ),
     stringsAsFactors = FALSE
   )
@@ -86,7 +86,8 @@ add_to_library <- function(model_type = "epidemic",
   # write model library to file with a message
   jsonlite::write_json(
     model_library,
-    system.file("extdata", "model_library.json", package = "epidemics")
+    system.file("extdata", "model_library.json", package = "epidemics"),
+    pretty = TRUE
   )
   message(
     sprintf(

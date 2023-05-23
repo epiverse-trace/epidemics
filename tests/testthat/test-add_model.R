@@ -27,7 +27,7 @@ test_that("Add model function and details to the library", {
   )
   expect_identical(
     test_fn,
-    "test-type_test-name_cpp"
+    ".test-type_test-name_cpp"
   )
 
   # check that the compartments exist
@@ -45,5 +45,6 @@ test_that("Add model function and details to the library", {
 # IMPORTANT: write original model library back to file
 jsonlite::write_json(
   ml_manual,
-  system.file("extdata", "model_library.json", package = "epidemics")
+  system.file("extdata", "model_library.json", package = "epidemics"),
+  pretty = TRUE
 )

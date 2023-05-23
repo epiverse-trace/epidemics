@@ -4,20 +4,21 @@
 \alias{vaccination}
 \title{Construct a new vaccination regime for an epidemic model}
 \usage{
-vaccination(name = NA_character_, time_begin, time_end, nu)
+vaccination(name = NA_character_, nu, time_begin, time_end)
 }
 \arguments{
 \item{name}{String for the name of the vaccination regime.}
 
-\item{time_begin}{Vector for the start time of the vaccination for each
+\item{nu}{Matrix for the group-specific rate of vaccination, expressed as the
+rate parameter \eqn{nu}. Each element of the matrix \eqn{nu_{ij}} represents
+the rate of delivering vaccine dose \eqn{j} to demographic group \eqn{i}.}
+
+\item{time_begin}{Matrix for the start time of delivering vaccination dose
+\eqn{j} to demographic group \eqn{i}.
 demographic group \eqn{i}.}
 
-\item{time_end}{Vector for the end time of the vaccination for each
-demographic group \eqn{i}.}
-
-\item{nu}{Vector of the same length as the
-number of demographic groups, which gives the group-specific rate of
-vaccination, expressed as the rate parameter \eqn{nu}.}
+\item{time_end}{Matrix for the end time of delivering vaccination dose
+\eqn{j} to demographic group \eqn{i}.}
 }
 \value{
 An object of the \code{vaccination} S3 class.

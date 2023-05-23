@@ -16,6 +16,7 @@
 #include "population.h"
 #include "intervention.h"
 #include "vaccination.h"
-#include "epidemic_default.h"  // paths must be relative to this file
+#include "epidemic_default.h"
+#include "epidemic_vacamole.h"  // paths must be relative to this file
 
 #endif  // epidemics_epidemics_H_

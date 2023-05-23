@@ -10,3 +10,5 @@
 ^\.Rproj\.user$
 ^formatcpp.sh
 ^lintcpp.sh
+^doc$
+^Meta$

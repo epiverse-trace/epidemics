@@ -98,9 +98,9 @@ Prepare a vaccination campaign targeting individuals aged over 65.
 # prepare a vaccination object
 vaccinate_elders <- vaccination(
   name = "vaccinate elders",
-  time_begin = rep(100, nrow(contact_matrix)),
-  time_end = rep(250, nrow(contact_matrix)),
-  nu = c(0.0001, 0.0001, 0.0001)
+  time_begin = matrix(100, nrow(contact_matrix)),
+  time_end = matrix(250, nrow(contact_matrix)),
+  nu = matrix(c(0.0001, 0.0001, 0.0001))
 )
 
 # view vaccination object

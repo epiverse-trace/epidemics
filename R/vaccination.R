@@ -2,15 +2,16 @@
 #' Construct a new vaccination regime
 #'
 #' @param name String for the name of the vaccination regime.
-#' @param time_begin Vector for the start time of the vaccination for each
+#' @param time_begin Matrix for the start time of delivering vaccination dose
+#' \eqn{j} to demographic group \eqn{i}.
 #' demographic group \eqn{i}.
-#' @param time_end Vector for the end time of the vaccination for each
-#' demographic group \eqn{i}.
-#' @param nu Vector of the same length as the
-#' number of demographic groups, which gives the group-specific rate of
-#' vaccination, expressed as the rate parameter \eqn{nu}.
+#' @param time_end Matrix for the end time of delivering vaccination dose
+#' \eqn{j} to demographic group \eqn{i}.
+#' @param nu Matrix for the group-specific rate of vaccination, expressed as the
+#' rate parameter \eqn{nu}. Each element of the matrix \eqn{nu_{ij}} represents
+#' the rate of delivering vaccine dose \eqn{j} to demographic group \eqn{i}.
 #'
-#' @return An `vaccination` class object.
+#' @return A `vaccination` class object.
 #' @keywords internal
 #' @noRd
 new_vaccination <- function(name = NA_character_,
@@ -32,13 +33,14 @@ new_vaccination <- function(name = NA_character_,
 #' Construct a new vaccination regime for an epidemic model
 #'
 #' @param name String for the name of the vaccination regime.
-#' @param time_begin Vector for the start time of the vaccination for each
+#' @param time_begin Matrix for the start time of delivering vaccination dose
+#' \eqn{j} to demographic group \eqn{i}.
 #' demographic group \eqn{i}.
-#' @param time_end Vector for the end time of the vaccination for each
-#' demographic group \eqn{i}.
-#' @param nu Vector of the same length as the
-#' number of demographic groups, which gives the group-specific rate of
-#' vaccination, expressed as the rate parameter \eqn{nu}.
+#' @param time_end Matrix for the end time of delivering vaccination dose
+#' \eqn{j} to demographic group \eqn{i}.
+#' @param nu Matrix for the group-specific rate of vaccination, expressed as the
+#' rate parameter \eqn{nu}. Each element of the matrix \eqn{nu_{ij}} represents
+#' the rate of delivering vaccine dose \eqn{j} to demographic group \eqn{i}.
 #'
 #' @return An object of the `vaccination` S3 class.
 #' @export
@@ -54,14 +56,14 @@ new_vaccination <- function(name = NA_character_,
 #' )
 #' childhood_vaccination
 vaccination <- function(name = NA_character_,
+                        nu,
                         time_begin,
-                        time_end,
-                        nu) {
+                        time_end) {
   # check input
   checkmate::assert_string(name, na.ok = TRUE)
-  checkmate::assert_numeric(time_begin, lower = 0, finite = TRUE)
-  checkmate::assert_numeric(time_end, lower = 0, finite = TRUE)
-  checkmate::assert_numeric(nu, finite = TRUE)
+  checkmate::assert_matrix(nu)
+  checkmate::assert_matrix(time_begin, nrows = nrow(nu), ncols = ncol(nu))
+  checkmate::assert_matrix(time_end, nrows = nrow(nu), ncols = ncol(nu))
 
   # message if any vaccinations' intervals are badly formed
   if (any(time_end <= time_begin)) {
@@ -69,6 +71,12 @@ vaccination <- function(name = NA_character_,
       "Vaccination: some `time_end`s are not greater than `time_begin`s"
     )
   }
+
+  # assign dose names
+  dose_names <- glue::glue("dose_{seq(ncol(nu))}")
+  colnames(nu) <- dose_names
+  colnames(time_begin) <- dose_names
+  colnames(time_end) <- dose_names
 
   # call vaccination constructor
   vaccination_ <- new_vaccination(
@@ -105,9 +113,15 @@ validate_vaccination <- function(object) {
 
   # other checks for the vaccination object
   checkmate::assert_string(object$name, na.ok = TRUE)
-  checkmate::assert_numeric(object$time_begin, lower = 0, finite = TRUE)
-  checkmate::assert_numeric(object$time_end, lower = 0, finite = TRUE)
-  checkmate::assert_numeric(object$nu, finite = TRUE)
+  checkmate::assert_matrix(object$nu)
+  checkmate::assert_matrix(
+    object$time_begin,
+    nrows = nrow(object$nu), ncols = ncol(object$nu)
+  )
+  checkmate::assert_matrix(
+    object$time_end,
+    nrows = nrow(object$nu), ncols = ncol(object$nu)
+  )
 
   invisible(object)
 }
@@ -143,9 +157,9 @@ no_vaccination <- function(population) {
   checkmate::assert_class(population, "population")
   vaccination(
     name = "no_vaccination",
-    time_begin = rep(0.0, times = nrow(population$contact_matrix)),
-    time_end = rep(0.0, times = nrow(population$contact_matrix)),
-    nu = rep(0.0, times = nrow(population$contact_matrix))
+    time_begin = matrix(0.0, nrow = nrow(population$contact_matrix)),
+    time_end = matrix(0.0, nrow = nrow(population$contact_matrix)),
+    nu = matrix(0.0, nrow = nrow(population$contact_matrix))
   )
 }
 
@@ -194,20 +208,29 @@ format.vaccination <- function(x, ...) {
         "
 
         Time begin:
-        {glue::glue_collapse(x$time_begin, sep = ', ')}
-        Time end:
-        {glue::glue_collapse(x$time_end, sep = ', ')}
         "
       )
     )
   )
+  print(x$time_begin)
+
+  print(glue::glue(
+    "
+
+    Time end:
+    "
+  ))
+  print(x$time_end)
+
   print(
     glue::glue(
-      "Vaccination rate:
-      {glue::glue_collapse(x$nu, sep = ', ')}
+      "
+
+      Vaccination rate:
       "
     )
   )
+  print(x$nu)
 
   invisible(x)
 }

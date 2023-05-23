@@ -32,14 +32,32 @@ pandemic <- infection(
 # prepare a basic vaccination regime
 elder_vaccination <- vaccination(
   name = "elder_vaccination",
-  time_begin = c(0, 0, 0),
-  time_end = c(200, 200, 200),
-  nu = c(0, 0, 1e-4)
+  time_begin = matrix(0, 3, 1),
+  time_end = matrix(200, 3, 1),
+  nu = matrix(c(0, 0, 1e-4), 3, 1)
+)
+
+# prepare a three dose vaccination regime for a single age group
+triple_vaccination <- vaccination(
+  name = "triple_vaccination",
+  nu = matrix(
+    1e-4,
+    nrow = 1, ncol = 3
+  ),
+  time_begin = matrix(
+    seq(0, 30, 60),
+    nrow = 1, ncol = 3
+  ),
+  time_end = matrix(
+    seq(31, 61, 101),
+    nrow = 1, ncol = 3
+  )
 )
 
 # snapshot test for printing
 test_that("Printing vaccination class", {
   expect_snapshot(elder_vaccination)
+  expect_snapshot(triple_vaccination)
 })
 
 # test the vaccination has expected structure
@@ -64,13 +82,13 @@ test_that("Vaccination is correctly initialised", {
   expect_type(
     elder_vaccination$nu, "double"
   )
-  expect_length(
-    elder_vaccination$time_end,
-    length(elder_vaccination$time_begin)
+  expect_identical(
+    nrow(elder_vaccination$time_begin),
+    nrow(elder_vaccination$nu)
   )
-  expect_length(
-    elder_vaccination$nu,
-    length(elder_vaccination$time_begin)
+  expect_identical(
+    nrow(elder_vaccination$time_end),
+    nrow(elder_vaccination$nu)
   )
 })
 

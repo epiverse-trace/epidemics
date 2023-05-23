@@ -23,7 +23,7 @@ namespace epidemics {
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_vacamole {
   const double beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma;
-  const Eigen::ArrayXd nu;
+  const Eigen::MatrixXd nu;
   const Rcpp::List population, intervention, vaccination;
   const Eigen::MatrixXd contact_matrix;
   // npi, interv, pop
@@ -59,7 +59,7 @@ struct epidemic_vacamole {
     }
 
     // get current vaccination rate
-    Eigen::ArrayXd current_nu = vaccination::current_nu(nu, vaccination, t);
+    Eigen::MatrixXd current_nu = vaccination::current_nu(nu, vaccination, t);
 
     // NB: Casting initial conditions matrix columns to arrays is necessary
     // for vectorised operations
@@ -73,9 +73,9 @@ struct epidemic_vacamole {
         beta * x.col(0).array() * (cm * (x.col(5) + x.col(6))).array();
 
     // Susceptible to vaccinated with one dose
-    Eigen::ArrayXd sToV1 = current_nu * x.col(0).array();
+    Eigen::ArrayXd sToV1 = current_nu.col(0).array() * x.col(0).array();
     // Vaccinated one dose to vaccinated with two doses
-    Eigen::ArrayXd v1ToV2 = current_nu * x.col(1).array();
+    Eigen::ArrayXd v1ToV2 = current_nu.col(1).array() * x.col(1).array();
 
     // Vaccinated one dose to exposed - same as susceptible to exposed
     Eigen::ArrayXd v1ToE =

@@ -23,7 +23,7 @@ namespace epidemics {
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_default {
   const double beta, alpha, gamma;
-  const Eigen::ArrayXd nu;
+  const Eigen::MatrixXd nu;
   const Rcpp::List population, intervention, vaccination;
   const Eigen::MatrixXd contact_matrix;
   // npi, interv, pop
@@ -52,7 +52,7 @@ struct epidemic_default {
     }
 
     // get current vaccination rate
-    Eigen::ArrayXd current_nu = vaccination::current_nu(nu, vaccination, t);
+    Eigen::MatrixXd current_nu = vaccination::current_nu(nu, vaccination, t);
 
     // NB: Casting initial conditions matrix columns to arrays is necessary
     // for vectorised operations
@@ -61,7 +61,7 @@ struct epidemic_default {
     Eigen::ArrayXd sToE = beta * x.col(0).array() * (cm * x.col(2)).array();
     Eigen::ArrayXd eToI = alpha * x.col(1).array();
     Eigen::ArrayXd iToR = gamma * x.col(2).array();
-    Eigen::ArrayXd sToV = current_nu * x.col(0).array();
+    Eigen::ArrayXd sToV = current_nu.col(0).array() * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)
     dxdt.col(0) = -sToE - sToV;  // -β*S*contacts*I - ν*S

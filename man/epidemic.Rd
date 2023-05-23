@@ -4,7 +4,14 @@
 \alias{epidemic}
 \title{Model an epidemic}
 \usage{
-epidemic(model_name = "default", population, infection, ...)
+epidemic(
+  model_name = c("default", "vacamole"),
+  population,
+  infection,
+  time_end = 200,
+  increment = 1,
+  ...
+)
 }
 \arguments{
 \item{model_name}{A string for the epidemic model. The only currently
@@ -18,6 +25,12 @@ of each demographic group. See \code{\link[=population]{population()}}.}
 have at least the basic reproductive number \eqn{R_0} of the infection, and
 the infectious period. Parameters required by other models can be found in
 the documentation for model functions.}
+
+\item{time_end}{The maximum number of timesteps over which to run the model.
+Taken as days, with a default value of 200 days.}
+
+\item{increment}{The size of the time increment. Taken as days, with a
+default value of 1 day.}
 
 \item{...}{Arguments to the model specified by \code{model}. See \strong{Details} for
 more on the supported arguments.}
@@ -69,8 +82,6 @@ argument in the default model.
 course of the epidemic, with a start and end time, and age-specific effect
 on the transition of individuals from susceptible to vaccinated.
 See \code{\link[=vaccination]{vaccination()}}. This is an optional argument in the default model.
-\item \code{time_end} The maximum number of timesteps over which to run the model.
-\item \code{increment} The size of the time increment.
 }
 }
 \examples{

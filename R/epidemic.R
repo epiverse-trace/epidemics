@@ -18,6 +18,10 @@
 #' have at least the basic reproductive number \eqn{R_0} of the infection, and
 #' the infectious period. Parameters required by other models can be found in
 #' the documentation for model functions.
+#' @param time_end The maximum number of timesteps over which to run the model.
+#' Taken as days, with a default value of 200 days.
+#' @param increment The size of the time increment. Taken as days, with a
+#' default value of 1 day.
 #' @param ... Arguments to the model specified by `model`. See **Details** for
 #' more on the supported arguments.
 #'
@@ -56,8 +60,6 @@
 #' course of the epidemic, with a start and end time, and age-specific effect
 #' on the transition of individuals from susceptible to vaccinated.
 #' See [vaccination()]. This is an optional argument in the default model.
-#' - `time_end` The maximum number of timesteps over which to run the model.
-#' - `increment` The size of the time increment.
 #'
 #' @examples
 #' # create a population
@@ -87,16 +89,19 @@
 epidemic <- function(model_name = c("default", "vacamole"),
                      population,
                      infection,
+                     time_end = 200,
+                     increment = 1,
                      ...) {
 
   # select epidemic model from library
-  # currently supports only a single SEIRV model
   # handle the arguments check and prep functions, and the model function
   model_name <- match.arg(arg = model_name, several.ok = FALSE)
 
   # collect population, infection, and model arguments passed as `...`
   model_arguments <- list(
-    population = population, infection = infection, ...
+    population = population, infection = infection,
+    time_end = time_end, increment = increment,
+    ...
   )
 
   # prepare model arguments while checking them

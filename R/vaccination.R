@@ -50,9 +50,9 @@ new_vaccination <- function(name = NA_character_,
 #' # an example for childhood vaccination only
 #' childhood_vaccination <- vaccination(
 #'   name = "childhood_vaccination",
-#'   time_begin = c(0, 100), # assuming a simulation over 100 days
-#'   time_end = c(100, 100),
-#'   nu = c(0.0001, 0.0) # over 5s never vaccinated
+#'   time_begin = matrix(c(0, 100)), # assuming a simulation over 100 days
+#'   time_end = matrix(c(100, 100)),
+#'   nu = matrix(c(0.0001, 0.0)) # over 5s never vaccinated
 #' )
 #' childhood_vaccination
 vaccination <- function(name = NA_character_,
@@ -137,9 +137,9 @@ validate_vaccination <- function(object) {
 #' # an example for childhood vaccination only
 #' childhood_vaccination <- vaccination(
 #'   name = "childhood_vaccination",
-#'   time_begin = c(0, 100), # assuming a simulation over 100 days
-#'   time_end = c(100, 100),
-#'   nu = c(0.0001, 0.0) # over 5s never vaccinated
+#'   time_begin = matrix(c(0, 100)), # assuming a simulation over 100 days
+#'   time_end = matrix(c(100, 100)),
+#'   nu = matrix(c(0.0001, 0.0)) # over 5s never vaccinated
 #' )
 #' is_vaccination(childhood_vaccination)
 is_vaccination <- function(object) {

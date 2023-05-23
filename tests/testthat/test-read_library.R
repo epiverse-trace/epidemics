@@ -57,7 +57,7 @@ test_that("Reading functions from library", {
   compartments_default <- read_from_library(what = "compartments")
   expect_identical(
     compartments_default,
-    unlist(ml_manual$compartments)
+    unlist(ml_manual$compartments[ml_manual$model_name == "default"])
   )
 
   # Test that requesting a model not in the library errors

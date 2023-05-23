@@ -46,6 +46,10 @@ test_that("Output of default epidemic model", {
     data, c("compartment", "demography_group", "value", "time"),
     ignore.order = TRUE
   )
+  expect_identical(
+    unique(data$compartment),
+    read_from_library(what = "compartments")
+  )
 
   # check for all positive values within the range 0 and total population size
   expect_true(

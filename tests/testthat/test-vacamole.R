@@ -35,9 +35,9 @@ uk_population <- population(
   initial_conditions = initial_conditions
 )
 
-# prepare a three dose vaccination regime for a single age group
+# prepare a two dose vaccination regime for three age groups
 double_vaccination <- vaccination(
-  name = "triple_vaccination",
+  name = "double_vaccination",
   nu = matrix(
     1e-3,
     nrow = 3, ncol = 2

@@ -1,0 +1,168 @@
+---
+title: "Using the RIVM Vacamole model of leaky vaccination on hospitalisations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using the RIVM Vacamole model of leaky vaccination on hospitalisations}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(epidemics)
+library(data.table)
+library(ggplot2)
+```
+
+## Prepare population and initial conditions
+
+Prepare population and contact data.
+
+```{r}
+# load contact and population data from socialmixr::polymod
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 65),
+  symmetric = TRUE
+)
+
+# prepare contact matrix
+contact_matrix <- t(contact_data$matrix)
+
+# prepare the demography vector
+demography_vector <- contact_data$demography$population
+names(demography_vector) <- rownames(contact_matrix)
+```
+
+Prepare initial conditions for each age group. The Vacamole model has 11 compartments and therefore requires a matrix with 11 columns.
+
+```{r}
+# initial conditions
+initial_i <- 1e-6
+
+# // 0| 1| 2|3| 4|5| 6|7| 8|9|10
+# // S|V1|V2|E|EV|I|IV|H|HV|D|R
+
+# make initial conditions - order is important
+initial_conditions <- c(
+  S = 1 - initial_i,
+  V1 = 0, V2 = 0,
+  E = 0, EV = 0,
+  I = initial_i, IV = 0,
+  H = 0, HV = 0, D = 0, R = 0
+)
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+
+# assign rownames for clarity
+rownames(initial_conditions) <- rownames(contact_matrix)
+```
+
+Prepare a population as a `population` class object.
+
+```{r}
+uk_population <- population(
+  name = "UK",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+```
+
+## Prepare pathogen parameters
+
+```{r}
+# make infection class for Vacamole model
+# note extra arguments passed as ...
+infect <- infection(
+  name = "covid", r0 = 3, infectious_period = 10,
+  preinfectious_period = 5,
+  eta = 1 / 1000, omega = 1 / 1000,
+  susc_reduction_vax = 0.2,
+  hosp_reduction_vax = 0.5,
+  mort_reduction_vax = 0.5
+)
+```
+
+## Prepare a two dose vaccination campaign
+
+```{r}
+# prepare a two dose vaccination regime for a single age group
+double_vaccination <- vaccination(
+  name = "double_vaccination",
+  nu = matrix(
+    1e-2,
+    nrow = 3, ncol = 2
+  ),
+  time_begin = matrix(
+    00,
+    nrow = 3, ncol = 2
+  ),
+  time_end = matrix(
+    200,
+    nrow = 3, ncol = 2
+  )
+)
+```
+
+## Model epidemic using Vacamole
+
+```{r}
+data <- epidemic(
+  model_name = "vacamole",
+  population = uk_population,
+  infection = infect,
+  vaccination = double_vaccination,
+  time_end = 300, increment = 1
+)
+```
+
+## Visualise model outcomes
+
+Plot the number of individuals hospitalised over time - this is the total number, not the number hospitalised each day.
+
+```{r class.source = 'fold-hide'}
+# plot figure of epidemic curve
+ggplot(
+  data[compartment %like% c("hospitalised")],
+  aes(
+    x = time,
+    y = value,
+    col = demography_group,
+    linetype = compartment
+  )
+) +
+  geom_line() +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    linetype = "Compartment",
+    y = "Individuals"
+  )
+```

@@ -142,3 +142,23 @@ test_that("Bad vaccination schedule prints a message", {
     regexp = "(time_end)*(not greater than)*(time_begin)"
   )
 })
+
+#### Test two dose no vaccination ####
+doses <- 2L
+no_vax_two_dose <- no_vaccination(uk_population, doses = doses)
+
+test_that("No vaccination with two dose regime", {
+  expect_identical(
+    ncol(no_vax_two_dose$nu), doses
+  )
+  expect_identical(
+    ncol(no_vax_two_dose$time_begin), doses
+  )
+  expect_identical(
+    ncol(no_vax_two_dose$time_end), doses
+  )
+  expect_identical(
+    unique(as.vector(no_vax_two_dose$nu)), 0.0,
+    tolerance = 1e-6
+  )
+})

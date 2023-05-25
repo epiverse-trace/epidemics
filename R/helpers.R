@@ -85,6 +85,10 @@ output_to_df <- function(output, model_arguments, compartments) {
 #' @param by_group A logical representing whether the epidemic size should be
 #' returned by demographic group, or whether a single population-wide value is
 #' returned.
+#' @param deaths A logical value that indicates whether to count individuals in
+#' the epidemic size calculation. Setting `deaths = TRUE` looks for a `"dead"`
+#' compartment in the data. If there is no such column, the function returns
+#' only the final number of recovered individuals in each demographic group.
 #'
 #' @return A single number when `by_group = FALSE`, or a vector of numbers of
 #' the same length as the number of demographic groups when `by_group = TRUE`.
@@ -121,26 +125,45 @@ output_to_df <- function(output, model_arguments, compartments) {
 #'
 #' # get the epidemic size at the halfway point
 #' epidemic_size(data, stage = 0.5)
-epidemic_size <- function(data, stage = 1.0, by_group = TRUE) {
+epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
   # input checking for data
   checkmate::assert_data_table(data)
   checkmate::assert_logical(by_group)
+  checkmate::assert_logical(deaths)
   checkmate::assert_number(stage, lower = 0.0, upper = 1.0, finite = TRUE)
 
   stopifnot(
     "No 'recovered' compartment found in `data`, check model compartments" =
       "recovered" %in% unique(data$compartment)
   )
+  # if deaths are requested to be counted, but no "dead" compartment exists
+  # throw a message
+  if (isTRUE(deaths) && (!"dead" %in% unique(data$compartment))) {
+    message(
+      "No 'dead' compartment found in `data`; counting only 'recovered'",
+      " individuals in the epidemic size."
+    )
+  }
+  # add deaths to compartments to search
+  size_compartments <- "recovered"
+  if (isTRUE(deaths)) {
+    size_compartments <- c(size_compartments, "deaths")
+  }
 
   # get final numbers recovered - operate on data.table as though data.frame
-  final_recovered <- data[data$compartment == "recovered" &
+  epidemic_size_ <- data[data$compartment %in% size_compartments &
     data$time == round(max(data$time) * stage, 2), ]
 
   if (by_group) {
-    final_recovered[["value"]]
+    epidemic_size_ <- epidemic_size_[["value"]]
+    names(epidemic_size_) <- unique(data$demography_group)
   } else {
-    sum(final_recovered[["value"]])
+    epidemic_size_ <- sum(epidemic_size_[["value"]])
+    names(epidemic_size_) <- "total_population"
   }
+
+  # return epidemic size
+  epidemic_size_
 }
 
 #' Get new infections

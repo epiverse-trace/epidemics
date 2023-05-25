@@ -149,17 +149,27 @@ is_vaccination <- function(object) {
 #' Generate a null vaccination
 #'
 #' @param population A `population` object with a `contact_matrix` member.
-#'
+#' @param doses A number, defaulting to 1, to indicate the number of doses in
+#' the vaccination regime.
 #' @return An vaccination that has no effect on the population, with start and
 #' end times set to 0.0, and the rate of vaccination \eqn{nu} also set to 0.0.
 #' @export
-no_vaccination <- function(population) {
+no_vaccination <- function(population, doses = 1L) {
   checkmate::assert_class(population, "population")
   vaccination(
     name = "no_vaccination",
-    time_begin = matrix(0.0, nrow = nrow(population$contact_matrix)),
-    time_end = matrix(0.0, nrow = nrow(population$contact_matrix)),
-    nu = matrix(0.0, nrow = nrow(population$contact_matrix))
+    time_begin = matrix(
+      0.0,
+      nrow = nrow(population$contact_matrix), ncol = doses
+    ),
+    time_end = matrix(
+      0.0,
+      nrow = nrow(population$contact_matrix), ncol = doses
+    ),
+    nu = matrix(
+      0.0,
+      nrow = nrow(population$contact_matrix), ncol = doses
+    )
   )
 }
 

@@ -67,3 +67,49 @@ test_that("Epidemic size functions", {
     epidemic_size(data, by_group = FALSE), 1
   )
 })
+
+#### Test that epidemic size with no deaths is same as deaths = FALSE
+nonlethal_infect <- infection(
+  name = "covid", r0 = 5, infectious_period = 10,
+  preinfectious_period = 5,
+  eta = 1 / 1000,
+  omega = 0, # no deaths due to infection
+  susc_reduction_vax = 0.5,
+  hosp_reduction_vax = 0.7,
+  mort_reduction_vax = 0.9
+)
+
+# make initial conditions - order is important
+initial_conditions <- c(
+  S = 1 - 1e-6,
+  V1 = 0, V2 = 0,
+  E = 0, EV = 0,
+  I = 1e-6, IV = 0,
+  H = 0, HV = 0, D = 0, R = 0
+)
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions
+)
+
+# create a population
+uk_population <- population(
+  name = "UK population",
+  contact_matrix = matrix(1, 2, 2),
+  demography_vector = 67e6 * c(0.4, 0.6),
+  initial_conditions = initial_conditions
+)
+
+test_that("Epidemic size with no deaths is correct", {
+  data <- epidemic(
+    model_name = "vacamole",
+    population = uk_population,
+    infection = nonlethal_infect,
+    vaccination = no_vaccination(uk_population, doses = 2L),
+    time_end = 400, increment = 1
+  )
+  expect_identical(
+    epidemic_size(data, deaths = FALSE),
+    epidemic_size(data)
+  )
+})

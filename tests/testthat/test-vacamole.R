@@ -118,3 +118,91 @@ test_that("Vacamole model works", {
     tolerance = 1e-6
   )
 })
+
+#### Tests for features of Vacamole ####
+# prepare a null vaccination schedule
+no_vaccination <- no_vaccination(uk_population, doses = 2)
+
+# make infection class for Vacamole model
+# note extra arguments passed as ...
+infect <- infection(
+  name = "covid", r0 = 5, infectious_period = 10,
+  preinfectious_period = 5,
+  eta = 1 / 1000, omega = 1 / 1000,
+  susc_reduction_vax = 0.5,
+  hosp_reduction_vax = 0.7,
+  mort_reduction_vax = 0.9
+)
+
+test_that("Vacamole model with no vaccination", {
+  # check model runs silently
+  data <- epidemic(
+    model_name = "vacamole",
+    population = uk_population,
+    infection = infect,
+    vaccination = no_vaccination,
+    time_end = 400, increment = 1
+  )
+  # test that no individuals are vaccinated in any compartments related to
+  # vaccination - e.g. hospitalised-vaccinated etc.
+  pop_vaxxed <- data[time == max(time) &
+    grepl("vaccinated", data$compartment, fixed = TRUE)]$value
+  expect_identical(
+    unique(pop_vaxxed), 0.0,
+    tolerance = 1e-6
+  )
+})
+
+nonlethal_infect <- infection(
+  name = "covid", r0 = 5, infectious_period = 10,
+  preinfectious_period = 5,
+  eta = 1 / 1000,
+  omega = 0, # no deaths due to infection
+  susc_reduction_vax = 0.5,
+  hosp_reduction_vax = 0.7,
+  mort_reduction_vax = 0.9
+)
+
+test_that("Vacamole with non-fatal infection", {
+  data <- epidemic(
+    model_name = "vacamole",
+    population = uk_population,
+    infection = nonlethal_infect,
+    vaccination = no_vaccination,
+    time_end = 400, increment = 1
+  )
+  # test that no individuals are dead
+  pop_dead <- data[time == max(time) &
+    grepl("dead", data$compartment, fixed = TRUE)]$value
+  expect_identical(
+    unique(pop_dead), 0.0,
+    tolerance = 1e-6
+  )
+})
+
+no_hospitalisation <- infection(
+  name = "covid", r0 = 5, infectious_period = 10,
+  preinfectious_period = 5,
+  eta = 0, # no hospitalisation
+  omega = 1 / 1000,
+  susc_reduction_vax = 0.5,
+  hosp_reduction_vax = 0.7,
+  mort_reduction_vax = 0.9
+)
+
+test_that("Vacamole with no hospitalisation", {
+  data <- epidemic(
+    model_name = "vacamole",
+    population = uk_population,
+    infection = no_hospitalisation,
+    vaccination = no_vaccination,
+    time_end = 400, increment = 1
+  )
+  # test that no individuals are dead
+  pop_hospitalised <- data[time == max(time) &
+    grepl("hospitalised", data$compartment, fixed = TRUE)]$value
+  expect_identical(
+    unique(pop_hospitalised), 0.0,
+    tolerance = 1e-6
+  )
+})

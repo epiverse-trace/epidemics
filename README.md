@@ -15,25 +15,31 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.org/package=epidemics)
 <!-- badges: end -->
 
-*epidemics* is an R package that provides an easy interface to a library
-of compartmental models that can help to model epidemic scenarios for
-directly transmitted infections such as influenza, Covid-19, or
-respiratory syncytial virus (RSV).
+*epidemics* is an R package that provides a convenient interface to a
+library of compartmental models that can help to model epidemic
+scenarios for directly transmitted infections such as influenza,
+Covid-19, or respiratory syncytial virus (RSV). The models in
+*epidemics* implement methods outlined in Bjørnstad et al.
+([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
+([2020b](#ref-bjornstad2020)). The models in *epidemics* can help
+provide rough estimates of the course of epidemics, and the
+effectiveness of pharmaceutical and non-pharmaceutical interventions.
 
-*epidemics* currently provides a single model with susceptible, exposed,
-infectious, recovered, and vaccinated compartments (SEIR-V), allowing
-for heterogeneity in social contacts, the implementation of a
+*epidemics* currently provides a default model with susceptible,
+exposed, infectious, recovered, and vaccinated compartments (SEIR-V),
+allowing for heterogeneity in social contacts, the implementation of a
 group-specific non-pharmaceutical intervention that reduces social
 contacts, and a vaccination regime with group-specific start and end
-dates.
+dates. Additionally, *epidemics* includes the Vacamole model developed
+at [RIVM, the Dutch Public Health Institute](https://www.rivm.nl/) for
+the Covid-19 pandemic, with a focus on scenario modelling for
+hospitalisation and vaccination ([Ainslie et al.
+2022](#ref-ainslie2022)).
 
-*epidemics* implements methods outlined in Bjørnstad et al.
-([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
-([2020b](#ref-bjornstad2020)).
-
-The models in *epidemics* can help provide rough estimates of the course
-of epidemics, and the effectiveness of pharmaceutical and
-non-pharmaceutical interventions
+More such models developed during the Covid-19 pandemic are planned to
+be added in the near future. Please get in touch if you would like to
+see your model added to the *epidemics* model library — we are happy to
+help with translating it from R or another language to Rcpp.
 
 *epidemics* relies on [Eigen](https://gitlab.com/libeigen/eigen) via
 [{RcppEigen}](https://cran.r-project.org/web/packages/RcppEigen/index.html),
@@ -57,11 +63,11 @@ pak::pak("epiverse-trace/epidemics")
 
 ## Quick start
 
-Here we show an example of using *epidemics* to model an epidemic in the
-U.K. population with an $R_0$ similar to that of pandemic influenza,
-with heterogeneity in social contacts among different age groups, and
-with the implementation of school closures to dampen the spread of the
-infection.
+Here we show an example of using the default model in *epidemics* to
+model an epidemic in the U.K. population with an $R_0$ similar to that
+of pandemic influenza, with heterogeneity in social contacts among
+different age groups, and with the implementation of school closures to
+dampen the spread of the infection.
 
 ``` r
 # load epidemics
@@ -212,6 +218,18 @@ By contributing to this project, you agree to abide by its terms.
 ## References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-ainslie2022" class="csl-entry">
+
+Ainslie, Kylie E. C., Jantien A. Backer, Pieter T. de Boer, Albert Jan
+van Hoek, Don Klinkenberg, Hester Korthals Altes, Ka Yin Leung, Hester
+de Melker, Fuminari Miura, and Jacco Wallinga. 2022. “A Scenario
+Modelling Analysis to Anticipate the Impact of COVID-19 Vaccination in
+Adolescents and Children on Disease Outcomes in the Netherlands, Summer
+2021.” *Eurosurveillance* 27 (44): 2101090.
+<https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090>.
+
+</div>
 
 <div id="ref-bjornstad2020a" class="csl-entry">
 

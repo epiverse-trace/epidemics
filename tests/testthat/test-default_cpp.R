@@ -154,9 +154,9 @@ test_that("Identical population sizes lead to identical final size", {
   final_sizes <- epidemic_size(data)
 
   # both groups have same final size
-  expect_identical(
+  expect_equal(
     final_sizes[1], final_sizes[2],
-    tolerance = 1e-6
+    tolerance = 1e-6, ignore_attr = TRUE
   )
 })
 

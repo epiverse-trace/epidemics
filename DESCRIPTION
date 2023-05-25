@@ -41,6 +41,7 @@ Imports:
     glue
 Suggests: 
     bookdown,
+    colorspace,
     covr,
     ggplot2,
     knitr,

@@ -4,10 +4,13 @@
 \alias{no_vaccination}
 \title{Generate a null vaccination}
 \usage{
-no_vaccination(population)
+no_vaccination(population, doses = 1L)
 }
 \arguments{
 \item{population}{A \code{population} object with a \code{contact_matrix} member.}
+
+\item{doses}{A number, defaulting to 1, to indicate the number of doses in
+the vaccination regime.}
 }
 \value{
 An vaccination that has no effect on the population, with start and

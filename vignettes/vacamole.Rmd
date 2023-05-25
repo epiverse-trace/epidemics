@@ -1,8 +1,15 @@
 ---
-title: "Using the RIVM Vacamole model of leaky vaccination on hospitalisations"
-output: rmarkdown::html_vignette
+title: "Using the RIVM Vacamole model of leaky vaccination and hospitalisations"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+bibliography: references.json
+link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Using the RIVM Vacamole model of leaky vaccination on hospitalisations}
+  %\VignetteIndexEntry{Using the RIVM Vacamole model of leaky vaccination and hospitalisations}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -12,14 +19,53 @@ editor_options:
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  dpi = 150
 )
 ```
+
+::: {.alert .alert-warning}
+**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) and ["Modelling a vaccination campaign"](modelling_vaccination.html) vignettes first!
+:::
+
+Vacamole is a deterministic, compartmental epidemic model built by Kylie Ainslie and others at [RIVM, the Dutch Public Health Institute](https://www.rivm.nl/) for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination [@ainslie2022].
+
+Vacamole was implemented as an R package, and the [source code can be found on Github](https://github.com/kylieainslie/vacamole). Some versions have been used to generate scenarios for the ECDC Covid-19 Scenario Hub.
+
+The original model has 8 conceptual compartments - four epidemiological compartments: susceptible, exposed, infectious, and recovered (S, E, I, R respectively), three hospitalisation compartments: hospitalised, in intensive care, and returning from intensive care to regular hospital care (H, ICU, ICU2H), and death - see the [manuscript describing them here](doi.org/10.2807/1560-7917.ES.2022.27.44.2101090). Only infected individuals can enter the hospitalisation or death compartments.
+
+Individuals from the susceptible compartment may be vaccinated partially ($V_1$) or fully ($V_2$; assuming a two dose regimen), with each dose reducing their probability of being infected, and of being hospitalised or dying.
+
+## Modifications for _epidemics_
+
+We have made some modifications to the ODE model of Vacamole in order to make it more general and thus potentially more applicable to a wider range of settings.
+
+Specifically,
+
+1. We have dropped the ICU and ICU2H compartment as this is potentially less relevant to a context in which intensive care capacity is low.
+
+2. We have added transitions from the infectious (I) and hospitalised (H) compartments to death (D), as this may be a more general assumption when hospital capacity is low (relatively more I → D) or when treatments are poor (relatively more H → D).
+
+3. We assume, in a first pass implementation that vaccination primarily reduces adverse outcomes, by modification to the transition rates ($\beta_V,\eta_{V},\omega_V$):
+
+	1. $\beta_V$: The infection rate $\beta$ for individuals in the fully vaccinated compartment $V_2$;
+	
+	2. $\eta_{V}$: The hospitalisation rate $\eta$ for fully vaccinated, infected individuals ($I_V$ → $H_V$);
+	
+	3. $\omega_V$: The mortality rate for all fully vaccinated individuals at any stage in or post infection (I, or H).
+
+::: {.alert .alert-primary}
+The details of the ODE system for the version of Vacamole included in _epidemics_ can be found at [the end of this page.](#vacamole-ode-system-for-epidemics)
+:::
 
 ```{r setup}
 library(epidemics)
 library(data.table)
 library(ggplot2)
+library(colorspace)
+library(scales)
 ```
 
 ## Prepare population and initial conditions
@@ -71,6 +117,12 @@ initial_conditions <- rbind(
 rownames(initial_conditions) <- rownames(contact_matrix)
 ```
 
+Prepare the time in days over which to model the epidemic, with the outbreak beginning at day zero.
+
+```{r}
+epidemic_days <- 300
+```
+
 Prepare a population as a `population` class object.
 
 ```{r}
@@ -91,7 +143,7 @@ infect <- infection(
   name = "covid", r0 = 3, infectious_period = 10,
   preinfectious_period = 5,
   eta = 1 / 1000, omega = 1 / 1000,
-  susc_reduction_vax = 0.2,
+  susc_reduction_vax = 0.5,
   hosp_reduction_vax = 0.5,
   mort_reduction_vax = 0.5
 )
@@ -107,12 +159,35 @@ double_vaccination <- vaccination(
     1e-2,
     nrow = 3, ncol = 2
   ),
+  # first doses begin after approx. 100 days
+  # second doses begin 1 month after first doses
+  time_begin = matrix(
+    c(30, 60),
+    nrow = 3, ncol = 2,
+    byrow = TRUE
+  ),
+  # doses are given until the end of the simulation
+  time_end = matrix(
+    epidemic_days,
+    nrow = 3, ncol = 2
+  )
+)
+```
+
+```{r}
+# prepare a null vaccination regime with two doses
+no_vaccination <- vaccination(
+  name = "double_vaccination",
+  nu = matrix(
+    0.0,
+    nrow = 3, ncol = 2
+  ),
   time_begin = matrix(
     00,
     nrow = 3, ncol = 2
   ),
   time_end = matrix(
-    200,
+    00,
     nrow = 3, ncol = 2
   )
 )
@@ -120,49 +195,188 @@ double_vaccination <- vaccination(
 
 ## Model epidemic using Vacamole
 
+First, we run the model with no vaccination.
+
 ```{r}
 data <- epidemic(
   model_name = "vacamole",
   population = uk_population,
   infection = infect,
-  vaccination = double_vaccination,
-  time_end = 300, increment = 1
+  vaccination = no_vaccination, # note custom no_vaccination object
+  time_end = epidemic_days
+)
+```
+
+Next we run the model with a two dose vaccination regime.
+
+```{r}
+data_vaccination <- epidemic(
+  model_name = "vacamole",
+  population = uk_population,
+  infection = infect,
+  vaccination = double_vaccination, # note custom object for two doses
+  time_end = epidemic_days
 )
 ```
 
 ## Visualise model outcomes
 
-Plot the number of individuals hospitalised over time - this is the total number, not the number hospitalised each day.
+First, we calculate the total number of infections resulting in recoveries and deaths over the course of the simulation; this is the epidemic's final size.
 
-```{r class.source = 'fold-hide'}
-# plot figure of epidemic curve
-ggplot(
-  data[compartment %like% c("hospitalised")],
-  aes(
-    x = time,
-    y = value,
-    col = demography_group,
-    linetype = compartment
-  )
-) +
-  geom_line() +
-  scale_y_continuous(
-    labels = scales::comma
+```{r}
+# collect data from the two scenarios
+data_scenarios <- list(data, data_vaccination)
+
+# get deaths and recoveries from infection
+data_scenarios <- Map(
+  data_scenarios, c("no_vax", "vax"),
+  f = function(df, sc) {
+    df_ <- unique(df[, "demography_group"], by = "demography_group")
+    # get total deaths per group
+    df_$total_deaths <- df[time == max(time) & compartment == "dead", ]$value
+
+    # get total recoveries per group using helper function `epidemic_size()`
+    df_$total_recovered <- epidemic_size(df, deaths = FALSE) # do not count dead
+
+    # add scenario information
+    df_$scenario <- sc
+
+    # return data
+    df_
+  }
+)
+
+# collect data
+data_scenarios <- rbindlist(data_scenarios)
+
+# transform to long format
+data_scenarios <- melt(
+  data_scenarios,
+  id.vars = c("demography_group", "scenario")
+)
+```
+
+```{r fig.width=5, fig.height=4, class.source = 'fold-hide'}
+ggplot(data_scenarios) +
+  geom_col(
+    aes(demography_group, value, fill = scenario),
+    position = "dodge",
+    colour = "black"
   ) +
-  scale_colour_brewer(
-    palette = "Dark2",
-    name = "Age group"
+  facet_wrap(
+    ~variable,
+    scales = "free_y",
+    labeller = labeller(
+      variable = c(
+        "total_deaths" = "Total deaths",
+        "total_recovered" = "Epidemic size (infections, not counting deaths)"
+      )
+    )
+  ) +
+  scale_fill_discrete_qualitative(
+    palette = "Dynamic",
+    labels = c("No vaccination", "Vaccination"),
+    name = "Scenario",
+    na.value = "lightgrey"
+  ) +
+  scale_y_continuous(
+    labels = label_comma(
+      scale = 1e-6, suffix = "M"
+    )
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "bottom",
+    legend.key.height = unit(2, "mm"),
+    strip.background = element_blank(),
+    strip.text = element_text(
+      face = "bold",
+      size = 11
+    )
+  ) +
+  expand_limits(
+    x = c(0.5, length(unique(data_scenarios$demography_group)) + 0.5)
   ) +
   coord_cartesian(
     expand = FALSE
   ) +
-  theme_classic() +
-  theme(
-    legend.position = "top"
-  ) +
   labs(
-    x = "Simulation time (days)",
-    linetype = "Compartment",
-    y = "Individuals"
+    x = "Age group",
+    y = "No. of individuals",
+    title = "Effect of vaccination on deaths and total infections"
   )
 ```
+
+Finally, we can compare the peak of hospital bed occupancy in each scenario --- this can be a rough indication of how much hospital capacity would be required if a pandemic of these characteristics were to occur, as well as another way to examine the effect of vaccination in reducing this requirement.
+
+
+```{r}
+# collect data from the two scenarios
+data_scenarios <- list(data, data_vaccination)
+
+peak_hospital_occupancy <- vapply(data_scenarios, function(df) {
+  # get highest hospital occupancy
+  # first get total hospitalisations among vaccinated and un- or part-vacc.
+  df <- dcast(
+    df[compartment %like% "hospitalised", ],
+    time + demography_group ~ compartment,
+    value.var = "value"
+  )
+  df[, total_hosp := hospitalised + hospitalised_vaccinated]
+
+  # sum all age groups
+  df <- df[, list(total_hosp = sum(total_hosp)), by = "time"]
+
+  df[total_hosp == max(total_hosp), ]$total_hosp
+}, FUN.VALUE = numeric(1))
+
+# set names for comprehensibility
+names(peak_hospital_occupancy) <- c("No vaccination", "Vaccination")
+
+# show peak hospital occupancy in a readable format
+format(peak_hospital_occupancy, big.mark = ",", digits = 1)
+```
+
+This example demonstrates that implementing vaccination can substantially reduce peak hospital occupancy (by about `r round((1 - (peak_hospital_occupancy["Vaccination"] / peak_hospital_occupancy["No vaccination"])) * 100)`%) compared to a scenario in which no vaccines are deployed.
+
+## Vacamole ODE system for {epidemics}
+
+The Vacamole ODE system adapted for {epidemics} is:
+
+Susceptibles who are not vaccinated, or only partially vaccinated (considered unprotected) can transition to exposed and vaccinated:
+
+$$dS = -\beta S(I+I_V) - \nu_1 S$$
+
+Two sequential vaccination compartments, with a lower conversion rate from two-dose vaccinated individuals (considered to be protected) to exposed:
+
+$$dV_1 = \nu_1S - \beta V_1(I+I_V) - \nu_2V_1$$
+
+$$dV_2 = \nu_2V_1 - \beta_VV_2(I+I_V)$$
+
+Two parallel exposed compartments, with similar conversion to infectious:
+
+$$dE = \beta (S+V_1)(I+I_V) - \alpha E$$
+
+$$dE_V = \beta_VV_2(I+I_V) - \alpha E_V$$
+
+Two parallel infectious compartments, with lower hospitalisation and mortality rate for vaccinated:
+
+$$dI = \alpha E - \gamma I - \eta I - \omega I$$
+
+$$dI_V = \alpha E_V - \gamma I_V - \eta_{V} I_V - \omega_V I_V$$
+
+Two parallel hospitalisation compartments, with a lower mortality rate for vaccinated:
+
+$$dH = \eta I - \gamma H - \eta_2 H - \omega H$$
+
+$$dH_V = \eta_{V} I - \gamma H_V - \omega_V H_V$$
+
+Single recovered compartment:
+
+$$dR = \gamma(I + H + I_V + H_V)$$
+
+Single mortality compartment:
+
+$$dD = \omega(I + H) + \omega_V(I_V + H_V)$$
+
+## References

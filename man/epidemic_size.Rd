@@ -4,7 +4,7 @@
 \alias{epidemic_size}
 \title{Get the epidemic size}
 \usage{
-epidemic_size(data, stage = 1, by_group = TRUE)
+epidemic_size(data, stage = 1, by_group = TRUE, deaths = TRUE)
 }
 \arguments{
 \item{data}{A \code{data.table} (or \code{data.frame}) of model output, typically
@@ -19,6 +19,11 @@ epidemic.}
 \item{by_group}{A logical representing whether the epidemic size should be
 returned by demographic group, or whether a single population-wide value is
 returned.}
+
+\item{deaths}{A logical value that indicates whether to count individuals in
+the epidemic size calculation. Setting \code{deaths = TRUE} looks for a \code{"dead"}
+compartment in the data. If there is no such column, the function returns
+only the final number of recovered individuals in each demographic group.}
 }
 \value{
 A single number when \code{by_group = FALSE}, or a vector of numbers of

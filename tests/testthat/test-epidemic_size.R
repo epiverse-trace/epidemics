@@ -44,16 +44,18 @@ test_that("Epidemic size functions", {
 
   # test the final size
   epidemic_final_size <- epidemic_size(data)
-  expect_identical(
+  expect_equal(
     epidemic_final_size,
-    data[data$compartment == "recovered" & data$time == max(data$time), ]$value
+    data[data$compartment == "recovered" & data$time == max(data$time), ]$value,
+    ignore_attr = TRUE
   )
 
   # expect that the final size proportion is the same as the demography prop.
-  expect_identical(
+  expect_equal(
     epidemic_final_size / sum(epidemic_final_size),
     uk_population$demography_vector / sum(uk_population$demography_vector),
-    tolerance = 1e-6
+    tolerance = 1e-6,
+    ignore_attr = TRUE
   )
 
   # test that final size is greater than size at 50% epidemic time

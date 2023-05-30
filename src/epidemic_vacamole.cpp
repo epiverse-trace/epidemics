@@ -50,7 +50,7 @@
 //' @param eta_v The hospitalisation rate of individuals who are protected by
 //' vaccination.
 //' @param gamma The recovery rate \eqn{\gamma}.
-//' @param time_end The maximum time, defaults to 200.0.
+//' @param time_end The maximum time. See [epidemic()] for default value.
 //' @param intervention A non-pharamaceutical intervention applied during the
 //' course of the epidemic, with a start and end time, and age-specific effect
 //' on contacts. See [intervention()].
@@ -58,7 +58,7 @@
 //' course of the epidemic, with a group- and dose-specific start and end time,
 //' and age-specific rates of delivery of first and second doses.
 //' See [vaccination()].
-//' @param increment The increment time, defaults to 0.1.
+//' @param increment The increment time. See [epidemic()] for default value.
 //' @return A two element list, where the first element is a list of matrices
 //' whose elements correspond to the numbers of individuals in each compartment
 //' as specified in the initial conditions matrix (see [population()]).
@@ -70,8 +70,8 @@ Rcpp::List epidemic_vacamole_cpp(
     const double &alpha, const double &omega, const double &omega_v,
     const double &eta, const double &eta_v, const double &gamma,
     const Rcpp::List &intervention, const Rcpp::List &vaccination,
-    const double &time_end = 200.0,  // double required by boost solver
-    const double &increment = 0.1) {
+    const double &time_end,  // double required by boost solver
+    const double &increment) {
   // initial conditions from input
   odetools::state_type x = odetools::initial_state_from_pop(population);
 

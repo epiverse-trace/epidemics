@@ -5,12 +5,7 @@
   # check that arguments list has expected names
   checkmate::assert_names(
     names(mod_args),
-    type = "unique",
-    must.include = c(
-      "population",
-      "infection",
-      "time_end", "increment"
-    )
+    type = "unique"
   )
 
   # add null intervention and vaccination if these are missing

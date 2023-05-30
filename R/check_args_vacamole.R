@@ -6,11 +6,7 @@
   checkmate::assert_names(
     names(mod_args),
     type = "unique",
-    must.include = c(
-      "population", "infection",
-      "vaccination", # vaccination necessary for Vacamole
-      "time_end", "increment"
-    )
+    must.include = "vaccination" # vaccination necessary for Vacamole
   )
 
   # add null intervention and vaccination if these are missing
@@ -50,11 +46,15 @@
     lower = 0, finite = TRUE
   )
 
+  # load number of compartments to check initial conditions matrix
+  compartments_vacamole <- read_from_library(
+    model_name = "vacamole", what = "compartments"
+  )
   # check that compartment sizes are numerics
   checkmate::assert_matrix(
     mod_args$population$initial_conditions,
     mode = "numeric",
-    ncols = 11L # hardcoded for the Vacamole model with hospitalisation no ICU
+    ncols = length(compartments_vacamole) # read from Vacamole data in library
   )
   # check that compartments sum to 1.0
   checkmate::assert_numeric(

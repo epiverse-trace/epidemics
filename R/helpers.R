@@ -138,7 +138,7 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
   )
   # if deaths are requested to be counted, but no "dead" compartment exists
   # throw a message
-  if (isTRUE(deaths) && (!"dead" %in% unique(data$compartment))) {
+  if (deaths && (!"dead" %in% unique(data$compartment))) {
     message(
       "No 'dead' compartment found in `data`; counting only 'recovered'",
       " individuals in the epidemic size."

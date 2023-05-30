@@ -244,3 +244,36 @@ format.vaccination <- function(x, ...) {
 
   invisible(x)
 }
+
+#' Convert a list to a vaccination object
+#'
+#' @param x A list, or an object that inherits from a list.
+#' @return A [vaccination] class object.
+#' @export
+#' @examples
+#' # prepare a list
+#' vax <- list(
+#'   name = "vax_regime",
+#'   time_begin = matrix(1),
+#'   time_end = matrix(100),
+#'   nu = matrix(0.001)
+#' )
+#'
+#' as.vaccination(vax)
+as.vaccination <- function(x) {
+  # check that input is a list or vaccination
+  stopifnot(
+    "Input must inherit from `list`" =
+      is.list(x)
+  )
+
+  x <- vaccination(
+    name = x[["name"]],
+    time_begin = x[["time_begin"]],
+    time_end = x[["time_end"]],
+    nu = x[["nu"]]
+  )
+
+  # return x
+  x
+}

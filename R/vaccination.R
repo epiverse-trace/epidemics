@@ -277,3 +277,81 @@ as.vaccination <- function(x) {
   # return x
   x
 }
+
+#' Concatenate vaccination doses into a multi-dose vaccination
+#'
+#' @param x A `vaccination` object.
+#' @param ... Vaccination objects to combine with `x` to create a multi-dose
+#' `vaccination` object.
+#' @return A `vaccination` object with as many doses as the overall number of
+#' doses specified in `x` and in the objects passed to `...`.
+#' @export
+#' @examples
+#' # create first dose regime
+#' vax_1 <- vaccination(
+#'   name = "vax_regime",
+#'   time_begin = matrix(1),
+#'   time_end = matrix(100),
+#'   nu = matrix(0.001)
+#' )
+#'
+#' # second dose regime
+#' vax_2 <- vaccination(
+#'   name = "vax_regime",
+#'   time_begin = matrix(101),
+#'   time_end = matrix(200),
+#'   nu = matrix(0.001)
+#' )
+#'
+#' c(vax_1, vax_2)
+c.vaccination <- function(x, ...) {
+  # collect inputs
+  multi_vacc <- list(x, ...)
+  invisible(
+    lapply(multi_vacc, validate_vaccination)
+  )
+
+  # check that all vaccination regimes have the same dimensions
+  # of vaccination rates --- these are identical to dims of start and end times
+  stopifnot(
+    "All `vaccination`s must have identical dimensions for Nu, start, and end" =
+      all(
+        vapply(multi_vacc, function(vx) {
+          identical(nrow(vx$nu), nrow(x$nu))
+        }, FUN.VALUE = logical(1))
+      )
+  )
+
+  # strip class and `name` member from `multi_vacc`
+  multi_vacc <- lapply(multi_vacc, function(z) {
+    z <- unclass(z)
+    z$name <- NULL
+    z
+  })
+
+  # modify x to return a list object of multiple start and end times and nu-s
+  multi_vacc <- do.call(
+    Map, c(f = cbind, multi_vacc)
+  )
+
+  # add name parameter --- take "name" of `x`
+  multi_vacc$name <- x$name
+
+  # generate vaccination dose names as dose_1 ... dose_n
+  # get total number of doses from the sum of all columns
+  vacc_dose_names <- glue::glue("dose_{seq_len(ncol(multi_vacc$nu))}")
+
+  # add names to doses for comprehension when printed
+  for (i in c("time_begin", "time_end", "nu")) {
+    colnames(multi_vacc[[i]]) <- vacc_dose_names
+  }
+
+  # convert resulting object to vaccination
+  multi_vacc <- as.vaccination(multi_vacc)
+
+  # validate new object
+  validate_vaccination(multi_vacc)
+
+  # return object
+  multi_vacc
+}

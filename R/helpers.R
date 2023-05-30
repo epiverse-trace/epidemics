@@ -146,7 +146,7 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
   }
   # add deaths to compartments to search
   size_compartments <- "recovered"
-  if (isTRUE(deaths)) {
+  if (deaths) {
     size_compartments <- c(size_compartments, "deaths")
   }
 

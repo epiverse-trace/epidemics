@@ -151,46 +151,43 @@ infect <- infection(
 
 ## Prepare a two dose vaccination campaign
 
+We prepare a two-dose vaccination campaign by concatenating two single dose vaccination regimes, i.e., applying the function `c()` to two `vaccination` objects.
+
+::: {.alert .alert-primary}
+It is possible to combine multiple vaccination objects together using `c()` --- the only limitation is that all vaccination regimes combined in this way must have the same number of demographic groups. It is possible to add a single dose to a two-vaccination regime by using `c()` on two `vaccination` objects with two and one dose, respectively.
+:::
+
 ```{r}
 # prepare a two dose vaccination regime for a single age group
-double_vaccination <- vaccination(
-  name = "double_vaccination",
-  nu = matrix(
-    1e-2,
-    nrow = 3, ncol = 2
-  ),
-  # first doses begin after approx. 100 days
-  # second doses begin 1 month after first doses
-  time_begin = matrix(
-    c(30, 60),
-    nrow = 3, ncol = 2,
-    byrow = TRUE
-  ),
-  # doses are given until the end of the simulation
-  time_end = matrix(
-    epidemic_days,
-    nrow = 3, ncol = 2
-  )
+# prepare the first dose
+dose_1 <- vaccination(
+  name = "two-dose vaccination", # name given to first dose
+  nu = matrix(1e-2, nrow = 3),
+  time_begin = matrix(30, nrow = 3),
+  time_end = matrix(epidemic_days, nrow = 3)
 )
+
+# prepare the second dose with a 30 day interval in start date
+dose_2 <- vaccination(
+  name = "two-dose vaccination", # name given to first dose
+  nu = matrix(1e-2, nrow = 3),
+  time_begin = matrix(60, nrow = 3),
+  time_end = matrix(epidemic_days, nrow = 3)
+)
+
+# use `c()` to combine the two doses
+double_vaccination <- c(dose_1, dose_2)
+
+# print to visualise
+double_vaccination
 ```
+
+We prepare a dummy vaccination regime of no vaccination against which to compare the two-dose vaccination campaign. This is done by using the `no_vaccination()` function and specifying the number of doses (here, 2 doses).
 
 ```{r}
 # prepare a null vaccination regime with two doses
-no_vaccination <- vaccination(
-  name = "double_vaccination",
-  nu = matrix(
-    0.0,
-    nrow = 3, ncol = 2
-  ),
-  time_begin = matrix(
-    00,
-    nrow = 3, ncol = 2
-  ),
-  time_end = matrix(
-    00,
-    nrow = 3, ncol = 2
-  )
-)
+# use the convenience function `no_vaccination()`
+no_vaccination <- no_vaccination(population = uk_population, doses = 2)
 ```
 
 ## Model epidemic using Vacamole

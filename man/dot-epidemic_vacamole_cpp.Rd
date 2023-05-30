@@ -16,8 +16,8 @@
   gamma,
   intervention,
   vaccination,
-  time_end = 200,
-  increment = 0.1
+  time_end,
+  increment
 )
 }
 \arguments{
@@ -58,9 +58,9 @@ course of the epidemic, with a group- and dose-specific start and end time,
 and age-specific rates of delivery of first and second doses.
 See \code{\link[=vaccination]{vaccination()}}.}
 
-\item{time_end}{The maximum time, defaults to 200.0.}
+\item{time_end}{The maximum time. See \code{\link[=epidemic]{epidemic()}} for default value.}
 
-\item{increment}{The increment time, defaults to 0.1.}
+\item{increment}{The increment time. See \code{\link[=epidemic]{epidemic()}} for default value.}
 }
 \value{
 A two element list, where the first element is a list of matrices

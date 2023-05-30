@@ -79,7 +79,7 @@
 #' @param eta_v The hospitalisation rate of individuals who are protected by
 #' vaccination.
 #' @param gamma The recovery rate \eqn{\gamma}.
-#' @param time_end The maximum time, defaults to 200.0.
+#' @param time_end The maximum time. See [epidemic()] for default value.
 #' @param intervention A non-pharamaceutical intervention applied during the
 #' course of the epidemic, with a start and end time, and age-specific effect
 #' on contacts. See [intervention()].
@@ -87,13 +87,13 @@
 #' course of the epidemic, with a group- and dose-specific start and end time,
 #' and age-specific rates of delivery of first and second doses.
 #' See [vaccination()].
-#' @param increment The increment time, defaults to 0.1.
+#' @param increment The increment time. See [epidemic()] for default value.
 #' @return A two element list, where the first element is a list of matrices
 #' whose elements correspond to the numbers of individuals in each compartment
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.epidemic_vacamole_cpp <- function(population, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, intervention, vaccination, time_end = 200.0, increment = 0.1) {
+.epidemic_vacamole_cpp <- function(population, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, intervention, vaccination, time_end, increment) {
     .Call(`_epidemics_epidemic_vacamole_cpp`, population, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, intervention, vaccination, time_end, increment)
 }
 

@@ -44,3 +44,23 @@
            dose_1 dose_2 dose_3
       [1,]  1e-04  1e-04  1e-04
 
+# Multi-dose vaccination using `c()`
+
+    Code
+      c(vax_1, vax_2)
+    Output
+      <vaccination>
+      Vaccination name: "vax_regime"
+      
+      Time begin:
+           dose_1 dose_2
+      [1,]      1    101
+      
+      Time end:
+           dose_1 dose_2
+      [1,]    100    200
+      
+      Vaccination rate:
+           dose_1 dose_2
+      [1,]  0.001  0.001
+

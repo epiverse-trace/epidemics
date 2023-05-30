@@ -92,6 +92,39 @@ test_that("Vaccination is correctly initialised", {
   )
 })
 
+# test that building a multi-dose vaccination works with c()
+test_that("Multi-dose vaccination using `c()`", {
+  vax_1 <- vaccination(
+    name = "vax_regime",
+    time_begin = matrix(1),
+    time_end = matrix(100),
+    nu = matrix(0.001)
+  )
+
+  # second dose regime
+  vax_2 <- vaccination(
+    name = "vax_regime",
+    time_begin = matrix(101),
+    time_end = matrix(200),
+    nu = matrix(0.001)
+  )
+
+  expect_s3_class(
+    c(vax_1, vax_2),
+    "vaccination"
+  )
+  expect_snapshot(
+    c(vax_1, vax_2)
+  )
+
+  # test for combining a two dose regime with another dose
+  double_vax <- c(vax_1, vax_2)
+  expect_s3_class(
+    c(double_vax, vax_1),
+    "vaccination"
+  )
+})
+
 # run model with vaccination
 data_vaccination <- epidemic(
   population = uk_population,

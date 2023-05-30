@@ -123,6 +123,13 @@ validate_vaccination <- function(object) {
     nrows = nrow(object$nu), ncols = ncol(object$nu)
   )
 
+  # message if any vaccinations' intervals are badly formed
+  if (any(object$time_end <= object$time_begin)) {
+    message(
+      "Vaccination: some `time_end`s are not greater than `time_begin`s"
+    )
+  }
+
   invisible(object)
 }
 
@@ -224,15 +231,17 @@ format.vaccination <- function(x, ...) {
   )
   print(x$time_begin)
 
-  print(glue::glue(
-    "
+  writeLines(
+    glue::glue(
+      "
 
     Time end:
     "
-  ))
+    )
+  )
   print(x$time_end)
 
-  print(
+  writeLines(
     glue::glue(
       "
 

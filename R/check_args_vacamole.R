@@ -11,6 +11,7 @@
 
   # add null intervention and vaccination if these are missing
   if (!"intervention" %in% names(mod_args)) {
+    # no_intervention() throws a message for default initialisation, suppress
     suppressMessages(
       mod_args$intervention <- no_intervention(
         mod_args$population

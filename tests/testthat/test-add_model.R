@@ -1,9 +1,17 @@
 # Tests for adding functions to the model library provided by model_library()
 
-# read the model library using the model library function
-ml_manual <- model_library()
-
 test_that("Add model function and details to the library", {
+  # read the model library using the model library function
+  ml_manual <- model_library()
+
+  # IMPORTANT: write original model library back to file
+  withr::defer({
+    jsonlite::write_json(
+      ml_manual,
+      system.file("extdata", "model_library.json", package = "epidemics"),
+      pretty = TRUE
+    )
+  })
 
   # expect message when writing
   expect_message(
@@ -41,10 +49,3 @@ test_that("Add model function and details to the library", {
     c("S", "I", "R")
   )
 })
-
-# IMPORTANT: write original model library back to file
-jsonlite::write_json(
-  ml_manual,
-  system.file("extdata", "model_library.json", package = "epidemics"),
-  pretty = TRUE
-)

@@ -47,6 +47,7 @@ Suggests:
     rmarkdown,
     scales,
     socialmixr,
+    spelling,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
@@ -54,3 +55,4 @@ LinkingTo:
     Rcpp,
     BH,
     RcppEigen
+Language: en-GB

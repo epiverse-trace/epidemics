@@ -42,6 +42,7 @@ details to check the infection parameters required by each model. This
 function is for internal use in argument checking functions.
 }
 \examples{
+\dontrun{
 # prepare a well formed infection object for the default model
 infection_default <- infection(
   name = "influenza", r0 = 1.3, infectious_period = 10,
@@ -53,5 +54,6 @@ assert_infection(
   infection_default,
   extra_parameters = c("preinfectious_period", "mortality_rate")
 )
+}
 }
 \keyword{internal}

@@ -61,9 +61,15 @@ vaccination <- function(name = NA_character_,
                         time_end) {
   # check input
   checkmate::assert_string(name, na.ok = TRUE)
-  checkmate::assert_matrix(nu)
-  checkmate::assert_matrix(time_begin, nrows = nrow(nu), ncols = ncol(nu))
-  checkmate::assert_matrix(time_end, nrows = nrow(nu), ncols = ncol(nu))
+  checkmate::assert_matrix(nu, mode = "numeric")
+  checkmate::assert_matrix(
+    time_begin,
+    nrows = nrow(nu), ncols = ncol(nu), mode = "numeric"
+  )
+  checkmate::assert_matrix(
+    time_end,
+    nrows = nrow(nu), ncols = ncol(nu), mode = "numeric"
+  )
 
   # message if any vaccinations' intervals are badly formed
   if (any(time_end <= time_begin)) {
@@ -113,14 +119,24 @@ validate_vaccination <- function(object) {
 
   # other checks for the vaccination object
   checkmate::assert_string(object$name, na.ok = TRUE)
-  checkmate::assert_matrix(object$nu)
+  checkmate::assert_matrix(object$nu, mode = "numeric")
   checkmate::assert_matrix(
     object$time_begin,
-    nrows = nrow(object$nu), ncols = ncol(object$nu)
+    nrows = nrow(object$nu), ncols = ncol(object$nu),
+    mode = "numeric"
   )
   checkmate::assert_matrix(
     object$time_end,
-    nrows = nrow(object$nu), ncols = ncol(object$nu)
+    nrows = nrow(object$nu), ncols = ncol(object$nu),
+    mode = "numeric"
+  )
+  stopifnot(
+    "`nu` should have positive or zero values" =
+      all(object$nu >= 0.0),
+    "`time_begin` should have positive or zero values" =
+      all(object$time_begin >= 0.0),
+    "`time_end` should have positive or zero values" =
+      all(object$time_end >= 0.0)
   )
 
   # message if any vaccinations' intervals are badly formed

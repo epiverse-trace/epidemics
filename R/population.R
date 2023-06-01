@@ -105,12 +105,20 @@ validate_population <- function(object) {
       (c(
         "name", "contact_matrix", "demography_vector"
       ) %in% attributes(object)$names),
-    "`contact_matrix` must have as many rows as length of `demography_vector`" =
-      (nrow(object$contact_matrix) == length(object$demography_vector)),
+    "`name` must be a string" =
+      checkmate::test_string(object$name, na.ok = TRUE),
+    "`contact_matrix` must be a numeric matrix with same rows as demography" =
+      checkmate::test_matrix(
+        object$contact_matrix,
+        mode = "numeric",
+        nrows = length(object$demography_vector)
+      ),
     "`initial_conditions` must be a numeric matrix" =
-      checkmate::test_matrix(object$initial_conditions, mode = "numeric"),
-    "`initial_conditions` must have as many rows as `demography_vector`" =
-      (nrow(object$initial_conditions) == length(object$demography_vector)),
+      checkmate::test_matrix(
+        object$initial_conditions,
+        mode = "numeric",
+        nrow = length(object$demography_vector)
+      ),
     "`initial_conditions` rows must always sum to 1.0" =
       (all(abs(rowSums(object$initial_conditions) - 1) < 1e-6))
   )

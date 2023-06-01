@@ -27,9 +27,9 @@
   }
 
   # input checking on pathogen parameters
-  checkmate::assert_number(
-    mod_args$infection$r0,
-    lower = 0, finite = TRUE
+  assert_infection(
+    mod_args$infection,
+    extra_parameters = "preinfectious_period"
   )
   checkmate::assert_number(
     mod_args$infection$infectious_period,

@@ -4,8 +4,7 @@
 #' Assert that objects of the `infection` class have the parameters expected by
 #' an epidemic model. See [infection()] and [epidemic()], as well as model
 #' details to check the infection parameters required by each model. This
-#' function is for internal use in argument checking functions such as
-#' [.check_args_prep_default()].
+#' function is for internal use in argument checking functions.
 #'
 #' @param x An [infection] object.
 #' @param extra_parameters A character vector giving the names of any extra
@@ -100,4 +99,3 @@ assert_infection <- function(x, extra_parameters, extra_parameters_limits) {
   # invisibly return x
   invisible(x)
 }
-

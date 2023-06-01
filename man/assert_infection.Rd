@@ -29,7 +29,6 @@ side effects of throwing errors when \code{x} does not meet certain requirements
 Assert that objects of the \code{infection} class have the parameters expected by
 an epidemic model. See \code{\link[=infection]{infection()}} and \code{\link[=epidemic]{epidemic()}}, as well as model
 details to check the infection parameters required by each model. This
-function is for internal use in argument checking functions such as
-\code{\link[=.check_args_prep_default]{.check_args_prep_default()}}.
+function is for internal use in argument checking functions.
 }
 \keyword{internal}

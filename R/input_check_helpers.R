@@ -26,7 +26,7 @@
 #'
 #' @return Silently returns the `infection` object `x`. Primarily called for its
 #' side effects of throwing errors when `x` does not meet certain requirements.
-#' @examples
+#' @examples \dontrun{
 #' # prepare a well formed infection object for the default model
 #' infection_default <- infection(
 #'   name = "influenza", r0 = 1.3, infectious_period = 10,
@@ -38,6 +38,7 @@
 #'   infection_default,
 #'   extra_parameters = c("preinfectious_period", "mortality_rate")
 #' )
+#' }
 assert_infection <- function(x,
                              default_params = c(
                                "name", "r0", "infectious_period"

@@ -163,19 +163,22 @@ is_vaccination <- function(object) {
 #' @export
 no_vaccination <- function(population, doses = 1L) {
   checkmate::assert_class(population, "population")
-  vaccination(
-    name = "no_vaccination",
-    time_begin = matrix(
-      0.0,
-      nrow = nrow(population$contact_matrix), ncol = doses
-    ),
-    time_end = matrix(
-      0.0,
-      nrow = nrow(population$contact_matrix), ncol = doses
-    ),
-    nu = matrix(
-      0.0,
-      nrow = nrow(population$contact_matrix), ncol = doses
+  # suppress messages because we are sure we want both time begin and end as 0
+  suppressMessages(
+    vaccination(
+      name = "no_vaccination",
+      time_begin = matrix(
+        0.0,
+        nrow = nrow(population$contact_matrix), ncol = doses
+      ),
+      time_end = matrix(
+        0.0,
+        nrow = nrow(population$contact_matrix), ncol = doses
+      ),
+      nu = matrix(
+        0.0,
+        nrow = nrow(population$contact_matrix), ncol = doses
+      )
     )
   )
 }

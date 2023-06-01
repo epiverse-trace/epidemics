@@ -168,14 +168,6 @@ test_that("Epidemic model with vaccination", {
   )
 })
 
-# expect that no vaccination prints a message
-test_that("Bad vaccination schedule prints a message", {
-  expect_message(
-    no_vaccination(uk_population),
-    regexp = "(time_end)*(not greater than)*(time_begin)"
-  )
-})
-
 #### Test two dose no vaccination ####
 doses <- 2L
 no_vax_two_dose <- no_vaccination(uk_population, doses = doses)

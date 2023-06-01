@@ -4,10 +4,20 @@
 \alias{assert_infection}
 \title{Assert properties of an \code{infection} object}
 \usage{
-assert_infection(x, extra_parameters, extra_parameters_limits)
+assert_infection(
+  x,
+  default_params = c("name", "r0", "infectious_period"),
+  extra_parameters,
+  extra_parameters_limits
+)
 }
 \arguments{
 \item{x}{An \link{infection} object.}
+
+\item{default_params}{Default parameter names present in an
+\code{infection} object.
+This argument is provided to account for potential changes to the default
+elements of an \code{infection} object, and is not expected to be changed.}
 
 \item{extra_parameters}{A character vector giving the names of any extra
 parameters included in \code{x}. \code{x} may already be expected to have the members
@@ -30,5 +40,18 @@ Assert that objects of the \code{infection} class have the parameters expected b
 an epidemic model. See \code{\link[=infection]{infection()}} and \code{\link[=epidemic]{epidemic()}}, as well as model
 details to check the infection parameters required by each model. This
 function is for internal use in argument checking functions.
+}
+\examples{
+# prepare a well formed infection object for the default model
+infection_default <- infection(
+  name = "influenza", r0 = 1.3, infectious_period = 10,
+  preinfectious_period = 3, mortality_rate = 1e-4
+)
+
+# expect no errors for well formed infection-assertion matches
+assert_infection(
+  infection_default,
+  extra_parameters = c("preinfectious_period", "mortality_rate")
+)
 }
 \keyword{internal}

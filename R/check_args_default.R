@@ -31,20 +31,16 @@
     mod_args$infection,
     extra_parameters = "preinfectious_period"
   )
-  checkmate::assert_number(
-    mod_args$infection$infectious_period,
-    lower = 0, finite = TRUE
-  )
-  checkmate::assert_number(
-    mod_args$infection$preinfectious_period,
-    lower = 0, finite = TRUE
-  )
 
+  # load number of compartments to check initial conditions matrix
+  compartments_default <- read_from_library(
+    model_name = "default", what = "compartments"
+  )
   # check that compartment sizes are numerics
   checkmate::assert_matrix(
     mod_args$population$initial_conditions,
     mode = "numeric",
-    ncols = 5L # hardcoded for the present
+    ncols = length(compartments_default)
   )
   # check that compartments sum to 1.0
   checkmate::assert_numeric(

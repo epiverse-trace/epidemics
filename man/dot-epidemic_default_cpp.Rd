@@ -26,7 +26,7 @@ of each demographic group. See \code{\link[=population]{population()}}.}
 
 \item{gamma}{The recovery rate \eqn{\gamma}.}
 
-\item{intervention}{A non-pharamaceutical intervention applied during the
+\item{intervention}{A non-pharmaceutical intervention applied during the
 course of the epidemic, with a start and end time, and age-specific effect
 on contacts. See \code{\link[=intervention]{intervention()}}.}
 

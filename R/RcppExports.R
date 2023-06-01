@@ -53,7 +53,7 @@
 #' (H, ICU, ICU2H), and death - see the manuscript in Eurosurveillance.
 #' Only infected individuals can enter the hospitalisation or death
 #' compartments.
-#' Vacamole was implemented as a standalone R package, and some versions have
+#' Vacamole was implemented as a stand-alone R package, and some versions have
 #' been used to generate scenarios for the ECDC Covid-19 Scenario Hub.
 #'
 #' Individuals from the susceptible compartment may be vaccinated partially
@@ -80,7 +80,7 @@
 #' vaccination.
 #' @param gamma The recovery rate \eqn{\gamma}.
 #' @param time_end The maximum time. See [epidemic()] for default value.
-#' @param intervention A non-pharamaceutical intervention applied during the
+#' @param intervention A non-pharmaceutical intervention applied during the
 #' course of the epidemic, with a start and end time, and age-specific effect
 #' on contacts. See [intervention()].
 #' @param vaccination A vaccination regime followed during the

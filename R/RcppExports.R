@@ -21,7 +21,7 @@
 #' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 #' @param gamma The recovery rate \eqn{\gamma}.
 #' @param time_end The maximum time, defaults to 200.0.
-#' @param intervention A non-pharamaceutical intervention applied during the
+#' @param intervention A non-pharmaceutical intervention applied during the
 #' course of the epidemic, with a start and end time, and age-specific effect
 #' on contacts. See [intervention()].
 #' @param vaccination A vaccination regime followed during the

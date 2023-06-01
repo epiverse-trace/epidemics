@@ -1,4 +1,4 @@
-# Tests for input checking on infection objects
+# Tests for input checking on population objects
 # prepare a population
 contact_matrix <- matrix(1, 2, 2)
 demography_vector <- c(1e6, 1e6)

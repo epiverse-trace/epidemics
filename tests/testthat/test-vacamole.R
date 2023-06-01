@@ -40,15 +40,15 @@ double_vaccination <- vaccination(
   name = "double_vaccination",
   nu = matrix(
     1e-3,
-    nrow = 3, ncol = 2
+    nrow = 2, ncol = 2
   ),
   time_begin = matrix(
     00,
-    nrow = 3, ncol = 2
+    nrow = 2, ncol = 2
   ),
   time_end = matrix(
     200,
-    nrow = 3, ncol = 2
+    nrow = 2, ncol = 2
   )
 )
 

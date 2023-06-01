@@ -97,12 +97,23 @@ epidemic <- function(model_name = c("default", "vacamole"),
   # handle the arguments check and prep functions, and the model function
   model_name <- match.arg(arg = model_name, several.ok = FALSE)
 
+  # check class on required inputs
+  checkmate::assert_class(population, "population")
+  checkmate::assert_class(infection, "infection")
+
   # collect population, infection, and model arguments passed as `...`
   model_arguments <- list(
     population = population, infection = infection,
     time_end = time_end, increment = increment,
     ...
   )
+
+  # check class on optional inputs if present
+  for (i in c("vaccination", "intervention")) {
+    if (i %in% names(model_arguments)) {
+      checkmate::assert_class(model_arguments[[i]], i)
+    }
+  }
 
   # prepare model arguments while checking them
   args_check_fn <- read_from_library(

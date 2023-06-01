@@ -19,12 +19,6 @@
     )
   }
 
-  # some basic input checking for custom classes
-  checkmate::assert_class(mod_args$population, "population")
-  checkmate::assert_class(mod_args$infection, "infection")
-  checkmate::assert_class(mod_args$intervention, "intervention")
-  checkmate::assert_class(mod_args$vaccination, "vaccination")
-
   # input checking on pathogen parameters
   checkmate::assert_names(
     names(mod_args$infection),

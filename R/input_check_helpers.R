@@ -153,3 +153,49 @@ assert_population <- function(x, compartments) {
   # invisibly return x
   invisible(x)
 }
+
+#' Assert properties of a `vaccination` object
+#'
+#' @description
+#' Assert that objects of the `vaccination` class have the parameters expected
+#' by an epidemic model. See [vaccination()] and [epidemic()], as well as model
+#' details to check the vaccination properties required by each model. This
+#' function is for internal use in argument checking functions.
+#'
+#' @param x A [vaccination] object.
+#' @param doses The number of doses expected in the vaccination object.
+#' @param population An optional argument which is a [population] object.
+#' When present, this is used to check whether the vaccination object `x` has
+#' corresponding values for each demographic group in `population`.
+#'
+#' @keywords internal
+#'
+#' @return Silently returns the `vaccination` object `x`.
+#' Primarily called for its side effects of throwing errors when `x` does not
+#' meet certain requirements.
+assert_vaccination <- function(x, doses, population) {
+  # check for input class
+  checkmate::assert_class(x, "vaccination")
+  checkmate::assert_number(doses, finite = TRUE, lower = 1L)
+  checkmate::assert_integerish(doses, lower = 1L)
+
+  # check that x has as many cols in `nu` as `doses`
+  # all other elements are identical dims as `nu`
+  checkmate::assert_matrix(
+    x$nu,
+    ncol = doses
+  )
+
+  # if a population is provided, check that the rows of `nu`
+  # match the number of demography groups
+  if (!missing(population)) {
+    checkmate::assert_class(population, "population")
+    checkmate::assert_matrix(
+      x$nu,
+      nrow = length(population$demography_vector)
+    )
+  }
+
+  # invisibly return x
+  invisible(x)
+}

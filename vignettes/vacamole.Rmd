@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 
 Vacamole is a deterministic, compartmental epidemic model built by Kylie Ainslie and others at [RIVM, the Dutch Public Health Institute](https://www.rivm.nl/) for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination [@ainslie2022].
 
-Vacamole was implemented as an R package, and the [source code can be found on Github](https://github.com/kylieainslie/vacamole). Some versions have been used to generate scenarios for the ECDC Covid-19 Scenario Hub.
+Vacamole was implemented as an R package, and the [source code can be found on GitHub](https://github.com/kylieainslie/vacamole). Some versions have been used to generate scenarios for the ECDC Covid-19 Scenario Hub.
 
 The original model has 8 conceptual compartments - four epidemiological compartments: susceptible, exposed, infectious, and recovered (S, E, I, R respectively), three hospitalisation compartments: hospitalised, in intensive care, and returning from intensive care to regular hospital care (H, ICU, ICU2H), and death - see the [manuscript describing them here](doi.org/10.2807/1560-7917.ES.2022.27.44.2101090). Only infected individuals can enter the hospitalisation or death compartments.
 

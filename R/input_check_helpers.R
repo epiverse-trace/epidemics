@@ -7,6 +7,10 @@
 #' function is for internal use in argument checking functions.
 #'
 #' @param x An [infection] object.
+#' @param default_params Default parameter names present in an
+#' `infection` object.
+#' This argument is provided to account for potential changes to the default
+#' elements of an `infection` object, and is not expected to be changed.
 #' @param extra_parameters A character vector giving the names of any extra
 #' parameters included in `x`. `x` may already be expected to have the members
 #' `r0` and `infectious_period`.
@@ -22,30 +26,41 @@
 #'
 #' @return Silently returns the `infection` object `x`. Primarily called for its
 #' side effects of throwing errors when `x` does not meet certain requirements.
-assert_infection <- function(x, extra_parameters, extra_parameters_limits) {
+#' @examples
+#' # prepare a well formed infection object for the default model
+#' infection_default <- infection(
+#'   name = "influenza", r0 = 1.3, infectious_period = 10,
+#'   preinfectious_period = 3, mortality_rate = 1e-4
+#' )
+#'
+#' # expect no errors for well formed infection-assertion matches
+#' assert_infection(
+#'   infection_default,
+#'   extra_parameters = c("preinfectious_period", "mortality_rate")
+#' )
+assert_infection <- function(x,
+                             default_params = c(
+                               "name", "r0", "infectious_period"
+                             ),
+                             extra_parameters, extra_parameters_limits) {
   # check for input class and expected names
   checkmate::assert_class(x, "infection")
+
+  # check that there are no extra parameters other than the ones specified
+  # collect names other than default names
+  infection_extra_params <- setdiff(names(x), default_params)
   checkmate::assert_names(
-    names(x),
-    must.include = c(
-      "r0", "infectious_period", extra_parameters
-    )
+    infection_extra_params,
+    identical.to = extra_parameters
   )
-  # checks on the r0 and infectious period
-  checkmate::assert_number(
-    x$r0,
-    lower = 0, finite = TRUE
-  )
-  checkmate::assert_number(
-    x$infectious_period,
-    lower = 0, finite = TRUE
-  )
+  # name, r0, and infectious period are checked when initialising
+  # an infection object, via validate_infection
 
   # checks on the limits of the extra parameters
   # by default check for finite non-negative parameters
   invisible(
     lapply(
-      x[[extra_parameters]], checkmate::assert_number,
+      x[extra_parameters], checkmate::assert_number,
       lower = 0.0, finite = TRUE
     )
   )
@@ -78,8 +93,12 @@ assert_infection <- function(x, extra_parameters, extra_parameters_limits) {
     )
     invisible(
       lapply(
-        names(extra_parameters_limits), checkmate::assert_names,
-        c("lower", "upper")
+        extra_parameters_limits, function(le) {
+          checkmate::assert_names(
+            names(le),
+            identical.to = c("lower", "upper")
+          )
+        }
       )
     )
 

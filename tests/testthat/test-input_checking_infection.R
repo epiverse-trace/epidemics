@@ -1,4 +1,4 @@
-# Tests for input checking
+# Tests for input checking on infection objects
 test_that("Infections are checked correctly", {
   # prepare a well formed infection object for the default model
   infection_default <- infection(
@@ -7,14 +7,14 @@ test_that("Infections are checked correctly", {
   )
 
   # expect no errors for well formed infection-assertion matches
-  expect_no_error(
+  expect_no_condition(
     assert_infection(
       infection_default,
       extra_parameters = c("preinfectious_period", "mortality_rate")
     )
   )
 
-  expect_no_error(
+  expect_no_condition(
     assert_infection(
       infection_default,
       extra_parameters = c("preinfectious_period", "mortality_rate"),

@@ -32,9 +32,17 @@
   compartments_vacamole <- read_from_library(
     model_name = "vacamole", what = "compartments"
   )
+  # input checking on population parameters
   assert_population(
     mod_args$population,
     compartments = compartments_vacamole
+  )
+  # input checking on vaccination parameters
+  # the Vacamole model expects two vaccination doses
+  assert_vaccination(
+    mod_args$vaccination,
+    doses = 2L,
+    population = mod_args$population
   )
 
   # return arguments invisibly

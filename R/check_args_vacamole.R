@@ -32,16 +32,9 @@
   compartments_vacamole <- read_from_library(
     model_name = "vacamole", what = "compartments"
   )
-  # check that compartment sizes are numerics
-  checkmate::assert_matrix(
-    mod_args$population$initial_conditions,
-    mode = "numeric",
-    ncols = length(compartments_vacamole) # read from Vacamole data in library
-  )
-  # check that compartments sum to 1.0
-  checkmate::assert_numeric(
-    rowSums(mod_args$population$initial_condition),
-    lower = 1.0 - 1e-5, upper = 1.0 + 1e-5 # specify tolerance manually
+  assert_population(
+    mod_args$population,
+    compartments = compartments_vacamole
   )
 
   # return arguments invisibly

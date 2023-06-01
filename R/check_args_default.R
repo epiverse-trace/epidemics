@@ -36,18 +36,10 @@
   compartments_default <- read_from_library(
     model_name = "default", what = "compartments"
   )
-  # check that compartment sizes are numerics
-  checkmate::assert_matrix(
-    mod_args$population$initial_conditions,
-    mode = "numeric",
-    ncols = length(compartments_default)
+  assert_population(
+    mod_args$population,
+    compartments = compartments_default
   )
-  # check that compartments sum to 1.0
-  checkmate::assert_numeric(
-    rowSums(mod_args$population$initial_conditions),
-    lower = 1.0 - 1e-6, upper = 1.0 + 1e-6 # specify tolerance manually
-  )
-  # TODO: more input checking to be added
 
   # return arguments invisibly
   invisible(mod_args)

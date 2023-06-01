@@ -20,25 +20,12 @@
   }
 
   # input checking on pathogen parameters
-  checkmate::assert_names(
-    names(mod_args$infection),
-    must.include = c(
-      "r0", "infectious_period", "preinfectious_period",
-      "eta", "omega", # hospitalisation and death rate
+  assert_infection(
+    mod_args$infection,
+    extra_parameters = c(
+      "preinfectious_period", "eta", "omega",
       "susc_reduction_vax", "hosp_reduction_vax", "mort_reduction_vax"
     )
-  )
-  checkmate::assert_number(
-    mod_args$infection$r0,
-    lower = 0, finite = TRUE
-  )
-  checkmate::assert_number(
-    mod_args$infection$infectious_period,
-    lower = 0, finite = TRUE
-  )
-  checkmate::assert_number(
-    mod_args$infection$preinfectious_period,
-    lower = 0, finite = TRUE
   )
 
   # load number of compartments to check initial conditions matrix

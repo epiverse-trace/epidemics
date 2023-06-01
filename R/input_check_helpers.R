@@ -119,3 +119,37 @@ assert_infection <- function(x,
   # invisibly return x
   invisible(x)
 }
+
+#' Assert properties of a `population` object
+#'
+#' @description
+#' Assert that objects of the `population` class have the parameters expected by
+#' an epidemic model. See [population()] and [epidemic()], as well as model
+#' details to check the population parameters required by each model. This
+#' function is for internal use in argument checking functions.
+#'
+#' @param x A [population] object.
+#' @param compartments A character vector giving the names of model compartments
+#' whose length is taken as the reference for the number of columns in the
+#' `initial_conditions` matrix in `x`.
+#'
+#' @keywords internal
+#'
+#' @return Silently returns the `population` object `x`.
+#' Primarily called for its side effects of throwing errors when `x` does not
+#' meet certain requirements.
+assert_population <- function(x, compartments) {
+  # check for input class
+  checkmate::assert_class(x, "population")
+
+  # check that population has as many compartments in initial conditions
+  # matrix as the length of `compartments`
+  checkmate::assert_matrix(
+    x$initial_conditions,
+    mode = "numeric", # this is also checked when initialising a population
+    ncols = length(compartments)
+  )
+
+  # invisibly return x
+  invisible(x)
+}

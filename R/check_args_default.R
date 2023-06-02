@@ -53,7 +53,7 @@
   )
   # check that compartments sum to 1.0
   checkmate::assert_numeric(
-    rowSums(mod_args$population$initial_condition),
+    rowSums(mod_args$population$initial_conditions),
     lower = 1.0 - 1e-6, upper = 1.0 + 1e-6 # specify tolerance manually
   )
   # TODO: more input checking to be added
@@ -69,7 +69,7 @@
   # scale the contact matrix by the maximum real eigenvalue
   mod_args$population$contact_matrix <-
     mod_args$population$contact_matrix /
-      max(Re(eigen(mod_args$population$contact_matrix)$value))
+      max(Re(eigen(mod_args$population$contact_matrix)$values))
 
   # scale rows of the contact matrix by the corresponding group population
   mod_args$population$contact_matrix <-

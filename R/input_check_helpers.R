@@ -199,3 +199,42 @@ assert_vaccination <- function(x, doses, population) {
   # invisibly return x
   invisible(x)
 }
+
+#' Assert properties of a `intervention` object
+#'
+#' @description
+#' Assert that objects of the `intervention` class have the properties expected
+#' by an epidemic model. See [intervention()] and [epidemic()], as well as model
+#' details to check the intervention properties required by each model. This
+#' function is for internal use in argument checking functions.
+#'
+#' @param x A [intervention] object.
+#' @param population An optional argument which is a [population] object.
+#' When present, this is used to check whether the intervention object `x` has
+#' corresponding values of `contact_reduction` for each demographic group in
+#' `population`.
+#'
+#' @keywords internal
+#'
+#' @return Silently returns the `intervention` object `x`.
+#' Primarily called for its side effects of throwing errors when `x` does not
+#' meet certain requirements.
+assert_intervention <- function(x, population) {
+  # check for input class
+  checkmate::assert_class(x, "intervention")
+
+  # check that the length of contact_reduction is the same as the number
+  # of demographic groups
+  n_demo_groups <- NULL
+  if (!missing(population)) {
+    n_demo_groups <- length(population$demography_vector)
+  }
+  checkmate::assert_numeric(
+    x$contact_reduction,
+    lower = 0.0, upper = 1.0,
+    len = n_demo_groups
+  )
+
+  # invisibly return x
+  invisible(x)
+}

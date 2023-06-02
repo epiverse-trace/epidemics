@@ -65,7 +65,7 @@ infect <- infection(
 
 test_that("Vacamole model works", {
   # check model runs silently
-  expect_silent(
+  expect_no_condition(
     epidemic(
       model_name = "vacamole",
       population = uk_population,
@@ -204,5 +204,18 @@ test_that("Vacamole with no hospitalisation", {
   expect_identical(
     unique(pop_hospitalised), 0.0,
     tolerance = 1e-6
+  )
+})
+
+#### Test for Vacamole model run with wrong inputs ####
+test_that("Vacamole model errors correctly", {
+  expect_error(
+    epidemic(
+      model_name = "vacamole",
+      population = uk_population,
+      infection = infect,
+      vaccination = no_vaccination(uk_population, doses = 3L),
+      time_end = 400, increment = 1
+    )
   )
 })

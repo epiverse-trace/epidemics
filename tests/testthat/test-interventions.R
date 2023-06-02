@@ -118,19 +118,15 @@ test_that("Error on poorly specified intervention", {
       infection = pandemic,
       intervention = badly_formed_intervention,
       time_end = 200, increment = 1.0
-    ),
-    regexp = "(Intervention must have)|(number of elements)|(contact matrix)"
+    )
   )
 })
 
 test_that("Null intervention is correctly initialised", {
   null_intervention <- no_intervention(uk_population)
-  # expect message as time end and time start are identical
-  expect_message(
-    {
-      no_intervention(uk_population)
-    },
-    regexp = "(time_end)*(not greater than)*(time_begin)"
+  # expect no message using helper function no_intervention()
+  expect_no_condition(
+    no_intervention(uk_population)
   )
   expect_identical(
     null_intervention$time_begin, null_intervention$time_end

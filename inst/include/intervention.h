@@ -20,13 +20,6 @@ inline Eigen::MatrixXd intervention_on_cm(const Eigen::MatrixXd &cm,
   Eigen::ArrayXd contact_reduction(
       Rcpp::as<Eigen::ArrayXd>(intervention["contact_reduction"]));
 
-  // check inputs here
-  if (contact_reduction.size() != cm.rows()) {
-    Rcpp::stop(
-        "Intervention must have the same number of elements as rows in "
-        "the contact matrix (demo. groups.)\n");
-  }
-
   // modify the contact matrix as cm_mod = cm * (1 - intervention)
   // for a percentage reduction in contacts
   Eigen::MatrixXd modified_cm =

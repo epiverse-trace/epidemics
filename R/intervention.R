@@ -103,8 +103,30 @@ validate_intervention <- function(object) {
   # check intervention class members
   checkmate::assert_string(object$name, na.ok = TRUE)
   checkmate::assert_number(object$time_begin, lower = 0, finite = TRUE)
-  checkmate::assert_number(object$time_end, lower = 0, finite = TRUE)
-  checkmate::assert_numeric(object$contact_reduction)
+  # stricter initialisation of interventions so that negative intervals are
+  # not allowed
+  checkmate::assert_number(
+    object$time_end,
+    lower = object$time_begin, finite = TRUE
+  )
+  checkmate::assert_numeric(
+    object$contact_reduction,
+    lower = 0.0, upper = 1.0,
+    any.missing = FALSE, all.missing = FALSE
+  )
+
+  # message if any intervention intervals are badly formed
+  # tackles the case of mistakenly setting all values the same
+  # this is explicitly used in no_intervention(), with message suppressed
+  # also accounts for eventual extension to group-specific start and end times
+  if (any(object$time_end <= object$time_begin)) {
+    message(
+      "Intervention: some `time_end`s are not greater than `time_begin`s"
+    )
+  }
+
+  # checks on length of `contact_reduction` can only be made in the context
+  # of a population, see assert_intervention()
 
   invisible(object)
 }

@@ -8,25 +8,7 @@
     type = "unique"
   )
 
-  # add null intervention and vaccination if these are missing
-  if (!"intervention" %in% names(mod_args)) {
-    # no_intervention() throws a message for default initialisation, suppress
-    suppressMessages(
-      mod_args$intervention <- no_intervention(
-        mod_args$population
-      )
-    )
-  }
-  if (!"vaccination" %in% names(mod_args)) {
-    # no_vaccination() throws a message for default initialisation, suppress
-    suppressMessages(
-      mod_args$vaccination <- no_vaccination(
-        mod_args$population
-      )
-    )
-  }
-
-  # input checking on pathogen parameters
+  # input checking on the infection object
   assert_infection(
     mod_args$infection,
     extra_parameters = "preinfectious_period"

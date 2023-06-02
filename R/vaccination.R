@@ -130,16 +130,20 @@ validate_vaccination <- function(object) {
     nrows = nrow(object$nu), ncols = ncol(object$nu),
     mode = "numeric"
   )
+  # stricter initialisation of vaccinations so that negative values and
+  # vaccination intervals are not allowed
   stopifnot(
     "`nu` should have positive or zero values" =
       all(object$nu >= 0.0),
     "`time_begin` should have positive or zero values" =
       all(object$time_begin >= 0.0),
-    "`time_end` should have positive or zero values" =
-      all(object$time_end >= 0.0)
+    "`time_end` should have values greater-than or equal-to `time_begin`" =
+      all(object$time_end >= object$time_begin)
   )
 
   # message if any vaccinations' intervals are badly formed
+  # tackles the case of mistakenly setting all values the same
+  # this is explicitly used in no_vaccination(), with message suppressed
   if (any(object$time_end <= object$time_begin)) {
     message(
       "Vaccination: some `time_end`s are not greater than `time_begin`s"
@@ -179,7 +183,8 @@ is_vaccination <- function(object) {
 #' @export
 no_vaccination <- function(population, doses = 1L) {
   checkmate::assert_class(population, "population")
-  # suppress messages because we are sure we want both time begin and end as 0
+  # message on identical value of time_begin and time_end (0) suppressed
+  # as this is a valid use case
   suppressMessages(
     vaccination(
       name = "no_vaccination",

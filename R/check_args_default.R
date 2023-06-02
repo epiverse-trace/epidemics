@@ -23,6 +23,24 @@
     compartments = compartments_default
   )
 
+  # add null intervention and vaccination if these are missing
+  # if not missing, check that they conform to expectations
+  if (!"intervention" %in% names(mod_args)) {
+    mod_args$intervention <- no_intervention(
+      mod_args$population
+    )
+  } else {
+    assert_intervention(mod_args$intervention, mod_args$population)
+  }
+  if (!"vaccination" %in% names(mod_args)) {
+    mod_args$vaccination <- no_vaccination(
+      mod_args$population
+    )
+  } else {
+    # default model only supports a single dose vaccination
+    assert_vaccination(mod_args$vaccination, doses = 1L, mod_args$population)
+  }
+
   # return arguments invisibly
   invisible(mod_args)
 }

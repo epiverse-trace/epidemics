@@ -9,17 +9,7 @@
     must.include = "vaccination" # vaccination necessary for Vacamole
   )
 
-  # add null intervention and vaccination if these are missing
-  if (!"intervention" %in% names(mod_args)) {
-    # no_intervention() throws a message for default initialisation, suppress
-    suppressMessages(
-      mod_args$intervention <- no_intervention(
-        mod_args$population
-      )
-    )
-  }
-
-  # input checking on pathogen parameters
+  # input checking on infection object
   assert_infection(
     mod_args$infection,
     extra_parameters = c(
@@ -37,6 +27,7 @@
     mod_args$population,
     compartments = compartments_vacamole
   )
+
   # input checking on vaccination parameters
   # the Vacamole model expects two vaccination doses
   assert_vaccination(
@@ -44,6 +35,16 @@
     doses = 2L,
     population = mod_args$population
   )
+
+  # add null intervention if this is missing
+  # if not missing, check that it conforms to expectations
+  if (!"intervention" %in% names(mod_args)) {
+    mod_args$intervention <- no_intervention(
+      mod_args$population
+    )
+  } else {
+    assert_intervention(mod_args$intervention, mod_args$population)
+  }
 
   # return arguments invisibly
   invisible(mod_args)

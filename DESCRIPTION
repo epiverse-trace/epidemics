@@ -42,7 +42,6 @@ Imports:
 Suggests: 
     bookdown,
     colorspace,
-    covr,
     ggplot2,
     knitr,
     rmarkdown,

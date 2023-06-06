@@ -44,6 +44,7 @@ See Details for more information."><meta property="og:image" content="/logo.svg"
     <a class="dropdown-item" href="../articles/epidemics_rcpp.html">Epidemic modelling with Rcpp</a>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
+    <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -79,7 +80,14 @@ See <strong>Details</strong> for more information.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">epidemic</span><span class="op">(</span>model_name <span class="op">=</span> <span class="st">"default"</span>, <span class="va">population</span>, <span class="va">infection</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">epidemic</span><span class="op">(</span></span>
+<span>  model_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"default"</span>, <span class="st">"vacamole"</span><span class="op">)</span>,</span>
+<span>  <span class="va">population</span>,</span>
+<span>  <span class="va">infection</span>,</span>
+<span>  time_end <span class="op">=</span> <span class="fl">200</span>,</span>
+<span>  increment <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -100,6 +108,16 @@ of each demographic group. See <code><a href="population.html">population()</a><
 have at least the basic reproductive number \(R_0\) of the infection, and
 the infectious period. Parameters required by other models can be found in
 the documentation for model functions.</p></dd>
+
+
+<dt>time_end</dt>
+<dd><p>The maximum number of timesteps over which to run the model.
+Taken as days, with a default value of 200 days.</p></dd>
+
+
+<dt>increment</dt>
+<dd><p>The size of the time increment. Taken as days, with a
+default value of 1 day.</p></dd>
 
 
 <dt>...</dt>
@@ -146,8 +164,6 @@ argument in the default model.</p></li>
 course of the epidemic, with a start and end time, and age-specific effect
 on the transition of individuals from susceptible to vaccinated.
 See <code><a href="vaccination.html">vaccination()</a></code>. This is an optional argument in the default model.</p></li>
-<li><p><code>time_end</code> The maximum number of timesteps over which to run the model.</p></li>
-<li><p><code>increment</code> The size of the time increment.</p></li>
 </ul></div>
 
     <div class="section level2">
@@ -176,8 +192,6 @@ See <code><a href="vaccination.html">vaccination()</a></code>. This is an option
 <span class="r-in"><span>  time_end <span class="op">=</span> <span class="fl">200</span>,</span></span>
 <span class="r-in"><span>  increment <span class="op">=</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Intervention: `time_end` is not greater than `time_begin`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Vaccination: some `time_end`s are not greater than `time_begin`s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       time demography_group compartment      value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    1:    0     demo_group_1 susceptible 66993300.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    2:    0     demo_group_1     exposed     6700.0</span>

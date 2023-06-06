@@ -32,6 +32,7 @@
     <a class="dropdown-item" href="../articles/epidemics_rcpp.html">Epidemic modelling with Rcpp</a>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
+    <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -82,10 +83,11 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># an example for childhood vaccination only</span></span></span>
 <span class="r-in"><span><span class="va">childhood_vaccination</span> <span class="op">&lt;-</span> <span class="fu"><a href="vaccination.html">vaccination</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  name <span class="op">=</span> <span class="st">"childhood_vaccination"</span>,</span></span>
-<span class="r-in"><span>  time_begin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>, <span class="co"># assuming a simulation over 100 days</span></span></span>
-<span class="r-in"><span>  time_end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  nu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0001</span>, <span class="fl">0.0</span><span class="op">)</span> <span class="co"># over 5s never vaccinated</span></span></span>
+<span class="r-in"><span>  time_begin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span>, <span class="co"># assuming a simulation over 100 days</span></span></span>
+<span class="r-in"><span>  time_end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  nu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0001</span>, <span class="fl">0.0</span><span class="op">)</span><span class="op">)</span> <span class="co"># over 5s never vaccinated</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Vaccination: some `time_end`s are not greater than `time_begin`s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Vaccination: some `time_end`s are not greater than `time_begin`s</span>
 <span class="r-in"><span><span class="fu">is_vaccination</span><span class="op">(</span><span class="va">childhood_vaccination</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>

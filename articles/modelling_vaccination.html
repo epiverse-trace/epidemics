@@ -56,6 +56,7 @@
     <a class="dropdown-item" href="../articles/epidemics_rcpp.html">Epidemic modelling with Rcpp</a>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
+    <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
   </div>
 </li>
       </ul>
@@ -162,9 +163,9 @@
 <code class="sourceCode R"><span><span class="co"># prepare a vaccination object</span></span>
 <span><span class="va">vaccinate_elders</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vaccination.html">vaccination</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"vaccinate elders"</span>,</span>
-<span>  time_begin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">250</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  nu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0001</span>, <span class="fl">0.0001</span>, <span class="fl">0.0001</span><span class="op">)</span></span>
+<span>  time_begin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  time_end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">250</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  nu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0001</span>, <span class="fl">0.0001</span>, <span class="fl">0.0001</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># view vaccination object</span></span>
@@ -173,11 +174,22 @@
 <span><span class="co">#&gt; Vaccination name: "vaccinate elders"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time begin:</span></span>
-<span><span class="co">#&gt; 100, 100, 100</span></span>
+<span><span class="co">#&gt;      dose_1</span></span>
+<span><span class="co">#&gt; [1,]    100</span></span>
+<span><span class="co">#&gt; [2,]    100</span></span>
+<span><span class="co">#&gt; [3,]    100</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time end:</span></span>
-<span><span class="co">#&gt; 250, 250, 250</span></span>
+<span><span class="co">#&gt;      dose_1</span></span>
+<span><span class="co">#&gt; [1,]    250</span></span>
+<span><span class="co">#&gt; [2,]    250</span></span>
+<span><span class="co">#&gt; [3,]    250</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Vaccination rate:</span></span>
-<span><span class="co">#&gt; 1e-04, 1e-04, 1e-04</span></span></code></pre></div>
+<span><span class="co">#&gt;      dose_1</span></span>
+<span><span class="co">#&gt; [1,]  1e-04</span></span>
+<span><span class="co">#&gt; [2,]  1e-04</span></span>
+<span><span class="co">#&gt; [3,]  1e-04</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">
@@ -190,8 +202,7 @@
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  vaccination <span class="op">=</span> <span class="va">vaccinate_elders</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Intervention: `time_end` is not greater than `time_begin`</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">

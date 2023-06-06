@@ -56,6 +56,7 @@
     <a class="dropdown-item" href="articles/epidemics_rcpp.html">Epidemic modelling with Rcpp</a>
     <a class="dropdown-item" href="articles/modelling_interventions.html">Modelling interventions</a>
     <a class="dropdown-item" href="articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
+    <a class="dropdown-item" href="articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
   </div>
 </li>
       </ul>
@@ -85,10 +86,9 @@
 </div>
 <!-- badges: start -->
 
-<p><em>epidemics</em> is an R package that provides an easy interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted infections such as influenza, Covid-19, or respiratory syncytial virus (RSV).</p>
-<p><em>epidemics</em> currently provides a single model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates.</p>
-<p><em>epidemics</em> implements methods outlined in Bjørnstad et al. (<a href="#ref-bjornstad2020a">2020a</a>) and Bjørnstad et al. (<a href="#ref-bjornstad2020">2020b</a>).</p>
-<p>The models in <em>epidemics</em> can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions</p>
+<p><em>epidemics</em> is an R package that provides a convenient interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted infections such as influenza, Covid-19, or respiratory syncytial virus (RSV). The models in <em>epidemics</em> implement methods outlined in Bjørnstad et al. (<a href="#ref-bjornstad2020a">2020a</a>) and Bjørnstad et al. (<a href="#ref-bjornstad2020">2020b</a>). The models in <em>epidemics</em> can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions.</p>
+<p><em>epidemics</em> currently provides a default model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates. Additionally, <em>epidemics</em> includes the Vacamole model developed at <a href="https://www.rivm.nl/" class="external-link">RIVM, the Dutch Public Health Institute</a> for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination (<a href="#ref-ainslie2022">Ainslie et al. 2022</a>).</p>
+<p>More such models developed during the Covid-19 pandemic are planned to be added in the near future. Please get in touch if you would like to see your model added to the <em>epidemics</em> model library — we are happy to help with translating it from R or another language to Rcpp.</p>
 <p><em>epidemics</em> relies on <a href="https://gitlab.com/libeigen/eigen" class="external-link">Eigen</a> via <a href="https://cran.r-project.org/web/packages/RcppEigen/index.html" class="external-link">{RcppEigen}</a>, and on <a href="https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html" class="external-link">Boost Odeint</a> via <a href="https://cran.r-project.org/web/packages/BH/index.html" class="external-link">{BH}</a>, and is developed at the <a href="https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases" class="external-link">Centre for the Mathematical Modelling of Infectious Diseases</a> at the London School of Hygiene and Tropical Medicine as part of the <a href="https://data.org/initiatives/epiverse/" class="external-link">Epiverse-TRACE initiative</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -101,7 +101,7 @@
 <div class="section level2">
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
-<p>Here we show an example of using <em>epidemics</em> to model an epidemic in the U.K. population with an <span class="math inline"><em>R</em><sub>0</sub></span> similar to that of pandemic influenza, with heterogeneity in social contacts among different age groups, and with the implementation of school closures to dampen the spread of the infection.</p>
+<p>Here we show an example of using the default model in <em>epidemics</em> to model an epidemic in the U.K. population with an <span class="math inline"><em>R</em><sub>0</sub></span> similar to that of pandemic influenza, with heterogeneity in social contacts among different age groups, and with the implementation of school closures to dampen the spread of the infection.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load epidemics</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
@@ -211,6 +211,9 @@
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-ainslie2022" class="csl-entry">
+Ainslie, Kylie E. C., Jantien A. Backer, Pieter T. de Boer, Albert Jan van Hoek, Don Klinkenberg, Hester Korthals Altes, Ka Yin Leung, Hester de Melker, Fuminari Miura, and Jacco Wallinga. 2022. “A Scenario Modelling Analysis to Anticipate the Impact of COVID-19 Vaccination in Adolescents and Children on Disease Outcomes in the Netherlands, Summer 2021.” <em>Eurosurveillance</em> 27 (44): 2101090. <a href="https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090" class="external-link uri">https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090</a>.
+</div>
 <div id="ref-bjornstad2020a" class="csl-entry">
 Bjørnstad, Ottar N., Katriona Shea, Martin Krzywinski, and Naomi Altman. 2020a. “Modeling Infectious Epidemics.” <em>Nature Methods</em> 17 (5): 455–56. <a href="https://doi.org/10.1038/s41592-020-0822-z" class="external-link uri">https://doi.org/10.1038/s41592-020-0822-z</a>.
 </div>

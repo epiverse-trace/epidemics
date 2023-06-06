@@ -22,6 +22,9 @@
     <loc>/articles/modelling_vaccination.html</loc>
   </url>
   <url>
+    <loc>/articles/vacamole.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -31,13 +34,28 @@
     <loc>/reference/add_to_library.html</loc>
   </url>
   <url>
+    <loc>/reference/as.vaccination.html</loc>
+  </url>
+  <url>
+    <loc>/reference/c.vaccination.html</loc>
+  </url>
+  <url>
     <loc>/reference/dot-check_args_epidemic_default.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-check_args_epidemic_vacamole.html</loc>
   </url>
   <url>
     <loc>/reference/dot-epidemic_default_cpp.html</loc>
   </url>
   <url>
+    <loc>/reference/dot-epidemic_vacamole_cpp.html</loc>
+  </url>
+  <url>
     <loc>/reference/dot-prepare_args_epidemic_default.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-prepare_args_epidemic_vacamole.html</loc>
   </url>
   <url>
     <loc>/reference/epidemic.html</loc>
@@ -47,6 +65,9 @@
   </url>
   <url>
     <loc>/reference/epidemics-package.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_model_names.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>

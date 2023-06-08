@@ -33,7 +33,7 @@ pandemic <- infection(
 close_schools <- intervention(
   name = "close_schools",
   time_begin = 100, time_end = 150,
-  contact_reduction = c(0.2, 0.0)
+  contact_reduction = matrix(c(0.2, 0.0))
 )
 
 # snapshot test for printing
@@ -107,7 +107,7 @@ test_that("Intervention reduces final size", {
 badly_formed_intervention <- intervention(
   name = "close_schools",
   time_begin = 100, time_end = 150,
-  contact_reduction = c(0.2, 0.0, 0.2) # too many values, 2 needed, 3 given
+  contact_reduction = matrix(0.2, 3) # too many values, 2 needed, 3 given
 )
 
 test_that("Error on poorly specified intervention", {

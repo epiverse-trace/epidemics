@@ -209,23 +209,117 @@ format.intervention <- function(x, ...) {
   writeLines(
     c(
       header,
-      name,
-      glue::glue(
-        "
+#' Convert a list to a intervention object
+#'
+#' @param x A list, or an object that inherits from a list.
+#' @return A [intervention] class object.
+#' @export
+#' @examples
+#' # prepare a list
+#' npi <- list(
+#'   name = "npi",
+#'   time_begin = 30,
+#'   time_end = 60,
+#'   contact_reduction = matrix(0.1, 3)
+#' )
+#'
+#' as.intervention(npi)
+as.intervention <- function(x) {
+  # check that input is a list or intervention
+  stopifnot(
+    "Input must inherit from `list`" =
+      is.list(x)
+  )
 
-        Time begin: {x$time_begin}
-        Time end: {x$time_end}
-        "
+  x <- intervention(
+    name = x[["name"]],
+    time_begin = x[["time_begin"]],
+    time_end = x[["time_end"]],
+    contact_reduction = x[["contact_reduction"]]
+  )
+
+  # return x
+  x
+}
+
+#' Concatenate intervention doses into a multi-dose intervention
+#'
+#' @param x An `intervention` object.
+#' @param ... intervention objects to combine with `x` to create a multi-dose
+#' `intervention` object.
+#' @return An `intervention` object with as many doses as the overall number of
+#' doses specified in `x` and in the objects passed to `...`.
+#' @export
+#' @examples
+#' # create first dose regime
+#' npi_1 <- intervention(
+#'   time_begin = 30,
+#'   time_end = 60,
+#'   contact_reduction = matrix(0.1)
+#' )
+#'
+#' # second dose regime
+#' npi_2 <- intervention(
+#'   time_begin = 45,
+#'   time_end = 75,
+#'   contact_reduction = matrix(0.1)
+#' )
+#'
+#' c(npi_1, npi_2)
+c.intervention <- function(x, ...) {
+  # collect inputs
+  multi_npi <- list(x, ...)
+  invisible(
+    lapply(multi_npi, validate_intervention)
+  )
+
+  # check that all intervention regimes have the same dimensions
+  # of intervention rates --- these are identical to dims of start and end times
+  stopifnot(
+    "All `intervention`s must have identical dimensions for c, start, and end" =
+      all(
+        vapply(multi_npi, function(vx) {
+          identical(nrow(vx$nu), nrow(x$nu))
+        }, FUN.VALUE = logical(1))
       )
-    )
-  )
-  print(
-    glue::glue(
-      "Contact reduction:
-      {glue::glue_collapse(x$contact_reduction, sep = ', ')}
-      "
-    )
   )
 
-  invisible(x)
+  # strip class and `name` member from `multi_npi`
+  multi_npi <- lapply(multi_npi, function(z) {
+    z <- unclass(z)
+    z$name <- NULL
+    z
+  })
+
+  # modify x to return a list object of multiple start and end times and nu-s
+  multi_npi <- do.call(
+    Map, c(f = cbind, multi_npi)
+  )
+  multi_npi$time_begin <- as.vector(multi_npi$time_begin)
+  multi_npi$time_end <- as.vector(multi_npi$time_end)
+
+  # add name parameter --- take "name" of `x`
+  multi_npi$name <- x$name
+
+  # generate intervention dose names as dose_1 ... dose_n
+  # get total number of doses from the sum of all columns
+  npi_names <- glue::glue("npi_{seq_len(ncol(multi_npi$contact_reduction))}")
+
+  # add names to doses for comprehension when printed
+  for (i in c("time_begin", "time_end", "contact_reduction")) {
+    if (is.matrix(multi_npi[[i]])) {
+      colnames(multi_npi[[i]]) <- npi_names
+    } else {
+      names(multi_npi[[i]]) <- npi_names
+    }
+  }
+
+  # convert resulting object to intervention
+  multi_npi <- as.intervention(multi_npi)
+
+  # validate new object
+  validate_intervention(multi_npi)
+
+  # return object
+  multi_npi
 }

@@ -140,3 +140,37 @@ test_that("Null intervention is correctly initialised", {
     nrow(uk_population$contact_matrix)
   )
 })
+
+# Tests for multiple stacked interventions
+npi_1 <- intervention(
+  time_begin = 30,
+  time_end = 60,
+  contact_reduction = matrix(0.15, nrow = 3)
+)
+
+# second dose regime
+npi_2 <- intervention(
+  time_begin = 45,
+  time_end = 75,
+  contact_reduction = matrix(0.1, nrow = 3)
+)
+
+multi_npi <- c(npi_1, npi_2)
+
+# Tests for basic expectations of c.intervention
+test_that("Concatenating `intervention`s works", {
+  # expect that rows sum to expected values
+  expect_identical(
+    rowSums(multi_npi$contact_reduction),
+    rep(0.25, 3L)
+  )
+  # expect that there are only two columns
+  expect_identical(
+    ncol(multi_npi$contact_reduction),
+    2L
+  )
+  # snapshot of the multi-NPI
+  expect_snapshot(
+    multi_npi
+  )
+})

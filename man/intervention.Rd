@@ -30,7 +30,7 @@ close_schools <- intervention(
   name = "close schools",
   time_begin = 50,
   time_end = 80,
-  contact_reduction = c(0.5, 0.01) # reduces contacts differentially
+  contact_reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
 )
 close_schools
 }

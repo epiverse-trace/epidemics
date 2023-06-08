@@ -229,10 +229,10 @@ assert_intervention <- function(x, population) {
   if (!missing(population)) {
     n_demo_groups <- length(population[["demography_vector"]])
   }
-  checkmate::assert_numeric(
+  checkmate::assert_matrix(
     x[["contact_reduction"]],
-    lower = 0.0, upper = 1.0,
-    len = n_demo_groups
+    mode = "numeric",
+    nrow = n_demo_groups
   )
 
   # invisibly return x

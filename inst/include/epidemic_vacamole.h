@@ -58,10 +58,8 @@ struct epidemic_vacamole {
     dxdt.resize(x.rows(), x.cols());
 
     // modify contact matrix if time is within intervention timespan
-    Eigen::MatrixXd cm = contact_matrix;
-    if (intervention::is_intervention_active(t, intervention)) {
-      cm = intervention::intervention_on_cm(contact_matrix, intervention);
-    }
+    Eigen::MatrixXd cm =
+        intervention::intervention_on_cm(t, contact_matrix, intervention);
 
     // get current vaccination rate
     Eigen::MatrixXd current_nu = vaccination::current_nu(nu, vaccination, t);

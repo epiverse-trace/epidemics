@@ -46,7 +46,7 @@ new_intervention <- function(name = NA_character_,
 #'   name = "close schools",
 #'   time_begin = 50,
 #'   time_end = 80,
-#'   contact_reduction = c(0.5, 0.01) # reduces contacts differentially
+#'   contact_reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
 #' )
 #' close_schools
 intervention <- function(name = NA_character_,
@@ -55,15 +55,20 @@ intervention <- function(name = NA_character_,
                          contact_reduction) {
   # check input
   checkmate::assert_string(name, na.ok = TRUE)
-  checkmate::assert_number(time_begin, lower = 0, finite = TRUE)
-  checkmate::assert_number(time_end, lower = 0, finite = TRUE)
-  checkmate::assert_numeric(contact_reduction)
+  checkmate::assert_matrix(contact_reduction, mode = "numeric")
+  checkmate::assert_numeric(
+    time_begin,
+    len = ncol(contact_reduction)
+  )
+  checkmate::assert_numeric(
+    time_end,
+    len = ncol(contact_reduction)
+  )
 
-  # print message if time end is not before time begin
-  # but allow it nonetheless
-  if (!(time_end > time_begin)) {
+  # message if any vaccinations' intervals are badly formed
+  if (any(time_end <= time_begin)) {
     message(
-      "Intervention: `time_end` is not greater than `time_begin`"
+      "Vaccination: some `time_end`s are not greater than `time_begin`s"
     )
   }
 
@@ -102,17 +107,28 @@ validate_intervention <- function(object) {
 
   # check intervention class members
   checkmate::assert_string(object$name, na.ok = TRUE)
-  checkmate::assert_number(object$time_begin, lower = 0, finite = TRUE)
-  # stricter initialisation of interventions so that negative intervals are
-  # not allowed
-  checkmate::assert_number(
-    object$time_end,
-    lower = object$time_begin, finite = TRUE
+  checkmate::assert_matrix(object$contact_reduction, mode = "numeric")
+  checkmate::assert_numeric(
+    object$time_begin,
+    len = ncol(object$contact_reduction)
   )
   checkmate::assert_numeric(
-    object$contact_reduction,
-    lower = 0.0, upper = 1.0,
-    any.missing = FALSE, all.missing = FALSE
+    object$time_end,
+    len = ncol(object$contact_reduction)
+  )
+
+  # stricter initialisation of interventions so that negative values and
+  # npi intervals are not allowed, and cumulative contact reductions > 1 are
+  # not allowed
+  stopifnot(
+    "`nu` should have positive or zero values" =
+      all(object$contact_reduction >= 0.0),
+    "`time_begin` should have positive or zero values" =
+      all(object$time_begin >= 0.0),
+    "`time_end` should have values greater-than or equal-to `time_begin`" =
+      all(object$time_end >= object$time_begin),
+    "Rows of `contact_reduction` must sum to <= 1.0" =
+      all(rowSums(object$contact_reduction) <= 1.0)
   )
 
   # message if any intervention intervals are badly formed
@@ -143,7 +159,7 @@ validate_intervention <- function(object) {
 #'   name = "close schools",
 #'   time_begin = 50,
 #'   time_end = 80,
-#'   contact_reduction = c(0.5, 0.01) # reduces contacts differentially
+#'   contact_reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
 #' )
 #' is_intervention(close_schools)
 is_intervention <- function(object) {
@@ -164,7 +180,7 @@ no_intervention <- function(population) {
   suppressMessages(
     intervention(
       name = "no_intervention", time_begin = 0, time_end = 0,
-      contact_reduction = rep(0.0, times = nrow(population$contact_matrix))
+      contact_reduction = matrix(0.0, nrow(population$contact_matrix))
     )
   )
 }
@@ -209,6 +225,28 @@ format.intervention <- function(x, ...) {
   writeLines(
     c(
       header,
+      name
+      # glue::glue(
+      #   "
+
+      #   Time begin: {x$time_begin}
+      #   Time end: {x$time_end}
+      #   "
+      # )
+    )
+  )
+  writeLines("Time begin:")
+  print(x$time_begin)
+
+  writeLines("Time end:")
+  print(x$time_end)
+
+  writeLines("Contact reduction:")
+  print(x$contact_reduction)
+
+  invisible(x)
+}
+
 #' Convert a list to a intervention object
 #'
 #' @param x A list, or an object that inherits from a list.

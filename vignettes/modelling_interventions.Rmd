@@ -100,7 +100,7 @@ close_schools <- intervention(
   name = "School closure",
   time_begin = 200,
   time_end = 300,
-  contact_reduction = c(0.5, 0.001, 0.001)
+  contact_reduction = matrix(c(0.5, 0.001, 0.001))
 )
 
 # examine the intervention object

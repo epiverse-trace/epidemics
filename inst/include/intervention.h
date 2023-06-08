@@ -38,10 +38,11 @@ inline Eigen::ArrayXd cumulative_intervention(const double &t,
   return effective_contact_reduction;
 }
 
+inline Eigen::MatrixXd intervention_on_cm(const double &t,
+                                          const Eigen::MatrixXd &cm,
                                           const Rcpp::List &intervention) {
   // create Eigen 1D array from R matrix passed in an list (class intervention)
-  Eigen::ArrayXd contact_reduction(
-      Rcpp::as<Eigen::ArrayXd>(intervention["contact_reduction"]));
+  Eigen::ArrayXd contact_reduction = cumulative_intervention(t, intervention);
 
   // modify the contact matrix as cm_mod = cm * (1 - intervention)
   // for a percentage reduction in contacts
@@ -49,15 +50,6 @@ inline Eigen::ArrayXd cumulative_intervention(const double &t,
       cm.array().colwise() * (1.0 - contact_reduction);
   // transpose for rowwise array multiplication, as Eigen is col-major
   return modified_cm;
-}
-
-inline bool is_intervention_active(const double &t,
-                                   const Rcpp::List &intervention) {
-  const double time_begin = intervention["time_begin"];
-  const double time_end = intervention["time_end"];
-  // input checking on intervention
-  bool intervention_active = t >= time_begin && t <= time_end;
-  return intervention_active;
 }
 
 }  // namespace intervention

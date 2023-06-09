@@ -1,0 +1,237 @@
+---
+title: "Modelling multiple overlapping non-pharmaceutical interventions"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+vignette: >
+  %\VignetteIndexEntry{Modelling multiple overlapping non-pharmaceutical interventions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  dpi = 150
+)
+```
+
+::: {.alert .alert-warning}
+**New to _epidemics_, or to modelling non-pharmaceutical interventions?** It may help to read the ["Get started"](epidemics.html) and ["Modelling a non-pharmaceutical intervention"](modelling_interventions.html) vignettes first!
+:::
+
+```{r setup}
+library(epidemics)
+library(data.table)
+library(ggplot2)
+```
+
+## Prepare population and initial conditions
+
+Prepare population and contact data.
+
+```{r}
+# load contact and population data from socialmixr::polymod
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 65),
+  symmetric = TRUE
+)
+
+# prepare contact matrix
+contact_matrix <- t(contact_data$matrix)
+
+# prepare the demography vector
+demography_vector <- contact_data$demography$population
+names(demography_vector) <- rownames(contact_matrix)
+```
+
+Prepare initial conditions for each age group.
+
+```{r}
+# initial conditions
+initial_i <- 1e-6
+initial_conditions <- c(
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
+)
+
+# build for all age groups
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+
+# assign rownames for clarity
+rownames(initial_conditions) <- rownames(contact_matrix)
+```
+
+Prepare a population as a `population` class object.
+
+```{r}
+uk_population <- population(
+  name = "UK",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+```
+
+## Prepare pathogen parameters
+
+```{r}
+# Prepare epidemiological parameters as an infection object
+pandemic <- infection(
+  r0 = 2.0,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
+```
+
+## Prepare overlapping interventions
+
+We shall prepare two interventions that could plausibly implemented over the course of an epidemic.
+
+1. School closures, which are primarily aimed at reducing infections among younger individuals who could then transmit them to their families,
+
+2. General workplace closures, which are a broad-based measure aimed at reducing infections among all working age adults.
+
+::: {.alert .alert-primary}
+### What is the effect of multiple overlapping interventions?
+
+WIP: Add how interventions works additively.
+
+:::
+
+### Modelling school closures
+
+We first prepare an intervention that simulates the effect of closing schools to reduce the contacts of younger people.
+We assume that this reduces the contacts of the age group 0 -- 19 by 70%, and the contacts of all other age groups by only 1% (as most adults meet individuals their own age).
+
+This intervention is assumed to last 100 days, beginning from the 100th day of the outbreak.
+
+```{r}
+# prepare an intervention that models school closures for ~3 months (100 days)
+close_schools <- intervention(
+  name = "School closure",
+  time_begin = 100,
+  time_end = 200,
+  contact_reduction = matrix(c(0.7, 0.01, 0.01))
+)
+
+# examine the intervention object
+close_schools
+```
+
+### Modelling workplace closures
+
+We then prepare an intervention that simulates the effect of closing workplaces to reduce the contacts of working age adults.
+We assume that this reduces the contacts of the age group 20 -- 65 by 80%, and the contacts of all other age groups by only 1% (we assume that individuals in other age groups are not meeting many individuals in workplaces).
+
+This intervention is assumed to last 60 days, beginning from the 130th day of the outbreak --- this simulates a situation in which policymakers decide to close workplaces some time after deciding to close schools, and in which they choose not to keep workplaces closed for as long (2 months or 60 days vs. 3 months or 100 days for school closures).
+
+```{r}
+# prepare an intervention which mostly affects adults 20 -- 65
+intervention_duration <- 60
+close_workplaces <- intervention(
+  name = "Workplace closure",
+  time_begin = 130,
+  time_end = 130 + intervention_duration,
+  contact_reduction = matrix(c(0.01, 0.5, 0.01))
+)
+
+# examine the intervention object
+close_workplaces
+```
+
+### Combining interventions
+
+We can use the `c()` function to combine two `intervention` objects into a single `intervention` that accommodates the effect of both interventions.
+This multiple intervention can then be passed --- as a single `intervention` object --- to  an epidemic model in `epidemic()`.
+
+```{r}
+# combine interventions using `c()`
+combined_interventions <- c(
+  close_schools, close_workplaces
+)
+
+# visualise the combined intervention object
+combined_interventions
+```
+
+::: {.alert .alert-primary}
+**Note** We can combine any number of `intervention` objects into a single `intervention` object to be passed to `epidemic()`. The cumulative effect of the interventions is handled automatically by the C++ code underlying _epidemics_!
+:::
+
+## Run epidemic model with multiple interventions
+
+```{r}
+# get data from an epidemic model with both interventions
+data <- epidemic(
+  population = uk_population,
+  infection = pandemic,
+  intervention = combined_interventions,
+  time_end = 600, increment = 1.0
+)
+```
+
+### Visualise model outcomes
+
+```{r class.source = 'fold-hide'}
+# plot figure of epidemic curve
+ggplot(
+  data[compartment %in% c("exposed", "infectious")],
+  aes(
+    x = time,
+    y = value,
+    col = demography_group,
+    linetype = compartment
+  )
+) +
+  geom_line() +
+  annotate(
+    geom = "rect",
+    xmin = close_schools$time_begin,
+    xmax = close_schools$time_end,
+    ymin = 0, ymax = 500e3,
+    fill = alpha("red", alpha = 0.2),
+    lty = "dashed"
+  ) +
+  annotate(
+    geom = "text",
+    x = mean(c(close_schools$time_begin, close_schools$time_end)),
+    y = 400e3,
+    angle = 90,
+    label = "School closure"
+  ) +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  expand_limits(
+    y = c(0, 500e3)
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    linetype = "Compartment",
+    y = "Individuals"
+  )
+```

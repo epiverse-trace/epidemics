@@ -37,6 +37,18 @@
     <loc>/reference/as.vaccination.html</loc>
   </url>
   <url>
+    <loc>/reference/assert_infection.html</loc>
+  </url>
+  <url>
+    <loc>/reference/assert_intervention.html</loc>
+  </url>
+  <url>
+    <loc>/reference/assert_population.html</loc>
+  </url>
+  <url>
+    <loc>/reference/assert_vaccination.html</loc>
+  </url>
+  <url>
     <loc>/reference/c.vaccination.html</loc>
   </url>
   <url>

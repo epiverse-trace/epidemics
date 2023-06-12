@@ -56,14 +56,8 @@ intervention <- function(name = NA_character_,
   # check input
   checkmate::assert_string(name, na.ok = TRUE)
   checkmate::assert_matrix(contact_reduction, mode = "numeric")
-  checkmate::assert_numeric(
-    time_begin,
-    len = ncol(contact_reduction)
-  )
-  checkmate::assert_numeric(
-    time_end,
-    len = ncol(contact_reduction)
-  )
+  checkmate::assert_number(time_begin, lower = 0, finite = TRUE)
+  checkmate::assert_number(time_end, lower = 0, finite = TRUE)
 
   # message if any vaccinations' intervals are badly formed
   if (any(time_end <= time_begin)) {
@@ -75,8 +69,8 @@ intervention <- function(name = NA_character_,
   # call intervention constructor
   intervention_ <- new_intervention(
     name = name,
-    time_begin = time_begin,
-    time_end = time_end,
+    time_begin = matrix(time_begin),
+    time_end = matrix(time_end),
     contact_reduction = contact_reduction
   )
 
@@ -108,13 +102,13 @@ validate_intervention <- function(object) {
   # check intervention class members
   checkmate::assert_string(object$name, na.ok = TRUE)
   checkmate::assert_matrix(object$contact_reduction, mode = "numeric")
-  checkmate::assert_numeric(
+  checkmate::assert_matrix(
     object$time_begin,
-    len = ncol(object$contact_reduction)
+    ncol = ncol(object$contact_reduction), nrow = 1L
   )
-  checkmate::assert_numeric(
+  checkmate::assert_matrix(
     object$time_end,
-    len = ncol(object$contact_reduction)
+    ncol = ncol(object$contact_reduction), nrow = 1L
   )
 
   # stricter initialisation of interventions so that negative values and
@@ -226,13 +220,6 @@ format.intervention <- function(x, ...) {
     c(
       header,
       name
-      # glue::glue(
-      #   "
-
-      #   Time begin: {x$time_begin}
-      #   Time end: {x$time_end}
-      #   "
-      # )
     )
   )
   writeLines("Time begin:")
@@ -316,8 +303,8 @@ c.intervention <- function(x, ...) {
   stopifnot(
     "All `intervention`s must have identical dimensions for c, start, and end" =
       all(
-        vapply(multi_npi, function(vx) {
-          identical(nrow(vx$nu), nrow(x$nu))
+        vapply(multi_npi, function(npi) {
+          identical(nrow(npi$contact_reduction), nrow(x$contact_reduction))
         }, FUN.VALUE = logical(1))
       )
   )
@@ -333,8 +320,6 @@ c.intervention <- function(x, ...) {
   multi_npi <- do.call(
     Map, c(f = cbind, multi_npi)
   )
-  multi_npi$time_begin <- as.vector(multi_npi$time_begin)
-  multi_npi$time_end <- as.vector(multi_npi$time_end)
 
   # add name parameter --- take "name" of `x`
   multi_npi$name <- x$name
@@ -353,7 +338,12 @@ c.intervention <- function(x, ...) {
   }
 
   # convert resulting object to intervention
-  multi_npi <- as.intervention(multi_npi)
+  multi_npi <- new_intervention(
+    multi_npi$name,
+    multi_npi$time_begin,
+    multi_npi$time_end,
+    multi_npi$contact_reduction
+  )
 
   # validate new object
   validate_intervention(multi_npi)

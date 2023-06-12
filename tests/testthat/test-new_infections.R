@@ -45,30 +45,23 @@ data <- epidemic(
 test_that("New infections are correctly caculated", {
   data_ <- new_infections(data, compartments_from_susceptible = "vaccinated")
 
-  # expect correct number of rows
+  # expect correct number of rows - single demography group
   expect_identical(
-    nrow(data_),
-    nrow(data) + (length(seq(0, time_end, by = increment)))
+    data_$time,
+    seq(0, time_end, increment)
   )
 
   # expect columns with specific names
   expect_named(
     data_,
-    c("time", "demography_group", "compartment", "value"),
+    c("time", "demography_group", "new_infections"),
     ignore.order = TRUE
-  )
-
-  # expect new variable
-  expect_true(
-    "new_infections" %in% unique(data_$compartment)
   )
 
   # test for correctness
   # test that new infections are exactly the same as change in susceptibles
   # - change in vaccinations
-  new_infections <- data_[
-    data_$compartment == "new_infections",
-  ][["value"]]
+  new_infections <- data_$new_infections
 
   # note use of original data.table
   delta_susc <- data[data$compartment == "susceptible", ][["value"]]
@@ -85,9 +78,7 @@ test_that("New infections are correctly caculated", {
 
 test_that("New infections without accounting for vaccination", {
   data_ <- new_infections(data)
-  new_infections <- data_[
-    data_$compartment == "new_infections",
-  ][["value"]]
+  new_infections <- data_$new_infections
 
   # note use of original data.table
   delta_susc <- data[data$compartment == "susceptible", ][["value"]]

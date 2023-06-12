@@ -6,9 +6,11 @@
       <intervention>
       Intervention name: "close_schools"
       Time begin:
-      [1] 100
+           [,1]
+      [1,]  100
       Time end:
-      [1] 150
+           [,1]
+      [1,]  150
       Contact reduction:
            [,1]
       [1,]  0.2
@@ -22,11 +24,11 @@
       <intervention>
       Intervention name: NA
       Time begin:
-      npi_1 npi_2 
-         30    45 
+           npi_1 npi_2
+      [1,]    30    45
       Time end:
-      npi_1 npi_2 
-         60    75 
+           npi_1 npi_2
+      [1,]    60    75
       Contact reduction:
            npi_1 npi_2
       [1,]  0.15   0.1

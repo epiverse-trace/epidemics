@@ -175,10 +175,9 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
 #' from the "susceptible" compartment, and which are not related to infection.
 #' A common example is a compartment for "vaccinated" individuals who are no
 #' longer susceptible, but who should also not be counted as infected.
-#'
-#' @importFrom data.table :=
-#' @importFrom data.table .SD
-#'
+#' @param by_group A logical representing whether the epidemic size should be
+#' returned by demographic group, or whether a single population-wide value is
+#' returned.
 #' @return A `data.table` with the same columns as `data`, but with the
 #' additional variable under `compartment`, "new_infections", resulting in
 #' additional rows.
@@ -212,9 +211,11 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
 #' new_infections(data)
 #'
 new_infections <- function(data,
-                           compartments_from_susceptible) {
+                           compartments_from_susceptible,
+                           by_group = TRUE) {
   # input checking for class and susceptible compartment
   checkmate::expect_data_table(data)
+  checkmate::assert_logical(by_group, len = 1L)
   stopifnot(
     "Compartment 'susceptible' not found in data, check compartment names." =
       "susceptible" %in% unique(data$compartment)
@@ -256,10 +257,14 @@ new_infections <- function(data,
     ]
   }
 
-  # return data in long format
-  data.table::melt(
-    data,
-    id.vars = c("time", "demography_group"),
-    variable.name = "compartment"
-  )
+  # return data in long format, by demographic group by default,
+  # or aggregated otherwise
+  # do not return other compartments
+  data <- data[, c("time", "demography_group", "new_infections")]
+  if (!by_group) {
+    data <- data[, list(new_infections = sum(new_infections)), by = "time"]
+  }
+
+  # return data
+  data
 }

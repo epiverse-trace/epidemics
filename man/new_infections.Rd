@@ -4,7 +4,7 @@
 \alias{new_infections}
 \title{Get new infections}
 \usage{
-new_infections(data, compartments_from_susceptible)
+new_infections(data, compartments_from_susceptible, by_group = TRUE)
 }
 \arguments{
 \item{data}{A \code{data.table} (or \code{data.frame}) of model output, typically
@@ -15,6 +15,10 @@ vector of the names of model compartments into which individuals transition
 from the "susceptible" compartment, and which are not related to infection.
 A common example is a compartment for "vaccinated" individuals who are no
 longer susceptible, but who should also not be counted as infected.}
+
+\item{by_group}{A logical representing whether the epidemic size should be
+returned by demographic group, or whether a single population-wide value is
+returned.}
 }
 \value{
 A \code{data.table} with the same columns as \code{data}, but with the

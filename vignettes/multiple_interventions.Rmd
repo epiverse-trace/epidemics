@@ -8,8 +8,10 @@ pkgdown:
   as_is: true
 vignette: >
   %\VignetteIndexEntry{Modelling multiple overlapping non-pharmaceutical interventions}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -18,7 +20,9 @@ knitr::opts_chunk$set(
   comment = "#>",
   message = FALSE,
   warning = FALSE,
-  dpi = 150
+  fig.width = 5,
+  fig.height = 4,
+  dpi = 300
 )
 ```
 
@@ -32,11 +36,17 @@ library(data.table)
 library(ggplot2)
 ```
 
-## Prepare population and initial conditions
+## Prepare population, initial conditions, and pathogen
 
-Prepare population and contact data.
+We prepare population and contact data from the U.K., with epidemiological compartments matching the default epidemic model (SEIR-V).
 
-```{r}
+We prepare an `infection` object to simulate a pathogen with an $R_0$ of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.
+
+We assume that one in every million people has been infected and is infectious, translating to about 67 total infections for a U.K. population of 67 million.
+
+The code for these steps is similar to that in the ["Getting started vignette"](epidemics.html) and is hidden here, although it can be expanded for reference.
+
+```{r class.source = 'fold-hide'}
 # load contact and population data from socialmixr::polymod
 polymod <- socialmixr::polymod
 contact_data <- socialmixr::contact_matrix(
@@ -54,11 +64,9 @@ demography_vector <- contact_data$demography$population
 names(demography_vector) <- rownames(contact_matrix)
 ```
 
-Prepare initial conditions for each age group.
-
-```{r}
+```{r class.source = 'fold-hide'}
 # initial conditions
-initial_i <- 1e-6
+initial_i <- 1e-4
 initial_conditions <- c(
   S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
 )
@@ -74,9 +82,7 @@ initial_conditions <- rbind(
 rownames(initial_conditions) <- rownames(contact_matrix)
 ```
 
-Prepare a population as a `population` class object.
-
-```{r}
+```{r class.source = 'fold-hide'}
 uk_population <- population(
   name = "UK",
   contact_matrix = contact_matrix,
@@ -85,74 +91,203 @@ uk_population <- population(
 )
 ```
 
-## Prepare pathogen parameters
-
-```{r}
+```{r class.source = 'fold-hide'}
 # Prepare epidemiological parameters as an infection object
 pandemic <- infection(
-  r0 = 2.0,
-  preinfectious_period = 3,
-  infectious_period = 7
+  r0 = 1.3,
+  preinfectious_period = 1.5,
+  infectious_period = 5
 )
 ```
 
-## Prepare overlapping interventions
+## Examine the baseline
 
-We shall prepare two interventions that could plausibly implemented over the course of an epidemic.
+We first examine the baseline scenario --- no interventions are implemented to slow the spread of the epidemic --- and visualise the outcomes in terms of daily new infections.
 
-1. School closures, which are primarily aimed at reducing infections among younger individuals who could then transmit them to their families,
+We simulate an epidemic using the `epidemic()` function, calling the default model outlined in the ["Get started vignette"](epidemics.html).
 
-2. General workplace closures, which are a broad-based measure aimed at reducing infections among all working age adults.
+```{r}
+# no intervention baseline scenario
+data_baseline <- epidemic(
+  population = uk_population,
+  infection = pandemic,
+  time_end = 400, increment = 1.0
+)
 
-::: {.alert .alert-primary}
-### What is the effect of multiple overlapping interventions?
+# get new infections
+data_baseline_infections <- new_infections(data_baseline, by_group = TRUE)
+```
 
-WIP: Add how interventions works additively.
+We show one instance of the plotting code using the _ggplot2_ package here, with further instances hidden to keep the vignette short.
 
-:::
+```{r fig.cap="A model of an infectious disease epidemic, assuming a directly transmitted infection such as influenza, with an $R_0$ of 1.3, an infectious period of 5 days, and a pre-infectious period of 1.5 days."}
+# visualise the spread of the epidemic in terms of new infections
+# plot figure of epidemic curve
+plot_baseline <- ggplot() +
+  geom_line(
+    data = data_baseline_infections,
+    aes(time, new_infections, colour = demography_group),
+    linetype = "dashed"
+  ) +
+  scale_y_sqrt(
+    labels = scales::comma,
+    breaks = c(10^seq(3, 5), 5e4)
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    linetype = "Compartment",
+    y = "Individuals"
+  )
 
-### Modelling school closures
+plot_baseline
+```
+
+In the baseline scenario, the epidemic would continue for approximately 400 days, or more than one year, with a peak in new infections between the 150th and 180th day for the different age groups.
+
+In this scenario, the epidemic is expected to have a final size of around `r scales::comma(epidemic_size(data_baseline, by_group = FALSE), accuracy = 1, scale = 1e-6, suffix = " million")` individuals infected overall.
+
+In the following sections we shall iteratively model the effects of applying non-pharmaceutical interventions that reduce contacts to examine whether the epidemic's final size could be reduced, and whether the peak of infections can be spread out over time.
+
+## Modelling overlapping interventions
+
+We shall prepare multiple interventions that could plausibly implemented over the course of an epidemic.
+
+### School closures
+
+In the first example, we shall model school closures, which are primarily aimed at reducing infections among younger individuals who could then transmit them to their families.
 
 We first prepare an intervention that simulates the effect of closing schools to reduce the contacts of younger people.
-We assume that this reduces the contacts of the age group 0 -- 19 by 70%, and the contacts of all other age groups by only 1% (as most adults meet individuals their own age).
+We assume that this reduces the contacts of the age group 0 -- 19 by 30%, and the contacts of all other age groups by only 1% (as most adults meet individuals their own age).
 
-This intervention is assumed to last 100 days, beginning from the 100th day of the outbreak.
+This intervention is assumed to last 6 months or approximately 180 days, beginning from the 100th day of the outbreak --- this is similar to the duration of initial school closures during the Covid-19 pandemic in 2020 in the U.K.
 
 ```{r}
 # prepare an intervention that models school closures for ~3 months (100 days)
 close_schools <- intervention(
   name = "School closure",
-  time_begin = 100,
-  time_end = 200,
-  contact_reduction = matrix(c(0.7, 0.01, 0.01))
+  time_begin = 60,
+  time_end = 60 + 180,
+  contact_reduction = matrix(c(0.3, 0.01, 0.01))
 )
 
 # examine the intervention object
 close_schools
 ```
 
-### Modelling workplace closures
+We simulate the epidemic for 600 days as we expect the intervention to spread disease incidence out over a longer period.
 
-We then prepare an intervention that simulates the effect of closing workplaces to reduce the contacts of working age adults.
-We assume that this reduces the contacts of the age group 20 -- 65 by 80%, and the contacts of all other age groups by only 1% (we assume that individuals in other age groups are not meeting many individuals in workplaces).
+```{r}
+# no intervention baseline scenario
+data_schools_closed <- epidemic(
+  population = uk_population,
+  infection = pandemic,
+  intervention = close_schools,
+  time_end = 600, increment = 1.0
+)
 
-This intervention is assumed to last 60 days, beginning from the 130th day of the outbreak --- this simulates a situation in which policymakers decide to close workplaces some time after deciding to close schools, and in which they choose not to keep workplaces closed for as long (2 months or 60 days vs. 3 months or 100 days for school closures).
+# get new infections
+data_noschool_infections <- new_infections(data_schools_closed, by_group = TRUE)
+```
+
+```{r class.source = 'fold-hide', fig.cap="Epidemic model with an intervention that targets infections among children by closing schools for six months, thus reducing children's social contacts."}
+# visualise the spread of the epidemic in terms of new infections when
+# schools are closed
+plot_noschool <-
+  ggplot() +
+  geom_vline(
+    xintercept = c(
+      close_schools$time_begin,
+      close_schools$time_end
+    ),
+    linetype = "dotted"
+  ) +
+  annotate(
+    geom = "text",
+    x = mean(c(close_schools$time_begin, close_schools$time_end)),
+    y = 1000,
+    label = "Schools closed"
+  ) +
+  geom_line(
+    data = data_baseline_infections,
+    aes(time, new_infections, colour = demography_group),
+    linetype = "dashed"
+  ) +
+  geom_line(
+    data = data_noschool_infections,
+    aes(time, new_infections, colour = demography_group),
+    linetype = "solid"
+  ) +
+  scale_y_sqrt(
+    labels = scales::comma,
+    breaks = c(10^seq(3, 5), 5e4)
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    linetype = "Compartment",
+    y = "Individuals"
+  )
+
+plot_noschool
+```
+
+In the school closures only scenario, the epidemic would continue for approximately 600 days, or more than one and a half years, with more than 10,000 daily new infections for over one year.
+
+In this scenario, the epidemic is expected to have a final size of around `r scales::comma(epidemic_size(data_schools_closed, by_group = FALSE), accuracy = 1, scale = 1e-6, suffix = " million")` individuals infected overall.
+
+### Workplace closures
+
+General workplace closures are a broad-based measure aimed at reducing infections among all working age adults.
+
+We shall prepare an intervention that simulates the effect of closing workplaces **in addition to closing schools**, and we assume that this reduces the contacts of the age group 20 -- 65 by 30%, and the contacts of all other age groups by only 1% (we assume that individuals in other age groups are not meeting many individuals in workplaces).
+
+This intervention is assumed to last 60 days, beginning from the 80th day of the outbreak --- this simulates a situation in which policymakers decide to close workplaces three weeks after deciding to close schools, and in which they choose not to keep workplaces closed for as long (2 months or 60 days vs. 6 months or 180 days for school closures).
 
 ```{r}
 # prepare an intervention which mostly affects adults 20 -- 65
 intervention_duration <- 60
 close_workplaces <- intervention(
   name = "Workplace closure",
-  time_begin = 130,
-  time_end = 130 + intervention_duration,
-  contact_reduction = matrix(c(0.01, 0.5, 0.01))
+  time_begin = 80,
+  time_end = 80 + intervention_duration,
+  contact_reduction = matrix(c(0.01, 0.3, 0.01))
 )
 
 # examine the intervention object
 close_workplaces
 ```
 
+::: {.alert .alert-primary}
 ### Combining interventions
+
+We can use the `c()` function to combine two `intervention` objects into a single `intervention` that accommodates the effect of both interventions.
+This multiple intervention can then be passed --- as a single `intervention` object --- to  an epidemic model in `epidemic()`.
+
+When an `intervention` object is made up of multiple interventions the first intervention to be specified is treated as the baseline intervention, with an age-specific effect on reducing contacts during its duration of effect.
+
+All further interventions are assumed to be **additional percentage point** increases on the effect of any active interventions.
+:::
 
 We can use the `c()` function to combine two `intervention` objects into a single `intervention` that accommodates the effect of both interventions.
 This multiple intervention can then be passed --- as a single `intervention` object --- to  an epidemic model in `epidemic()`.
@@ -168,59 +303,82 @@ combined_interventions
 ```
 
 ::: {.alert .alert-primary}
-**Note** We can combine any number of `intervention` objects into a single `intervention` object to be passed to `epidemic()`. The cumulative effect of the interventions is handled automatically by the C++ code underlying _epidemics_!
+- We can combine any number of `intervention` objects into a single `intervention` object to be passed to `epidemic()`.
+The cumulative effect of the interventions is handled automatically by the C++ code underlying _epidemics_.
+
+- Remember that two multiple interventions can also be combined using `c()`.
+It is important to be careful when doing this and make sure that only the interventions you intend to combine are concatenated together.
+For example, `c(combined_interventions, combined_interventions)` is valid, and would effectively double the effect of school and workplace closures in the example.
 :::
 
-## Run epidemic model with multiple interventions
+We simulate an epidemic using the `epidemic()` function, calling the default model outlined in the ["Get started vignette"](epidemics.html).
+
+We simulate the epidemic for 600 days.
 
 ```{r}
 # get data from an epidemic model with both interventions
-data <- epidemic(
+data_combined <- epidemic(
   population = uk_population,
   infection = pandemic,
   intervention = combined_interventions,
   time_end = 600, increment = 1.0
 )
+
+# get data on new infections
+data_infections <- new_infections(data_combined, by_group = TRUE)
 ```
 
-### Visualise model outcomes
-
-```{r class.source = 'fold-hide'}
-# plot figure of epidemic curve
-ggplot(
-  data[compartment %in% c("exposed", "infectious")],
-  aes(
-    x = time,
-    y = value,
-    col = demography_group,
-    linetype = compartment
-  )
-) +
-  geom_line() +
-  annotate(
-    geom = "rect",
-    xmin = close_schools$time_begin,
-    xmax = close_schools$time_end,
-    ymin = 0, ymax = 500e3,
-    fill = alpha("red", alpha = 0.2),
-    lty = "dashed"
+```{r class.source = 'fold-hide', fig.cap="Epidemic model with two overlapping interventions in the early phase of the outbreak: school closures that target infections among younger people, and workplace closures which target infections among working-age adults."}
+plot_intervention_cases <-
+  ggplot() +
+  geom_vline(
+    xintercept = c(
+      close_schools$time_begin,
+      close_schools$time_end
+    ),
+    linetype = "dotted"
+  ) +
+  geom_vline(
+    xintercept = c(
+      close_workplaces$time_begin,
+      close_workplaces$time_end
+    ),
+    colour = "red",
+    linetype = "dotted"
   ) +
   annotate(
     geom = "text",
     x = mean(c(close_schools$time_begin, close_schools$time_end)),
-    y = 400e3,
-    angle = 90,
-    label = "School closure"
+    y = 50000,
+    label = "Schools closed"
   ) +
-  scale_y_continuous(
-    labels = scales::comma
+  annotate(
+    geom = "text",
+    x = mean(c(
+      close_workplaces$time_begin,
+      close_workplaces$time_end
+    )),
+    y = 30000,
+    colour = "red",
+    label = "Workplaces\nclosed"
+  ) +
+  geom_line(
+    data = data_baseline_infections,
+    aes(time, new_infections, colour = demography_group),
+    linetype = "dashed"
+  ) +
+  geom_line(
+    data = data_infections,
+    aes(time, new_infections, colour = demography_group),
+    linetype = "solid"
+  ) +
+  scale_y_sqrt(
+    labels = scales::comma,
+    breaks = c(10^seq(3, 5), 5e4)
   ) +
   scale_colour_brewer(
     palette = "Dark2",
     name = "Age group"
-  ) +
-  expand_limits(
-    y = c(0, 500e3)
   ) +
   coord_cartesian(
     expand = FALSE
@@ -234,4 +392,132 @@ ggplot(
     linetype = "Compartment",
     y = "Individuals"
   )
+
+plot_intervention_cases
 ```
+
+In this scenario with school closures for 6 months as well as workplace closures for 2 months, the epidemic would still continue for approximately 600 days, or more than one and a half years, but the number of days with 10,000 or more daily cases is reduced, and these typically occur once the intervention on workplaces is lifted.
+
+In this scenario, the epidemic is expected to have a final size of around `r scales::comma(epidemic_size(data_combined, by_group = FALSE), accuracy = 1, scale = 1e-6, suffix = " million")` individuals infected overall --- this is similar to the school closures only intervention.
+
+There is a distinct peak new infections once schools are simulated to re-open, with nearly 100,000 new infections on some days.
+
+### Re-applying workplace closures
+
+In the scenario with combined interventions, daily new infections are forecast to exceed 50,000 on the `r min(which(new_infections(data_combined, by_group = FALSE)[, new_infections > 50000]))`th day of the epidemic.
+
+In this final example, we simulate re-implementing two months of workplace closures, but not school closures, to reduce infections.
+
+```{r}
+# log the date that cases exceed 50000 daily
+start_date <- min(
+  which(
+    new_infections(data_combined, by_group = FALSE)[, new_infections > 50000]
+  )
+)
+
+# create a new workplace closures object
+workplace_closures_2 <- intervention(
+  time_begin = start_date,
+  time_end = start_date + 60,
+  contact_reduction = matrix(c(0.01, 0.3, 0.01))
+)
+```
+
+Combine the multiple interventions object with two interventions with the third intervention.
+
+```{r}
+combined_interventions <- c(combined_interventions, workplace_closures_2)
+```
+
+We simulate an epidemic using the `epidemic()` function for 600 days as before.
+
+```{r}
+# get data from an epidemic model with both interventions
+data_combined <- epidemic(
+  population = uk_population,
+  infection = pandemic,
+  intervention = combined_interventions,
+  time_end = 600, increment = 1.0
+)
+
+# get data on new infections
+data_infections <- new_infections(data_combined, by_group = TRUE)
+```
+
+```{r class.source = 'fold-hide', fig.cap="Epidemic model with two initial, overlapping interventions on schools and workplaces, followed by a later intervention on workplaces."}
+plot_three_interventions <-
+  ggplot() +
+  geom_vline(
+    xintercept = c(
+      close_schools$time_begin,
+      close_schools$time_end
+    ),
+    linetype = "dotted"
+  ) +
+  geom_vline(
+    xintercept = c(
+      close_workplaces$time_begin,
+      close_workplaces$time_end,
+      workplace_closures_2$time_begin,
+      workplace_closures_2$time_end
+    ),
+    colour = "red",
+    linetype = "dotted"
+  ) +
+  annotate(
+    geom = "text",
+    x = mean(c(close_schools$time_begin, close_schools$time_end)),
+    y = 50000,
+    label = "Schools closed"
+  ) +
+  annotate(
+    geom = "text",
+    x = c(
+      mean(
+        c(close_workplaces$time_begin, close_workplaces$time_end)
+      ),
+      mean(c(workplace_closures_2$time_begin, workplace_closures_2$time_end))
+    ),
+    y = 30000,
+    colour = "red",
+    label = c("Workplaces\nclosed", "Workplaces\nclosed")
+  ) +
+  geom_line(
+    data = data_baseline_infections,
+    aes(time, new_infections, colour = demography_group),
+    linetype = "dashed"
+  ) +
+  geom_line(
+    data = data_infections,
+    aes(time, new_infections, colour = demography_group),
+    linetype = "solid"
+  ) +
+  scale_y_sqrt(
+    labels = scales::comma,
+    breaks = c(10^seq(3, 5), 5e4)
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    linetype = "Compartment",
+    y = "Individuals"
+  )
+
+plot_three_interventions
+```
+
+In this scenario with school closures for 6 months as well as two phases of workplace closures for 2 months each, the epidemic would continue for over 600 days, or more than one and a half years, but the number of days with 10,000 or more daily cases would be reduced, and these typically occur once the interventions on workplaces are lifted --- this is similar to the previous example.
+
+In this scenario, the epidemic is expected to have a final size of around `r scales::comma(epidemic_size(data_combined, by_group = FALSE), accuracy = 1, scale = 1e-6, suffix = " million")` individuals infected overall --- this is lower than the previous examples.
+

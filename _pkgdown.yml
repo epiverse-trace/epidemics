@@ -13,4 +13,14 @@ template:
         gtag('js', new Date());
         gtag('config', 'G-XZ471458FQ');
       </script>
-
+articles:
+- title: Package vignettes
+  navbar: Package vignettes
+  contents:
+  - modelling_vaccination
+  - modelling_interventions
+  - multiple_interventions
+- title: Guides to library models
+  navbar: Guides to library models
+  contents:
+  - vacamole

@@ -48,14 +48,20 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
+  <a class="nav-link" href="../articles/epidemics.html">Get started</a>
+</li>
+<li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/epidemics_rcpp.html">Epidemic modelling with Rcpp</a>
-    <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
+    <h6 class="dropdown-header" data-toc-skip>Package vignettes</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
+    <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
+    <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling multiple overlapping non-pharmaceutical interventions</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
   </div>
 </li>
@@ -165,18 +171,24 @@
 <span>  name <span class="op">=</span> <span class="st">"School closure"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  contact_reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.001</span>, <span class="fl">0.001</span><span class="op">)</span></span>
+<span>  contact_reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.001</span>, <span class="fl">0.001</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># examine the intervention object</span></span>
 <span><span class="va">close_schools</span></span>
 <span><span class="co">#&gt; &lt;intervention&gt;</span></span>
 <span><span class="co">#&gt; Intervention name: "School closure"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time begin: 200</span></span>
-<span><span class="co">#&gt; Time end: 300</span></span>
+<span><span class="co">#&gt; Time begin:</span></span>
+<span><span class="co">#&gt;      [,1]</span></span>
+<span><span class="co">#&gt; [1,]  200</span></span>
+<span><span class="co">#&gt; Time end:</span></span>
+<span><span class="co">#&gt;      [,1]</span></span>
+<span><span class="co">#&gt; [1,]  300</span></span>
 <span><span class="co">#&gt; Contact reduction:</span></span>
-<span><span class="co">#&gt; 0.5, 0.001, 0.001</span></span></code></pre></div>
+<span><span class="co">#&gt;       [,1]</span></span>
+<span><span class="co">#&gt; [1,] 0.500</span></span>
+<span><span class="co">#&gt; [2,] 0.001</span></span>
+<span><span class="co">#&gt; [3,] 0.001</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">

@@ -10,7 +10,7 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/articles/epidemics_rcpp.html</loc>
+    <loc>/articles/epidemics.html</loc>
   </url>
   <url>
     <loc>/articles/index.html</loc>
@@ -20,6 +20,9 @@
   </url>
   <url>
     <loc>/articles/modelling_vaccination.html</loc>
+  </url>
+  <url>
+    <loc>/articles/multiple_interventions.html</loc>
   </url>
   <url>
     <loc>/articles/vacamole.html</loc>
@@ -32,6 +35,9 @@
   </url>
   <url>
     <loc>/reference/add_to_library.html</loc>
+  </url>
+  <url>
+    <loc>/reference/as.intervention.html</loc>
   </url>
   <url>
     <loc>/reference/as.vaccination.html</loc>
@@ -47,6 +53,9 @@
   </url>
   <url>
     <loc>/reference/assert_vaccination.html</loc>
+  </url>
+  <url>
+    <loc>/reference/c.intervention.html</loc>
   </url>
   <url>
     <loc>/reference/c.vaccination.html</loc>

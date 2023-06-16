@@ -37,6 +37,6 @@ test_that("Initialisation of the infection class", {
 test_that("Errors in infection initialisation", {
   expect_error(
     infection(r0 = 1.3, infectious_period = 5, preinfectious_period = c(3, 4)),
-    regex = "Error: All infection parameters must be the same length!"
+    regexp = "Error: All infection parameters must be the same length!"
   )
 })

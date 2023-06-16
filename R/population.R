@@ -117,7 +117,7 @@ validate_population <- function(object) {
       checkmate::test_matrix(
         object$initial_conditions,
         mode = "numeric",
-        nrow = length(object$demography_vector)
+        nrows = length(object$demography_vector)
       ),
     "`initial_conditions` rows must always sum to 1.0" =
       (all(abs(rowSums(object$initial_conditions) - 1) < 1e-6))

@@ -104,11 +104,11 @@ validate_intervention <- function(object) {
   checkmate::assert_matrix(object$contact_reduction, mode = "numeric")
   checkmate::assert_matrix(
     object$time_begin,
-    ncol = ncol(object$contact_reduction), nrow = 1L
+    ncols = ncol(object$contact_reduction), nrows = 1L
   )
   checkmate::assert_matrix(
     object$time_end,
-    ncol = ncol(object$contact_reduction), nrow = 1L
+    ncols = ncol(object$contact_reduction), nrows = 1L
   )
 
   # stricter initialisation of interventions so that negative values and

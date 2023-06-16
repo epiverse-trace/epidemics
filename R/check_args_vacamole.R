@@ -57,7 +57,7 @@
   # scale the contact matrix by the maximum real eigenvalue
   mod_args[["population"]][["contact_matrix"]] <-
     mod_args[["population"]][["contact_matrix"]] /
-      max(Re(eigen(mod_args[["population"]][["contact_matrix"]])$value))
+      max(Re(eigen(mod_args[["population"]][["contact_matrix"]])$values))
 
   # scale rows of the contact matrix by the corresponding group population
   mod_args[["population"]][["contact_matrix"]] <-

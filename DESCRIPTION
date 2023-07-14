@@ -23,6 +23,27 @@ Authors@R:
             role = c("aut", "cph"),
             email = "edwin.vanleeuwen@ukhsa.gov.uk",
             comment = c(ORCID = "https://orcid.org/0000-0002-2383-5305")
+        ),
+        person(
+            given = "Tim",
+            family = "Taylor",
+            role = c("ctb", "rev"),
+            email = "tim.taylor@hiddenelephants.co.uk",
+            comment = c(ORCID = "https://orcid.org/0000-0002-8587-7113")
+        ),
+        person(
+            given = "Hugo",
+            family = "Gruson",
+            role = c("rev"),
+            email = "hugo.gruson@data.org",
+            comment = c(ORCID = "https://orcid.org/0000-0002-4094-1476")
+        ),
+        person(
+            given = "Joshua W.",
+            family = "Lambert",
+            role = c("rev"),
+            email = "joshua.lambert@lshtm.ac.uk",
+            comment = c(ORCID = "https://orcid.org/0000-0001-5218-3046")
         )
     )
 Description: Model epidemics using compartmental models.

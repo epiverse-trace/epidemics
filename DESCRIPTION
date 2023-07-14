@@ -59,7 +59,9 @@ Imports:
     RcppEigen,
     jsonlite,
     data.table,
-    glue
+    glue,
+    utils,
+    stats
 Suggests: 
     bookdown,
     colorspace,

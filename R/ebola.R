@@ -8,10 +8,7 @@
 #' @return      A vector containing all p_i values, for i = 1 : n.
 compute_erlang_discrete_prob <- function(k, gamma) {
   n_bin <- 0
-  factorials <- 1 ## 0! = 1
-  for (i in 1:k) {
-    factorials[i + 1] <- factorials[i] * i ## factorial[i + 1] = i!
-  }
+  factorials <- factorial(seq(0, k))
 
   one_sub_cumulative_probs <- NULL
   cumulative_prob <- 0
@@ -23,9 +20,8 @@ compute_erlang_discrete_prob <- function(k, gamma) {
       one_sub_cumulative_probs[n_bin] <-
         one_sub_cumulative_probs[n_bin] +
         (
-          exp(-n_bin * gamma)
-          * ((n_bin * gamma)^j)
-            / factorials[j + 1] ## factorials[j + 1] = j!
+          exp(-n_bin * gamma) * ((n_bin * gamma)^j) / factorials[j + 1]
+          ## factorials[j + 1] = j!
         )
     }
     cumulative_prob <- 1 - one_sub_cumulative_probs[n_bin]
@@ -33,8 +29,8 @@ compute_erlang_discrete_prob <- function(k, gamma) {
   one_sub_cumulative_probs <- c(1, one_sub_cumulative_probs)
 
   density_prob <-
-    utils::head(one_sub_cumulative_probs, -1) - 
-        utils::tail(one_sub_cumulative_probs, -1)
+    utils::head(one_sub_cumulative_probs, -1) -
+    utils::tail(one_sub_cumulative_probs, -1)
   density_prob <- density_prob / cumulative_prob
 
   return(density_prob)

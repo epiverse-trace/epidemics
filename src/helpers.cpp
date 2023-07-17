@@ -1,6 +1,6 @@
 // Copyright 2023 'epidemics' authors. See repository licence in LICENSE.md.
 #include <Rcpp.h>
-#include <helpers.h>
+#include <epidemics.h>
 
 //' @title Compute the discrete probability of the truncated Erlang distribution
 //'

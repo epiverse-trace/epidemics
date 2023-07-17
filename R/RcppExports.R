@@ -110,7 +110,7 @@
 #' @return A vector of variable length giving the probability of each integer
 #' value for a cumulative probability of 0.99.
 #' @export
-.prob_discrete_erlang <- function(shape, rate) {
+.prob_discrete_erlang <- function(shape = 5L, rate = 1.0) {
     .Call(`_epidemics_prob_discrete_erlang`, shape, rate)
 }
 

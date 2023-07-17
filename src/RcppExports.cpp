@@ -53,10 +53,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// prob_discrete_erlang
+Rcpp::NumericVector prob_discrete_erlang(const int& shape, const double& rate);
+RcppExport SEXP _epidemics_prob_discrete_erlang(SEXP shapeSEXP, SEXP rateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int& >::type shape(shapeSEXP);
+    Rcpp::traits::input_parameter< const double& >::type rate(rateSEXP);
+    rcpp_result_gen = Rcpp::wrap(prob_discrete_erlang(shape, rate));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_epidemics_epidemic_default_cpp", (DL_FUNC) &_epidemics_epidemic_default_cpp, 8},
     {"_epidemics_epidemic_vacamole_cpp", (DL_FUNC) &_epidemics_epidemic_vacamole_cpp, 13},
+    {"_epidemics_prob_discrete_erlang", (DL_FUNC) &_epidemics_prob_discrete_erlang, 2},
     {NULL, NULL, 0}
 };
 

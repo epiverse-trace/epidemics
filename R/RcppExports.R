@@ -97,3 +97,20 @@
     .Call(`_epidemics_epidemic_vacamole_cpp`, population, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, intervention, vaccination, time_end, increment)
 }
 
+#' @title Compute the discrete probability of the truncated Erlang distribution
+#'
+#' @description A helper function that gives the probability of discrete values
+#' from an Erlang distribution with a given shape and rate. The number of
+#' values returned correspond to the number of discrete values over which the
+#' cumulative probability reaches 0.99.
+#'
+#' @param shape A single integer-like number for the shape of the Erlang
+#' distribution.
+#' @param rate A single number for the rate of the Erlang distribution.
+#' @return A vector of variable length giving the probability of each integer
+#' value for a cumulative probability of 0.99.
+#' @export
+.prob_discrete_erlang <- function(shape, rate) {
+    .Call(`_epidemics_prob_discrete_erlang`, shape, rate)
+}
+

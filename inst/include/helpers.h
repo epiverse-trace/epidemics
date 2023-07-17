@@ -20,9 +20,9 @@ namespace helpers {
 inline Rcpp::NumericVector prob_discrete_erlang(const int &shape,
                                                 const double &rate) {
   // prepare factorials vector, note loop starts at 1
-  std::vector<double> factorials(0.0, shape);
+  std::vector<double> factorials(shape + 1, 0.0);
   factorials[0] = 1.0;
-  for (int i = 1; i < shape; i++) factorials[i] = i * factorials[i - 1];
+  for (int i = 1; i <= shape; i++) factorials[i] = i * factorials[i - 1];
 
   double cumulative_prob = 0.0;
   int n_bin = 0;
@@ -30,20 +30,19 @@ inline Rcpp::NumericVector prob_discrete_erlang(const int &shape,
 
   while (cumulative_prob <= 0.99) {
     n_bin++;  // increment bin number
-    vec_cumulative_probs.push_back(
-        0.0);  // increase vector size, inserting zero
+    double val = 0.0;
 
     for (int j = 0; j < shape; j++) {
-      vec_cumulative_probs[n_bin] += std::exp(-n_bin * rate) *
-                                     std::pow((n_bin * rate), j) /
-                                     factorials[j + 1];
+      val += std::exp(-n_bin * rate) * std::pow((n_bin * rate), j) /
+             factorials[j + 1];
     }
-    cumulative_prob = 1.0 - vec_cumulative_probs[n_bin];
+    vec_cumulative_probs.push_back(val);
+    cumulative_prob = 1.0 - val;
   }
 
   // probabilities at each integer
   std::vector<double> density_prob(vec_cumulative_probs.size() - 1);
-  for (size_t i = 0; i < vec_cumulative_probs.size(); i++) {
+  for (size_t i = 0; i < density_prob.size(); i++) {
     density_prob[i] = vec_cumulative_probs[i] - vec_cumulative_probs[i + 1];
   }
 

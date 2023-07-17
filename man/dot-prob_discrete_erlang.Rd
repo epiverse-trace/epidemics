@@ -4,7 +4,7 @@
 \alias{.prob_discrete_erlang}
 \title{Compute the discrete probability of the truncated Erlang distribution}
 \usage{
-.prob_discrete_erlang(shape, rate)
+.prob_discrete_erlang(shape = 5L, rate = 1)
 }
 \arguments{
 \item{shape}{A single integer-like number for the shape of the Erlang

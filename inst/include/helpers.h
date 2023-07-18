@@ -75,7 +75,7 @@ inline Rcpp::NumericVector prob_discrete_erlang(const int &shape,
 /// @param N A single integer for the number of simulated data sets to produce.
 /// @return An integer vector of size N, giving draws from multinomial outcomes.
 inline Rcpp::IntegerVector rmultinom_1(const int &size,
-                                       const Rcpp::NumericVector &probs,
+                                       Rcpp::NumericVector &probs,  // NOLINT
                                        const int &N) {
   Rcpp::IntegerVector outcome(N);
   R::rmultinom(size, probs.begin(), N, outcome.begin());
@@ -89,8 +89,10 @@ inline Rcpp::IntegerVector rmultinom_1(const int &size,
 /// @param probs An Rcpp numeric vector of probabilities.
 /// @return An integer matrix with as many rows as the length of `probs` and `n`
 /// columns.
-Rcpp::IntegerMatrix rmultinom_vectorised(const int &n, const int &size,
-                                         const Rcpp::NumericVector &probs) {
+inline Rcpp::IntegerMatrix rmultinom_vectorised(
+    const int &n, const int &size,
+    Rcpp::NumericVector &probs  // NOLINT
+) {
   const int N = probs.length();
   Rcpp::IntegerMatrix sim(N, n);
   for (int i = 0; i < n; i++) {

@@ -63,6 +63,42 @@ inline Rcpp::NumericVector prob_discrete_erlang(const int &shape,
 
   return Rcpp::wrap(density_prob);
 }
+
+/// Replicating the stats::rmultinom() function vectorised across a range of
+/// probabilities, taken from
+/// https://gallery.rcpp.org/articles/recreating-rmultinom-and-rpois-with-rcpp/
+
+/// @brief Draw from a multinomial distribution.
+/// @param size A single integer number for the number of multinomial outcomes
+/// to sample for each data set.
+/// @param probs An Rcpp numeric vector of probabilities.
+/// @param N A single integer for the number of simulated data sets to produce.
+/// @return An integer vector of size N, giving draws from multinomial outcomes.
+inline Rcpp::IntegerVector rmultinom_1(const int &size,
+                                       const Rcpp::NumericVector &probs,
+                                       const int &N) {
+  Rcpp::IntegerVector outcome(N);
+  R::rmultinom(size, probs.begin(), N, outcome.begin());
+  return outcome;
+}
+
+/// @brief Vectorise draws from a multinomial distribution.
+/// @param n A single integer for the number of draws from the distribution.
+/// @param size A single integer number for the number of multinomial outcomes
+/// to sample for each data set.
+/// @param probs An Rcpp numeric vector of probabilities.
+/// @return An integer matrix with as many rows as the length of `probs` and `n`
+/// columns.
+Rcpp::IntegerMatrix rmultinom_vectorised(const int &n, const int &size,
+                                         const Rcpp::NumericVector &probs) {
+  const int N = probs.length();
+  Rcpp::IntegerMatrix sim(N, n);
+  for (int i = 0; i < n; i++) {
+    sim(Rcpp::_, i) = rmultinom_1(size, probs, N);
+  }
+  return sim;
+}
+
 }  // namespace helpers
 
 #endif  // INST_INCLUDE_HELPERS_H_

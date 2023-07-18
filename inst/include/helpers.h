@@ -17,6 +17,14 @@
 #include <vector>
 
 namespace helpers {
+
+/// @brief Get the discrete probabilities of an Erlang distribution
+/// @param shape An integer number for the shape parameter of the Erlang
+/// distribution.
+/// @param rate A single number for the rate parameter of the Erlang
+/// distribution.
+/// @return An Rcpp double (numeric) vector of variable length. The length is
+/// determined by the value at which the cumulative probability is >= 0.99.
 inline Rcpp::NumericVector prob_discrete_erlang(const int &shape,
                                                 const double &rate) {
   // prepare factorials vector, note loop starts at 1

@@ -38,6 +38,30 @@
     .Call(`_epidemics_epidemic_default_cpp`, population, beta, alpha, gamma, intervention, vaccination, time_end, increment)
 }
 
+#' @title Run an SEIR model with Erlang passage times
+#'
+#' @param population An object of the `population` class, which holds a
+#' population contact matrix, a demography vector, and the initial conditions
+#' of each demographic group. See [population()].
+#' @param beta The transmission rate \eqn{\beta}.
+#' @param shape_E A single integer for the shape parameter of the Erlang
+#' distribution of passage times through the exposed compartment.
+#' @param rate_E A single double for the rate parameter of the Erlang
+#' distribution of passage times through the exposed compartment.
+#' @param shape_I A single integer for the shape parameter of the Erlang
+#' distribution of passage times through the infectious compartment.
+#' @param rate_I A single double for the rate parameter of the Erlang
+#' distribution of passage times through the infectious compartment.
+#' @param time_end A single integer for the maximum simulation time; this is
+#' assumed to be in days.
+#' @return An integer matrix with as many rows as the number of timesteps
+#' (given by `time_end`), and four columns, one for each compartment, SEIR,
+#' in that order.
+#' @export
+.epidemic_ebola_cpp <- function(population, beta, shape_E, rate_E, shape_I, rate_I, time_end) {
+    .Call(`_epidemics_epidemic_ebola_cpp`, population, beta, shape_E, rate_E, shape_I, rate_I, time_end)
+}
+
 #' @title Run the RIVM Vacamole model
 #'
 #' @description Vacamole is a deterministic, compartmental epidemic model built

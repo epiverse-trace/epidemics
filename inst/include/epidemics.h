@@ -19,5 +19,6 @@
 #include "helpers.h"
 #include "epidemic_default.h"
 #include "epidemic_vacamole.h"  // paths must be relative to this file
+#include "epidemic_ebola.h"
 
 #endif  // epidemics_epidemics_H_

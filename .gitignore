@@ -60,3 +60,5 @@ lintcpp.sh
 scratch*
 /doc/
 /Meta/
+
+/.luarc.json

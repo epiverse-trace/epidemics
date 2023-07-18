@@ -26,5 +26,12 @@ Authors:
   \item Edwin Van Leeuwen \email{edwin.vanleeuwen@ukhsa.gov.uk} (\href{https://orcid.org/0000-0002-2383-5305}{ORCID}) [copyright holder]
 }
 
+Other contributors:
+\itemize{
+  \item Tim Taylor \email{tim.taylor@hiddenelephants.co.uk} (\href{https://orcid.org/0000-0002-8587-7113}{ORCID}) [contributor, reviewer]
+  \item Hugo Gruson \email{hugo.gruson@data.org} (\href{https://orcid.org/0000-0002-4094-1476}{ORCID}) [reviewer]
+  \item Joshua W. Lambert \email{joshua.lambert@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5218-3046}{ORCID}) [reviewer]
+}
+
 }
 \keyword{internal}

@@ -5,7 +5,7 @@
 \title{Model an epidemic}
 \usage{
 epidemic(
-  model_name = c("default", "vacamole"),
+  model_name = c("default", "vacamole", "ebola"),
   population,
   infection,
   time_end = 200,

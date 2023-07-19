@@ -33,44 +33,46 @@ inline Rcpp::List epidemic_ebola(const double &beta, const int &shape_E,
                                  const Rcpp::List population) {
   // get population size and initial conditions
   const int population_size = population::get_population_size(population);
-  Rcpp::NumericVector initial_conditions =
-      Rcpp::NumericVector(population::get_initial_conditions(population));
+  std::vector<int> initial_conditions = Rcpp::as<std::vector<int> >(
+      population::get_initial_conditions(population));
 
   // copy conditions
-  Rcpp::NumericVector current_conditions = initial_conditions;
+  std::vector<int> current_conditions = initial_conditions;
 
-  // exposed and infectious rates
+  // exposed and infectious rates --- must be Rcpp vectors
   Rcpp::NumericVector exposed_rates =
       helpers::prob_discrete_erlang(shape_E, rate_E);
   Rcpp::NumericVector infectious_rates =
       helpers::prob_discrete_erlang(shape_I, rate_I);
 
   // numbers of exposed and infectious blocks
-  const int n_exposed_blocks = exposed_rates.length();
-  const int n_infectious_blocks = infectious_rates.length();
+  const int n_exposed_blocks = exposed_rates.size();
+  const int n_infectious_blocks = infectious_rates.size();
 
   // vectors to store the numbers of individuals in each block, past and
   // current
-  Rcpp::IntegerVector exposed_blocks_past(n_exposed_blocks);
-  Rcpp::IntegerVector infectious_blocks_past(n_infectious_blocks);
+  std::vector<int> exposed_blocks_past(n_exposed_blocks);
+  std::vector<int> infectious_blocks_past(n_infectious_blocks);
 
   // fill vectors with initial values
   // exposed is expected to be the second element -- hardcoded
-  // infectious is expeted to be the third element -- hardcoded
-  // TODO(all): replace all position-based access with name-based access
-  exposed_blocks_past(n_exposed_blocks - 1) = initial_conditions[1];
-  infectious_blocks_past(n_infectious_blocks - 1) = initial_conditions[2];
+  // infectious is expected to be the third element -- hardcoded
+  // TODO(all): replace all position-based access with name-based access via map
+  exposed_blocks_past.back() = initial_conditions[1];
+  infectious_blocks_past.back() = initial_conditions[2];
 
-  // matrix for data storage --- four columns for each compartment
-  Rcpp::IntegerMatrix data_matrix(max_time + 1, 4L);
+  // vec-of-vecs matrix for data storage --- four columns for each compartment
+  std::vector<std::vector<int> > data_matrix(max_time + 1,
+                                             std::vector<int>(4L));
+
   // assign initial conditions
-  data_matrix(0, Rcpp::_) = initial_conditions;
+  data_matrix[0] = initial_conditions;
 
   // run the simulation from 1 to max time
   for (size_t time = 1; time <= max_time; time++) {
     // vectors for current values --- hold zeros
-    Rcpp::IntegerVector exposed_blocks_current(n_exposed_blocks);
-    Rcpp::IntegerVector infectious_blocks_current(n_infectious_blocks);
+    std::vector<int> exposed_blocks_current(n_exposed_blocks);
+    std::vector<int> infectious_blocks_current(n_infectious_blocks);
 
     // get current probability of exposure
     const double beta_now = beta * static_cast<double>(current_conditions[2]) /
@@ -80,53 +82,50 @@ inline Rcpp::List epidemic_ebola(const double &beta, const int &shape_E,
     // get new exposures, infectious, and recovered
     const int new_exposed = Rcpp::rbinom(
         1.0, static_cast<double>(current_conditions[0]), prob_exposure)[0];
-    const int new_infectious = exposed_blocks_past(0);    // first index
-    const int new_recovered = infectious_blocks_past(0);  // first index
+    const int new_infectious = exposed_blocks_past[0];    // first index
+    const int new_recovered = infectious_blocks_past[0];  // first index
 
     // handle movement across exposed blocks
     if (new_exposed > 0) {
-      exposed_blocks_current = Rcpp::IntegerVector(Rcpp::transpose(
-          helpers::rmultinom_vectorised(1, new_exposed, exposed_rates)));
+      exposed_blocks_current =
+          Rcpp::as<std::vector<int> >(Rcpp::IntegerVector(Rcpp::transpose(
+              helpers::rmultinom_vectorised(1, new_exposed, exposed_rates))));
     }
     // number of individuals in each block
-    Rcpp::IntegerVector vals_exposed(n_exposed_blocks);
-    vals_exposed[n_exposed_blocks - 1] = 0;
+    exposed_blocks_current.back() += 0;
     for (size_t i = 0; i < n_exposed_blocks - 1; i++) {
-      vals_exposed[i] = exposed_blocks_past[i + 1];
+      exposed_blocks_current[i] += exposed_blocks_past[i + 1];
     }
-    exposed_blocks_current += vals_exposed;
 
     // handle movement across infectious blocks
     if (new_infectious > 0) {
-      infectious_blocks_current = Rcpp::IntegerVector(Rcpp::transpose(
-          helpers::rmultinom_vectorised(1, new_infectious, infectious_rates)));
+      infectious_blocks_current = Rcpp::as<std::vector<int> >(
+          Rcpp::IntegerVector(Rcpp::transpose(helpers::rmultinom_vectorised(
+              1, new_infectious, infectious_rates))));
     }
     // number of individuals in each block
-    Rcpp::IntegerVector vals_infectious(n_infectious_blocks);
-    vals_infectious[n_infectious_blocks - 1] = 0;
+    infectious_blocks_current.back() += 0;
     for (size_t i = 0; i < n_infectious_blocks - 1; i++) {
-      vals_infectious[i] = infectious_blocks_past[i + 1];
+      infectious_blocks_current[i] += infectious_blocks_past[i + 1];
     }
-    infectious_blocks_current += vals_infectious;
-
-    // log data
-    data_matrix(time, 0) = current_conditions[0] - new_exposed;
-    data_matrix(time, 1) = Rcpp::sum(exposed_blocks_current);
-    data_matrix(time, 2) = Rcpp::sum(infectious_blocks_current);
-    data_matrix(time, 3) = current_conditions[3] + new_recovered;
 
     // update current conditions
     current_conditions[0] = current_conditions[0] - new_exposed;
-    current_conditions[1] = Rcpp::sum(exposed_blocks_current);
-    current_conditions[2] = Rcpp::sum(infectious_blocks_current);
+    current_conditions[1] = std::accumulate(exposed_blocks_current.begin(),
+                                            exposed_blocks_current.end(), 0);
+    current_conditions[2] = std::accumulate(infectious_blocks_current.begin(),
+                                            infectious_blocks_current.end(), 0);
     current_conditions[3] = current_conditions[3] + new_recovered;
+
+    // log data
+    data_matrix[time] = current_conditions;
 
     // swap past vectors vectors
     exposed_blocks_past = exposed_blocks_current;
     infectious_blocks_past = infectious_blocks_current;
   }
 
-  return Rcpp::List::create(Rcpp::Named("x") = Rcpp::transpose(data_matrix),
+  return Rcpp::List::create(Rcpp::Named("x") = Rcpp::wrap(data_matrix),
                             Rcpp::Named("time") = Rcpp::seq(0, max_time));
 }
 

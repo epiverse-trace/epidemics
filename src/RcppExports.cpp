@@ -31,7 +31,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // epidemic_ebola_cpp
-Rcpp::IntegerMatrix epidemic_ebola_cpp(const Rcpp::List population, const double& beta, const int& shape_E, const double& rate_E, const int& shape_I, const double& rate_I, const int& time_end);
+Rcpp::List epidemic_ebola_cpp(const Rcpp::List population, const double& beta, const int& shape_E, const double& rate_E, const int& shape_I, const double& rate_I, const int& time_end);
 RcppExport SEXP _epidemics_epidemic_ebola_cpp(SEXP populationSEXP, SEXP betaSEXP, SEXP shape_ESEXP, SEXP rate_ESEXP, SEXP shape_ISEXP, SEXP rate_ISEXP, SEXP time_endSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

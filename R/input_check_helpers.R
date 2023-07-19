@@ -52,7 +52,7 @@ assert_infection <- function(x,
   infection_extra_params <- setdiff(names(x), default_params)
   checkmate::assert_names(
     infection_extra_params,
-    identical.to = extra_parameters
+    permutation.of = extra_parameters
   )
   # name, r0, and infectious period are checked when initialising
   # an infection object, via validate_infection

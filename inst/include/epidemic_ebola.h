@@ -111,13 +111,13 @@ inline Rcpp::IntegerMatrix epidemic_ebola(
     data_matrix(time, 0) = current_conditions[0] - new_exposed;
     data_matrix(time, 1) = Rcpp::sum(exposed_blocks_current);
     data_matrix(time, 2) = Rcpp::sum(infectious_blocks_current);
-    data_matrix(time, 3) = current_conditions[3] - new_recovered;
+    data_matrix(time, 3) = current_conditions[3] + new_recovered;
 
     // update current conditions
     current_conditions[0] = current_conditions[0] - new_exposed;
     current_conditions[1] = Rcpp::sum(exposed_blocks_current);
     current_conditions[2] = Rcpp::sum(infectious_blocks_current);
-    current_conditions[3] = current_conditions[3] - new_recovered;
+    current_conditions[3] = current_conditions[3] + new_recovered;
 
     // swap past vectors vectors
     exposed_blocks_past = exposed_blocks_current;

@@ -37,10 +37,17 @@ distribution of passage times through the infectious compartment.}
 assumed to be in days.}
 }
 \value{
-An integer matrix with as many rows as the number of timesteps
-(given by \code{time_end}), and four columns, one for each compartment, SEIR,
-in that order.
+A list with two elements, \code{x}, and integer matrix with as many rows
+as the number of timesteps (given by \code{time_end}), and four columns, one for
+each compartment, susceptible, exposed, infectious, recovered, in that order
+; and \code{times}, a vector of the simulation times, taken to be days.
+This output is intended to be passed to \code{\link[=output_to_df]{output_to_df()}} to be converted
+into a data.frame for further analysis.
 }
 \description{
-Run an SEIR model with Erlang passage times
+Wrapper function for an SEIR compartmental model with Erlang
+passage times based on Getz and Dougherty (2017) J. Biological Dynamics,
+and developed to model the West African ebola virus disease outbreak of 2014
+.
 }
+\keyword{internal}

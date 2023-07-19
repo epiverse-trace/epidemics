@@ -53,12 +53,18 @@ output_to_df <- function(output, model_arguments, compartments) {
 
   vec_demo_groups <- rep(names_demo_groups, length(compartments) * n_timesteps)
 
+  # handle values as potential list, otherwise matrix
+  values <- output$x
+  if (is.list(values)) {
+    values <- unlist(values)
+  }
+
   # return a data.table
   data.table::data.table(
     time = rep(output$time, each = n_groups * length(compartments)),
     demography_group = vec_demo_groups,
     compartment = vec_compartments,
-    value = unlist(output$x)
+    value = as.vector(values)
   )
 }
 

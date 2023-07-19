@@ -27,10 +27,10 @@
 // add to namespace epidemics
 namespace epidemics {
 
-inline Rcpp::IntegerMatrix epidemic_ebola(
-    const double &beta, const int &shape_E, const double &rate_E,
-    const int &shape_I, const double &rate_I, const int &max_time,
-    const Rcpp::List population) {
+inline Rcpp::List epidemic_ebola(const double &beta, const int &shape_E,
+                                 const double &rate_E, const int &shape_I,
+                                 const double &rate_I, const int &max_time,
+                                 const Rcpp::List population) {
   // get population size and initial conditions
   const int population_size = population::get_population_size(population);
   Rcpp::NumericVector initial_conditions =
@@ -62,10 +62,12 @@ inline Rcpp::IntegerMatrix epidemic_ebola(
   infectious_blocks_past(n_infectious_blocks - 1) = initial_conditions[2];
 
   // matrix for data storage --- four columns for each compartment
-  Rcpp::IntegerMatrix data_matrix(max_time, 4L);
+  Rcpp::IntegerMatrix data_matrix(max_time + 1, 4L);
+  // assign initial conditions
+  data_matrix(0, Rcpp::_) = initial_conditions;
 
   // run the simulation from 1 to max time
-  for (size_t time = 1; time < max_time; time++) {
+  for (size_t time = 1; time <= max_time; time++) {
     // vectors for current values --- hold zeros
     Rcpp::IntegerVector exposed_blocks_current(n_exposed_blocks);
     Rcpp::IntegerVector infectious_blocks_current(n_infectious_blocks);
@@ -78,8 +80,8 @@ inline Rcpp::IntegerMatrix epidemic_ebola(
     // get new exposures, infectious, and recovered
     const int new_exposed = Rcpp::rbinom(
         1.0, static_cast<double>(current_conditions[0]), prob_exposure)[0];
-    const int new_infectious = exposed_blocks_past(1);
-    const int new_recovered = infectious_blocks_past(1);
+    const int new_infectious = exposed_blocks_past(0);    // first index
+    const int new_recovered = infectious_blocks_past(0);  // first index
 
     // handle movement across exposed blocks
     if (new_exposed > 0) {
@@ -124,7 +126,8 @@ inline Rcpp::IntegerMatrix epidemic_ebola(
     infectious_blocks_past = infectious_blocks_current;
   }
 
-  return data_matrix;
+  return Rcpp::List::create(Rcpp::Named("x") = data_matrix,
+                            Rcpp::Named("time") = Rcpp::seq(0, max_time));
 }
 
 }  // namespace epidemics

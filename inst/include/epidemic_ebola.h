@@ -126,7 +126,7 @@ inline Rcpp::List epidemic_ebola(const double &beta, const int &shape_E,
     infectious_blocks_past = infectious_blocks_current;
   }
 
-  return Rcpp::List::create(Rcpp::Named("x") = data_matrix,
+  return Rcpp::List::create(Rcpp::Named("x") = Rcpp::transpose(data_matrix),
                             Rcpp::Named("time") = Rcpp::seq(0, max_time));
 }
 

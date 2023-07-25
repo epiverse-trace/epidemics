@@ -32,7 +32,7 @@ test_that("Ebola model: basic expectations", {
       time_end = 200
     )
   )
-  
+
   set.seed(1)
   # returns a data.table
   data <- epidemic(

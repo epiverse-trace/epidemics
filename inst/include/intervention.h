@@ -22,7 +22,8 @@ inline Eigen::ArrayXd cumulative_intervention(const double &t,
   Rcpp::NumericVector time_end = intervention["time_end"];
   Rcpp::NumericMatrix cr = intervention["contact_reduction"];
 
-  Rcpp::NumericVector eff_con_red(cr.size());
+  // a vector with as elements as the number of rows, i.e., age groups
+  Rcpp::NumericVector eff_con_red(cr.nrow());
 
   // iterate over the Rcpp vector time_begin, a member of the list-like
   // intervention-class

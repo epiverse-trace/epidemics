@@ -10,5 +10,6 @@
 ^\.Rproj\.user$
 ^formatcpp.sh
 ^lintcpp.sh
+^scratch.R
 ^doc$
 ^Meta$

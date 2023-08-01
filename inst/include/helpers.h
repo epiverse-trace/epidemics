@@ -31,7 +31,7 @@ inline Rcpp::NumericVector prob_discrete_erlang(const int &shape,
   // different length from R implementation as last value seemingly never used
   std::vector<double> factorials(shape, 0.0);
   factorials[0] = 1.0;
-  for (int i = 1; i <= shape; i++) factorials[i] = i * factorials[i - 1];
+  for (int i = 1; i < shape; i++) factorials[i] = i * factorials[i - 1];
 
   // initial values for while loop
   double cumulative_prob = 0.0;

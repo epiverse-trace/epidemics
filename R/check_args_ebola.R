@@ -1,4 +1,3 @@
-
 #' Check arguments to epidemic ebola model from Getz and Dougherty
 #' @keywords internal
 .check_args_epidemic_ebola <- function(mod_args) {
@@ -31,14 +30,12 @@
 #' @keywords internal
 .prepare_args_epidemic_ebola <- function(mod_args) {
   # prepare initial conditions by scaling with demography
-  mod_args[["population"]][["initial_conditions"]] <-
+  mod_args[["initial_conditions"]] <-
     as.integer(mod_args[["population"]][["initial_conditions"]] *
       mod_args[["population"]][["demography_vector"]])
-  # convert to integer values
-  mod_args[["population"]][["initial_conditions"]] <- as.matrix(
-    mod_args[["population"]][["initial_conditions"]],
-    nrow = 1L
-  )
+
+  # prepare population size
+  mod_args[["population_size"]] <- sum(mod_args[["population"]][["demography_vector"]])
 
   # calculate beta, Erlang shape and rate parameters are passed
   mod_args[["beta"]] <- mod_args[["infection"]][["r0"]] /
@@ -48,9 +45,12 @@
   mod_args[["shape_I"]] <- mod_args[["infection"]][["shape_I"]]
   mod_args[["rate_I"]] <- mod_args[["infection"]][["rate_I"]]
 
-  # remove infection object, as parameters are passed as alpha, beta, gamma
-  mod_args[["infection"]] <- NULL
-  mod_args[["increment"]] <- NULL
+  # return only required list elements
 
-  return(mod_args)
+  return(mod_args[
+    c(
+      "population", "population_size", "initial_conditions", "beta",
+      "shape_E", "rate_E", "shape_I", "rate_I", "time_end"
+    )
+  ])
 }

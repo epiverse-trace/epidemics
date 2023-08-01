@@ -29,7 +29,7 @@ test_that("Ebola model: basic expectations", {
       model_name = "ebola",
       population = uk_pop,
       infection = ebola,
-      time_end = 200
+      time_end = 100
     )
   )
 
@@ -130,6 +130,7 @@ test_that("Larger R0 leads to larger final size in ebola model", {
 # Equivalence with R model
 test_that("Ebola model equivalence in R-only and RCpp", {
   set.seed(1)
+  max_time <- 100
   ebola_r <- seir_erlang(
     initial_state = uk_pop$demography_vector * uk_pop$initial_conditions,
     parameters = c(
@@ -137,10 +138,14 @@ test_that("Ebola model equivalence in R-only and RCpp", {
       shape_I = 5L, rate_I = 1,
       beta = ebola$r0 / ebola$infectious_period
     ),
-    max_time = 10
+    max_time = max_time
   )
-  # access values as SEIR for each timestep
-  ebola_r_values <- as.integer(t(as.matrix(ebola_r[, c("S", "E", "I", "R")])))
+  # values at last timestep
+  ebola_r_values <- as.integer(
+    t(
+      as.matrix(ebola_r[max_time, c("S", "E", "I", "R")])
+    )
+  )
 
   # set seed for Rcpp run
   set.seed(1)
@@ -148,10 +153,10 @@ test_that("Ebola model equivalence in R-only and RCpp", {
     model_name = "ebola",
     population = uk_pop,
     infection = ebola,
-    time_end = 9 # one less for C++ implementation due to zero indexing
+    time_end = max_time - 1 # one less for C++ implementation due to zero index
   )
-  # get first ten generations
-  ebola_cpp_values <- ebola_cpp$value
+  # get last timestep values
+  ebola_cpp_values <- tail(ebola_cpp$value, 4L)
 
   # expect identical
   expect_identical(

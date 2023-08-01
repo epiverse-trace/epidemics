@@ -1,4 +1,3 @@
-
 #' Check arguments to epidemic function for the Vacamole model
 #' @keywords internal
 .check_args_epidemic_vacamole <- function(mod_args) {

@@ -92,7 +92,6 @@ epidemic <- function(model_name = c("default", "vacamole", "ebola"),
                      time_end = 200,
                      increment = 1,
                      ...) {
-
   # select epidemic model from library
   # handle the arguments check and prep functions, and the model function
   model_name <- match.arg(arg = model_name, several.ok = FALSE)

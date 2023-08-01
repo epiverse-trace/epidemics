@@ -1,4 +1,3 @@
-
 #' Construct a new vaccination regime
 #'
 #' @param name String for the name of the vaccination regime.
@@ -225,7 +224,6 @@ print.vaccination <- function(x, ...) {
 #' @keywords internal
 #' @noRd
 format.vaccination <- function(x, ...) {
-
   # validate the vaccination object
   validate_vaccination(x)
 

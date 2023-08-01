@@ -1,4 +1,3 @@
-
 #' Construct a new infection
 #'
 #' @param name String for the name of the infection. The default value is `NA`.
@@ -179,7 +178,6 @@ print.infection <- function(x, ...) {
 #' @keywords internal
 #' @noRd
 format.infection <- function(x, ...) {
-
   # validate the infection object
   validate_infection(x)
 

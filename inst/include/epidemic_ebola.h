@@ -27,15 +27,26 @@
 // add to namespace epidemics
 namespace epidemics {
 
+/// @brief Run a stochastic SEIR model of ebola with Erlang passage times
+/// @param beta The transmission rate.
+/// @param shape_E The shape of the Erlang distribution of passage times through
+/// the exposed compartment
+/// @param rate_E The rate of the Erlang distribution of passage times through
+/// the exposed compartment
+/// @param shape_I The shape of the Erlang distribution of passage times through
+/// the infectious compartment
+/// @param rate_I The rate of the Erlang distribution of passage times through
+/// the infectious compartment
+/// @param max_time The time at which the simulation ends
+/// @param population_size The population size
+/// @param initial_conditions A vector representing the number of individuals in
+/// each compartment
+/// @return An Rcpp::List with the states and times
 inline Rcpp::List epidemic_ebola(const double &beta, const int &shape_E,
                                  const double &rate_E, const int &shape_I,
                                  const double &rate_I, const int &max_time,
-                                 const Rcpp::List population) {
-  // get population size and initial conditions
-  const int population_size = population::get_population_size(population);
-  std::vector<int> initial_conditions = Rcpp::as<std::vector<int> >(
-      population::get_initial_conditions(population));
-
+                                 const int &population_size,
+                                 const std::vector<int> &initial_conditions) {
   // copy conditions
   std::vector<int> current_conditions = initial_conditions;
 
@@ -61,14 +72,14 @@ inline Rcpp::List epidemic_ebola(const double &beta, const int &shape_E,
   exposed_blocks_past.back() = initial_conditions[1];
   infectious_blocks_past.back() = initial_conditions[2];
 
-  // vec-of-vecs matrix for data storage --- four columns for each compartment
+  // vec-of-vecs matrix for data storage --- four columns, 1 per compartment
   std::vector<std::vector<int> > data_matrix(max_time + 1,
                                              std::vector<int>(4L));
 
-  // assign initial conditions
+  // assign initial conditions at time = 0
   data_matrix[0] = initial_conditions;
 
-  // run the simulation from 1 to max time
+  // run the simulation from time 1 to max time (inclusive of max time)
   for (size_t time = 1; time <= max_time; time++) {
     // vectors for current values --- hold zeros
     std::vector<int> exposed_blocks_current(n_exposed_blocks);

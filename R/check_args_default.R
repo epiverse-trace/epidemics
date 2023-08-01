@@ -1,4 +1,3 @@
-
 #' Check arguments to default epidemic function
 #' @keywords internal
 .check_args_epidemic_default <- function(mod_args) {

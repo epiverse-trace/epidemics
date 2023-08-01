@@ -1,5 +1,4 @@
 test_that("Computing Erlang probabilites", {
-
   # using R only
   v <- compute_erlang_discrete_prob(5, 1)
 
@@ -10,7 +9,6 @@ test_that("Computing Erlang probabilites", {
 })
 
 test_that("Computing Erlang probabilites with C++", {
-
   # using R only
   v <- .prob_discrete_erlang(5L, 1)
 

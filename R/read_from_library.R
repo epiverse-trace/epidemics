@@ -15,7 +15,6 @@
 read_from_library <- function(model_type = "epidemic",
                               model_name = "default",
                               what = "model_function") {
-
   # input checking
   checkmate::assert_string(model_type)
   checkmate::assert_string(model_name)

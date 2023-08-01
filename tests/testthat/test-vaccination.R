@@ -141,7 +141,6 @@ data <- epidemic(
 )
 
 test_that("Epidemic model with vaccination", {
-
   # expect that only the last age group is vaccinated
   total_vaccinated <- data_vaccination[data_vaccination$compartment ==
     "vaccinated" & data_vaccination$time ==

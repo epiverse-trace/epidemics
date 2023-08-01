@@ -1,4 +1,3 @@
-
 #' Construct a new intervention
 #'
 #' @param name String for the name of the intervention.
@@ -200,7 +199,6 @@ print.intervention <- function(x, ...) {
 #' @keywords internal
 #' @noRd
 format.intervention <- function(x, ...) {
-
   # validate the intervention object
   validate_intervention(x)
 

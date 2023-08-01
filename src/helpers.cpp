@@ -16,7 +16,7 @@
 //' value for a cumulative probability of 0.99.
 //' @export
 // [[Rcpp::export(name=".prob_discrete_erlang")]]
-Rcpp::NumericVector prob_discrete_erlang(const int &shape = 5,
-                                         const double &rate = 1.0) {
+Rcpp::NumericVector prob_discrete_erlang_cpp(const int &shape = 5,
+                                             const double &rate = 1.0) {
   return helpers::prob_discrete_erlang(shape, rate);
 }

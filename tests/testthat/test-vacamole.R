@@ -1,4 +1,3 @@
-
 #### Tests for the Vacamole model ####
 # Prepare contact matrix and demography vector
 polymod <- socialmixr::polymod

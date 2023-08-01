@@ -1,4 +1,3 @@
-
 #' Construct a new population
 #'
 #' @param name Optional string for the population name.
@@ -166,7 +165,6 @@ print.population <- function(x, ...) {
 #' @keywords internal
 #' @noRd
 format.population <- function(x, ...) {
-
   # validate the population object
   validate_population(x)
 

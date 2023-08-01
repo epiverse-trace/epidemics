@@ -35,7 +35,9 @@
       mod_args[["population"]][["demography_vector"]])
 
   # prepare population size
-  mod_args[["population_size"]] <- sum(mod_args[["population"]][["demography_vector"]])
+  mod_args[["population_size"]] <- sum(
+    mod_args[["population"]][["demography_vector"]]
+  )
 
   # calculate beta, Erlang shape and rate parameters are passed
   mod_args[["beta"]] <- mod_args[["infection"]][["r0"]] /

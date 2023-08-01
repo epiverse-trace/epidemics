@@ -44,10 +44,12 @@
 #' passage times based on Getz and Dougherty (2017) J. Biological Dynamics,
 #' and developed to model the West African ebola virus disease outbreak of 2014
 #' .
-#'
 #' @param population An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
 #' of each demographic group. See [population()].
+#' @param population_size A single integer for the population size.
+#' @param initial_conditions An integer vector of the initial conditions
+#' corresponding to an SEIR model.
 #' @param beta The transmission rate \eqn{\beta}.
 #' @param shape_E A single integer for the shape parameter of the Erlang
 #' distribution of passage times through the exposed compartment.
@@ -66,8 +68,8 @@
 #' This output is intended to be passed to [output_to_df()] to be converted
 #' into a data.frame for further analysis.
 #' @keywords internal
-.epidemic_ebola_cpp <- function(population, beta, shape_E, rate_E, shape_I, rate_I, time_end) {
-    .Call(`_epidemics_epidemic_ebola_cpp`, population, beta, shape_E, rate_E, shape_I, rate_I, time_end)
+.epidemic_ebola_cpp <- function(population, population_size, initial_conditions, beta, shape_E, rate_E, shape_I, rate_I, time_end) {
+    .Call(`_epidemics_epidemic_ebola_cpp`, population, population_size, initial_conditions, beta, shape_E, rate_E, shape_I, rate_I, time_end)
 }
 
 #' @title Run the RIVM Vacamole model
@@ -143,6 +145,6 @@
 #' value for a cumulative probability of 0.99.
 #' @export
 .prob_discrete_erlang <- function(shape = 5L, rate = 1.0) {
-    .Call(`_epidemics_prob_discrete_erlang`, shape, rate)
+    .Call(`_epidemics_prob_discrete_erlang_cpp`, shape, rate)
 }
 

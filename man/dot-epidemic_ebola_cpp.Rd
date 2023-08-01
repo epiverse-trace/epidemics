@@ -5,7 +5,8 @@
 \title{Run an SEIR model with Erlang passage times}
 \usage{
 .epidemic_ebola_cpp(
-  population,
+  population_size,
+  initial_conditions,
   beta,
   shape_E,
   rate_E,
@@ -15,9 +16,10 @@
 )
 }
 \arguments{
-\item{population}{An object of the \code{population} class, which holds a
-population contact matrix, a demography vector, and the initial conditions
-of each demographic group. See \code{\link[=population]{population()}}.}
+\item{population_size}{A single integer for the population size.}
+
+\item{initial_conditions}{An integer vector of the initial conditions
+corresponding to an SIRV model.}
 
 \item{beta}{The transmission rate \eqn{\beta}.}
 

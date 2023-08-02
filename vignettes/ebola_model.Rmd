@@ -111,7 +111,7 @@ This is an appropriate period over which to obtain initial predictions for the o
 
 ```{r}
 # set seed to get consistent results
-set.seed(1)
+set.seed(0)
 
 # run the epidemic model using `epidemic`
 # we call the model "ebola" from the library

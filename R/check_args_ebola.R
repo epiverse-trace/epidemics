@@ -30,8 +30,10 @@
 #' @keywords internal
 .prepare_args_epidemic_ebola <- function(mod_args) {
   # prepare initial conditions by scaling with demography
+  # we take the ceiling to ensure that models with only one
+  # infectious individual can be accommodated
   mod_args[["initial_conditions"]] <-
-    as.integer(mod_args[["population"]][["initial_conditions"]] *
+    ceiling(mod_args[["population"]][["initial_conditions"]] *
       mod_args[["population"]][["demography_vector"]])
 
   # prepare population size

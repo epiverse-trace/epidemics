@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 ```
 
 ::: {.alert .alert-warning}
-**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) and ["Modelling a vaccination campaign"](modelling_vaccination.html) vignettes first!
+**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first!
 :::
 
 This vignette shows how to model an epidemic in which stochasticity is expected to play an important role.
@@ -55,7 +55,7 @@ We can create a `<population>` object with dummy values for the contact matrix, 
 
 We prepare a population with a total size of 14 million, corresponding to the population of Guinea, a West African country where the 2014 ebolavirus epidemic originated.
 
-We assume that only _one_ person is initially infected, in line with [@getz2018].
+We assume that only _one_ person is initially infected, in line with @getz2018.
 
 ```{r}
 population_size <- 14e6
@@ -92,10 +92,6 @@ While ebola has very high severity, our model does not yet have a "deaths" compa
 
 ```{r}
 # Prepare ebola parameters as an infection class object
-# set seed to get consistent results
-set.seed(1)
-
-# run model
 ebola <- infection(
   name = "ebolavirus disease",
   r0 = 1.5,
@@ -114,6 +110,9 @@ We run the model for 100 days, with data reported on each day.
 This is an appropriate period over which to obtain initial predictions for the outbreak, and after which response efforts such as non-pharmaceutical interventions and vaccination campaigns are likely to be launched to bring the outbreak under control.
 
 ```{r}
+# set seed to get consistent results
+set.seed(1)
+
 # run the epidemic model using `epidemic`
 # we call the model "ebola" from the library
 output <- epidemic(

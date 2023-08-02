@@ -9,6 +9,7 @@ Codecov
 Covid
 ECDC
 Eigen
+Epirecipes
 Epiverse
 Eurosurveillance
 Fuminari
@@ -52,6 +53,7 @@ dS
 dV
 doi
 ebola
+ebolavirus
 ggplot
 gh
 github
@@ -62,6 +64,7 @@ org
 packagename
 pkg
 prepper
+stochasticity
 svg
 th
 timesteps

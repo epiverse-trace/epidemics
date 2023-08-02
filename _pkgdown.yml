@@ -24,3 +24,4 @@ articles:
   navbar: Guides to library models
   contents:
   - vacamole
+  - ebola_model

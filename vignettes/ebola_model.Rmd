@@ -1,0 +1,273 @@
+---
+title: "Modelling ebolavirus disease with a stochastic model"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+bibliography: references.json
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Modelling ebolavirus disease with a stochastic model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  dpi = 150
+)
+```
+
+::: {.alert .alert-warning}
+**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) and ["Modelling a vaccination campaign"](modelling_vaccination.html) vignettes first!
+:::
+
+This vignette shows how to model an epidemic in which stochasticity is expected to play an important role.
+This is often the case with outbreaks of infections such as ebolavirus disease (or simply, ebola).
+
+_epidemics_ includes a compartmental model of ebola based on @getz2018 and adapted from [Epirecipes](http://epirecip.es/epicookbook/chapters/erlang/r).
+
+This model has four compartments --- susceptible, exposed, infectious, and recovered --- and does not yet include demographic variation in contacts.
+It is expected that two further compartments, for hospitalisation and funeral transmission, will added as well.
+
+This model cannot yet accommodate interventions or vaccination regimes, but interventions are expected to be added.
+
+```{r setup}
+# some initial setup to load necessary packages
+library(epidemics)
+library(data.table)
+library(ggplot2)
+```
+
+## Prepare population and initial conditions
+
+Prepare population data --- for this model, we only need the total population size and the initial conditions.
+
+We can create a `<population>` object with dummy values for the contact matrix, and assign the total size to the demography vector.
+
+We prepare a population with a total size of 14 million, corresponding to the population of Guinea, a West African country where the 2014 ebolavirus epidemic originated.
+
+We assume that only _one_ person is initially infected, in line with [@getz2018].
+
+```{r}
+population_size <- 14e6
+
+# prepare initial conditions as proportions
+initial_i <- 1 / population_size
+
+initial_conditions <- c(
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0
+)
+```
+
+
+```{r}
+guinea_population <- population(
+  name = "Guinea",
+  contact_matrix = matrix(1), # note dummy value
+  demography_vector = 14e6, # 14 million, no age groups
+  initial_conditions = matrix(
+    initial_conditions,
+    nrow = 1
+  )
+)
+
+guinea_population
+```
+
+## Prepare pathogen parameters
+
+We prepare an `<infection>` class object for ebola, with an $R_0$ taken from the value estimated for ebola in Guinea [@althaus2014].
+
+We assume that ebola has an infectious period of 5 days.
+While ebola has very high severity, our model does not yet have a "deaths" compartment so we assume that individuals recover after this period.
+
+```{r}
+# Prepare ebola parameters as an infection class object
+# set seed to get consistent results
+set.seed(1)
+
+# run model
+ebola <- infection(
+  name = "ebolavirus disease",
+  r0 = 1.5,
+  infectious_period = 5,
+  shape_E = 5L, rate_E = 1,
+  shape_I = 5L, rate_I = 1
+)
+
+# print to visualise
+ebola
+```
+
+## Run epidemic model
+
+We run the model for 100 days, with data reported on each day.
+This is an appropriate period over which to obtain initial predictions for the outbreak, and after which response efforts such as non-pharmaceutical interventions and vaccination campaigns are likely to be launched to bring the outbreak under control.
+
+```{r}
+# run the epidemic model using `epidemic`
+# we call the model "ebola" from the library
+output <- epidemic(
+  model_name = "ebola",
+  population = guinea_population,
+  infection = ebola,
+  time_end = 100, increment = 1.0
+)
+
+# view the head of the output
+head(output)
+```
+
+## Prepare data and visualise infections
+
+We plot the ebola epidemic over time, showing only the number of individuals in the exposed and infected compartments.
+
+```{r class.source = 'fold-hide'}
+# plot figure of epidemic curve
+ggplot(
+  output[compartment %in% c("exposed", "infectious")],
+  aes(
+    x = time,
+    y = value,
+    colour = compartment
+  )
+) +
+  geom_line() +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = NULL,
+    labels = c("Exposed", "Infectious")
+  ) +
+  expand_limits(
+    x = c(0, 101)
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    linetype = "Compartment",
+    y = "Individuals"
+  )
+```
+
+## Consensus estimates from multiple model iterations
+
+Since the ebola model is a stochastic one, model results will vary in each run.
+We can run the model multiple times --- here, 100 times --- and plot the number of infectious people, to get a consensus idea of what an ebola outbreak might look like.
+
+```{r}
+# set seed for consistent output
+set.seed(1)
+
+# run the simulation 100 times
+data <- Map(
+  x = seq(100),
+  f = function(x) {
+    data <- epidemic(
+      model_name = "ebola",
+      population = guinea_population,
+      infection = ebola,
+      time_end = 100, increment = 1.0
+    )
+
+    # add replicate number and return data
+    data$replicate <- x
+    data
+  }
+)
+
+# use data.table to collect the data
+data_timeseries <- rbindlist(data)
+```
+
+We plot the data.
+
+```{r class.source = 'fold-hide'}
+ggplot(data_timeseries[compartment == "infectious", ]) +
+  geom_line(
+    aes(time, value, group = replicate),
+    alpha = 0.3, colour = "grey50"
+  ) +
+  stat_summary(
+    aes(time, value),
+    geom = "ribbon",
+    fill = "red", alpha = 0.5
+  ) +
+  stat_summary(
+    aes(time, value),
+    geom = "line"
+  ) +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  expand_limits(
+    x = c(0, 101)
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    y = "Individuals infectious with ebola"
+  )
+```
+
+We observe that model stochasticity leads to wide variation in model outcomes, and not all simulation replicates lead to exponential growth of the outbreak within the first 100 days.
+However, in a number of replicates, the outbreak has only a low daily incidence within the simulation time, although these replicates might show exponential growth later.
+
+We can find the 'final size' of each replicate using the `epidemic_size()` function on the original simulation data.
+Note that the final size here refers to the final size after 100 days, which is the duration of our simulation.
+
+```{r}
+# apply the function over each replicate
+data_final_size <- Map(
+  data, f = epidemic_size, deaths = FALSE, by_group = FALSE
+)
+data_final_size <- unlist(data_final_size)
+```
+
+```{r class.source = 'fold-hide'}
+# plot a histogram of the replicates
+ggplot() +
+  geom_histogram(
+    aes(data_final_size),
+    fill = "steelblue"
+  ) +
+  scale_x_continuous(
+    labels = scales::comma
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Epidemic size at 100 days",
+    y = "Number of replicates"
+  )
+```
+
+We see that while some replicates affect over 3,000 individuals within the first 100 days, most replicates have fewer than 1,000 cases, suggesting that responses to halt the spread of ebola may be quite effective in most real outbreaks.

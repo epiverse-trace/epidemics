@@ -98,21 +98,20 @@ inline Rcpp::List epidemic_ebola(const double &beta, const int &shape_E,
 
     // handle movement across exposed blocks
     if (new_exposed > 0) {
-      exposed_blocks_current =
-          Rcpp::as<std::vector<int> >(Rcpp::IntegerVector(Rcpp::transpose(
-              helpers::rmultinom_vectorised(1, new_exposed, exposed_rates))));
+      exposed_blocks_current = Rcpp::as<std::vector<int> >(
+          helpers::rmultinom_1(new_exposed, exposed_rates, n_exposed_blocks));
     }
     // number of individuals in each block
-    exposed_blocks_current.back() += 0;
+    exposed_blocks_current[n_exposed_blocks - 1] += 0;
     for (size_t i = 0; i < n_exposed_blocks - 1; i++) {
       exposed_blocks_current[i] += exposed_blocks_past[i + 1];
     }
 
     // handle movement across infectious blocks
     if (new_infectious > 0) {
-      infectious_blocks_current = Rcpp::as<std::vector<int> >(
-          Rcpp::IntegerVector(Rcpp::transpose(helpers::rmultinom_vectorised(
-              1, new_infectious, infectious_rates))));
+      infectious_blocks_current =
+          Rcpp::as<std::vector<int> >(helpers::rmultinom_1(
+              new_infectious, infectious_rates, n_infectious_blocks));
     }
     // number of individuals in each block
     infectious_blocks_current.back() += 0;

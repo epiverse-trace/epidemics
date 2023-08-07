@@ -2,10 +2,11 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
+  ebola_model: ebola_model.html
   epidemics: epidemics.html
   modelling_interventions: modelling_interventions.html
   modelling_vaccination: modelling_vaccination.html
   multiple_interventions: multiple_interventions.html
   vacamole: vacamole.html
-last_built: 2023-07-14T11:42Z
+last_built: 2023-08-07T16:54Z
 

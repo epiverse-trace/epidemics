@@ -6,7 +6,15 @@
 \usage{
 .check_args_epidemic_default(mod_args)
 }
+\value{
+Invisibly returns the model arguments passed in \code{mod_args}. If the
+model arguments did not previously contain elements named \code{intervention} and
+\code{vaccination}, these are added as dummy objects of the corresponding classes.
+}
 \description{
-Check arguments to default epidemic function
+Checks the four main arguments to \code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}}.
+Adds an empty \verb{<intervention>} and \verb{<vaccination>} object if these are
+missing from the model arguments, and this is done for compatibility with
+the model code.
 }
 \keyword{internal}

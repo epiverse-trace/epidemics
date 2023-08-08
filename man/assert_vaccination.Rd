@@ -22,8 +22,8 @@ meet certain requirements.
 }
 \description{
 Assert that objects of the \code{vaccination} class have the parameters expected
-by an epidemic model. See \code{\link[=vaccination]{vaccination()}} and \code{\link[=epidemic]{epidemic()}}, as well as model
-details to check the vaccination properties required by each model. This
+by an epidemic model. See \code{\link[=vaccination]{vaccination()}} and specific epidemic functions
+to check the vaccination properties required by each model. This
 function is for internal use in argument checking functions.
 }
 \keyword{internal}

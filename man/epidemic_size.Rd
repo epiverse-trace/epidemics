@@ -8,7 +8,7 @@ epidemic_size(data, stage = 1, by_group = TRUE, deaths = TRUE)
 }
 \arguments{
 \item{data}{A \code{data.table} (or \code{data.frame}) of model output, typically
-the output of \code{\link[=epidemic]{epidemic()}}.}
+the output of \code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}} or similar functions.}
 
 \item{stage}{The stage of the epidemic at which to return the epidemic size;
 here, 0.0 represents the initial conditions of the epidemic (0\% of model time
@@ -60,8 +60,7 @@ pandemic_influenza <- infection(
 )
 
 # run epidemic simulation with no vaccination or intervention
-data <- epidemic(
-  model_name = "default",
+data <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic_influenza,
   time_end = 200,

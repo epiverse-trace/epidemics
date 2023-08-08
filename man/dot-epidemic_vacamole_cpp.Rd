@@ -5,7 +5,7 @@
 \title{Run the RIVM Vacamole model}
 \usage{
 .epidemic_vacamole_cpp(
-  population,
+  initial_state,
   beta,
   beta_v,
   alpha,
@@ -14,17 +14,18 @@
   eta,
   eta_v,
   gamma,
-  intervention,
-  vaccination,
-  time_end,
-  increment
+  contact_matrix,
+  npi_time_begin,
+  npi_time_end,
+  npi_cr,
+  vax_time_begin,
+  vax_time_end,
+  vax_nu,
+  time_end = 100,
+  increment = 0.1
 )
 }
 \arguments{
-\item{population}{An object of the \code{population} class, which holds a
-population contact matrix, a demography vector, and the initial conditions
-of each demographic group. See \code{\link[=population]{population()}}.}
-
 \item{beta}{The transmission rate \eqn{\beta} at which unvaccinated and
 partially vaccinated individuals are infected by the disease.}
 
@@ -49,6 +50,14 @@ vaccination.}
 
 \item{gamma}{The recovery rate \eqn{\gamma}.}
 
+\item{time_end}{The maximum time. Defaults to 100.0.}
+
+\item{increment}{The increment time, defaults to 0.1.}
+
+\item{population}{An object of the \code{population} class, which holds a
+population contact matrix, a demography vector, and the initial conditions
+of each demographic group. See \code{\link[=population]{population()}}.}
+
 \item{intervention}{A non-pharmaceutical intervention applied during the
 course of the epidemic, with a start and end time, and age-specific effect
 on contacts. See \code{\link[=intervention]{intervention()}}.}
@@ -57,10 +66,6 @@ on contacts. See \code{\link[=intervention]{intervention()}}.}
 course of the epidemic, with a group- and dose-specific start and end time,
 and age-specific rates of delivery of first and second doses.
 See \code{\link[=vaccination]{vaccination()}}.}
-
-\item{time_end}{The maximum time. See \code{\link[=epidemic]{epidemic()}} for default value.}
-
-\item{increment}{The increment time. See \code{\link[=epidemic]{epidemic()}} for default value.}
 }
 \value{
 A two element list, where the first element is a list of matrices

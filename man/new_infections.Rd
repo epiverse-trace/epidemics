@@ -8,7 +8,7 @@ new_infections(data, compartments_from_susceptible, by_group = TRUE)
 }
 \arguments{
 \item{data}{A \code{data.table} (or \code{data.frame}) of model output, typically
-the output of \code{\link[=epidemic]{epidemic()}}.}
+the output of \code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}} or similar functions.}
 
 \item{compartments_from_susceptible}{An optional argument, for a character
 vector of the names of model compartments into which individuals transition
@@ -46,8 +46,7 @@ pandemic_influenza <- infection(
 )
 
 # run epidemic simulation with no vaccination or intervention
-data <- epidemic(
-  model_name = "default",
+data <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic_influenza,
   time_end = 200,

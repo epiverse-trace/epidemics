@@ -12,50 +12,54 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// epidemic_default_cpp
-Rcpp::List epidemic_default_cpp(const Rcpp::List& population, const double& beta, const double& alpha, const double& gamma, const Rcpp::List& intervention, const Rcpp::List& vaccination, const double& time_end, const double& increment);
-RcppExport SEXP _epidemics_epidemic_default_cpp(SEXP populationSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP interventionSEXP, SEXP vaccinationSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
+// epidemic_default_cpp_internal
+Rcpp::List epidemic_default_cpp_internal(const Eigen::MatrixXd& initial_state, const double& beta, const double& alpha, const double& gamma, const Eigen::MatrixXd& contact_matrix, const Rcpp::NumericVector& npi_time_begin, const Rcpp::NumericVector& npi_time_end, const Rcpp::NumericMatrix& npi_cr, const Eigen::MatrixXd& vax_time_begin, const Eigen::MatrixXd& vax_time_end, const Eigen::MatrixXd& vax_nu, const double& time_end, const double& increment);
+RcppExport SEXP _epidemics_epidemic_default_cpp_internal(SEXP initial_stateSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP gammaSEXP, SEXP contact_matrixSEXP, SEXP npi_time_beginSEXP, SEXP npi_time_endSEXP, SEXP npi_crSEXP, SEXP vax_time_beginSEXP, SEXP vax_time_endSEXP, SEXP vax_nuSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type population(populationSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type initial_state(initial_stateSEXP);
     Rcpp::traits::input_parameter< const double& >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< const double& >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< const double& >::type gamma(gammaSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type intervention(interventionSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type vaccination(vaccinationSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type contact_matrix(contact_matrixSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type npi_time_begin(npi_time_beginSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type npi_time_end(npi_time_endSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type npi_cr(npi_crSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type vax_time_begin(vax_time_beginSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type vax_time_end(vax_time_endSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type vax_nu(vax_nuSEXP);
     Rcpp::traits::input_parameter< const double& >::type time_end(time_endSEXP);
     Rcpp::traits::input_parameter< const double& >::type increment(incrementSEXP);
-    rcpp_result_gen = Rcpp::wrap(epidemic_default_cpp(population, beta, alpha, gamma, intervention, vaccination, time_end, increment));
+    rcpp_result_gen = Rcpp::wrap(epidemic_default_cpp_internal(initial_state, beta, alpha, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, time_end, increment));
     return rcpp_result_gen;
 END_RCPP
 }
-// epidemic_ebola_cpp
-Rcpp::List epidemic_ebola_cpp(const Rcpp::List population, const int& population_size, const Rcpp::IntegerVector& initial_conditions, const double& beta, const int& shape_E, const double& rate_E, const int& shape_I, const double& rate_I, const int& time_end);
-RcppExport SEXP _epidemics_epidemic_ebola_cpp(SEXP populationSEXP, SEXP population_sizeSEXP, SEXP initial_conditionsSEXP, SEXP betaSEXP, SEXP shape_ESEXP, SEXP rate_ESEXP, SEXP shape_ISEXP, SEXP rate_ISEXP, SEXP time_endSEXP) {
+// epidemic_ebola_cpp_internal
+Rcpp::List epidemic_ebola_cpp_internal(const Rcpp::IntegerVector& initial_conditions, const int& population_size, const double& beta, const int& shape_E, const double& rate_E, const int& shape_I, const double& rate_I, const int& time_end);
+RcppExport SEXP _epidemics_epidemic_ebola_cpp_internal(SEXP initial_conditionsSEXP, SEXP population_sizeSEXP, SEXP betaSEXP, SEXP shape_ESEXP, SEXP rate_ESEXP, SEXP shape_ISEXP, SEXP rate_ISEXP, SEXP time_endSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List >::type population(populationSEXP);
-    Rcpp::traits::input_parameter< const int& >::type population_size(population_sizeSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type initial_conditions(initial_conditionsSEXP);
+    Rcpp::traits::input_parameter< const int& >::type population_size(population_sizeSEXP);
     Rcpp::traits::input_parameter< const double& >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< const int& >::type shape_E(shape_ESEXP);
     Rcpp::traits::input_parameter< const double& >::type rate_E(rate_ESEXP);
     Rcpp::traits::input_parameter< const int& >::type shape_I(shape_ISEXP);
     Rcpp::traits::input_parameter< const double& >::type rate_I(rate_ISEXP);
     Rcpp::traits::input_parameter< const int& >::type time_end(time_endSEXP);
-    rcpp_result_gen = Rcpp::wrap(epidemic_ebola_cpp(population, population_size, initial_conditions, beta, shape_E, rate_E, shape_I, rate_I, time_end));
+    rcpp_result_gen = Rcpp::wrap(epidemic_ebola_cpp_internal(initial_conditions, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end));
     return rcpp_result_gen;
 END_RCPP
 }
-// epidemic_vacamole_cpp
-Rcpp::List epidemic_vacamole_cpp(const Rcpp::List& population, const double& beta, const double& beta_v, const double& alpha, const double& omega, const double& omega_v, const double& eta, const double& eta_v, const double& gamma, const Rcpp::List& intervention, const Rcpp::List& vaccination, const double& time_end, const double& increment);
-RcppExport SEXP _epidemics_epidemic_vacamole_cpp(SEXP populationSEXP, SEXP betaSEXP, SEXP beta_vSEXP, SEXP alphaSEXP, SEXP omegaSEXP, SEXP omega_vSEXP, SEXP etaSEXP, SEXP eta_vSEXP, SEXP gammaSEXP, SEXP interventionSEXP, SEXP vaccinationSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
+// epidemic_vacamole_cpp_internal
+Rcpp::List epidemic_vacamole_cpp_internal(const Eigen::MatrixXd& initial_state, const double& beta, const double& beta_v, const double& alpha, const double& omega, const double& omega_v, const double& eta, const double& eta_v, const double& gamma, const Eigen::MatrixXd& contact_matrix, const Rcpp::NumericVector& npi_time_begin, const Rcpp::NumericVector& npi_time_end, const Rcpp::NumericMatrix& npi_cr, const Eigen::MatrixXd& vax_time_begin, const Eigen::MatrixXd& vax_time_end, const Eigen::MatrixXd& vax_nu, const double& time_end, const double& increment);
+RcppExport SEXP _epidemics_epidemic_vacamole_cpp_internal(SEXP initial_stateSEXP, SEXP betaSEXP, SEXP beta_vSEXP, SEXP alphaSEXP, SEXP omegaSEXP, SEXP omega_vSEXP, SEXP etaSEXP, SEXP eta_vSEXP, SEXP gammaSEXP, SEXP contact_matrixSEXP, SEXP npi_time_beginSEXP, SEXP npi_time_endSEXP, SEXP npi_crSEXP, SEXP vax_time_beginSEXP, SEXP vax_time_endSEXP, SEXP vax_nuSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type population(populationSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type initial_state(initial_stateSEXP);
     Rcpp::traits::input_parameter< const double& >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< const double& >::type beta_v(beta_vSEXP);
     Rcpp::traits::input_parameter< const double& >::type alpha(alphaSEXP);
@@ -64,11 +68,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double& >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< const double& >::type eta_v(eta_vSEXP);
     Rcpp::traits::input_parameter< const double& >::type gamma(gammaSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type intervention(interventionSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type vaccination(vaccinationSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type contact_matrix(contact_matrixSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type npi_time_begin(npi_time_beginSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type npi_time_end(npi_time_endSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type npi_cr(npi_crSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type vax_time_begin(vax_time_beginSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type vax_time_end(vax_time_endSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type vax_nu(vax_nuSEXP);
     Rcpp::traits::input_parameter< const double& >::type time_end(time_endSEXP);
     Rcpp::traits::input_parameter< const double& >::type increment(incrementSEXP);
-    rcpp_result_gen = Rcpp::wrap(epidemic_vacamole_cpp(population, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, intervention, vaccination, time_end, increment));
+    rcpp_result_gen = Rcpp::wrap(epidemic_vacamole_cpp_internal(initial_state, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, time_end, increment));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -86,9 +95,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_epidemics_epidemic_default_cpp", (DL_FUNC) &_epidemics_epidemic_default_cpp, 8},
-    {"_epidemics_epidemic_ebola_cpp", (DL_FUNC) &_epidemics_epidemic_ebola_cpp, 9},
-    {"_epidemics_epidemic_vacamole_cpp", (DL_FUNC) &_epidemics_epidemic_vacamole_cpp, 13},
+    {"_epidemics_epidemic_default_cpp_internal", (DL_FUNC) &_epidemics_epidemic_default_cpp_internal, 13},
+    {"_epidemics_epidemic_ebola_cpp_internal", (DL_FUNC) &_epidemics_epidemic_ebola_cpp_internal, 8},
+    {"_epidemics_epidemic_vacamole_cpp_internal", (DL_FUNC) &_epidemics_epidemic_vacamole_cpp_internal, 18},
     {"_epidemics_prob_discrete_erlang_cpp", (DL_FUNC) &_epidemics_prob_discrete_erlang_cpp, 2},
     {NULL, NULL, 0}
 };

@@ -48,34 +48,75 @@
   invisible(mod_args)
 }
 
-#' Prepare arguments to default epidemic function
+#' @title Prepare arguments to default epidemic function
+#'
+#' @description Prepares arguments for [.epidemic_default_cpp()], which is the
+#' C++ function that solves the default ODE system using a Boost _odeint_ solver
+#' .
+#' @return Returns a list of model arguments suitable for
+#' [.epidemic_default_cpp()]. This is a named list consisting of:
+#'
+#'  1. `population`, the `<population>` object with the contact matrix
+#' scaled by the largest real eigenvalue and by the size of each groups; the
+#' initial conditions are also modified to represent absolute rather than
+#' proportional values.
+#'
+#'  2. `beta`, a single number for the transmission rate of the infection.
+#'
+#'  3. `alpha`, a single number for the rate of transition from exposed to
+#' infectious.
+#'
+#'  4. `gamma`, a single number for the recovery rate.
+#'
+#'  5. `intervention`, the `<intervention>` object,
+#'
+#'  6. `vaccination`, the `<vaccination>` object,
+#'
+#'  7. `time_end`, a single number for the time point at which to end the
+#' simulation, and
+#'
+#'  8. `increment`,  a single number for the value by which the simulation time
+#' is incremented.
 #' @keywords internal
 .prepare_args_epidemic_default <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
   # scale the contact matrix by the maximum real eigenvalue
-  mod_args[["population"]][["contact_matrix"]] <-
-    mod_args[["population"]][["contact_matrix"]] /
-      max(Re(eigen(mod_args[["population"]][["contact_matrix"]])$values))
+  contact_matrix <- mod_args[["population"]][["contact_matrix"]] /
+    max(Re(eigen(mod_args[["population"]][["contact_matrix"]])$values))
 
   # scale rows of the contact matrix by the corresponding group population
-  mod_args[["population"]][["contact_matrix"]] <-
-    mod_args[["population"]][["contact_matrix"]] /
-      mod_args[["population"]][["demography_vector"]]
+  contact_matrix <- contact_matrix /
+    mod_args[["population"]][["demography_vector"]]
 
   # prepare initial conditions by scaling with demography
-  mod_args[["population"]][["initial_conditions"]] <-
+  initial_state <-
     mod_args[["population"]][["initial_conditions"]] *
       mod_args[["population"]][["demography_vector"]]
 
-  # calculate beta and gamma
-  mod_args[["gamma"]] <- 1.0 / mod_args[["infection"]][["infectious_period"]]
-  mod_args[["alpha"]] <- 1.0 / mod_args[["infection"]][["preinfectious_period"]]
-  mod_args[["beta"]] <- mod_args[["infection"]][["r0"]] /
+  # calculate infection parameters
+  gamma <- 1.0 / mod_args[["infection"]][["infectious_period"]]
+  alpha <- 1.0 / mod_args[["infection"]][["preinfectious_period"]]
+  beta <- mod_args[["infection"]][["r0"]] /
     mod_args[["infection"]][["infectious_period"]]
-  # nu is passed through vaccination class
 
-  # remove infection object, as parameters are passed as alpha, beta, gamma
-  mod_args[["infection"]] <- NULL
+  # get NPI related times and contact reductions
+  npi_time_begin <- mod_args[["intervention"]][["time_begin"]]
+  npi_time_end <- mod_args[["intervention"]][["time_end"]]
+  npi_cr <- mod_args[["intervention"]][["contact_reduction"]]
 
-  return(mod_args)
+  # get vaccination related times and rates
+  vax_time_begin <- mod_args[["vaccination"]][["time_begin"]]
+  vax_time_end <- mod_args[["vaccination"]][["time_end"]]
+  vax_nu <- mod_args[["vaccination"]][["nu"]]
+
+  # return selected arguments for internal C++ function
+  list(
+    initial_state,
+    beta, alpha, gamma,
+    contact_matrix,
+    npi_time_begin, npi_time_end, npi_cr,
+    vax_time_begin, vax_time_end, vax_nu,
+    mod_args$time_end,
+    mod_args$increment
+  )
 }

@@ -50,9 +50,12 @@ output_to_df <- function(output, population, compartments) {
   vec_demo_groups <- rep(names_demo_groups, length(compartments) * n_timesteps)
 
   # handle values as potential list, otherwise matrix
+  # matrix will need to be transposed for conversion to long format
   values <- output$x
   if (is.list(values)) {
     values <- unlist(values)
+  } else if (is.matrix(values)) {
+    values <- t(values)
   }
 
   # return a data.table

@@ -2,10 +2,9 @@
 #' @param output The model output, which must be a two element list (for
 #' epidemic) models, with the names "x" and "time", where "x" represents the
 #' condition of each compartment at each timestep in "time".
-#' @param model_arguments A list containing the model arguments passed to
-#' [epidemic()]. This is scanned for information on the population passed to
-#' the model, which must be a `population` object; see [population()].
-#' The `population` object is used to generate the names of the demographic
+#' @param population A `<population>` object corresponding to the population
+#' used in the epidemic model; see [population()].
+#' The `<population>` object is used to generate the names of the demographic
 #' groups, if these are named.
 #' @param compartments A vector for the model compartment names.
 #' @keywords internal
@@ -15,7 +14,7 @@
 #' compartment, and the model timestep, respectively.
 #' Names for the demographic groups are generated if no names are provided in
 #' the `population` object; these are of the form "demo_group_X".
-output_to_df <- function(output, model_arguments, compartments) {
+output_to_df <- function(output, population, compartments) {
   # input checking
   checkmate::assert_list(output,
     any.missing = FALSE, all.missing = FALSE,
@@ -29,17 +28,14 @@ output_to_df <- function(output, model_arguments, compartments) {
     any.missing = FALSE,
     all.missing = FALSE, unique = TRUE
   )
+  checkmate::assert_class(population, "population")
 
-  # check whether there is a `population` in the model arguments
-  stopifnot(
-    "No `population` object found in the model, please check model arguments" =
-      "population" %in% names(model_arguments)
-  )
-  names_demo_groups <- rownames(model_arguments$population$contact_matrix)
+  # get demographic group names if any
+  names_demo_groups <- rownames(population$contact_matrix)
   if (is.null(names_demo_groups)) {
     names_demo_groups <- sprintf(
       "demo_group_%i",
-      seq_len(nrow(model_arguments$population$contact_matrix))
+      seq_len(nrow(population$contact_matrix))
     )
   }
 

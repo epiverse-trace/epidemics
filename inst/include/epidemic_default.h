@@ -57,20 +57,22 @@ struct epidemic_default {
     dxdt.resize(x.rows(), x.cols());
 
     // modify contact matrix if time is within intervention timespan
-    Eigen::MatrixXd cm =
-        intervention::intervention_on_cm(t, contact_matrix, intervention);
+    cm_temp = intervention::intervention_on_cm(
+        t, contact_matrix, npi_time_begin, npi_time_end, npi_cr);
 
     // get current vaccination rate
-    Eigen::MatrixXd current_nu = vaccination::current_nu(nu, vaccination, t);
+    vax_nu_current =
+        vaccination::current_nu(t, vax_nu, vax_time_begin, vax_time_end);
 
     // NB: Casting initial conditions matrix columns to arrays is necessary
     // for vectorised operations
 
     // compartmental transitions without accounting for contacts
-    Eigen::ArrayXd sToE = beta * x.col(0).array() * (cm * x.col(2)).array();
+    Eigen::ArrayXd sToE =
+        beta * x.col(0).array() * (cm_temp * x.col(2)).array();
     Eigen::ArrayXd eToI = alpha * x.col(1).array();
     Eigen::ArrayXd iToR = gamma * x.col(2).array();
-    Eigen::ArrayXd sToV = current_nu.col(0).array() * x.col(0).array();
+    Eigen::ArrayXd sToV = vax_nu_current.col(0).array() * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)
     dxdt.col(0) = -sToE - sToV;  // -β*S*contacts*I - ν*S

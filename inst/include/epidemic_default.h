@@ -19,21 +19,36 @@ namespace epidemics {
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_default {
   const double beta, alpha, gamma;
-  const Eigen::MatrixXd nu;
-  const Rcpp::List population, intervention, vaccination;
   const Eigen::MatrixXd contact_matrix;
+  Eigen::MatrixXd cm_temp;
+  // related to interventions
+  const Rcpp::NumericVector npi_time_begin, npi_time_end;
+  const Rcpp::NumericMatrix npi_cr;
+  // related to vaccination
+  const Eigen::MatrixXd vax_time_begin, vax_time_end, vax_nu;
+  Eigen::MatrixXd vax_nu_current;
+
   // npi, interv, pop
   epidemic_default(const double beta, const double alpha, const double gamma,
-                   const Rcpp::List population, const Rcpp::List intervention,
-                   const Rcpp::List vaccination)
+                   const Eigen::MatrixXd contact_matrix,
+                   const Rcpp::NumericVector npi_time_begin,
+                   const Rcpp::NumericVector npi_time_end,
+                   const Rcpp::NumericMatrix npi_cr,
+                   const Eigen::MatrixXd vax_time_begin,
+                   const Eigen::MatrixXd vax_time_end,
+                   const Eigen::MatrixXd vax_nu)
       : beta(beta),
         alpha(alpha),
         gamma(gamma),
-        nu(vaccination::get_nu(vaccination)),
-        population(population),
-        intervention(intervention),
-        vaccination(vaccination),
-        contact_matrix(population::get_contact_matrix(population)) {}
+        contact_matrix(contact_matrix),
+        cm_temp(contact_matrix),
+        npi_time_begin(npi_time_begin),
+        npi_time_end(npi_time_end),
+        npi_cr(npi_cr),
+        vax_time_begin(vax_time_begin),
+        vax_time_end(vax_time_end),
+        vax_nu(vax_nu),
+        vax_nu_current(vax_nu) {}
 
   void operator()(const odetools::state_type& x,
                   odetools::state_type& dxdt,  // NOLINT

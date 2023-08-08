@@ -28,15 +28,25 @@ namespace epidemics {
 /* The rhs of x' = f(x) defined as a struct with an operator */
 struct epidemic_vacamole {
   const double beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma;
-  const Eigen::MatrixXd nu;
-  const Rcpp::List population, intervention, vaccination;
   const Eigen::MatrixXd contact_matrix;
+  Eigen::MatrixXd cm_temp;
+  // related to interventions
+  const Rcpp::NumericVector npi_time_begin, npi_time_end;
+  const Rcpp::NumericMatrix npi_cr;
+  // related to vaccination
+  const Eigen::MatrixXd vax_time_begin, vax_time_end, vax_nu;
+  Eigen::MatrixXd vax_nu_current;
   // npi, interv, pop
   epidemic_vacamole(const double beta, const double beta_v, const double alpha,
                     const double omega, const double omega_v, const double eta,
                     const double eta_v, const double gamma,
-                    const Rcpp::List population, const Rcpp::List intervention,
-                    const Rcpp::List vaccination)
+                    const Eigen::MatrixXd contact_matrix,
+                    const Rcpp::NumericVector npi_time_begin,
+                    const Rcpp::NumericVector npi_time_end,
+                    const Rcpp::NumericMatrix npi_cr,
+                    const Eigen::MatrixXd vax_time_begin,
+                    const Eigen::MatrixXd vax_time_end,
+                    const Eigen::MatrixXd vax_nu)
       : beta(beta),
         beta_v(beta_v),
         alpha(alpha),
@@ -45,11 +55,15 @@ struct epidemic_vacamole {
         eta(eta),
         eta_v(eta_v),
         gamma(gamma),
-        nu(vaccination::get_nu(vaccination)),
-        population(population),
-        intervention(intervention),
-        vaccination(vaccination),
-        contact_matrix(population::get_contact_matrix(population)) {}
+        contact_matrix(contact_matrix),
+        cm_temp(contact_matrix),
+        npi_time_begin(npi_time_begin),
+        npi_time_end(npi_time_end),
+        npi_cr(npi_cr),
+        vax_time_begin(vax_time_begin),
+        vax_time_end(vax_time_end),
+        vax_nu(vax_nu),
+        vax_nu_current(vax_nu) {}
 
   void operator()(const odetools::state_type& x,
                   odetools::state_type& dxdt,  // NOLINT
@@ -58,11 +72,12 @@ struct epidemic_vacamole {
     dxdt.resize(x.rows(), x.cols());
 
     // modify contact matrix if time is within intervention timespan
-    Eigen::MatrixXd cm =
-        intervention::intervention_on_cm(t, contact_matrix, intervention);
+    cm_temp = intervention::intervention_on_cm(
+        t, contact_matrix, npi_time_begin, npi_time_end, npi_cr);
 
     // get current vaccination rate
-    Eigen::MatrixXd current_nu = vaccination::current_nu(nu, vaccination, t);
+    vax_nu_current =
+        vaccination::current_nu(t, vax_nu, vax_time_begin, vax_time_end);
 
     // NB: Casting initial conditions matrix columns to arrays is necessary
     // for vectorised operations
@@ -73,19 +88,19 @@ struct epidemic_vacamole {
     // compartmental transitions without accounting for contacts
     // Susceptible to exposed
     Eigen::ArrayXd sToE =
-        beta * x.col(0).array() * (cm * (x.col(5) + x.col(6))).array();
+        beta * x.col(0).array() * (cm_temp * (x.col(5) + x.col(6))).array();
 
     // Susceptible to vaccinated with one dose
-    Eigen::ArrayXd sToV1 = current_nu.col(0).array() * x.col(0).array();
+    Eigen::ArrayXd sToV1 = vax_nu_current.col(0).array() * x.col(0).array();
     // Vaccinated one dose to vaccinated with two doses
-    Eigen::ArrayXd v1ToV2 = current_nu.col(1).array() * x.col(1).array();
+    Eigen::ArrayXd v1ToV2 = vax_nu_current.col(1).array() * x.col(1).array();
 
     // Vaccinated one dose to exposed - same as susceptible to exposed
     Eigen::ArrayXd v1ToE =
-        beta * x.col(1).array() * (cm * (x.col(5) + x.col(6))).array();
+        beta * x.col(1).array() * (cm_temp * (x.col(5) + x.col(6))).array();
     // Vaccinated two doses to exposed - uses different beta
     Eigen::ArrayXd v2ToEv =
-        beta_v * x.col(2).array() * (cm * (x.col(5) + x.col(6))).array();
+        beta_v * x.col(2).array() * (cm_temp * (x.col(5) + x.col(6))).array();
 
     // Exposed unvaccinated or not protected to infectious
     Eigen::ArrayXd eToI = alpha * x.col(3).array();

@@ -195,8 +195,7 @@ no_vaccination <- no_vaccination(population = uk_population, doses = 2)
 First, we run the model with no vaccination.
 
 ```{r}
-data <- epidemic(
-  model_name = "vacamole",
+data <- epidemic_vacamole_cpp(
   population = uk_population,
   infection = infect,
   vaccination = no_vaccination, # note custom no_vaccination object
@@ -207,8 +206,7 @@ data <- epidemic(
 Next we run the model with a two dose vaccination regime.
 
 ```{r}
-data_vaccination <- epidemic(
-  model_name = "vacamole",
+data_vaccination <- epidemic_vacamole_cpp(
   population = uk_population,
   infection = infect,
   vaccination = double_vaccination, # note custom object for two doses

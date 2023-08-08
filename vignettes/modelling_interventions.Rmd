@@ -111,7 +111,7 @@ close_schools
 
 ```{r}
 # run an epidemic model using `epidemic`
-output <- epidemic(
+output <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic,
   intervention = close_schools,

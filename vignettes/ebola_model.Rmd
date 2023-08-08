@@ -10,8 +10,8 @@ bibliography: references.json
 link-citations: true
 vignette: >
   %\VignetteIndexEntry{Modelling ebolavirus disease with a stochastic model}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
   chunk_output_type: console
 ---
@@ -115,11 +115,10 @@ set.seed(0)
 
 # run the epidemic model using `epidemic`
 # we call the model "ebola" from the library
-output <- epidemic(
-  model_name = "ebola",
+output <- epidemic_ebola_cpp(
   population = guinea_population,
   infection = ebola,
-  time_end = 100, increment = 1.0
+  time_end = 100
 )
 
 # view the head of the output
@@ -179,11 +178,10 @@ set.seed(1)
 data <- Map(
   x = seq(100),
   f = function(x) {
-    data <- epidemic(
-      model_name = "ebola",
+    data <- epidemic_ebola_cpp(
       population = guinea_population,
       infection = ebola,
-      time_end = 100, increment = 1.0
+      time_end = 100
     )
 
     # add replicate number and return data

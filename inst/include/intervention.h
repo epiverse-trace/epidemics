@@ -9,6 +9,8 @@
 // clang-format off
 #include <Rcpp.h>
 #include <RcppEigen.h>
+
+#include <algorithm>
 // clang-format on
 
 // add to namespace ode
@@ -31,6 +33,11 @@ inline Eigen::ArrayXd cumulative_intervention(const double &t,
     if (t >= time_begin(i) && t <= time_end(i)) {
       eff_con_red += cr(Rcpp::_, i);
     }
+  }
+
+  // correct for contact reductions greater than 1.0
+  for (size_t i = 0; i < eff_con_red.size(); i++) {
+    eff_con_red[i] = std::min(1.0, eff_con_red[i]);
   }
 
   Eigen::ArrayXd effective_contact_reduction(

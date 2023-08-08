@@ -14,6 +14,11 @@
     extra_parameters = c(
       "preinfectious_period", "eta", "omega",
       "susc_reduction_vax", "hosp_reduction_vax", "mort_reduction_vax"
+    ),
+    extra_parameters_limits = list(
+      susc_reduction_vax = c(lower = 0.0, upper = 1.0),
+      hosp_reduction_vax = c(lower = 0.0, upper = 1.0),
+      mort_reduction_vax = c(lower = 0.0, upper = 1.0)
     )
   )
 

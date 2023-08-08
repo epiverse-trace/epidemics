@@ -65,8 +65,7 @@ infect <- infection(
 test_that("Vacamole model works", {
   # check model runs silently
   expect_no_condition(
-    epidemic(
-      model_name = "vacamole",
+    epidemic_vacamole_cpp(
       population = uk_population,
       infection = infect,
       vaccination = double_vaccination,
@@ -74,8 +73,7 @@ test_that("Vacamole model works", {
     )
   )
 
-  data <- epidemic(
-    model_name = "vacamole",
+  data <- epidemic_vacamole_cpp(
     population = uk_population,
     infection = infect,
     vaccination = double_vaccination,
@@ -135,8 +133,7 @@ infect <- infection(
 
 test_that("Vacamole model with no vaccination", {
   # check model runs silently
-  data <- epidemic(
-    model_name = "vacamole",
+  data <- epidemic_vacamole_cpp(
     population = uk_population,
     infection = infect,
     vaccination = no_vaccination,
@@ -163,8 +160,7 @@ nonlethal_infect <- infection(
 )
 
 test_that("Vacamole with non-fatal infection", {
-  data <- epidemic(
-    model_name = "vacamole",
+  data <- epidemic_vacamole_cpp(
     population = uk_population,
     infection = nonlethal_infect,
     vaccination = no_vaccination,
@@ -190,8 +186,7 @@ no_hospitalisation <- infection(
 )
 
 test_that("Vacamole with no hospitalisation", {
-  data <- epidemic(
-    model_name = "vacamole",
+  data <- epidemic_vacamole_cpp(
     population = uk_population,
     infection = no_hospitalisation,
     vaccination = no_vaccination,
@@ -209,7 +204,7 @@ test_that("Vacamole with no hospitalisation", {
 #### Test for Vacamole model run with wrong inputs ####
 test_that("Vacamole model errors correctly", {
   expect_error(
-    epidemic(
+    epidemic_vacamole_cpp(
       model_name = "vacamole",
       population = uk_population,
       infection = infect,

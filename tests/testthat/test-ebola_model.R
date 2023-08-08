@@ -25,8 +25,7 @@ ebola <- infection(
 test_that("Ebola model: basic expectations", {
   # runs without issues
   expect_no_condition(
-    epidemic(
-      model_name = "ebola",
+    epidemic_ebola_cpp(
       population = uk_pop,
       infection = ebola,
       time_end = 100
@@ -35,8 +34,7 @@ test_that("Ebola model: basic expectations", {
 
   set.seed(1)
   # returns a data.table
-  data <- epidemic(
-    model_name = "ebola",
+  data <- epidemic_ebola_cpp(
     population = uk_pop,
     infection = ebola,
     time_end = 200
@@ -109,11 +107,10 @@ test_that("Larger R0 leads to larger final size in ebola model", {
     infection_list,
     function(infection_) {
       # run model on data
-      data <- epidemic(
-        model_name = "ebola",
+      data <- epidemic_ebola_cpp(
         population = uk_pop,
         infection = infection_,
-        time_end = 100, increment = 1.0
+        time_end = 100
       )
     }
   )
@@ -131,8 +128,9 @@ test_that("Larger R0 leads to larger final size in ebola model", {
 test_that("Ebola model equivalence in R-only and RCpp", {
   set.seed(1)
   max_time <- 100
-  ebola_r <- seir_erlang(
-    initial_state = uk_pop$demography_vector * uk_pop$initial_conditions,
+  ebola_r <- epidemic_ebola_r(
+    initial_state = as.integer(uk_pop$demography_vector *
+      uk_pop$initial_conditions),
     parameters = c(
       shape_E = 5L, rate_E = 1,
       shape_I = 5L, rate_I = 1,
@@ -149,8 +147,7 @@ test_that("Ebola model equivalence in R-only and RCpp", {
 
   # set seed for Rcpp run
   set.seed(1)
-  ebola_cpp <- epidemic(
-    model_name = "ebola",
+  ebola_cpp <- epidemic_ebola_cpp(
     population = uk_pop,
     infection = ebola,
     time_end = max_time - 1 # one less for C++ implementation due to zero index

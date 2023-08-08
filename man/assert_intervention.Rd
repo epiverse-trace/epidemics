@@ -21,8 +21,8 @@ meet certain requirements.
 }
 \description{
 Assert that objects of the \code{intervention} class have the properties expected
-by an epidemic model. See \code{\link[=intervention]{intervention()}} and \code{\link[=epidemic]{epidemic()}}, as well as model
-details to check the intervention properties required by each model. This
+by an epidemic model. See \code{\link[=intervention]{intervention()}} and specific model functions
+to check the intervention properties required by each model. This
 function is for internal use in argument checking functions.
 }
 \keyword{internal}

@@ -20,8 +20,8 @@ meet certain requirements.
 }
 \description{
 Assert that objects of the \code{population} class have the parameters expected by
-an epidemic model. See \code{\link[=population]{population()}} and \code{\link[=epidemic]{epidemic()}}, as well as model
-details to check the population parameters required by each model. This
+an epidemic model. See \code{\link[=population]{population()}} and specific epidemic functions
+to check the population parameters required by each model. This
 function is for internal use in argument checking functions.
 }
 \keyword{internal}

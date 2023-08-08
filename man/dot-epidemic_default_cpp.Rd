@@ -2,29 +2,41 @@
 % Please edit documentation in R/RcppExports.R
 \name{.epidemic_default_cpp}
 \alias{.epidemic_default_cpp}
-\title{Run an age-structured SEIR-V epidemic model}
+\title{Run an age-structured SEIR-V epidemic ODE model using a Boost solver}
 \usage{
 .epidemic_default_cpp(
-  population,
+  initial_state,
   beta,
   alpha,
   gamma,
-  intervention,
-  vaccination,
-  time_end = 200,
+  contact_matrix,
+  npi_time_begin,
+  npi_time_end,
+  npi_cr,
+  vax_time_begin,
+  vax_time_end,
+  vax_nu,
+  time_end = 100,
   increment = 0.1
 )
 }
 \arguments{
-\item{population}{An object of the \code{population} class, which holds a
-population contact matrix, a demography vector, and the initial conditions
-of each demographic group. See \code{\link[=population]{population()}}.}
+\item{initial_state}{An \code{Eigen::MatrixXd} holding the initial state of
+each demographic-compartmental combination. Rows must represent demographic
+groups, while columns represent compartments in the order S, E, I, R, V.}
 
 \item{beta}{The transmission rate \eqn{\beta}.}
 
 \item{alpha}{The rate of transition from exposed to infectious \eqn{\alpha}.}
 
 \item{gamma}{The recovery rate \eqn{\gamma}.}
+
+\item{contact_matrix}{An \code{Eigen::MatrixXd} holding the population
+contact matrix.}
+
+\item{time_end}{The maximum time, defaults to 200.0.}
+
+\item{increment}{The increment time, defaults to 0.1.}
 
 \item{intervention}{A non-pharmaceutical intervention applied during the
 course of the epidemic, with a start and end time, and age-specific effect
@@ -34,10 +46,6 @@ on contacts. See \code{\link[=intervention]{intervention()}}.}
 course of the epidemic, with a start and end time, and age-specific effect
 on the transition of individuals from susceptible to vaccinated.
 See \code{\link[=vaccination]{vaccination()}}.}
-
-\item{time_end}{The maximum time, defaults to 200.0.}
-
-\item{increment}{The increment time, defaults to 0.1.}
 }
 \value{
 A two element list, where the first element is a list of matrices
@@ -47,8 +55,13 @@ The second list element is a vector of timesteps.
 }
 \description{
 A compartmental model with an optional non-pharmaceutical
-intervention and an optional vaccination regime. Allows heterogeneity in
-social contact patterns, and variable sizes of demographic groups.
+intervention and an optional vaccination regime.
+
+This function is intended to only be called internally from
+\code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}}.
+
+Allows heterogeneity in social contact patterns, and variable sizes of
+demographic groups.
 Also allows for group-specific initial proportions in each model
 compartment, as well as group-specific vaccination start dates and
 vaccination rates, and also group-specific effects of implementing a

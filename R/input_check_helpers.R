@@ -2,8 +2,8 @@
 #'
 #' @description
 #' Assert that objects of the `infection` class have the parameters expected by
-#' an epidemic model. See [infection()] and [epidemic()], as well as model
-#' details to check the infection parameters required by each model. This
+#' an epidemic model. See [infection()] and specific epidemic functions,
+#' to check the infection parameters required by each model. This
 #' function is for internal use in argument checking functions.
 #'
 #' @param x An [infection] object.
@@ -106,7 +106,7 @@ assert_infection <- function(x,
     # now check the elements of x, the infection object, using the limits
     invisible(
       Map(
-        x[[names(extra_parameters_limits)]], extra_parameters_limits,
+        x[names(extra_parameters_limits)], extra_parameters_limits,
         f = function(z, lims) {
           checkmate::assert_number(
             z,
@@ -124,8 +124,8 @@ assert_infection <- function(x,
 #'
 #' @description
 #' Assert that objects of the `population` class have the parameters expected by
-#' an epidemic model. See [population()] and [epidemic()], as well as model
-#' details to check the population parameters required by each model. This
+#' an epidemic model. See [population()] and specific epidemic functions
+#' to check the population parameters required by each model. This
 #' function is for internal use in argument checking functions.
 #'
 #' @param x A [population] object.
@@ -158,8 +158,8 @@ assert_population <- function(x, compartments) {
 #'
 #' @description
 #' Assert that objects of the `vaccination` class have the parameters expected
-#' by an epidemic model. See [vaccination()] and [epidemic()], as well as model
-#' details to check the vaccination properties required by each model. This
+#' by an epidemic model. See [vaccination()] and specific epidemic functions
+#' to check the vaccination properties required by each model. This
 #' function is for internal use in argument checking functions.
 #'
 #' @param x A [vaccination] object.
@@ -204,8 +204,8 @@ assert_vaccination <- function(x, doses, population) {
 #'
 #' @description
 #' Assert that objects of the `intervention` class have the properties expected
-#' by an epidemic model. See [intervention()] and [epidemic()], as well as model
-#' details to check the intervention properties required by each model. This
+#' by an epidemic model. See [intervention()] and specific model functions
+#' to check the intervention properties required by each model. This
 #' function is for internal use in argument checking functions.
 #'
 #' @param x A [intervention] object.

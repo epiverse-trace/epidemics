@@ -54,43 +54,55 @@
 .prepare_args_epidemic_vacamole <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
   # scale the contact matrix by the maximum real eigenvalue
-  mod_args[["population"]][["contact_matrix"]] <-
-    mod_args[["population"]][["contact_matrix"]] /
-      max(Re(eigen(mod_args[["population"]][["contact_matrix"]])$values))
+  contact_matrix <- mod_args[["population"]][["contact_matrix"]] /
+    max(Re(eigen(mod_args[["population"]][["contact_matrix"]])$values))
 
   # scale rows of the contact matrix by the corresponding group population
-  mod_args[["population"]][["contact_matrix"]] <-
-    mod_args[["population"]][["contact_matrix"]] /
-      mod_args[["population"]][["demography_vector"]]
+  contact_matrix <- contact_matrix /
+    mod_args[["population"]][["demography_vector"]]
 
   # prepare initial conditions by scaling with demography
-  mod_args[["population"]][["initial_conditions"]] <-
+  initial_state <-
     mod_args[["population"]][["initial_conditions"]] *
       mod_args[["population"]][["demography_vector"]]
 
   # calculate infection parametersß
-  mod_args[["gamma"]] <- 1.0 / mod_args[["infection"]][["infectious_period"]]
-  mod_args[["alpha"]] <- 1.0 / mod_args[["infection"]][["preinfectious_period"]]
-  mod_args[["beta"]] <- mod_args[["infection"]][["r0"]] /
+  gamma <- 1.0 / mod_args[["infection"]][["infectious_period"]]
+  alpha <- 1.0 / mod_args[["infection"]][["preinfectious_period"]]
+  beta <- mod_args[["infection"]][["r0"]] /
     mod_args[["infection"]][["infectious_period"]]
 
-  mod_args[["eta"]] <- mod_args[["infection"]][["eta"]]
-  mod_args[["omega"]] <- mod_args[["infection"]][["omega"]]
+  eta <- mod_args[["infection"]][["eta"]]
+  omega <- mod_args[["infection"]][["omega"]]
 
   # modified parameters for the two-dose vaccinated compartment
-  mod_args[["beta_v"]] <- mod_args[["beta"]] *
+  beta_v <- beta *
     (1.0 - mod_args[["infection"]][["susc_reduction_vax"]])
 
-  mod_args[["eta_v"]] <- mod_args[["infection"]][["eta"]] *
+  eta_v <- eta *
     (1.0 - mod_args[["infection"]][["hosp_reduction_vax"]])
 
-  mod_args[["omega_v"]] <- mod_args[["infection"]][["omega"]] *
+  omega_v <- omega *
     (1.0 - mod_args[["infection"]][["hosp_reduction_vax"]])
 
-  # nu is passed through vaccination class
+  # get NPI related times and contact reductions
+  npi_time_begin <- mod_args[["intervention"]][["time_begin"]]
+  npi_time_end <- mod_args[["intervention"]][["time_end"]]
+  npi_cr <- mod_args[["intervention"]][["contact_reduction"]]
 
-  # remove infection object, as parameters are passed as alpha, beta, gamma
-  mod_args[["infection"]] <- NULL
+  # get vaccination related times and rates
+  vax_time_begin <- mod_args[["vaccination"]][["time_begin"]]
+  vax_time_end <- mod_args[["vaccination"]][["time_end"]]
+  vax_nu <- mod_args[["vaccination"]][["nu"]]
 
-  return(mod_args)
+  # return selected arguments for internal C++ function
+  list(
+    initial_state,
+    beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma,
+    contact_matrix,
+    npi_time_begin, npi_time_end, npi_cr,
+    vax_time_begin, vax_time_end, vax_nu,
+    mod_args$time_end,
+    mod_args$increment
+  )
 }

@@ -50,7 +50,7 @@
 //' @param eta_v The hospitalisation rate of individuals who are protected by
 //' vaccination.
 //' @param gamma The recovery rate \eqn{\gamma}.
-//' @param time_end The maximum time. See [epidemic()] for default value.
+//' @param time_end The maximum time. Defaults to 100.0.
 //' @param intervention A non-pharmaceutical intervention applied during the
 //' course of the epidemic, with a start and end time, and age-specific effect
 //' on contacts. See [intervention()].
@@ -58,27 +58,32 @@
 //' course of the epidemic, with a group- and dose-specific start and end time,
 //' and age-specific rates of delivery of first and second doses.
 //' See [vaccination()].
-//' @param increment The increment time. See [epidemic()] for default value.
+//' @param increment The increment time, defaults to 0.1.
 //' @return A two element list, where the first element is a list of matrices
 //' whose elements correspond to the numbers of individuals in each compartment
 //' as specified in the initial conditions matrix (see [population()]).
 //' The second list element is a vector of timesteps.
 //' @keywords internal
 // [[Rcpp::export(name=".epidemic_vacamole_cpp")]]
-Rcpp::List epidemic_vacamole_cpp(
-    const Rcpp::List &population, const double &beta, const double &beta_v,
-    const double &alpha, const double &omega, const double &omega_v,
-    const double &eta, const double &eta_v, const double &gamma,
-    const Rcpp::List &intervention, const Rcpp::List &vaccination,
-    const double &time_end,  // double required by boost solver
-    const double &increment) {
+Rcpp::List epidemic_vacamole_cpp_internal(
+    const Eigen::MatrixXd &initial_state, const double &beta,
+    const double &beta_v, const double &alpha, const double &omega,
+    const double &omega_v, const double &eta, const double &eta_v,
+    const double &gamma, const Eigen::MatrixXd &contact_matrix,
+    const Rcpp::NumericVector &npi_time_begin,
+    const Rcpp::NumericVector &npi_time_end, const Rcpp::NumericMatrix &npi_cr,
+    const Eigen::MatrixXd &vax_time_begin, const Eigen::MatrixXd &vax_time_end,
+    const Eigen::MatrixXd &vax_nu,
+    const double &time_end = 100.0,  // double required by boost solver
+    const double &increment = 0.1) {
   // initial conditions from input
-  odetools::state_type x = odetools::initial_state_from_pop(population);
+  odetools::state_type x = initial_state;
 
   // create a default epidemic with parameters
   epidemics::epidemic_vacamole this_model(beta, beta_v, alpha, omega, omega_v,
-                                          eta, eta_v, gamma, population,
-                                          intervention, vaccination);
+                                          eta, eta_v, gamma, contact_matrix,
+                                          npi_time_begin, npi_time_end, npi_cr,
+                                          vax_time_begin, vax_time_end, vax_nu);
 
   // prepare storage containers for the observer
   std::vector<odetools::state_type> x_vec;  // is a vector of MatrixXd

@@ -27,30 +27,29 @@ inline Eigen::MatrixXd get_nu(const Rcpp::List &vaccination) {
 }
 
 /// @brief Get the vaccination rate at a time in the vaccination regime
-/// @param nu An Eigen Matrix of the group- and dose-specific vaccination rates
-/// @param vaccination An Rcpp List object that holds matrices giving the group-
-/// and dose-specific vaccination start and end times.
 /// @param t A double value giving the current time, which is compared against
 /// the vaccination start and end times.
-/// @return An Eigen Matrix of the same dimensions as `nu`, with values modified
-/// to 0.0 if vaccination for that group and dose is not active.
-inline Eigen::MatrixXd current_nu(const Eigen::MatrixXd &nu,
-                                  const Rcpp::List &vaccination,
-                                  const double &t) {
-  // create Eigen 2D array from R matrix passed in an list (class intervention)
-  // resize the array to have the correct dimensions as default is 1D
-  Eigen::MatrixXd time_begin(
-      Rcpp::as<Eigen::MatrixXd>(vaccination["time_begin"]));
-  Eigen::MatrixXd time_end(Rcpp::as<Eigen::MatrixXd>(vaccination["time_end"]));
-
-  Eigen::MatrixXd nu_active = nu;
+/// @param vax_nu An Eigen Matrix of the group- and dose-specific vaccination
+/// rates.
+/// @param vax_time_begin An Eigen Matrix of the group- and dose-specific
+/// vaccination start times.
+/// @param vax_time_end An Eigen Matrix of the group- and dose-specific
+/// vaccination end times.
+/// @return An Eigen Matrix of the same dimensions as `vax_nu`, with values
+/// modified to 0.0 if vaccination for that group and dose is not active.
+inline Eigen::MatrixXd current_nu(const double &t,
+                                  const Eigen::MatrixXd &vax_nu,
+                                  const Eigen::MatrixXd &vax_time_begin,
+                                  const Eigen::MatrixXd &vax_time_end) {
+  // create empty array
+  Eigen::MatrixXd nu_active = vax_nu;
   nu_active.fill(0.0);
 
   // iterate over a potentially 2D matrix
-  for (size_t i = 0; i < nu.rows(); i++) {
-    for (size_t j = 0; j < nu.cols(); j++) {
-      nu_active(i, j) = (t >= time_begin(i, j) && t <= time_end(i, j))
-                            ? nu(i, j)
+  for (size_t i = 0; i < vax_nu.rows(); i++) {
+    for (size_t j = 0; j < vax_nu.cols(); j++) {
+      nu_active(i, j) = (t >= vax_time_begin(i, j) && t <= vax_time_end(i, j))
+                            ? vax_nu(i, j)
                             : nu_active(i, j);
     }
   }

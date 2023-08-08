@@ -1,4 +1,12 @@
-#' Check arguments to default epidemic function
+#' @title Check arguments to default epidemic function
+#'
+#' @description Checks the four main arguments to [epidemic_default_cpp()].
+#' Adds an empty `<intervention>` and `<vaccination>` object if these are
+#' missing from the model arguments, and this is done for compatibility with
+#' the model code.
+#' @return Invisibly returns the model arguments passed in `mod_args`. If the
+#' model arguments did not previously contain elements named `intervention` and
+#' `vaccination`, these are added as dummy objects of the corresponding classes.
 #' @keywords internal
 .check_args_epidemic_default <- function(mod_args) {
   # check that arguments list has expected names

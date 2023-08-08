@@ -16,14 +16,21 @@
 // add to namespace ode
 namespace intervention {
 
-inline Eigen::ArrayXd cumulative_intervention(const double &t,
-                                              const Rcpp::List &intervention) {
-  // copy the list elements
-  // TODO(all): reduce copying
-  Rcpp::NumericVector time_begin = intervention["time_begin"];
-  Rcpp::NumericVector time_end = intervention["time_end"];
-  Rcpp::NumericMatrix cr = intervention["contact_reduction"];
-
+/// @brief Get the cumulative effect of interventions
+/// @param t The current simulation time.
+/// @param time_begin The time for each intervention to begin.
+/// @param time_end The time for each intervention to end.
+/// @param cr A matrix with the demographic group and intervention specific
+/// effect. When two interventions are simultaneously active, their cumulative
+/// effect is additive, that is, the two interventions' effects on social
+/// contacts are added together.
+/// @return An Eigen Array with as many elements as there are demographic groups
+/// in the population. This is the number of rows of `cr`.
+/// The array gives the current cumulative effect of interventions on the
+/// corresponding age group.
+inline Eigen::ArrayXd cumulative_intervention(
+    const double &t, const Rcpp::NumericVector &time_begin,
+    const Rcpp::NumericVector &time_end, const Rcpp::NumericMatrix &cr) {
   // a vector with as elements as the number of rows, i.e., age groups
   Rcpp::NumericVector eff_con_red(cr.nrow());
 
@@ -40,17 +47,31 @@ inline Eigen::ArrayXd cumulative_intervention(const double &t,
     eff_con_red[i] = std::min(1.0, eff_con_red[i]);
   }
 
+  // transform to an Eigen Array and return
   Eigen::ArrayXd effective_contact_reduction(
       Rcpp::as<Eigen::ArrayXd>(eff_con_red));
 
   return effective_contact_reduction;
 }
 
+/// @brief Get the contact matrix modified by interventions
+/// @param t The current simulation time.
+/// @param cm The population contact matrix.
+/// @param time_begin The time for each intervention to begin.
+/// @param time_end The time for each intervention to end.
+/// @param cr A matrix with the demographic group and intervention specific
+/// effect. When two interventions are simultaneously active, their cumulative
+/// effect is additive, that is, the two interventions' effects on social
+/// contacts are added together.
+/// @return An Eigen Matrix of the same dimensions as `cm`.
 inline Eigen::MatrixXd intervention_on_cm(const double &t,
                                           const Eigen::MatrixXd &cm,
-                                          const Rcpp::List &intervention) {
+                                          const Rcpp::NumericVector &time_begin,
+                                          const Rcpp::NumericVector &time_end,
+                                          const Rcpp::NumericMatrix &cr) {
   // create Eigen 1D array from R matrix passed in an list (class intervention)
-  Eigen::ArrayXd contact_reduction = cumulative_intervention(t, intervention);
+  Eigen::ArrayXd contact_reduction =
+      cumulative_intervention(t, time_begin, time_end, cr);
 
   // modify the contact matrix as cm_mod = cm * (1 - intervention)
   // for a percentage reduction in contacts

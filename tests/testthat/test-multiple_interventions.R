@@ -46,8 +46,7 @@ multi_npi <- c(npi_1, npi_2)
 test_that("Default model with multiple interventions", {
   # run epidemic model
   expect_no_condition(
-    epidemic(
-      model_name = "default",
+    epidemic_default_cpp(
       population = uk_population,
       infection = pandemic,
       intervention = multi_npi,
@@ -56,15 +55,13 @@ test_that("Default model with multiple interventions", {
   )
 
   # expect final size is smaller with stacked interventions
-  data_1_npi <- epidemic(
-    model_name = "default",
+  data_1_npi <- epidemic_default_cpp(
     population = uk_population,
     infection = pandemic,
     intervention = npi_2,
     time_end = 100
   )
-  data_2_npi <- epidemic(
-    model_name = "default",
+  data_2_npi <- epidemic_default_cpp(
     population = uk_population,
     infection = pandemic,
     intervention = multi_npi,

@@ -10,12 +10,10 @@
 //' passage times based on Getz and Dougherty (2017) J. Biological Dynamics,
 //' and developed to model the West African ebola virus disease outbreak of 2014
 //' .
-//' @param population An object of the `population` class, which holds a
-//' population contact matrix, a demography vector, and the initial conditions
-//' of each demographic group. See [population()].
-//' @param population_size A single integer for the population size.
+//'
 //' @param initial_conditions An integer vector of the initial conditions
 //' corresponding to an SEIR model.
+//' @param population_size A single integer for the population size.
 //' @param beta The transmission rate \eqn{\beta}.
 //' @param shape_E A single integer for the shape parameter of the Erlang
 //' distribution of passage times through the exposed compartment.
@@ -35,13 +33,10 @@
 //' into a data.frame for further analysis.
 //' @keywords internal
 // [[Rcpp::export(name=".epidemic_ebola_cpp")]]
-Rcpp::List epidemic_ebola_cpp(const Rcpp::List population,
-                              const int &population_size,
-                              const Rcpp::IntegerVector &initial_conditions,
-                              const double &beta, const int &shape_E,
-                              const double &rate_E, const int &shape_I,
-                              const double &rate_I, const int &time_end) {
-  return epidemics::epidemic_ebola(
-      beta, shape_E, rate_E, shape_I, rate_I, time_end, population_size,
-      Rcpp::as<std::vector<int> >(initial_conditions));
+Rcpp::List epidemic_ebola_cpp_internal(
+    const Rcpp::IntegerVector &initial_conditions, const int &population_size,
+    const double &beta, const int &shape_E, const double &rate_E,
+    const int &shape_I, const double &rate_I, const int &time_end) {
+  return epidemics::epidemic_ebola(initial_conditions, population_size, beta,
+                                   shape_E, rate_E, shape_I, rate_I, time_end);
 }

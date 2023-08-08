@@ -36,10 +36,13 @@ compute_erlang_discrete_prob <- function(k, gamma) {
   return(density_prob)
 }
 
-#' @title SEIR model with Erlang passage times
+#' @title Model a stochastic epidemic with Erlang passage times
+#'
+#' @description This is an R-only implementation of [epidemic_ebola_cpp()].
+#'
 #' @param initial_state A vector that contains 4 numbers corresponding to the
 #' initial values of the 4 classes: S, E, I, and R.
-#' @param parameters    A vector that contains 5 numbers corresponding to the
+#' @param parameters A vector that contains 5 numbers corresponding to the
 #' following parameters: the shape and the rate parameters
 #' of the Erlang distribution that will be used to
 #' calculate the transition rates between the E components
@@ -51,7 +54,12 @@ compute_erlang_discrete_prob <- function(k, gamma) {
 #' @param max_time The length of the simulation.
 #' @return A data frame containing the values of S, E, I, and R over time
 #' (from 1 to max_time).
-seir_erlang <- function(initial_state, parameters, max_time) {
+#' @export
+epidemic_ebola_r <- function(initial_state, parameters, max_time) {
+
+  # input checking for the ebola R model
+  checkmate::assert_integer(initial_state, lower = 0, any.missing = FALSE)
+  checkmate::assert_integer(initial_state, lower = 0, any.missing = FALSE)
   names(initial_state) <- c("S", "E", "I", "R")
   names(parameters) <- c(
     "erlang_shape_for_E", "erlang_rate_for_E",
@@ -134,4 +142,88 @@ seir_erlang <- function(initial_state, parameters, max_time) {
   }
 
   return(sim_data)
+}
+
+#' @title Model a stochastic epidemic with Erlang passage times
+#'
+#' @description Simulate an epidemic using a stochastic an SEIR compartmental
+#' model with Erlang passage times based on Getz and Dougherty (2017) in
+#' J. Biological Dynamics, and developed to model the West African
+#' Ebola virus disease outbreak of 2014. See **Details** for more information.
+#'
+#' @param population An object of the `population` class, which holds a
+#' population contact matrix, a demography vector, and the initial conditions
+#' of each demographic group. See [population()].
+#' @param infection An `infection` object created using [infection()]. Must
+#' have the basic reproductive number \eqn{R_0} of the infection, and the
+#' infectious period.
+#' These are used to calculate the transmission rate \eqn{\beta}, the rate
+#' at which individuals move from the 'exposed' to the 'infectious' compartment.
+#'
+#' This model also requires the following extra arguments in the `<infection>`
+#' object:
+#'
+#'  1. `shape_E`, a single integer value for the shape parameter of the Erlang
+#' distribution from which passage times are drawn for the 'exposed'
+#' compartment.
+#'
+#'  2. `rate_E`, a single integer value for the rate parameter of the Erlang
+#' distribution from which passage times are drawn for the 'exposed'
+#' compartment.
+#'
+#'  1. `shape_I`, a single integer value for the shape parameter of the Erlang
+#' distribution from which passage times are drawn for the 'infectious'
+#' compartment.
+#'
+#'  2. `rate_I`, a single integer value for the rate parameter of the Erlang
+#' distribution from which passage times are drawn for the 'infectious'
+#' compartment.
+#'
+#' @param time_end The maximum number of timesteps over which to run the model.
+#' Taken as days, with a default value of 100 days.
+#' @details This is a wrapper function for [.epidemic_ebola_cpp()], a C++
+#' function that uses Rcpp for its calculations.
+#'
+#' The internal C++ function [.epidemic_default_cpp()] accepts arguments that
+#' are created by processing the `population`, `infection`, `intervention` and
+#' `vaccination` arguments to the wrapper function into simpler forms.
+#'
+#' @return A `data.table` with the columns "time", "compartment", "age_group",
+#' "value". The compartments correspond to the compartments of the model
+#' chosen with `model`.
+#' The current default model has the compartments "susceptible", "exposed",
+#' "infectious", and "recovered".
+#' @export
+epidemic_ebola_cpp <- function(population, infection,
+                               time_end = 100) {
+  # check class on required inputs
+  checkmate::assert_class(population, "population")
+  checkmate::assert_class(infection, "infection")
+
+  # check the time end
+  checkmate::assert_number(time_end, lower = 0, finite = TRUE)
+
+  # collect population, infection, and model arguments passed as `...`
+  model_arguments <- list(
+    population = population, infection = infection,
+    time_end = time_end
+  )
+
+  # prepare checked arguments for function
+  # this necessary as check_args adds intervention and vaccination
+  # if missing
+  model_arguments <- .prepare_args_epidemic_ebola(
+    .check_args_epidemic_ebola(model_arguments)
+  )
+
+  # get compartment names
+  compartments <- c(
+    "susceptible", "exposed", "infectious", "recovered"
+  )
+
+  # run model over arguments
+  output <- do.call(.epidemic_ebola_cpp, model_arguments)
+
+  # prepare output and return
+  output_to_df(output, population, compartments)
 }

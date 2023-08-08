@@ -9,11 +9,16 @@
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppEigen)]]
 
-//' @title Run an age-structured SEIR-V epidemic model
+//' @title Run an age-structured SEIR-V epidemic ODE model using a Boost solver
 //'
 //' @description A compartmental model with an optional non-pharmaceutical
-//' intervention and an optional vaccination regime. Allows heterogeneity in
-//' social contact patterns, and variable sizes of demographic groups.
+//' intervention and an optional vaccination regime.
+//'
+//' This function is intended to only be called internally from
+//' [epidemic_default_cpp()].
+//'
+//' Allows heterogeneity in social contact patterns, and variable sizes of
+//' demographic groups.
 //' Also allows for group-specific initial proportions in each model
 //' compartment, as well as group-specific vaccination start dates and
 //' vaccination rates, and also group-specific effects of implementing a
@@ -22,9 +27,11 @@
 //' transition between the 'susceptible' and 'exposed' compartments, between the
 //' 'exposed' and 'infectious' compartments, and in the recovery rate.
 //'
-//' @param population An object of the `population` class, which holds a
-//' population contact matrix, a demography vector, and the initial conditions
-//' of each demographic group. See [population()].
+//' @param initial_state An `Eigen::MatrixXd` holding the initial state of
+//' each demographic-compartmental combination. Rows must represent demographic
+//' groups, while columns represent compartments in the order S, E, I, R, V.
+//' @param contact_matrix An `Eigen::MatrixXd` holding the population
+//' contact matrix.
 //' @param beta The transmission rate \eqn{\beta}.
 //' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
 //' @param gamma The recovery rate \eqn{\gamma}.
@@ -43,18 +50,23 @@
 //' The second list element is a vector of timesteps.
 //' @keywords internal
 // [[Rcpp::export(name=".epidemic_default_cpp")]]
-Rcpp::List epidemic_default_cpp(
-    const Rcpp::List &population, const double &beta, const double &alpha,
-    const double &gamma, const Rcpp::List &intervention,
-    const Rcpp::List &vaccination,
-    const double &time_end = 200.0,  // double required by boost solver
+Rcpp::List epidemic_default_cpp_internal(
+    const Eigen::MatrixXd &initial_state, const double &beta,
+    const double &alpha, const double &gamma,
+    const Eigen::MatrixXd &contact_matrix,
+    const Rcpp::NumericVector &npi_time_begin,
+    const Rcpp::NumericVector &npi_time_end, const Rcpp::NumericMatrix &npi_cr,
+    const Eigen::MatrixXd &vax_time_begin, const Eigen::MatrixXd &vax_time_end,
+    const Eigen::MatrixXd &vax_nu,
+    const double &time_end = 100.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input
-  odetools::state_type x = odetools::initial_state_from_pop(population);
+  odetools::state_type x = initial_state;
 
   // create a default epidemic with parameters
-  epidemics::epidemic_default this_model(beta, alpha, gamma, population,
-                                         intervention, vaccination);
+  epidemics::epidemic_default this_model(beta, alpha, gamma, contact_matrix,
+                                         npi_time_begin, npi_time_end, npi_cr,
+                                         vax_time_begin, vax_time_end, vax_nu);
 
   // prepare storage containers for the observer
   std::vector<odetools::state_type> x_vec;  // is a vector of MatrixXd

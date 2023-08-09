@@ -141,7 +141,7 @@
     contact_matrix = contact_matrix,
     npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
     npi_cr = npi_cr,
-    vax_time_begin = vax_time_begin, vax_time_end = vax_time_end, 
+    vax_time_begin = vax_time_begin, vax_time_end = vax_time_end,
     vax_nu = vax_nu,
     time_end = mod_args$time_end,
     increment = mod_args$increment

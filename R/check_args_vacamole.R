@@ -5,7 +5,7 @@
 #' @description Check and prepare the four main arguments to
 #' [epidemic_vacamole_cpp()] for use with [.epidemic_vacamole_cpp()].
 #'
-#' `.check_args_epidemic_vacamole()` adds an empty `<intervention>` object if 
+#' `.check_args_epidemic_vacamole()` adds an empty `<intervention>` object if
 #' this is missing from the model arguments.
 #'
 #' `.prepare_args_epidemics_vacamole()` prepares arguments for
@@ -18,41 +18,41 @@
 #'
 #' @return
 #'
-#' `.check_args_epidemic_vacamole()` invisibly returns the model arguments 
-#' passed in `mod_args`. If the model arguments did not previously contain 
+#' `.check_args_epidemic_vacamole()` invisibly returns the model arguments
+#' passed in `mod_args`. If the model arguments did not previously contain
 #' elements named `intervention` this is added as dummy objects of the
 #' corresponding classes.
 #'
-#' `.prepare_args_epidemic_vacamole()` returns a list of model arguments 
+#' `.prepare_args_epidemic_vacamole()` returns a list of model arguments
 #' suitable for [.epidemic_vacamole_cpp()]. This is a named list consisting of:
 #'
-#'  - `initial_state`: the initial conditions modified to represent absolute 
+#'  - `initial_state`: the initial conditions modified to represent absolute
 #' rather than proportional values;
 #'
 #'  - `beta`, `beta_v`: two numbers representing the transmission rate
 #' of the infection for unvaccinated or single-dose vaccinated, and two-dose
 #' vaccinated individuals, respectively;
-#' 
-#'  - `alpha`: a single number for the transition rate from the 'exposed' and 
+#'
+#'  - `alpha`: a single number for the transition rate from the 'exposed' and
 #' 'exposed_vaccinated' to the 'infectious' and 'infectious_vaccinated'
 #' compartments;
-#' 
+#'
 #'  - `omega`, `omega_v`: two numbers representing the mortality rate
 #' of the infection for unvaccinated or single-dose vaccinated, and two-dose
 #' vaccinated individuals, respectively;
-#' 
+#'
 #' - `eta`, `eta_v`: two numbers representing the hospitalisation rate
 #' of the infection for unvaccinated or single-dose vaccinated, and two-dose
 #' vaccinated individuals, respectively;
-#' 
+#'
 #' - `gamma`: a single number for the recovery rate from the infection;
-#' 
+#'
 #'  - `contact_matrix`, a numeric matrix for the population contact matrix
 #' scaled by the largest real eigenvalue and by the size of each groups;
 #'
 #'  - `npi_time_begin`, `npi_time_end`: two vectors for the start and end times
 #' of any interventions applied;
-#' 
+#'
 #'  - `npi_cr`: a matrix for the age- and intervention-specific effect on social
 #' contacts;
 #'
@@ -170,14 +170,14 @@
   # return selected arguments for internal C++ function
   list(
     initial_state = initial_state,
-    beta = beta, beta_v = beta_v, alpha = alpha, 
+    beta = beta, beta_v = beta_v, alpha = alpha,
     omega = omega, omega_v = omega_v,
     eta = eta, eta_v = eta_v,
     gamma = gamma,
     contact_matrix = contact_matrix,
     npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
     npi_cr = npi_cr,
-    vax_time_begin = vax_time_begin, vax_time_end = vax_time_end, 
+    vax_time_begin = vax_time_begin, vax_time_end = vax_time_end,
     vax_nu = vax_nu,
     time_end = mod_args$time_end,
     increment = mod_args$increment

@@ -29,7 +29,7 @@
 namespace epidemics {
 
 /// @brief Run a stochastic SEIR model of ebola with Erlang passage times
-/// @param initial_conditions A vector representing the number of individuals in
+/// @param initial_state A vector representing the number of individuals in
 /// each compartment.
 /// @param population_size The population size
 /// @param beta The transmission rate.
@@ -43,13 +43,13 @@ namespace epidemics {
 /// the infectious compartment
 /// @param time_end The time at which the simulation ends
 /// @return An Rcpp::List with the states and times
-inline Rcpp::List epidemic_ebola(const Rcpp::IntegerVector &initial_conditions,
+inline Rcpp::List epidemic_ebola(const Rcpp::IntegerVector &initial_state,
                                  const int &population_size, const double &beta,
                                  const int &shape_E, const double &rate_E,
                                  const int &shape_I, const double &rate_I,
                                  const int &time_end) {
   // copy conditions
-  Rcpp::IntegerVector current_conditions = initial_conditions;
+  Rcpp::IntegerVector current_state = initial_state;
 
   // exposed and infectious rates --- must be Rcpp vectors
   Rcpp::NumericVector exposed_rates =
@@ -70,14 +70,14 @@ inline Rcpp::List epidemic_ebola(const Rcpp::IntegerVector &initial_conditions,
   // exposed is expected to be the second element -- hardcoded
   // infectious is expected to be the third element -- hardcoded
   // TODO(all): replace all position-based access with name-based access via map
-  exposed_blocks_past.back() = initial_conditions[1];
-  infectious_blocks_past.back() = initial_conditions[2];
+  exposed_blocks_past.back() = initial_state[1];
+  infectious_blocks_past.back() = initial_state[2];
 
   // vec-of-vecs matrix for data storage --- four columns, 1 per compartment
   Rcpp::IntegerMatrix data_matrix(time_end + 1, 4);
 
   // assign initial conditions at time = 0
-  data_matrix(0, Rcpp::_) = initial_conditions;
+  data_matrix(0, Rcpp::_) = initial_state;
 
   // run the simulation from time 1 to max time (inclusive of max time)
   for (size_t time = 1; time <= time_end; time++) {
@@ -86,13 +86,13 @@ inline Rcpp::List epidemic_ebola(const Rcpp::IntegerVector &initial_conditions,
     std::vector<int> infectious_blocks_current(n_infectious_blocks);
 
     // get current probability of exposure
-    const double beta_now = beta * static_cast<double>(current_conditions[2]) /
+    const double beta_now = beta * static_cast<double>(current_state[2]) /
                             static_cast<double>(population_size);
     const double prob_exposure = 1.0 - std::exp(-beta_now);
 
     // get new exposures, infectious, and recovered
     const int new_exposed = Rcpp::rbinom(
-        1.0, static_cast<double>(current_conditions[0]), prob_exposure)[0];
+        1.0, static_cast<double>(current_state[0]), prob_exposure)[0];
     const int new_infectious = exposed_blocks_past[0];    // first index
     const int new_recovered = infectious_blocks_past[0];  // first index
 
@@ -120,15 +120,15 @@ inline Rcpp::List epidemic_ebola(const Rcpp::IntegerVector &initial_conditions,
     }
 
     // update current conditions
-    current_conditions[0] = current_conditions[0] - new_exposed;
-    current_conditions[1] = std::accumulate(exposed_blocks_current.begin(),
-                                            exposed_blocks_current.end(), 0);
-    current_conditions[2] = std::accumulate(infectious_blocks_current.begin(),
-                                            infectious_blocks_current.end(), 0);
-    current_conditions[3] = current_conditions[3] + new_recovered;
+    current_state[0] = current_state[0] - new_exposed;
+    current_state[1] = std::accumulate(exposed_blocks_current.begin(),
+                                       exposed_blocks_current.end(), 0);
+    current_state[2] = std::accumulate(infectious_blocks_current.begin(),
+                                       infectious_blocks_current.end(), 0);
+    current_state[3] = current_state[3] + new_recovered;
 
     // log data
-    data_matrix(time, Rcpp::_) = current_conditions;
+    data_matrix(time, Rcpp::_) = current_state;
 
     // swap past vectors vectors
     exposed_blocks_past = exposed_blocks_current;

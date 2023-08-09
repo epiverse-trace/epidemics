@@ -5,7 +5,7 @@
 \title{Run an SEIR model with Erlang passage times}
 \usage{
 .epidemic_ebola_cpp(
-  initial_conditions,
+  initial_state,
   population_size,
   beta,
   shape_E,
@@ -16,9 +16,6 @@
 )
 }
 \arguments{
-\item{initial_conditions}{An integer vector of the initial conditions
-corresponding to an SEIR model.}
-
 \item{population_size}{A single integer for the population size.}
 
 \item{beta}{The transmission rate \eqn{\beta}.}
@@ -37,6 +34,9 @@ distribution of passage times through the infectious compartment.}
 
 \item{time_end}{A single integer for the maximum simulation time; this is
 assumed to be in days.}
+
+\item{initial_conditions}{An integer vector of the initial conditions
+corresponding to an SEIR model.}
 }
 \value{
 A list with two elements, \code{x}, and integer matrix with as many rows

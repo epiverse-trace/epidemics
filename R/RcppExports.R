@@ -73,8 +73,8 @@
 #' This output is intended to be passed to [output_to_df()] to be converted
 #' into a data.frame for further analysis.
 #' @keywords internal
-.epidemic_ebola_cpp <- function(initial_conditions, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end) {
-    .Call(`_epidemics_epidemic_ebola_cpp_internal`, initial_conditions, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end)
+.epidemic_ebola_cpp <- function(initial_state, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end) {
+    .Call(`_epidemics_epidemic_ebola_cpp_internal`, initial_state, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end)
 }
 
 #' @title Run the RIVM Vacamole model

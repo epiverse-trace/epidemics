@@ -127,7 +127,7 @@ test_that("Larger R0 leads to larger final size in ebola model", {
 # Equivalence with R model
 test_that("Ebola model equivalence in R-only and RCpp", {
   set.seed(1)
-  max_time <- 100
+  time_end <- 100
   ebola_r <- epidemic_ebola_r(
     initial_state = as.integer(uk_pop$demography_vector *
       uk_pop$initial_conditions),
@@ -136,12 +136,12 @@ test_that("Ebola model equivalence in R-only and RCpp", {
       shape_I = 5L, rate_I = 1,
       beta = ebola$r0 / ebola$infectious_period
     ),
-    max_time = max_time
+    time_end = time_end
   )
   # values at last timestep
   ebola_r_values <- as.integer(
     t(
-      as.matrix(ebola_r[max_time, c("S", "E", "I", "R")])
+      as.matrix(ebola_r[time_end, c("S", "E", "I", "R")])
     )
   )
 
@@ -150,7 +150,7 @@ test_that("Ebola model equivalence in R-only and RCpp", {
   ebola_cpp <- epidemic_ebola_cpp(
     population = uk_pop,
     infection = ebola,
-    time_end = max_time - 1 # one less for C++ implementation due to zero index
+    time_end = time_end - 1 # one less for C++ implementation due to zero index
   )
   # get last timestep values
   ebola_cpp_values <- tail(ebola_cpp$value, 4L)

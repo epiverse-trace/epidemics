@@ -41,13 +41,13 @@ namespace epidemics {
 /// the infectious compartment
 /// @param rate_I The rate of the Erlang distribution of passage times through
 /// the infectious compartment
-/// @param max_time The time at which the simulation ends
+/// @param time_end The time at which the simulation ends
 /// @return An Rcpp::List with the states and times
 inline Rcpp::List epidemic_ebola(const Rcpp::IntegerVector &initial_conditions,
                                  const int &population_size, const double &beta,
                                  const int &shape_E, const double &rate_E,
                                  const int &shape_I, const double &rate_I,
-                                 const int &max_time) {
+                                 const int &time_end) {
   // copy conditions
   Rcpp::IntegerVector current_conditions = initial_conditions;
 
@@ -74,13 +74,13 @@ inline Rcpp::List epidemic_ebola(const Rcpp::IntegerVector &initial_conditions,
   infectious_blocks_past.back() = initial_conditions[2];
 
   // vec-of-vecs matrix for data storage --- four columns, 1 per compartment
-  Rcpp::IntegerMatrix data_matrix(max_time + 1, 4);
+  Rcpp::IntegerMatrix data_matrix(time_end + 1, 4);
 
   // assign initial conditions at time = 0
   data_matrix(0, Rcpp::_) = initial_conditions;
 
   // run the simulation from time 1 to max time (inclusive of max time)
-  for (size_t time = 1; time <= max_time; time++) {
+  for (size_t time = 1; time <= time_end; time++) {
     // vectors for current values --- hold zeros
     std::vector<int> exposed_blocks_current(n_exposed_blocks);
     std::vector<int> infectious_blocks_current(n_infectious_blocks);
@@ -136,7 +136,7 @@ inline Rcpp::List epidemic_ebola(const Rcpp::IntegerVector &initial_conditions,
   }
 
   return Rcpp::List::create(Rcpp::Named("x") = data_matrix,
-                            Rcpp::Named("time") = Rcpp::seq(0, max_time));
+                            Rcpp::Named("time") = Rcpp::seq(0, time_end));
 }
 
 }  // namespace epidemics

@@ -17,6 +17,8 @@
 namespace epidemics {
 
 /* The rhs of x' = f(x) defined as a struct with an operator */
+
+/// @brief Struct containing the default epidemic ODE system
 struct epidemic_default {
   const double beta, alpha, gamma;
   const Eigen::MatrixXd contact_matrix;
@@ -29,6 +31,18 @@ struct epidemic_default {
   Eigen::MatrixXd vax_nu_current;
 
   // npi, interv, pop
+
+  /// @brief Constructor for the default epidemic struct
+  /// @param beta The transmission rate
+  /// @param alpha The rate at which individuals become infectious
+  /// @param gamma The recovery rate
+  /// @param contact_matrix The population contact matrix
+  /// @param npi_time_begin The intervention start times
+  /// @param npi_time_end The intervention end times
+  /// @param npi_cr The intervention contact reduction
+  /// @param vax_time_begin The age- and dose-specific vaccination start time
+  /// @param vax_time_end The age- and dose-specific vaccination end time
+  /// @param vax_nu The age- and dose-specific vaccination rate
   epidemic_default(const double beta, const double alpha, const double gamma,
                    const Eigen::MatrixXd contact_matrix,
                    const Rcpp::NumericVector npi_time_begin,
@@ -50,6 +64,12 @@ struct epidemic_default {
         vax_nu(vax_nu),
         vax_nu_current(vax_nu) {}
 
+  /// @brief Operator for the default model
+  /// @param x The initial state of the population - rows represent age groups
+  /// while columns represent compartments
+  /// @param dxdt An object of the same type as `x` to hold the current state of
+  /// the system
+  /// @param t The simulation time
   void operator()(const odetools::state_type& x,
                   odetools::state_type& dxdt,  // NOLINT
                   const double t) {

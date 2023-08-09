@@ -18,20 +18,23 @@ the corresponding classes.
 
 \code{.prepare_args_epidemic_default()} returns a list of model arguments suitable
 for \code{\link[=.epidemic_default_cpp]{.epidemic_default_cpp()}}. This is a named list consisting of:
-\enumerate{
-\item \code{population}, the \verb{<population>} object with the contact matrix
-scaled by the largest real eigenvalue and by the size of each groups; the
-initial conditions are also modified to represent absolute rather than
-proportional values.
-\item \code{beta}, a single number for the transmission rate of the infection.
-\item \code{alpha}, a single number for the rate of transition from exposed to
-infectious.
-\item \code{gamma}, a single number for the recovery rate.
-\item \code{intervention}, the \verb{<intervention>} object,
-\item \code{vaccination}, the \verb{<vaccination>} object,
-\item \code{time_end}, a single number for the time point at which to end the
-simulation, and
-\item \code{increment},  a single number for the value by which the simulation time
+\itemize{
+\item \code{initial_state}: the initial conditions modified to represent absolute
+rather than proportional values;
+\item \code{beta}, \code{alpha}, \code{gamma}: three numbers representing the transmission rate
+of the infection, the rate of transition from exposed to infectious, and the
+recovery rate, respectively;
+\item \code{contact_matrix}, a numeric matrix for the population contact matrix
+scaled by the largest real eigenvalue and by the size of each groups;
+\item \code{npi_time_begin}, \code{npi_time_end}: two vectors for the start and end times
+of any interventions applied;
+\item \code{npi_cr}: a matrix for the age- and intervention-specific effect on social
+contacts;
+\item \code{vax_time_begin},\code{vax_time_end}, \code{vax_nu}: three numeric matrices for the
+age- and dose-specific start times, end times, and rates of any vaccination
+doses implemented;
+\item \code{time_end}, \code{increment}: two numbers for the time at which to end the
+simulation, and the value by which the simulation time
 is incremented.
 }
 }

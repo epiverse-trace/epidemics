@@ -1,4 +1,33 @@
-#' Check arguments to epidemic ebola model from Getz and Dougherty
+#' @title Check arguments to epidemic ebola model from Getz and Dougherty
+#' @name check_prepare_ebola_args
+#' @rdname check_prepare_ebola_args
+#'
+#' @description Check and prepare the four main arguments to
+#' [epidemic_ebola_cpp()] for use with [.epidemic_ebola_cpp()].
+#' @return
+#'
+#' `.check_args_epidemic_ebola()` invisibly returns the model arguments passed
+#' in `mod_args`.
+#'
+#' `.prepare_args_epidemic_ebola()` returns a list of model arguments suitable
+#' for [.epidemic_ebola_cpp()]. This is a named list consisting of:
+#'
+#' - `initial_state`: the initial conditions modified to represent absolute
+#' rather than proportional values;
+#'
+#'  - `population_size`: the population size;
+#'
+#'  - `beta`: the transmission rate of the infection;
+#'
+#'  - `shape_E`, `rate_E`: the shape and rate parameters of an Erlang
+#' distribution that represents passage times through the 'exposed' compartment;
+#'
+#'  - `shape_I`, `rate_I`: the shape and rate parameters of an Erlang
+#' distribution that represents passage times through the 'infectious'
+#' compartment;
+#'
+#' - `time_end`: the time at which the simulation ends.
+#'
 #' @keywords internal
 .check_args_epidemic_ebola <- function(mod_args) {
   # check that arguments list has expected names
@@ -26,7 +55,9 @@
   invisible(mod_args)
 }
 
-#' Prepare arguments to epidemic ebola model from Getz and Dougherty
+#' @title Prepare arguments to epidemic ebola model from Getz and Dougherty
+#' @name check_prepare_ebola_args
+#' @rdname check_prepare_ebola_args
 #' @keywords internal
 .prepare_args_epidemic_ebola <- function(mod_args) {
   # prepare initial conditions by scaling with demography
@@ -51,8 +82,9 @@
 
   # return only required list elements
   list(
-    initial_state, population_size,
-    beta, shape_E, rate_E, shape_I, rate_I,
-    mod_args$time_end
+    initial_state = initial_state, population_size = population_size,
+    beta = beta, shape_E = shape_E, rate_E = rate_E,
+    shape_I = shape_I, rate_I = rate_I,
+    time_end = mod_args$time_end
   )
 }

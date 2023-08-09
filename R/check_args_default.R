@@ -26,26 +26,28 @@
 #' `.prepare_args_epidemic_default()` returns a list of model arguments suitable
 #' for [.epidemic_default_cpp()]. This is a named list consisting of:
 #'
-#'  1. `population`, the `<population>` object with the contact matrix
-#' scaled by the largest real eigenvalue and by the size of each groups; the
-#' initial conditions are also modified to represent absolute rather than
-#' proportional values.
+#'  - `initial_state`: the initial conditions modified to represent absolute
+#' rather than proportional values;
 #'
-#'  2. `beta`, a single number for the transmission rate of the infection.
+#'  - `beta`, `alpha`, `gamma`: three numbers representing the transmission rate
+#' of the infection, the rate of transition from exposed to infectious, and the
+#' recovery rate, respectively;
 #'
-#'  3. `alpha`, a single number for the rate of transition from exposed to
-#' infectious.
+#'  - `contact_matrix`, a numeric matrix for the population contact matrix
+#' scaled by the largest real eigenvalue and by the size of each groups;
 #'
-#'  4. `gamma`, a single number for the recovery rate.
+#'  - `npi_time_begin`, `npi_time_end`: two vectors for the start and end times
+#' of any interventions applied;
 #'
-#'  5. `intervention`, the `<intervention>` object,
+#'  - `npi_cr`: a matrix for the age- and intervention-specific effect on social
+#' contacts;
 #'
-#'  6. `vaccination`, the `<vaccination>` object,
+#'  - `vax_time_begin`,`vax_time_end`, `vax_nu`: three numeric matrices for the
+#' age- and dose-specific start times, end times, and rates of any vaccination
+#' doses implemented;
 #'
-#'  7. `time_end`, a single number for the time point at which to end the
-#' simulation, and
-#'
-#'  8. `increment`,  a single number for the value by which the simulation time
+#'  - `time_end`, `increment`: two numbers for the time at which to end the
+#' simulation, and the value by which the simulation time
 #' is incremented.
 #'
 #' @keywords internal
@@ -134,12 +136,14 @@
 
   # return selected arguments for internal C++ function
   list(
-    initial_state,
-    beta, alpha, gamma,
-    contact_matrix,
-    npi_time_begin, npi_time_end, npi_cr,
-    vax_time_begin, vax_time_end, vax_nu,
-    mod_args$time_end,
-    mod_args$increment
+    initial_state = initial_state,
+    beta = beta, alpha = alpha, gamma = gamma,
+    contact_matrix = contact_matrix,
+    npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
+    npi_cr = npi_cr,
+    vax_time_begin = vax_time_begin, vax_time_end = vax_time_end, 
+    vax_nu = vax_nu,
+    time_end = mod_args$time_end,
+    increment = mod_args$increment
   )
 }

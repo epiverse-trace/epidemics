@@ -1,12 +1,53 @@
 #' @title Check arguments to default epidemic function
+#' @name check_prepare_default_args
+#' @rdname check_prepare_default_args
 #'
-#' @description Checks the four main arguments to [epidemic_default_cpp()].
-#' Adds an empty `<intervention>` and `<vaccination>` object if these are
-#' missing from the model arguments, and this is done for compatibility with
-#' the model code.
-#' @return Invisibly returns the model arguments passed in `mod_args`. If the
-#' model arguments did not previously contain elements named `intervention` and
-#' `vaccination`, these are added as dummy objects of the corresponding classes.
+#' @description Check and prepare the four main arguments to
+#' [epidemic_default_cpp()] for use with [.epidemic_default_cpp()].
+#'
+#' `.check_args_epidemic_default()` adds an empty `<intervention>` and
+#' `<vaccination>` object if these are missing from the model arguments.
+#'
+#' `.prepare_args_epidemics_default()` prepares arguments for
+#' [.epidemic_default_cpp()], which is the C++ function that solves the default
+#' ODE system using a Boost _odeint_ solver.
+#' `.prepare_args_epidemics_default()` converts the arguments collected in
+#' `mod_args` into simpler structures such as lists and numeric or integer
+#' vectors that can be interpreted as C++ types such as `Rcpp::List`,
+#' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
+#'
+#' @return
+#'
+#' `.check_args_epidemic_default()` invisibly returns the model arguments passed
+#' in `mod_args`. If the model arguments did not previously contain elements
+#' named `intervention` and `vaccination`, these are added as dummy objects of
+#' the corresponding classes.
+#'
+#' `.prepare_args_epidemic_default()` returns a list of model arguments suitable
+#' for [.epidemic_default_cpp()]. This is a named list consisting of:
+#'
+#'  1. `population`, the `<population>` object with the contact matrix
+#' scaled by the largest real eigenvalue and by the size of each groups; the
+#' initial conditions are also modified to represent absolute rather than
+#' proportional values.
+#'
+#'  2. `beta`, a single number for the transmission rate of the infection.
+#'
+#'  3. `alpha`, a single number for the rate of transition from exposed to
+#' infectious.
+#'
+#'  4. `gamma`, a single number for the recovery rate.
+#'
+#'  5. `intervention`, the `<intervention>` object,
+#'
+#'  6. `vaccination`, the `<vaccination>` object,
+#'
+#'  7. `time_end`, a single number for the time point at which to end the
+#' simulation, and
+#'
+#'  8. `increment`,  a single number for the value by which the simulation time
+#' is incremented.
+#'
 #' @keywords internal
 .check_args_epidemic_default <- function(mod_args) {
   # check that arguments list has expected names
@@ -57,34 +98,8 @@
 }
 
 #' @title Prepare arguments to default epidemic function
-#'
-#' @description Prepares arguments for [.epidemic_default_cpp()], which is the
-#' C++ function that solves the default ODE system using a Boost _odeint_ solver
-#' .
-#' @return Returns a list of model arguments suitable for
-#' [.epidemic_default_cpp()]. This is a named list consisting of:
-#'
-#'  1. `population`, the `<population>` object with the contact matrix
-#' scaled by the largest real eigenvalue and by the size of each groups; the
-#' initial conditions are also modified to represent absolute rather than
-#' proportional values.
-#'
-#'  2. `beta`, a single number for the transmission rate of the infection.
-#'
-#'  3. `alpha`, a single number for the rate of transition from exposed to
-#' infectious.
-#'
-#'  4. `gamma`, a single number for the recovery rate.
-#'
-#'  5. `intervention`, the `<intervention>` object,
-#'
-#'  6. `vaccination`, the `<vaccination>` object,
-#'
-#'  7. `time_end`, a single number for the time point at which to end the
-#' simulation, and
-#'
-#'  8. `increment`,  a single number for the value by which the simulation time
-#' is incremented.
+#' @name check_prepare_default_args
+#' @rdname check_prepare_default_args
 #' @keywords internal
 .prepare_args_epidemic_default <- function(mod_args) {
   # prepare the contact matrix and the initial conditions

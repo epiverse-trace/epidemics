@@ -1,4 +1,69 @@
-#' Check arguments to epidemic function for the Vacamole model
+#' @title Check arguments to the Vacamole epidemic function
+#' @name check_prepare_vacamole_args
+#' @rdname check_prepare_vacamole_args
+#'
+#' @description Check and prepare the four main arguments to
+#' [epidemic_vacamole_cpp()] for use with [.epidemic_vacamole_cpp()].
+#'
+#' `.check_args_epidemic_vacamole()` adds an empty `<intervention>` object if 
+#' this is missing from the model arguments.
+#'
+#' `.prepare_args_epidemics_vacamole()` prepares arguments for
+#' [.epidemic_vacamole_cpp()], which is the C++ function that solves the default
+#' ODE system using a Boost _odeint_ solver.
+#' `.prepare_args_epidemics_vacamole()` converts the arguments collected in
+#' `mod_args` into simpler structures such as lists and numeric or integer
+#' vectors that can be interpreted as C++ types such as `Rcpp::List`,
+#' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
+#'
+#' @return
+#'
+#' `.check_args_epidemic_vacamole()` invisibly returns the model arguments 
+#' passed in `mod_args`. If the model arguments did not previously contain 
+#' elements named `intervention` this is added as dummy objects of the
+#' corresponding classes.
+#'
+#' `.prepare_args_epidemic_vacamole()` returns a list of model arguments 
+#' suitable for [.epidemic_vacamole_cpp()]. This is a named list consisting of:
+#'
+#'  - `initial_state`: the initial conditions modified to represent absolute 
+#' rather than proportional values;
+#'
+#'  - `beta`, `beta_v`: two numbers representing the transmission rate
+#' of the infection for unvaccinated or single-dose vaccinated, and two-dose
+#' vaccinated individuals, respectively;
+#' 
+#'  - `alpha`: a single number for the transition rate from the 'exposed' and 
+#' 'exposed_vaccinated' to the 'infectious' and 'infectious_vaccinated'
+#' compartments;
+#' 
+#'  - `omega`, `omega_v`: two numbers representing the mortality rate
+#' of the infection for unvaccinated or single-dose vaccinated, and two-dose
+#' vaccinated individuals, respectively;
+#' 
+#' - `eta`, `eta_v`: two numbers representing the hospitalisation rate
+#' of the infection for unvaccinated or single-dose vaccinated, and two-dose
+#' vaccinated individuals, respectively;
+#' 
+#' - `gamma`: a single number for the recovery rate from the infection;
+#' 
+#'  - `contact_matrix`, a numeric matrix for the population contact matrix
+#' scaled by the largest real eigenvalue and by the size of each groups;
+#'
+#'  - `npi_time_begin`, `npi_time_end`: two vectors for the start and end times
+#' of any interventions applied;
+#' 
+#'  - `npi_cr`: a matrix for the age- and intervention-specific effect on social
+#' contacts;
+#'
+#'  - `vax_time_begin`,`vax_time_end`, `vax_nu`: three numeric matrices for the
+#' age- and dose-specific start times, end times, and rates of any vaccination
+#' doses implemented;
+#'
+#'  - `time_end`, `increment`: two numbers for the time at which to end the
+#' simulation, and the value by which the simulation time
+#' is incremented.
+#'
 #' @keywords internal
 .check_args_epidemic_vacamole <- function(mod_args) {
   # check that arguments list has expected names
@@ -54,7 +119,9 @@
   invisible(mod_args)
 }
 
-#' Prepare arguments for the Vacamole epidemic function
+#' @title Prepare arguments for the Vacamole epidemic function
+#' @name check_prepare_vacamole_args
+#' @rdname check_prepare_vacamole_args
 #' @keywords internal
 .prepare_args_epidemic_vacamole <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
@@ -102,12 +169,17 @@
 
   # return selected arguments for internal C++ function
   list(
-    initial_state,
-    beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma,
-    contact_matrix,
-    npi_time_begin, npi_time_end, npi_cr,
-    vax_time_begin, vax_time_end, vax_nu,
-    mod_args$time_end,
-    mod_args$increment
+    initial_state = initial_state,
+    beta = beta, beta_v = beta_v, alpha = alpha, 
+    omega = omega, omega_v = omega_v,
+    eta = eta, eta_v = eta_v,
+    gamma = gamma,
+    contact_matrix = contact_matrix,
+    npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
+    npi_cr = npi_cr,
+    vax_time_begin = vax_time_begin, vax_time_end = vax_time_end, 
+    vax_nu = vax_nu,
+    time_end = mod_args$time_end,
+    increment = mod_args$increment
   )
 }

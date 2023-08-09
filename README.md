@@ -162,7 +162,7 @@ using the function `intervention()`.
 close_schools <- intervention(
   time_begin = 200,
   time_end = 260,
-  contact_reduction = c(0.5, 0.01, 0.01)
+  contact_reduction = matrix(c(0.5, 0.01, 0.01))
 )
 ```
 
@@ -174,8 +174,7 @@ infectious period of 7 days, and a pre-infectious period of 3 days.
 
 ``` r
 # run an epidemic model using `epidemic()`
-output <- epidemic(
-  model = "default",
+output <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic_influenza,
   intervention = close_schools,

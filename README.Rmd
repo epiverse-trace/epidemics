@@ -11,7 +11,8 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE,
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "100%",
+  dpi = 150
 )
 ```
 
@@ -126,7 +127,7 @@ Define an intervention to close schools for two months. This intervention mostly
 close_schools <- intervention(
   time_begin = 200,
   time_end = 260,
-  contact_reduction = c(0.5, 0.01, 0.01)
+  contact_reduction = matrix(c(0.5, 0.01, 0.01))
 )
 ```
 
@@ -168,7 +169,7 @@ ggplot(output[compartment == "infectious", ]) +
   scale_colour_brewer(
     palette = "Dark2",
     labels = rownames(contact_matrix),
-    name = NULL
+    name = "Age group"
   ) +
   scale_y_continuous(
     labels = scales::comma,

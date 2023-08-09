@@ -33,10 +33,12 @@
 //' into a data.frame for further analysis.
 //' @keywords internal
 // [[Rcpp::export(name=".epidemic_ebola_cpp")]]
-Rcpp::List epidemic_ebola_cpp_internal(
-    const Rcpp::IntegerVector &initial_conditions, const int &population_size,
-    const double &beta, const int &shape_E, const double &rate_E,
-    const int &shape_I, const double &rate_I, const int &time_end) {
-  return epidemics::epidemic_ebola(initial_conditions, population_size, beta,
+Rcpp::List epidemic_ebola_cpp_internal(const Rcpp::IntegerVector &initial_state,
+                                       const int &population_size,
+                                       const double &beta, const int &shape_E,
+                                       const double &rate_E, const int &shape_I,
+                                       const double &rate_I,
+                                       const int &time_end) {
+  return epidemics::epidemic_ebola(initial_state, population_size, beta,
                                    shape_E, rate_E, shape_I, rate_I, time_end);
 }

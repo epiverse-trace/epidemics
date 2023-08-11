@@ -35,6 +35,7 @@ Odeint
 Ottar
 Pieter
 RIVM
+RTools
 Rcpp
 RcppEigen
 SEIHR
@@ -47,6 +48,7 @@ WIP
 Wallinga
 analogs
 args
+cmdstanr
 codecov
 com
 dD

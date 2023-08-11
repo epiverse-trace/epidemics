@@ -61,6 +61,21 @@ if(!require("pak")) install.packages("pak")
 pak::pak("epiverse-trace/epidemics")
 ```
 
+**Notes**
+
+1.  Some users who are also using or developing packages that use Stan
+    might face issues if they have modified their toolchain to
+    accommodate packages such as
+    [*cmdstanr*](https://mc-stan.org/cmdstanr/); see [this resolved
+    issue](https://github.com/stan-dev/cmdstanr/issues/790) for a
+    starting point if you face similar problems.
+
+2.  Users on Windows systems will need to have packages from the
+    *RTools* family installed and on their system path; see [this link
+    for guidance on using
+    *RTools*](https://cran.r-project.org/bin/windows/Rtools/) for your
+    version of R.
+
 ## Quick start
 
 Here we show an example of using the default model in *epidemics* to

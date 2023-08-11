@@ -88,7 +88,7 @@ https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.epidemic_vacamole_cpp</span><span class="op">(</span></span>
-<span>  <span class="va">population</span>,</span>
+<span>  <span class="va">initial_state</span>,</span>
 <span>  <span class="va">beta</span>,</span>
 <span>  <span class="va">beta_v</span>,</span>
 <span>  <span class="va">alpha</span>,</span>
@@ -97,22 +97,21 @@ https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090</p>
 <span>  <span class="va">eta</span>,</span>
 <span>  <span class="va">eta_v</span>,</span>
 <span>  <span class="va">gamma</span>,</span>
-<span>  <span class="va">intervention</span>,</span>
-<span>  <span class="va">vaccination</span>,</span>
-<span>  <span class="va">time_end</span>,</span>
-<span>  <span class="va">increment</span></span>
+<span>  <span class="va">contact_matrix</span>,</span>
+<span>  <span class="va">npi_time_begin</span>,</span>
+<span>  <span class="va">npi_time_end</span>,</span>
+<span>  <span class="va">npi_cr</span>,</span>
+<span>  <span class="va">vax_time_begin</span>,</span>
+<span>  <span class="va">vax_time_end</span>,</span>
+<span>  <span class="va">vax_nu</span>,</span>
+<span>  time_end <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  increment <span class="op">=</span> <span class="fl">0.1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>population</dt>
-<dd><p>An object of the <code>population</code> class, which holds a
-population contact matrix, a demography vector, and the initial conditions
-of each demographic group. See <code><a href="population.html">population()</a></code>.</p></dd>
-
-
-<dt>beta</dt>
+    <dl><dt>beta</dt>
 <dd><p>The transmission rate \(\beta\) at which unvaccinated and
 partially vaccinated individuals are infected by the disease.</p></dd>
 
@@ -152,6 +151,20 @@ vaccination.</p></dd>
 <dd><p>The recovery rate \(\gamma\).</p></dd>
 
 
+<dt>time_end</dt>
+<dd><p>The maximum time. Defaults to 100.0.</p></dd>
+
+
+<dt>increment</dt>
+<dd><p>The increment time, defaults to 0.1.</p></dd>
+
+
+<dt>population</dt>
+<dd><p>An object of the <code>population</code> class, which holds a
+population contact matrix, a demography vector, and the initial conditions
+of each demographic group. See <code><a href="population.html">population()</a></code>.</p></dd>
+
+
 <dt>intervention</dt>
 <dd><p>A non-pharmaceutical intervention applied during the
 course of the epidemic, with a start and end time, and age-specific effect
@@ -163,14 +176,6 @@ on contacts. See <code><a href="intervention.html">intervention()</a></code>.</p
 course of the epidemic, with a group- and dose-specific start and end time,
 and age-specific rates of delivery of first and second doses.
 See <code><a href="vaccination.html">vaccination()</a></code>.</p></dd>
-
-
-<dt>time_end</dt>
-<dd><p>The maximum time. See <code><a href="epidemic.html">epidemic()</a></code> for default value.</p></dd>
-
-
-<dt>increment</dt>
-<dd><p>The increment time. See <code><a href="epidemic.html">epidemic()</a></code> for default value.</p></dd>
 
 </dl></div>
     <div class="section level2">

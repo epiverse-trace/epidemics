@@ -64,16 +64,16 @@
     <loc>/reference/c.vaccination.html</loc>
   </url>
   <url>
+    <loc>/reference/check_prepare_default_args.html</loc>
+  </url>
+  <url>
+    <loc>/reference/check_prepare_ebola_args.html</loc>
+  </url>
+  <url>
+    <loc>/reference/check_prepare_vacamole_args.html</loc>
+  </url>
+  <url>
     <loc>/reference/compute_erlang_discrete_prob.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-check_args_epidemic_default.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-check_args_epidemic_ebola.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-check_args_epidemic_vacamole.html</loc>
   </url>
   <url>
     <loc>/reference/dot-epidemic_default_cpp.html</loc>
@@ -85,22 +85,19 @@
     <loc>/reference/dot-epidemic_vacamole_cpp.html</loc>
   </url>
   <url>
-    <loc>/reference/dot-prepare_args_epidemic_default.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-prepare_args_epidemic_ebola.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-prepare_args_epidemic_vacamole.html</loc>
-  </url>
-  <url>
     <loc>/reference/dot-prob_discrete_erlang.html</loc>
   </url>
   <url>
-    <loc>/reference/epidemic.html</loc>
+    <loc>/reference/epidemic_default_cpp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/epidemic_ebola.html</loc>
   </url>
   <url>
     <loc>/reference/epidemic_size.html</loc>
+  </url>
+  <url>
+    <loc>/reference/epidemic_vacamole_cpp.html</loc>
   </url>
   <url>
     <loc>/reference/epidemics-package.html</loc>
@@ -161,9 +158,6 @@
   </url>
   <url>
     <loc>/reference/read_from_library.html</loc>
-  </url>
-  <url>
-    <loc>/reference/seir_erlang.html</loc>
   </url>
   <url>
     <loc>/reference/vaccination.html</loc>

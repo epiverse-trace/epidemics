@@ -163,10 +163,10 @@
 <h2 id="examine-the-baseline">Examine the baseline<a class="anchor" aria-label="anchor" href="#examine-the-baseline"></a>
 </h2>
 <p>We first examine the baseline scenario — no interventions are implemented to slow the spread of the epidemic — and visualise the outcomes in terms of daily new infections.</p>
-<p>We simulate an epidemic using the <code><a href="../reference/epidemic.html">epidemic()</a></code> function, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
+<p>We simulate an epidemic using <code><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp()</a></code>, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># no intervention baseline scenario</span></span>
-<span><span class="va">data_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
+<span><span class="va">data_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">400</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
@@ -254,7 +254,7 @@ We assume that this reduces the contacts of the age group 0 – 19 by 30%, and t
 </details><p>We simulate the epidemic for 600 days as we expect the intervention to spread disease incidence out over a longer period.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># no intervention baseline scenario</span></span>
-<span><span class="va">data_schools_closed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
+<span><span class="va">data_schools_closed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="va">close_schools</span>,</span>
@@ -359,12 +359,12 @@ Figure 2: Epidemic model with an intervention that targets infections among chil
 <h3 id="combining-interventions">Combining interventions<a class="anchor" aria-label="anchor" href="#combining-interventions"></a>
 </h3>
 <p>We can use the <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> function to combine two <code>intervention</code> objects into a single <code>intervention</code> that accommodates the effect of both interventions.
-This multiple intervention can then be passed — as a single <code>intervention</code> object — to an epidemic model in <code><a href="../reference/epidemic.html">epidemic()</a></code>.</p>
+This multiple intervention can then be passed — as a single <code>intervention</code> object — to an epidemic model in <code><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp()</a></code>.</p>
 <p>When an <code>intervention</code> object is made up of multiple interventions the first intervention to be specified is treated as the baseline intervention, with an age-specific effect on reducing contacts during its duration of effect.</p>
 <p>All further interventions are assumed to be <strong>additional percentage point</strong> increases on the effect of any active interventions.</p>
 </div>
 <p>We can use the <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> function to combine two <code>intervention</code> objects into a single <code>intervention</code> that accommodates the effect of both interventions.
-This multiple intervention can then be passed — as a single <code>intervention</code> object — to an epidemic model in <code><a href="../reference/epidemic.html">epidemic()</a></code>.</p>
+This multiple intervention can then be passed — as a single <code>intervention</code> object — to an epidemic model in <code><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp()</a></code>.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># combine interventions using `c()`</span></span>
 <span><span class="va">combined_interventions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -388,18 +388,18 @@ This multiple intervention can then be passed — as a single <code>intervention
 <span><span class="co">#&gt; [3,]  0.01  0.01</span></span></code></pre></div>
 </details><div class="alert alert-primary">
 <ul>
-<li><p>We can combine any number of <code>intervention</code> objects into a single <code>intervention</code> object to be passed to <code><a href="../reference/epidemic.html">epidemic()</a></code>.
+<li><p>We can combine any number of <code>intervention</code> objects into a single <code>intervention</code> object to be passed to <code><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp()</a></code>.
 The cumulative effect of the interventions is handled automatically by the C++ code underlying <em>epidemics</em>.</p></li>
 <li><p>Remember that two multiple interventions can also be combined using <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>.
 It is important to be careful when doing this and make sure that only the interventions you intend to combine are concatenated together.
 For example, <code>c(combined_interventions, combined_interventions)</code> is valid, and would effectively double the effect of school and workplace closures in the example.</p></li>
 </ul>
 </div>
-<p>We simulate an epidemic using the <code><a href="../reference/epidemic.html">epidemic()</a></code> function, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
+<p>We simulate an epidemic using the <code><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp()</a></code> function, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
 <p>We simulate the epidemic for 600 days.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get data from an epidemic model with both interventions</span></span>
-<span><span class="va">data_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
+<span><span class="va">data_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="va">combined_interventions</span>,</span>
@@ -505,10 +505,10 @@ Figure 3: Epidemic model with two overlapping interventions in the early phase o
 </details><p>Combine the multiple interventions object with two interventions with the third intervention.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combined_interventions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">combined_interventions</span>, <span class="va">workplace_closures_2</span><span class="op">)</span></span></code></pre></div>
-</details><p>We simulate an epidemic using the <code><a href="../reference/epidemic.html">epidemic()</a></code> function for 600 days as before.</p>
+</details><p>We simulate an epidemic using the <code><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp()</a></code> function for 600 days as before.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get data from an epidemic model with both interventions</span></span>
-<span><span class="va">data_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
+<span><span class="va">data_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default_cpp.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="va">combined_interventions</span>,</span>

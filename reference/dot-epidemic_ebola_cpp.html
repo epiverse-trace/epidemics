@@ -79,9 +79,8 @@ and developed to model the West African ebola virus disease outbreak of 2014
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.epidemic_ebola_cpp</span><span class="op">(</span></span>
-<span>  <span class="va">population</span>,</span>
+<span>  <span class="va">initial_state</span>,</span>
 <span>  <span class="va">population_size</span>,</span>
-<span>  <span class="va">initial_conditions</span>,</span>
 <span>  <span class="va">beta</span>,</span>
 <span>  <span class="va">shape_E</span>,</span>
 <span>  <span class="va">rate_E</span>,</span>
@@ -93,19 +92,8 @@ and developed to model the West African ebola virus disease outbreak of 2014
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>population</dt>
-<dd><p>An object of the <code>population</code> class, which holds a
-population contact matrix, a demography vector, and the initial conditions
-of each demographic group. See <code><a href="population.html">population()</a></code>.</p></dd>
-
-
-<dt>population_size</dt>
+    <dl><dt>population_size</dt>
 <dd><p>A single integer for the population size.</p></dd>
-
-
-<dt>initial_conditions</dt>
-<dd><p>An integer vector of the initial conditions
-corresponding to an SEIR model.</p></dd>
 
 
 <dt>beta</dt>
@@ -135,6 +123,11 @@ distribution of passage times through the infectious compartment.</p></dd>
 <dt>time_end</dt>
 <dd><p>A single integer for the maximum simulation time; this is
 assumed to be in days.</p></dd>
+
+
+<dt>initial_conditions</dt>
+<dd><p>An integer vector of the initial conditions
+corresponding to an SEIR model.</p></dd>
 
 </dl></div>
     <div class="section level2">

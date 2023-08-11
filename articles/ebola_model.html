@@ -187,11 +187,10 @@ This is an appropriate period over which to obtain initial predictions for the o
 <span></span>
 <span><span class="co"># run the epidemic model using `epidemic`</span></span>
 <span><span class="co"># we call the model "ebola" from the library</span></span>
-<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
-<span>  model_name <span class="op">=</span> <span class="st">"ebola"</span>,</span>
+<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">epidemic_ebola_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">ebola</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
+<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># view the head of the output</span></span>
@@ -258,11 +257,10 @@ We can run the model multiple times — here, 100 times — and plot the number 
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Map</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
 <span>  f <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic.html">epidemic</a></span><span class="op">(</span></span>
-<span>      model_name <span class="op">=</span> <span class="st">"ebola"</span>,</span>
+<span>    <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">epidemic_ebola_cpp</a></span><span class="op">(</span></span>
 <span>      population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
 <span>      infection <span class="op">=</span> <span class="va">ebola</span>,</span>
-<span>      time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
+<span>      time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span>    <span class="op">)</span></span>
 <span></span>
 <span>    <span class="co"># add replicate number and return data</span></span>

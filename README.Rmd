@@ -26,13 +26,20 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/{{ packagename }})](https://CRAN.R-project.org/package={{ packagename }})
 <!-- badges: end -->
 
-_{{ packagename }}_ is an R package that provides a convenient interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted infections such as influenza, Covid-19, or respiratory syncytial virus (RSV). The models in _{{ packagename }}_ implement methods outlined in @bjornstad2020a and @bjornstad2020.
+_{{ packagename }}_ is an R package that provides a convenient interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted respiratory infections such as influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus disease.
+The models in _{{ packagename }}_ implement methods outlined in @bjornstad2020a and @bjornstad2020.
 The models in _{{ packagename }}_ can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions.
 
-_{{ packagename }}_ currently provides a default model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates.
-Additionally, _{{ packagename }}_ includes the Vacamole model developed at [RIVM, the Dutch Public Health Institute](https://www.rivm.nl/) for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination [@ainslie2022].
+_{{ packagename }}_ currently provides three models:
 
-More such models developed during the Covid-19 pandemic are planned to be added in the near future. Please get in touch if you would like to see your model added to the _{{ packagename }}_ model library --- we are happy to help with translating it from R or another language to Rcpp.
+1. A deterministic SEIR-V model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates,
+
+2. The deterministic Vacamole model developed at [RIVM, the Dutch Public Health Institute](https://www.rivm.nl/) for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination [@ainslie2022],
+
+3. A stochastic SEIR model of Ebola virus disease adapted from @getz2018.
+
+More models are planned to be added in the near future.
+Please get in touch if you would like to see your model added to the _{{ packagename }}_ model library --- we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.
 
 _{{ packagename }}_ relies on [Eigen](https://gitlab.com/libeigen/eigen) via [{RcppEigen}](https://cran.r-project.org/web/packages/RcppEigen/index.html), and on [Boost Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html) via [{BH}](https://cran.r-project.org/web/packages/BH/index.html), and is developed at the [Centre for the Mathematical Modelling of Infectious Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases) at the London School of Hygiene and Tropical Medicine as part of the [Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
 
@@ -45,7 +52,7 @@ if(!require("pak")) install.packages("pak")
 pak::pak("{{ gh_repo }}")
 ```
 
-**Notes**
+### Installation Notes
 
 1. Some users who are also using or developing packages that use Stan might face issues if they have modified their toolchain to accommodate packages such as [_cmdstanr_](https://mc-stan.org/cmdstanr/); see [this resolved issue](https://github.com/stan-dev/cmdstanr/issues/790) for a starting point if you face similar problems.
 

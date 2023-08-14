@@ -13,7 +13,7 @@
 #' @param ... Other arguments representing other infection parameters. This
 #' argument is intentionally left flexible to allow for single values or vectors
 #' of values.
-#' @return An `infection` class object.
+#' @return An `<infection>` class object.
 #' @keywords internal
 #' @noRd
 new_infection <- function(name = NA_character_,
@@ -34,7 +34,17 @@ new_infection <- function(name = NA_character_,
   )
 }
 
-#' Prepare a new infection for an epidemic model
+#' Prepare an infection for an epidemic model
+#'
+#' @name infection
+#' @rdname infection
+#'
+#' @description Prepare an S3 object of the `<infection>` class, which is used
+#' to hold some basic parameters of the infection that is to be modelled as
+#' causing an epidemic.
+#'
+#' `<infection>`s can hold any number of extra parameters as required by
+#' specific epidemic models.
 #'
 #' @param name String for the name of the infection. The default value is `NA`.
 #' @param r0 The basic reproductive number of the infection, \eqn{R_0}.
@@ -49,16 +59,28 @@ new_infection <- function(name = NA_character_,
 #' @param ... Other arguments representing other infection parameters. This
 #' argument is intentionally left flexible to allow for single values or vectors
 #' of values.
-#' @return An object of the `infection` S3 class.
+#'
+#' @param x An object to be checked as being an `<infection>`.
+#' @return
+#' `infection()` returns an object of the `<infection>` S3 class.
+#'
+#' `is_infection()` returns a logical for whether the object is of the
+#' `<infection>` class.
 #' @export
 #'
 #' @examples
-#' infection(
+#' pandemic_influenza <- infection(
 #'   name = "pandemic influenza",
 #'   r0 = 1.3,
 #'   infectious_period = 5,
 #'   preinfectious_period = 2
 #' )
+#'
+#' # print to examine
+#' pandemic_influenza
+#'
+#' # check for the infection class
+#' is_infection(pandemic_influenza)
 infection <- function(name = NA_character_,
                       r0,
                       infectious_period,
@@ -101,7 +123,7 @@ infection <- function(name = NA_character_,
 
 #' Validate an infection
 #'
-#' @param object An object to be validated as an `infection`.
+#' @param object An object to be validated as an `<infection>`.
 #'
 #' @return No return.
 #' @noRd
@@ -109,9 +131,9 @@ infection <- function(name = NA_character_,
 validate_infection <- function(object) {
   # check for class and class invariants
   stopifnot(
-    "Object should be of class `infection`" =
+    "Object should be of class `<infection>`" =
       (is_infection(object)),
-    "`infection` does not contain the minimum correct attributes" =
+    "`<infection>` does not contain the minimum correct attributes" =
       (c(
         "name", "r0", "infectious_period"
       ) %in% attributes(object)$names)
@@ -138,42 +160,31 @@ validate_infection <- function(object) {
   invisible(object)
 }
 
-#' Check whether an object is an `infection`
-#'
-#' @param object An object to be checked as being an `infection`.
-#'
-#' @return A logical for whether the object is of the `infection` class.
+#' Check whether an object is an `<infection>`
+#' @name infection
+#' @rdname infection
 #' @export
-#'
-#' @examples
-#' pandemic_influenza <- infection(
-#'   name = "pandemic influenza",
-#'   r0 = 1.3,
-#'   infectious_period = 5,
-#'   preinfectious_period = 2
-#' )
-#' is_infection(pandemic_influenza)
-is_infection <- function(object) {
-  inherits(object, "infection")
+is_infection <- function(x) {
+  inherits(x, "infection")
 }
 
-#' Print an `infection` object
+#' Print an `<infection>` object
 #'
-#' @param x A `infection` object.
+#' @param x A `<infection>` object.
 #' @param ... Other parameters passed to [print()].
-#' @return Invisibly returns the [`infection`] object `x`.
+#' @return Invisibly returns the `<infection>` object `x`.
 #' Called for printing side-effects.
 #' @export
 print.infection <- function(x, ...) {
   format(x, ...)
 }
 
-#' Format an `infection` object
+#' Format an `<infection>` object
 #'
-#' @param x A `infection` object.
+#' @param x A `<infection>` object.
 #' @param ... Other arguments passed to [format()].
 #'
-#' @return Invisibly returns the [`infection`] object `x`.
+#' @return Invisibly returns the [`<infection>`] object `x`.
 #' Called for printing side-effects.
 #' @keywords internal
 #' @noRd

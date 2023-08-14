@@ -10,7 +10,7 @@
 #' rate parameter \eqn{nu}. Each element of the matrix \eqn{nu_{ij}} represents
 #' the rate of delivering vaccine dose \eqn{j} to demographic group \eqn{i}.
 #'
-#' @return A `vaccination` class object.
+#' @return A `<vaccination>` class object.
 #' @keywords internal
 #' @noRd
 new_vaccination <- function(name = NA_character_,
@@ -31,6 +31,19 @@ new_vaccination <- function(name = NA_character_,
 
 #' Construct a new vaccination regime for an epidemic model
 #'
+#' @name vaccination
+#' @rdname vaccination
+#'
+#' @description
+#' Prepare a `<vaccination>` object that specifies a vaccination regime for use
+#' in an epidemic model.
+#' These objects can handle different vaccination start and
+#' end times, as well as different vaccination rates, for each demographic group
+#' in the epidemic modelling scenario.
+#'
+#' Combine `<vaccination>` objects to create multi-dose vaccination regimes
+#' using `c()` on two or more `<vaccination>` objects.
+#'
 #' @param name String for the name of the vaccination regime.
 #' @param time_begin Matrix for the start time of delivering vaccination dose
 #' \eqn{j} to demographic group \eqn{i}.
@@ -41,11 +54,48 @@ new_vaccination <- function(name = NA_character_,
 #' rate parameter \eqn{nu}. Each element of the matrix \eqn{nu_{ij}} represents
 #' the rate of delivering vaccine dose \eqn{j} to demographic group \eqn{i}.
 #'
-#' @return An object of the `vaccination` S3 class.
+#' @param x A `<vaccination>` object, or an object to be checked as being a
+#' `<vaccination>`.
+#' @param ... Vaccination objects to combine with `x` to create a multi-dose
+#' `<vaccination>` object.
+#'
+#' @param population A `population` object with a `contact_matrix` member.
+#' @param doses A number, defaulting to 1, to indicate the number of doses in
+#' the vaccination regime.
+#'
+#' @details
+#' Multi-dose vaccinations can be passed to all epidemic models, but not all
+#' models accommodate multi-dose vaccinations. For example, the default SEIR-V
+#' model provided by [epidemic_default_cpp()] has only a single vaccinated
+#' compartment, and will only use the first parameter set of a multi-dose regime
+#' to determine how individuals transition into the vaccinated compartment.
+#'
+#' In contrast, the Vacamole model considers two doses, and will make use of the
+#' first two parameter sets of a multi-dose regime. More doses can be specified,
+#' but will be disregarded by this model.
+#'
+#' @return
+#'
+#' An object of the `<vaccination>` S3 class.
+#'
+#' `vaccination()` returns a `<vaccination>` object with the specified
+#' parameters.
+#'
+#' Concatenating two or more `<vaccination>` objects using `c()` also returns a
+#' `<vaccination>` object. This object holds the group-specific start and end
+#' times, and group-specific vaccination rates specified by all the constituent
+#' vaccination regimes.
+#'
+#' `no_vaccination()` returns a `<vaccination>` that has no effect on the
+#' population, with start and end times set to 0.0, and the rate of
+#' vaccination \eqn{nu} also set to 0.0.
+#'
+#' `is_vaccination()` return a logical for whether the object is of the
+#' `<vaccination>` class.
 #' @export
 #'
 #' @examples
-#' # assuming a population with two age groups, children 0 -- 5, and others 5+
+#' # Assuming a population with two age groups, children 0 -- 5, and others 5+
 #' # an example for childhood vaccination only
 #' childhood_vaccination <- vaccination(
 #'   name = "childhood_vaccination",
@@ -54,6 +104,28 @@ new_vaccination <- function(name = NA_character_,
 #'   nu = matrix(c(0.0001, 0.0)) # over 5s never vaccinated
 #' )
 #' childhood_vaccination
+#'
+#' # check whether the object is a <vaccination>
+#' is_vaccination(childhood_vaccination)
+#'
+#' # Concatenating vaccinations
+#' # create first dose regime
+#' vax_1 <- vaccination(
+#'   name = "vax_regime",
+#'   time_begin = matrix(1),
+#'   time_end = matrix(100),
+#'   nu = matrix(0.001)
+#' )
+#'
+#' # second dose regime
+#' vax_2 <- vaccination(
+#'   name = "vax_regime",
+#'   time_begin = matrix(101),
+#'   time_end = matrix(200),
+#'   nu = matrix(0.001)
+#' )
+#'
+#' c(vax_1, vax_2)
 vaccination <- function(name = NA_character_,
                         nu,
                         time_begin,
@@ -98,9 +170,9 @@ vaccination <- function(name = NA_character_,
   vaccination_
 }
 
-#' Validate a `vaccination` object
+#' Validate a `<vaccination>` object
 #'
-#' @param object An object to be validated as a `vaccination`.
+#' @param object An object to be validated as a `<vaccination>`.
 #'
 #' @return No return.
 #' @noRd
@@ -108,9 +180,9 @@ vaccination <- function(name = NA_character_,
 validate_vaccination <- function(object) {
   # check for class and class invariants
   stopifnot(
-    "Object should be of class `vaccination`" =
+    "Object should be of class <vaccination>" =
       (is_vaccination(object)),
-    "`vaccination` does not contain the correct attributes" =
+    "<vaccination> does not contain the correct attributes" =
       (c(
         "name", "time_begin", "time_end", "nu"
       ) %in% attributes(object)$names)
@@ -152,33 +224,19 @@ validate_vaccination <- function(object) {
   invisible(object)
 }
 
-#' Check whether an object is a `vaccination`
+#' Check whether an object is a `<vaccination>`
 #'
-#' @param object An object to be checked as being a `vaccination`.
+#' @name vaccination
+#' @rdname vaccination
 #'
-#' @return A logical for whether the object is of the `vaccination` class.
 #' @export
-#'
-#' @examples
-#' # an example for childhood vaccination only
-#' childhood_vaccination <- vaccination(
-#'   name = "childhood_vaccination",
-#'   time_begin = matrix(c(0, 100)), # assuming a simulation over 100 days
-#'   time_end = matrix(c(100, 100)),
-#'   nu = matrix(c(0.0001, 0.0)) # over 5s never vaccinated
-#' )
-#' is_vaccination(childhood_vaccination)
-is_vaccination <- function(object) {
-  inherits(object, "vaccination")
+is_vaccination <- function(x) {
+  inherits(x, "vaccination")
 }
 
 #' Generate a null vaccination
-#'
-#' @param population A `population` object with a `contact_matrix` member.
-#' @param doses A number, defaulting to 1, to indicate the number of doses in
-#' the vaccination regime.
-#' @return An vaccination that has no effect on the population, with start and
-#' end times set to 0.0, and the rate of vaccination \eqn{nu} also set to 0.0.
+#' @name vaccination
+#' @rdname vaccination
 #' @export
 no_vaccination <- function(population, doses = 1L) {
   checkmate::assert_class(population, "population")
@@ -203,23 +261,23 @@ no_vaccination <- function(population, doses = 1L) {
   )
 }
 
-#' Print a `vaccination` object
+#' Print a `<vaccination>` object
 #'
-#' @param x A `vaccination` object.
+#' @param x A `<vaccination>` object.
 #' @param ... Other parameters passed to [print()].
-#' @return Invisibly returns the [`vaccination`] object `x`.
+#' @return Invisibly returns the `<vaccination>` object `x`.
 #' Called for printing side-effects.
 #' @export
 print.vaccination <- function(x, ...) {
   format(x, ...)
 }
 
-#' Format a `vaccination` object
+#' Format a `<vaccination>` object
 #'
-#' @param x A `vaccination` object.
+#' @param x A `<vaccination>` object.
 #' @param ... Other arguments passed to [format()].
 #'
-#' @return Invisibly returns the [`vaccination`] object `x`.
+#' @return Invisibly returns the [`<vaccination>`] object `x`.
 #' Called for printing side-effects.
 #' @keywords internal
 #' @noRd
@@ -311,30 +369,10 @@ as.vaccination <- function(x) {
 
 #' Concatenate vaccination doses into a multi-dose vaccination
 #'
-#' @param x A `vaccination` object.
-#' @param ... Vaccination objects to combine with `x` to create a multi-dose
-#' `vaccination` object.
-#' @return A `vaccination` object with as many doses as the overall number of
-#' doses specified in `x` and in the objects passed to `...`.
+#' @name vaccination
+#' @rdname vaccination
+#'
 #' @export
-#' @examples
-#' # create first dose regime
-#' vax_1 <- vaccination(
-#'   name = "vax_regime",
-#'   time_begin = matrix(1),
-#'   time_end = matrix(100),
-#'   nu = matrix(0.001)
-#' )
-#'
-#' # second dose regime
-#' vax_2 <- vaccination(
-#'   name = "vax_regime",
-#'   time_begin = matrix(101),
-#'   time_end = matrix(200),
-#'   nu = matrix(0.001)
-#' )
-#'
-#' c(vax_1, vax_2)
 c.vaccination <- function(x, ...) {
   # collect inputs
   multi_vacc <- list(x, ...)
@@ -345,7 +383,7 @@ c.vaccination <- function(x, ...) {
   # check that all vaccination regimes have the same dimensions
   # of vaccination rates --- these are identical to dims of start and end times
   stopifnot(
-    "All `vaccination`s must have identical dimensions for Nu, start, and end" =
+    "All <vaccination>s must have identical dimensions for Nu, start, and end" =
       all(
         vapply(multi_vacc, function(vx) {
           identical(nrow(vx$nu), nrow(x$nu))

@@ -58,12 +58,6 @@
     <loc>/reference/assert_vaccination.html</loc>
   </url>
   <url>
-    <loc>/reference/c.intervention.html</loc>
-  </url>
-  <url>
-    <loc>/reference/c.vaccination.html</loc>
-  </url>
-  <url>
     <loc>/reference/check_prepare_default_args.html</loc>
   </url>
   <url>
@@ -73,9 +67,6 @@
     <loc>/reference/check_prepare_vacamole_args.html</loc>
   </url>
   <url>
-    <loc>/reference/compute_erlang_discrete_prob.html</loc>
-  </url>
-  <url>
     <loc>/reference/dot-epidemic_default_cpp.html</loc>
   </url>
   <url>
@@ -83,9 +74,6 @@
   </url>
   <url>
     <loc>/reference/dot-epidemic_vacamole_cpp.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-prob_discrete_erlang.html</loc>
   </url>
   <url>
     <loc>/reference/epidemic_default_cpp.html</loc>
@@ -115,28 +103,10 @@
     <loc>/reference/intervention.html</loc>
   </url>
   <url>
-    <loc>/reference/is_infection.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is_intervention.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is_population.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is_vaccination.html</loc>
-  </url>
-  <url>
     <loc>/reference/model_library.html</loc>
   </url>
   <url>
     <loc>/reference/new_infections.html</loc>
-  </url>
-  <url>
-    <loc>/reference/no_intervention.html</loc>
-  </url>
-  <url>
-    <loc>/reference/no_vaccination.html</loc>
   </url>
   <url>
     <loc>/reference/output_to_df.html</loc>
@@ -155,6 +125,9 @@
   </url>
   <url>
     <loc>/reference/print.vaccination.html</loc>
+  </url>
+  <url>
+    <loc>/reference/prob_discrete_erlang.html</loc>
   </url>
   <url>
     <loc>/reference/read_from_library.html</loc>

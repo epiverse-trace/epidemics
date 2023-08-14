@@ -93,9 +93,14 @@
 </div>
 <!-- badges: start -->
 
-<p><em>epidemics</em> is an R package that provides a convenient interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted infections such as influenza, Covid-19, or respiratory syncytial virus (RSV). The models in <em>epidemics</em> implement methods outlined in Bjørnstad et al. (<a href="#ref-bjornstad2020a">2020a</a>) and Bjørnstad et al. (<a href="#ref-bjornstad2020">2020b</a>). The models in <em>epidemics</em> can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions.</p>
-<p><em>epidemics</em> currently provides a default model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates. Additionally, <em>epidemics</em> includes the Vacamole model developed at <a href="https://www.rivm.nl/" class="external-link">RIVM, the Dutch Public Health Institute</a> for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination (<a href="#ref-ainslie2022">Ainslie et al. 2022</a>).</p>
-<p>More such models developed during the Covid-19 pandemic are planned to be added in the near future. Please get in touch if you would like to see your model added to the <em>epidemics</em> model library — we are happy to help with translating it from R or another language to Rcpp.</p>
+<p><em>epidemics</em> is an R package that provides a convenient interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted respiratory infections such as influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus disease. The models in <em>epidemics</em> implement methods outlined in Bjørnstad et al. (<a href="#ref-bjornstad2020a">2020a</a>) and Bjørnstad et al. (<a href="#ref-bjornstad2020">2020b</a>). The models in <em>epidemics</em> can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions.</p>
+<p><em>epidemics</em> currently provides three models:</p>
+<ol style="list-style-type: decimal">
+<li><p>A deterministic SEIR-V model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates,</p></li>
+<li><p>The deterministic Vacamole model developed at <a href="https://www.rivm.nl/" class="external-link">RIVM, the Dutch Public Health Institute</a> for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination (<a href="#ref-ainslie2022">Ainslie et al. 2022</a>),</p></li>
+<li><p>A stochastic SEIR model of Ebola virus disease adapted from Getz and Dougherty (<a href="#ref-getz2018">2018</a>).</p></li>
+</ol>
+<p>More models are planned to be added in the near future. Please get in touch if you would like to see your model added to the <em>epidemics</em> model library — we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.</p>
 <p><em>epidemics</em> relies on <a href="https://gitlab.com/libeigen/eigen" class="external-link">Eigen</a> via <a href="https://cran.r-project.org/web/packages/RcppEigen/index.html" class="external-link">{RcppEigen}</a>, and on <a href="https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html" class="external-link">Boost Odeint</a> via <a href="https://cran.r-project.org/web/packages/BH/index.html" class="external-link">{BH}</a>, and is developed at the <a href="https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases" class="external-link">Centre for the Mathematical Modelling of Infectious Diseases</a> at the London School of Hygiene and Tropical Medicine as part of the <a href="https://data.org/initiatives/epiverse/" class="external-link">Epiverse-TRACE initiative</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -104,6 +109,14 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://pak.r-lib.org/" class="external-link">"pak"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="http://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"epiverse-trace/epidemics"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="installation-notes">Installation Notes<a class="anchor" aria-label="anchor" href="#installation-notes"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li><p>Some users who are also using or developing packages that use Stan might face issues if they have modified their toolchain to accommodate packages such as <a href="https://mc-stan.org/cmdstanr/" class="external-link"><em>cmdstanr</em></a>; see <a href="https://github.com/stan-dev/cmdstanr/issues/790" class="external-link">this resolved issue</a> for a starting point if you face similar problems.</p></li>
+<li><p>Users on Windows systems will need to have packages from the <em>RTools</em> family installed and on their system path; see <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">this link for guidance on using <em>RTools</em></a> for your version of R.</p></li>
+</ol>
+</div>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
@@ -225,6 +238,9 @@ Bjørnstad, Ottar N., Katriona Shea, Martin Krzywinski, and Naomi Altman. 2020a.
 </div>
 <div id="ref-bjornstad2020" class="csl-entry">
 ———. 2020b. “The SEIRS Model for Infectious Disease Dynamics.” <em>Nature Methods</em> 17 (6): 557–58. <a href="https://doi.org/10.1038/s41592-020-0856-2" class="external-link uri">https://doi.org/10.1038/s41592-020-0856-2</a>.
+</div>
+<div id="ref-getz2018" class="csl-entry">
+Getz, Wayne M., and Eric R. Dougherty. 2018. “Discrete Stochastic Analogs of Erlang Epidemic Models.” <em>Journal of Biological Dynamics</em> 12 (1): 16–38. <a href="https://doi.org/10.1080/17513758.2017.1401677" class="external-link uri">https://doi.org/10.1080/17513758.2017.1401677</a>.
 </div>
 </div>
 </div>

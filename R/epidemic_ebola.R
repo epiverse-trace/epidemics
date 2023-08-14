@@ -1,10 +1,20 @@
 #' @title Discrete probabilities for an Erlang distribution
-#' @param k     The shape parameter of the Erlang distribution.
-#' @param gamma The rate parameter of the Erlang distribution.
-#' @return      A vector containing all p_i values, for i = 1 : n.
-compute_erlang_discrete_prob <- function(k, gamma) {
+#'
+#' @name prob_discrete_erlang
+#' @rdname prob_discrete_erlang
+#'
+#' @description A helper function that gives the probability of discrete values
+#' from an Erlang distribution with a given shape and rate. The number of
+#' values returned correspond to the number of discrete values over which the
+#' cumulative probability reaches 0.99.
+#' @param shape A single integer-like number for the shape of the Erlang
+#' distribution.
+#' @param rate A single number for the rate of the Erlang distribution.
+#' @return A vector of variable length giving the probability of each integer
+#' value for a cumulative probability of 0.99.
+prob_discrete_erlang <- function(shape, rate) {
   n_bin <- 0
-  factorials <- factorial(seq(0, k))
+  factorials <- factorial(seq(0, shape))
 
   one_sub_cumulative_probs <- NULL
   cumulative_prob <- 0
@@ -12,12 +22,11 @@ compute_erlang_discrete_prob <- function(k, gamma) {
     n_bin <- n_bin + 1
 
     one_sub_cumulative_probs[n_bin] <- 0
-    for (j in 0:(k - 1)) {
+    for (j in seq(0, (shape - 1))) {
       one_sub_cumulative_probs[n_bin] <-
         one_sub_cumulative_probs[n_bin] +
         (
-          exp(-n_bin * gamma) * ((n_bin * gamma)^j) / factorials[j + 1]
-          ## factorials[j + 1] = j!
+          exp(-n_bin * rate) * ((n_bin * rate)^j) / factorials[j + 1]
         )
     }
     cumulative_prob <- 1 - one_sub_cumulative_probs[n_bin]
@@ -106,9 +115,9 @@ epidemic_ebola_r <- function(initial_state, parameters, time_end = 100) {
 
   ## Initialise a matrix to store the states of the exposed sub-blocks
   # over time.
-  exposed_block_adm_rates <- compute_erlang_discrete_prob(
-    k = parameters["erlang_shape_for_E"],
-    gamma = parameters["erlang_rate_for_E"]
+  exposed_block_adm_rates <- prob_discrete_erlang(
+    shape = parameters["erlang_shape_for_E"],
+    rate = parameters["erlang_rate_for_E"]
   )
   n_exposed_blocks <- length(exposed_block_adm_rates)
   exposed_blocks <- matrix(
@@ -119,9 +128,9 @@ epidemic_ebola_r <- function(initial_state, parameters, time_end = 100) {
 
   ## Initialise a matrix to store the states of the infectious
   # sub-blocks over time.
-  infectious_block_adm_rates <- compute_erlang_discrete_prob(
-    k = parameters["erlang_shape_for_I"],
-    gamma = parameters["erlang_rate_for_I"]
+  infectious_block_adm_rates <- prob_discrete_erlang(
+    shape = parameters["erlang_shape_for_I"],
+    rate = parameters["erlang_rate_for_I"]
   )
   n_infectious_blocks <- length(infectious_block_adm_rates)
   infectious_blocks <- matrix(

@@ -268,3 +268,5 @@ ggplot() +
 ```
 
 We see that while some replicates affect over 3,000 individuals within the first 100 days, most replicates have fewer than 1,000 cases, suggesting that responses to halt the spread of ebola may be quite effective in most real outbreaks.
+
+## References

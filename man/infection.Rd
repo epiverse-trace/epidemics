@@ -2,9 +2,12 @@
 % Please edit documentation in R/infection.R
 \name{infection}
 \alias{infection}
-\title{Prepare a new infection for an epidemic model}
+\alias{is_infection}
+\title{Prepare an infection for an epidemic model}
 \usage{
 infection(name = NA_character_, r0, infectious_period, ...)
+
+is_infection(x)
 }
 \arguments{
 \item{name}{String for the name of the infection. The default value is \code{NA}.}
@@ -23,18 +26,34 @@ demographic groups is available.}
 \item{...}{Other arguments representing other infection parameters. This
 argument is intentionally left flexible to allow for single values or vectors
 of values.}
+
+\item{x}{An object to be checked as being an \verb{<infection>}.}
 }
 \value{
-An object of the \code{infection} S3 class.
+\code{infection()} returns an object of the \verb{<infection>} S3 class.
+
+\code{is_infection()} returns a logical for whether the object is of the
+\verb{<infection>} class.
 }
 \description{
-Prepare a new infection for an epidemic model
+Prepare an S3 object of the \verb{<infection>} class, which is used
+to hold some basic parameters of the infection that is to be modelled as
+causing an epidemic.
+
+\verb{<infection>}s can hold any number of extra parameters as required by
+specific epidemic models.
 }
 \examples{
-infection(
+pandemic_influenza <- infection(
   name = "pandemic influenza",
   r0 = 1.3,
   infectious_period = 5,
   preinfectious_period = 2
 )
+
+# print to examine
+pandemic_influenza
+
+# check for the infection class
+is_infection(pandemic_influenza)
 }

@@ -2,9 +2,18 @@
 % Please edit documentation in R/intervention.R
 \name{intervention}
 \alias{intervention}
+\alias{is_intervention}
+\alias{no_intervention}
+\alias{c.intervention}
 \title{Construct a new intervention for an epidemic model}
 \usage{
 intervention(name = NA_character_, time_begin, time_end, contact_reduction)
+
+is_intervention(x)
+
+no_intervention(population)
+
+\method{c}{intervention}(x, ...)
 }
 \arguments{
 \item{name}{String for the name of the intervention.}
@@ -13,15 +22,68 @@ intervention(name = NA_character_, time_begin, time_end, contact_reduction)
 
 \item{time_end}{Single number for the end time of the intervention.}
 
-\item{contact_reduction}{A vector of the same length as the
-number of demographic groups in the target population, which gives the
-overall or group-specific proportion reduction in contacts respectively.}
+\item{contact_reduction}{A matrix \eqn{[i, 1]} with as many rows as the
+number of demographic groups in the target population, and a single column.
+Each element gives the group-specific proportion reduction in contacts.
+
+When multiple interventions are combined using \code{c()}, they are stacked column
+wise to form a matrix \eqn{[i, j]}. See \strong{Details} for how the effect of
+intervention \eqn{j} on group \eqn{i} is handled in epidemic models.}
+
+\item{x}{An \verb{<intervention>} object, or an object to be checked as an
+\verb{<intervention>} object.}
+
+\item{population}{A \verb{<population>} object with a \code{contact_matrix} member.}
+
+\item{...}{intervention objects to combine with \code{x} to create a multi-dose
+\verb{<intervention>} object.}
 }
 \value{
-An object of the \code{intervention} S3 class.
+An object of the \verb{<intervention>} S3 class.
+
+Concatenating two or more \verb{<intervention>} objects using \code{c()} also returns a
+\verb{<intervention>} object. This object holds the intervention-specific start
+and end times, and group-specific contact reductions specified by all the
+constituent intervention actions. The combined effect of these actions on the
+population is handled internally by epidemic model functions.
+
+A "null" intervention generated using \code{no_intervention(population)} returns
+an \verb{<intervention>} that has start and end times, and contact reduction all
+set to 0.0.
+
+\code{is_intervention()} returns a logical for whether the object is of the
+\verb{<intervention>} class.
 }
 \description{
-Construct a new intervention for an epidemic model
+Prepare an \verb{<intervention>} object that specifies a non-pharmaceutical
+intervention regime that reduces contacts, for use in an epidemic model.
+Interventions have a single start and end time that applies to all
+demographic groups in the population, but can have groups-specific effects on
+the reduction of contacts.
+
+Combine \verb{<intervention>} objects to create sequential and overlapping
+intervention regimes using \code{c()} on two or more \verb{<intervention>} objects.
+}
+\details{
+Epidemic models that can accommodate interventions are able to accommodate
+any number of interventions with different start and end times and different
+group-specific effects.
+
+Models such as \code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}} are set up to treat interventions
+with overlapping periods (i.e., overlap between the time when they are active
+) as having an \emph{additive effect} on contact reductions.
+The group-specific effect of \eqn{J} overlapping interventions is thus a
+vector \eqn{\sum_{j = 1}^J x_{ij}}.
+This is handled internally by the epidemic model code.
+
+For example, a contact reduction matrix for two perfectly overlapping
+interventions (\eqn{J = 2}) with different effects across three demographic
+groups (\eqn{I = 3}) would be represented as:
+
+\eqn{\begin{bmatrix}0.1 & 0.05\\0.1 & 0.1\\0.1 & 0.0\end{bmatrix}}
+
+In epidemic models, the cumulative group-specific effect when both
+interventions are active would be \eqn{(0.15, 0.2, 0.1)}.
 }
 \examples{
 # assuming a population with two age groups, 0 -- 18, and 18+
@@ -33,4 +95,39 @@ close_schools <- intervention(
   contact_reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
 )
 close_schools
+
+# Check for intervention class
+is_intervention(close_schools)
+
+# Concatenating interventions
+# create first intervention
+npi_1 <- intervention(
+  time_begin = 30,
+  time_end = 60,
+  contact_reduction = matrix(0.1)
+)
+
+# second intervention
+npi_2 <- intervention(
+  time_begin = 45,
+  time_end = 75,
+  contact_reduction = matrix(0.1)
+)
+
+c(npi_1, npi_2)
+
+# A null intervention for scenarios without interventions
+pop <- population(
+  demography_vector = 1e6, contact_matrix = matrix(1),
+  initial_conditions = matrix(c(0.99, 0.01, 0.0), nrow = 1)
+)
+
+no_intervention(pop)
+close_schools <- intervention(
+  name = "close schools",
+  time_begin = 50,
+  time_end = 80,
+  contact_reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
+)
+is_intervention(close_schools)
 }

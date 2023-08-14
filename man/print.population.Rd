@@ -2,19 +2,19 @@
 % Please edit documentation in R/population.R
 \name{print.population}
 \alias{print.population}
-\title{Print a \code{population} object}
+\title{Print a \verb{<population>} object}
 \usage{
 \method{print}{population}(x, ...)
 }
 \arguments{
-\item{x}{A \code{population} object.}
+\item{x}{A \verb{<population>} object.}
 
 \item{...}{Other parameters passed to \code{\link[=print]{print()}}.}
 }
 \value{
-Invisibly returns the \code{\link{population}} object \code{x}.
+Invisibly returns the \verb{<population>} object \code{x}.
 Called for printing side-effects.
 }
 \description{
-Print a \code{population} object
+Print a \verb{<population>} object
 }

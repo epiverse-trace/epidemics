@@ -2,9 +2,18 @@
 % Please edit documentation in R/vaccination.R
 \name{vaccination}
 \alias{vaccination}
+\alias{is_vaccination}
+\alias{no_vaccination}
+\alias{c.vaccination}
 \title{Construct a new vaccination regime for an epidemic model}
 \usage{
 vaccination(name = NA_character_, nu, time_begin, time_end)
+
+is_vaccination(x)
+
+no_vaccination(population, doses = 1L)
+
+\method{c}{vaccination}(x, ...)
 }
 \arguments{
 \item{name}{String for the name of the vaccination regime.}
@@ -19,15 +28,59 @@ demographic group \eqn{i}.}
 
 \item{time_end}{Matrix for the end time of delivering vaccination dose
 \eqn{j} to demographic group \eqn{i}.}
+
+\item{x}{A \verb{<vaccination>} object, or an object to be checked as being a
+\verb{<vaccination>}.}
+
+\item{population}{A \code{population} object with a \code{contact_matrix} member.}
+
+\item{doses}{A number, defaulting to 1, to indicate the number of doses in
+the vaccination regime.}
+
+\item{...}{Vaccination objects to combine with \code{x} to create a multi-dose
+\verb{<vaccination>} object.}
 }
 \value{
-An object of the \code{vaccination} S3 class.
+An object of the \verb{<vaccination>} S3 class.
+
+\code{vaccination()} returns a \verb{<vaccination>} object with the specified
+parameters.
+
+Concatenating two or more \verb{<vaccination>} objects using \code{c()} also returns a
+\verb{<vaccination>} object. This object holds the group-specific start and end
+times, and group-specific vaccination rates specified by all the constituent
+vaccination regimes.
+
+\code{no_vaccination()} returns a \verb{<vaccination>} that has no effect on the
+population, with start and end times set to 0.0, and the rate of
+vaccination \eqn{nu} also set to 0.0.
+
+\code{is_vaccination()} return a logical for whether the object is of the
+\verb{<vaccination>} class.
 }
 \description{
-Construct a new vaccination regime for an epidemic model
+Prepare a \verb{<vaccination>} object that specifies a vaccination regime for use
+in an epidemic model.
+These objects can handle different vaccination start and
+end times, as well as different vaccination rates, for each demographic group
+in the epidemic modelling scenario.
+
+Combine \verb{<vaccination>} objects to create multi-dose vaccination regimes
+using \code{c()} on two or more \verb{<vaccination>} objects.
+}
+\details{
+Multi-dose vaccinations can be passed to all epidemic models, but not all
+models accommodate multi-dose vaccinations. For example, the default SEIR-V
+model provided by \code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}} has only a single vaccinated
+compartment, and will only use the first parameter set of a multi-dose regime
+to determine how individuals transition into the vaccinated compartment.
+
+In contrast, the Vacamole model considers two doses, and will make use of the
+first two parameter sets of a multi-dose regime. More doses can be specified,
+but will be disregarded by this model.
 }
 \examples{
-# assuming a population with two age groups, children 0 -- 5, and others 5+
+# Assuming a population with two age groups, children 0 -- 5, and others 5+
 # an example for childhood vaccination only
 childhood_vaccination <- vaccination(
   name = "childhood_vaccination",
@@ -36,4 +89,26 @@ childhood_vaccination <- vaccination(
   nu = matrix(c(0.0001, 0.0)) # over 5s never vaccinated
 )
 childhood_vaccination
+
+# check whether the object is a <vaccination>
+is_vaccination(childhood_vaccination)
+
+# Concatenating vaccinations
+# create first dose regime
+vax_1 <- vaccination(
+  name = "vax_regime",
+  time_begin = matrix(1),
+  time_end = matrix(100),
+  nu = matrix(0.001)
+)
+
+# second dose regime
+vax_2 <- vaccination(
+  name = "vax_regime",
+  time_begin = matrix(101),
+  time_end = matrix(200),
+  nu = matrix(0.001)
+)
+
+c(vax_1, vax_2)
 }

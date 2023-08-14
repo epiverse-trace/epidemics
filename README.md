@@ -17,29 +17,35 @@ status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.
 
 *epidemics* is an R package that provides a convenient interface to a
 library of compartmental models that can help to model epidemic
-scenarios for directly transmitted infections such as influenza,
-Covid-19, or respiratory syncytial virus (RSV). The models in
-*epidemics* implement methods outlined in Bjørnstad et al.
-([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
+scenarios for directly transmitted respiratory infections such as
+influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus
+disease. The models in *epidemics* implement methods outlined in
+Bjørnstad et al. ([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
 ([2020b](#ref-bjornstad2020)). The models in *epidemics* can help
 provide rough estimates of the course of epidemics, and the
 effectiveness of pharmaceutical and non-pharmaceutical interventions.
 
-*epidemics* currently provides a default model with susceptible,
-exposed, infectious, recovered, and vaccinated compartments (SEIR-V),
-allowing for heterogeneity in social contacts, the implementation of a
-group-specific non-pharmaceutical intervention that reduces social
-contacts, and a vaccination regime with group-specific start and end
-dates. Additionally, *epidemics* includes the Vacamole model developed
-at [RIVM, the Dutch Public Health Institute](https://www.rivm.nl/) for
-the Covid-19 pandemic, with a focus on scenario modelling for
-hospitalisation and vaccination ([Ainslie et al.
-2022](#ref-ainslie2022)).
+*epidemics* currently provides three models:
 
-More such models developed during the Covid-19 pandemic are planned to
-be added in the near future. Please get in touch if you would like to
-see your model added to the *epidemics* model library — we are happy to
-help with translating it from R or another language to Rcpp.
+1.  A deterministic SEIR-V model with susceptible, exposed, infectious,
+    recovered, and vaccinated compartments (SEIR-V), allowing for
+    heterogeneity in social contacts, the implementation of a
+    group-specific non-pharmaceutical intervention that reduces social
+    contacts, and a vaccination regime with group-specific start and end
+    dates,
+
+2.  The deterministic Vacamole model developed at [RIVM, the Dutch
+    Public Health Institute](https://www.rivm.nl/) for the Covid-19
+    pandemic, with a focus on scenario modelling for hospitalisation and
+    vaccination ([Ainslie et al. 2022](#ref-ainslie2022)),
+
+3.  A stochastic SEIR model of Ebola virus disease adapted from Getz and
+    Dougherty ([2018](#ref-getz2018)).
+
+More models are planned to be added in the near future. Please get in
+touch if you would like to see your model added to the *epidemics* model
+library — we are happy to help with translating it into our framework,
+with a special focus on making the model applicable to LMIC settings.
 
 *epidemics* relies on [Eigen](https://gitlab.com/libeigen/eigen) via
 [{RcppEigen}](https://cran.r-project.org/web/packages/RcppEigen/index.html),
@@ -61,7 +67,7 @@ if(!require("pak")) install.packages("pak")
 pak::pak("epiverse-trace/epidemics")
 ```
 
-**Notes**
+### Installation Notes
 
 1.  Some users who are also using or developing packages that use Stan
     might face issues if they have modified their toolchain to
@@ -257,6 +263,14 @@ Bjørnstad, Ottar N., Katriona Shea, Martin Krzywinski, and Naomi Altman.
 
 ———. 2020b. “The SEIRS Model for Infectious Disease Dynamics.” *Nature
 Methods* 17 (6): 557–58. <https://doi.org/10.1038/s41592-020-0856-2>.
+
+</div>
+
+<div id="ref-getz2018" class="csl-entry">
+
+Getz, Wayne M., and Eric R. Dougherty. 2018. “Discrete Stochastic
+Analogs of Erlang Epidemic Models.” *Journal of Biological Dynamics* 12
+(1): 16–38. <https://doi.org/10.1080/17513758.2017.1401677>.
 
 </div>
 

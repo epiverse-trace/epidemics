@@ -7,7 +7,7 @@
 #' number of demographic groups in the target population, which gives the
 #' overall or group-specific proportion reduction in contacts respectively.
 #'
-#' @return An `intervention` class object.
+#' @return An `<intervention>` class object.
 #' @keywords internal
 #' @noRd
 new_intervention <- function(name = NA_character_,
@@ -28,14 +28,72 @@ new_intervention <- function(name = NA_character_,
 
 #' Construct a new intervention for an epidemic model
 #'
+#' @name intervention
+#' @rdname intervention
+#'
+#' @description
+#' Prepare an `<intervention>` object that specifies a non-pharmaceutical
+#' intervention regime that reduces contacts, for use in an epidemic model.
+#' Interventions have a single start and end time that applies to all
+#' demographic groups in the population, but can have groups-specific effects on
+#' the reduction of contacts.
+#'
+#' Combine `<intervention>` objects to create sequential and overlapping
+#' intervention regimes using `c()` on two or more `<intervention>` objects.
+#'
 #' @param name String for the name of the intervention.
 #' @param time_begin Single number for the start time of the intervention.
 #' @param time_end Single number for the end time of the intervention.
-#' @param contact_reduction A vector of the same length as the
-#' number of demographic groups in the target population, which gives the
-#' overall or group-specific proportion reduction in contacts respectively.
+#' @param contact_reduction A matrix \eqn{[i, 1]} with as many rows as the
+#' number of demographic groups in the target population, and a single column.
+#' Each element gives the group-specific proportion reduction in contacts.
 #'
-#' @return An object of the `intervention` S3 class.
+#' When multiple interventions are combined using `c()`, they are stacked column
+#' wise to form a matrix \eqn{[i, j]}. See **Details** for how the effect of
+#' intervention \eqn{j} on group \eqn{i} is handled in epidemic models.
+#'
+#' @param x An `<intervention>` object, or an object to be checked as an
+#' `<intervention>` object.
+#' @param ... intervention objects to combine with `x` to create a multi-dose
+#' `<intervention>` object.
+#'
+#' @param population A `<population>` object with a `contact_matrix` member.
+#'
+#' @details
+#' Epidemic models that can accommodate interventions are able to accommodate
+#' any number of interventions with different start and end times and different
+#' group-specific effects.
+#'
+#' Models such as [epidemic_default_cpp()] are set up to treat interventions
+#' with overlapping periods (i.e., overlap between the time when they are active
+#' ) as having an _additive effect_ on contact reductions.
+#' The group-specific effect of \eqn{J} overlapping interventions is thus a
+#' vector \eqn{\sum_{j = 1}^J x_{ij}}.
+#' This is handled internally by the epidemic model code.
+#'
+#' For example, a contact reduction matrix for two perfectly overlapping
+#' interventions (\eqn{J = 2}) with different effects across three demographic
+#' groups (\eqn{I = 3}) would be represented as:
+#'
+#' \eqn{\begin{bmatrix}0.1 & 0.05\\0.1 & 0.1\\0.1 & 0.0\end{bmatrix}}
+#'
+#' In epidemic models, the cumulative group-specific effect when both
+#' interventions are active would be \eqn{(0.15, 0.2, 0.1)}.
+#'
+#' @return An object of the `<intervention>` S3 class.
+#'
+#' Concatenating two or more `<intervention>` objects using `c()` also returns a
+#' `<intervention>` object. This object holds the intervention-specific start
+#' and end times, and group-specific contact reductions specified by all the
+#' constituent intervention actions. The combined effect of these actions on the
+#' population is handled internally by epidemic model functions.
+#'
+#' A "null" intervention generated using `no_intervention(population)` returns
+#' an `<intervention>` that has start and end times, and contact reduction all
+#' set to 0.0.
+#'
+#' `is_intervention()` returns a logical for whether the object is of the
+#' `<intervention>` class.
 #' @export
 #'
 #' @examples
@@ -48,6 +106,34 @@ new_intervention <- function(name = NA_character_,
 #'   contact_reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
 #' )
 #' close_schools
+#'
+#' # Check for intervention class
+#' is_intervention(close_schools)
+#'
+#' # Concatenating interventions
+#' # create first intervention
+#' npi_1 <- intervention(
+#'   time_begin = 30,
+#'   time_end = 60,
+#'   contact_reduction = matrix(0.1)
+#' )
+#'
+#' # second intervention
+#' npi_2 <- intervention(
+#'   time_begin = 45,
+#'   time_end = 75,
+#'   contact_reduction = matrix(0.1)
+#' )
+#'
+#' c(npi_1, npi_2)
+#'
+#' # A null intervention for scenarios without interventions
+#' pop <- population(
+#'   demography_vector = 1e6, contact_matrix = matrix(1),
+#'   initial_conditions = matrix(c(0.99, 0.01, 0.0), nrow = 1)
+#' )
+#'
+#' no_intervention(pop)
 intervention <- function(name = NA_character_,
                          time_begin,
                          time_end,
@@ -82,7 +168,7 @@ intervention <- function(name = NA_character_,
 
 #' Validate an intervention
 #'
-#' @param object An object to be validated as an `intervention`.
+#' @param object An object to be validated as an `<intervention>`.
 #'
 #' @return No return.
 #' @noRd
@@ -90,9 +176,9 @@ intervention <- function(name = NA_character_,
 validate_intervention <- function(object) {
   # check for class and class invariants
   stopifnot(
-    "Object should be of class `intervention`" =
+    "Object should be of class <intervention>" =
       (is_intervention(object)),
-    "`intervention` does not contain the correct attributes" =
+    "<intervention> does not contain the correct attributes" =
       (c(
         "name", "time_begin", "time_end", "contact_reduction"
       ) %in% attributes(object)$names)
@@ -140,11 +226,10 @@ validate_intervention <- function(object) {
   invisible(object)
 }
 
-#' Check whether an object is an `intervention`
+#' Check whether an object is an `<intervention>`
 #'
-#' @param object An object to be checked as being an `intervention`.
-#'
-#' @return A logical for whether the object is of the `intervention` class.
+#' @name intervention
+#' @rdname intervention
 #' @export
 #'
 #' @examples
@@ -155,16 +240,14 @@ validate_intervention <- function(object) {
 #'   contact_reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
 #' )
 #' is_intervention(close_schools)
-is_intervention <- function(object) {
-  inherits(object, "intervention")
+is_intervention <- function(x) {
+  inherits(x, "intervention")
 }
 
 #' Generate a null intervention
 #'
-#' @param population A `population` object with a `contact_matrix` member.
-#'
-#' @return An intervention that has no effect on contacts, with start and end
-#' times set to 0.0
+#' @name intervention
+#' @rdname intervention
 #' @export
 no_intervention <- function(population) {
   checkmate::assert_class(population, "population")
@@ -178,23 +261,23 @@ no_intervention <- function(population) {
   )
 }
 
-#' Print a `intervention` object
+#' Print a `<intervention>` object
 #'
-#' @param x A `intervention` object.
+#' @param x A `<intervention>` object.
 #' @param ... Other parameters passed to [print()].
-#' @return Invisibly returns the [`intervention`] object `x`.
+#' @return Invisibly returns the `<intervention>` object `x`.
 #' Called for printing side-effects.
 #' @export
 print.intervention <- function(x, ...) {
   format(x, ...)
 }
 
-#' Format a `intervention` object
+#' Format a `<intervention>` object
 #'
-#' @param x A `intervention` object.
+#' @param x A `<intervention>` object.
 #' @param ... Other arguments passed to [format()].
 #'
-#' @return Invisibly returns the [`intervention`] object `x`.
+#' @return Invisibly returns the [`<intervention>`] object `x`.
 #' Called for printing side-effects.
 #' @keywords internal
 #' @noRd
@@ -265,30 +348,13 @@ as.intervention <- function(x) {
   x
 }
 
-#' Concatenate intervention doses into a multi-dose intervention
+#' Concatenate interventions for use in an epidemic model
 #'
-#' @param x An `intervention` object.
-#' @param ... intervention objects to combine with `x` to create a multi-dose
-#' `intervention` object.
-#' @return An `intervention` object with as many doses as the overall number of
-#' doses specified in `x` and in the objects passed to `...`.
+#' @name intervention
+#' @rdname intervention
+#'
+
 #' @export
-#' @examples
-#' # create first dose regime
-#' npi_1 <- intervention(
-#'   time_begin = 30,
-#'   time_end = 60,
-#'   contact_reduction = matrix(0.1)
-#' )
-#'
-#' # second dose regime
-#' npi_2 <- intervention(
-#'   time_begin = 45,
-#'   time_end = 75,
-#'   contact_reduction = matrix(0.1)
-#' )
-#'
-#' c(npi_1, npi_2)
 c.intervention <- function(x, ...) {
   # collect inputs
   multi_npi <- list(x, ...)
@@ -299,7 +365,7 @@ c.intervention <- function(x, ...) {
   # check that all intervention regimes have the same dimensions
   # of intervention rates --- these are identical to dims of start and end times
   stopifnot(
-    "All `intervention`s must have identical dimensions for c, start, and end" =
+    "All <intervention>s must have identical dimensions for c, start, and end" =
       all(
         vapply(multi_npi, function(npi) {
           identical(nrow(npi$contact_reduction), nrow(x$contact_reduction))

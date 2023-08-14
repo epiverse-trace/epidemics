@@ -13,7 +13,7 @@
 #' proportion of individuals of demographic group \eqn{i} in compartment \eqn{j}
 #' .
 #' @keywords internal
-#' @return An object of the `population` class.
+#' @return An object of the `<population>` class.
 #' @noRd
 new_population <- function(name = NA_character_,
                            contact_matrix = matrix(),
@@ -46,11 +46,16 @@ new_population <- function(name = NA_character_,
 #' proportion of individuals of demographic group \eqn{i} in compartment \eqn{j}
 #' .
 #'
-#' @return An object of the `population` S3 class.
+#' @param x An object to be checked as a valid population.
+#'
+#' @return An object of the `<population>` S3 class.
+#'
+#' `is_population()` returns a logical for whether the object is a
+#' `<population>`.
 #' @export
 #'
 #' @examples
-#' population(
+#' uk_pop <- population(
 #'   name = "UK population",
 #'   contact_matrix = matrix(1),
 #'   demography_vector = 67e6,
@@ -59,6 +64,12 @@ new_population <- function(name = NA_character_,
 #'     nrow = 1, ncol = 4
 #'   )
 #' )
+#'
+#' # print to check
+#' uk_pop
+#'
+#' # check for class <population>
+#' is_population(uk_pop)
 population <- function(name = NA_character_,
                        contact_matrix = matrix(1),
                        demography_vector = 67e6,
@@ -88,19 +99,19 @@ population <- function(name = NA_character_,
   population_
 }
 
-#' Validate a `population` object
+#' Validate a `<population>` object
 #'
-#' @param object A `population` object for validation.
+#' @param object A `<population>` object for validation.
 #'
-#' @return A validated `population` object.
+#' @return A validated `<population>` object.
 #' @keywords internal
 #' @noRd
 validate_population <- function(object) {
   # check for class and class invariants
   stopifnot(
-    "Object should be of class `population`" =
+    "Object should be of class <population>" =
       (is_population(object)),
-    "`population` does not contain the correct attributes" =
+    "<population> does not contain the correct attributes" =
       (c(
         "name", "contact_matrix", "demography_vector"
       ) %in% attributes(object)$names),
@@ -124,43 +135,34 @@ validate_population <- function(object) {
   invisible(object)
 }
 
-#' Check whether an object is a `population`
+#' Check whether an object is a `<population>`
 #'
-#' @param object An object to be checked as a valid population.
+#' @name population
+#' @rdname population
 #'
-#' @return A logical for whether the object is a `population`.
 #' @export
 #'
-#' @examples
-#' # for the UK
-#' new_pop <- population(
-#'   initial_conditions = matrix(
-#'     c(0.999, 0.001, 0, 0),
-#'     nrow = 1, ncol = 4
-#'   )
-#' )
-#' is_population(new_pop)
-is_population <- function(object) {
-  inherits(object, "population")
+is_population <- function(x) {
+  inherits(x, "population")
 }
 
-#' Print a `population` object
+#' Print a `<population>` object
 #'
-#' @param x A `population` object.
+#' @param x A `<population>` object.
 #' @param ... Other parameters passed to [print()].
-#' @return Invisibly returns the [`population`] object `x`.
+#' @return Invisibly returns the `<population>` object `x`.
 #' Called for printing side-effects.
 #' @export
 print.population <- function(x, ...) {
   format(x, ...)
 }
 
-#' Format a `population` object
+#' Format a `<population>` object
 #'
-#' @param x A `population` object.
+#' @param x A `<population>` object.
 #' @param ... Other arguments passed to [format()].
 #'
-#' @return Invisibly returns the [`population`] object `x`. Called for printing
+#' @return Invisibly returns the `<population>` object `x`. Called for printing
 #' side-effects.
 #' @keywords internal
 #' @noRd

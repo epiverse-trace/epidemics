@@ -137,19 +137,10 @@
 }
 
 #' @title Compute the discrete probability of the truncated Erlang distribution
+#' @name prob_discrete_erlang
+#' @rdname prob_discrete_erlang
 #'
-#' @description A helper function that gives the probability of discrete values
-#' from an Erlang distribution with a given shape and rate. The number of
-#' values returned correspond to the number of discrete values over which the
-#' cumulative probability reaches 0.99.
-#'
-#' @param shape A single integer-like number for the shape of the Erlang
-#' distribution.
-#' @param rate A single number for the rate of the Erlang distribution.
-#' @return A vector of variable length giving the probability of each integer
-#' value for a cumulative probability of 0.99.
-#' @export
-.prob_discrete_erlang <- function(shape = 5L, rate = 1.0) {
+prob_discrete_erlang_cpp <- function(shape, rate) {
     .Call(`_epidemics_prob_discrete_erlang_cpp`, shape, rate)
 }
 

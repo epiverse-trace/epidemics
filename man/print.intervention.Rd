@@ -2,19 +2,19 @@
 % Please edit documentation in R/intervention.R
 \name{print.intervention}
 \alias{print.intervention}
-\title{Print a \code{intervention} object}
+\title{Print a \verb{<intervention>} object}
 \usage{
 \method{print}{intervention}(x, ...)
 }
 \arguments{
-\item{x}{A \code{intervention} object.}
+\item{x}{A \verb{<intervention>} object.}
 
 \item{...}{Other parameters passed to \code{\link[=print]{print()}}.}
 }
 \value{
-Invisibly returns the \code{\link{intervention}} object \code{x}.
+Invisibly returns the \verb{<intervention>} object \code{x}.
 Called for printing side-effects.
 }
 \description{
-Print a \code{intervention} object
+Print a \verb{<intervention>} object
 }

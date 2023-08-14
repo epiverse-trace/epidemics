@@ -2,6 +2,7 @@
 % Please edit documentation in R/population.R
 \name{population}
 \alias{population}
+\alias{is_population}
 \title{Construct a new population for an epidemic model}
 \usage{
 population(
@@ -10,6 +11,8 @@ population(
   demography_vector = 6.7e+07,
   initial_conditions = matrix()
 )
+
+is_population(x)
 }
 \arguments{
 \item{name}{Optional string for the population name.}
@@ -27,15 +30,22 @@ as the number of demographic groups. Each compartment is represented in the
 columns of the matrix, so that the element \eqn{M_{ij}} represents the
 proportion of individuals of demographic group \eqn{i} in compartment \eqn{j}
 .}
+
+\item{x}{An object to be checked as a valid population.}
 }
 \value{
-An object of the \code{population} S3 class.
+An object of the \verb{<population>} S3 class.
+
+\code{is_population()} returns a logical for whether the object is a
+\verb{<population>}.
 }
 \description{
 Construct a new population for an epidemic model
+
+Check whether an object is a \verb{<population>}
 }
 \examples{
-population(
+uk_pop <- population(
   name = "UK population",
   contact_matrix = matrix(1),
   demography_vector = 67e6,
@@ -44,4 +54,10 @@ population(
     nrow = 1, ncol = 4
   )
 )
+
+# print to check
+uk_pop
+
+# check for class <population>
+is_population(uk_pop)
 }

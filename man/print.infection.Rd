@@ -2,19 +2,19 @@
 % Please edit documentation in R/infection.R
 \name{print.infection}
 \alias{print.infection}
-\title{Print an \code{infection} object}
+\title{Print an \verb{<infection>} object}
 \usage{
 \method{print}{infection}(x, ...)
 }
 \arguments{
-\item{x}{A \code{infection} object.}
+\item{x}{A \verb{<infection>} object.}
 
 \item{...}{Other parameters passed to \code{\link[=print]{print()}}.}
 }
 \value{
-Invisibly returns the \code{\link{infection}} object \code{x}.
+Invisibly returns the \verb{<infection>} object \code{x}.
 Called for printing side-effects.
 }
 \description{
-Print an \code{infection} object
+Print an \verb{<infection>} object
 }

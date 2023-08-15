@@ -42,6 +42,39 @@ npi_2 <- intervention(
 )
 multi_npi <- c(npi_1, npi_2)
 
+# Tests for the value of contact reduction from overlapping NPIs
+test_that("Cumulative effect of NPIs", {
+  cumulative_cr <- cumulative_intervention(
+    t = 50, time_begin = multi_npi$time_begin, time_end = multi_npi$time_end,
+    cr = multi_npi$contact_reduction
+  )
+  expect_identical(
+    cumulative_cr,
+    rep(0.25, nrow(contact_matrix))
+  )
+
+  # when no intervention is active
+  expect_identical(
+    cumulative_intervention(
+      t = 10, time_begin = multi_npi$time_begin, time_end = multi_npi$time_end,
+      cr = multi_npi$contact_reduction
+    ),
+    numeric(nrow(contact_matrix))
+  )
+
+  # expect contact matrix has scaled values
+  expect_identical(
+    intervention_on_cm(
+      t = 50,
+      cm = contact_matrix,
+      time_begin = multi_npi$time_begin,
+      time_end = multi_npi$time_end,
+      cr = multi_npi$contact_reduction
+    ),
+    contact_matrix * 0.75
+  )
+})
+
 # Initial test that a model with two interventions works
 test_that("Default model with multiple interventions", {
   # run epidemic model

@@ -61,7 +61,8 @@ Imports:
     data.table,
     glue,
     utils,
-    stats
+    stats,
+    deSolve
 Suggests: 
     bookdown,
     colorspace,

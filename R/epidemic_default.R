@@ -101,3 +101,57 @@ epidemic_default_cpp <- function(population,
   # prepare output and return
   output_to_df(output, population, compartments)
 }
+
+#' Ordnary Differential Equations for the Default Model
+#'
+#' @description Provides the ODEs for the default SEIR-V model in a format that
+#' is suitable for passing to [deSolve::lsoda()].
+#' See [epidemic_default_r()] for a list of required parameters.
+#'
+#' @param t A single number of the timestep at which to integrate.
+#' @param y The conditions of the epidemiological compartments.
+#' @param params The parameters, passed as a named list.
+#'
+#' @return A list with a vector with as many elements as the number of
+#' demographic groups times the number of epidemiological compartments. Each
+#' value gives the change in the number of individuals in that compartment.
+#' @keywords internal
+.ode_epidemic_default <- function(t, y, params) {
+  # no input checking, fn is expected to be called only in epidemic_default_r()
+  n_age <- nrow(params[["contact_matrix"]])
+
+  # create a matrix
+  y <- matrix(y, nrow = n_age, ncol = 5L, byrow = FALSE)
+
+  # scale the contact matrix if within the intervention period
+  contact_matrix_ <- intervention_on_cm(
+    t = t,
+    cm = params[["contact_matrix"]],
+    time_begin = params[["npi_time_begin"]],
+    time_end = params[["npi_time_end"]],
+    cr = params[["npi_cr"]]
+  )
+
+  # modify the vaccination rate depending on the regime
+  # the number of doses is already checked before passing
+  current_nu <- params[["vax_nu"]] *
+    ((params[["vax_time_begin"]] < t) &
+      (params[["vax_time_end"]] > t))
+
+  # calculate transitions
+  sToE <- (params[["beta"]] * y[, 1] * contact_matrix_ %*% y[, 3])
+  eToI <- params[["alpha"]] * y[, 2]
+  iToR <- params[["gamma"]] * y[, 3]
+  sToV <- current_nu * y[, 1]
+
+  # define compartmental changes
+  dS <- -sToE - sToV
+  dE <- sToE - eToI
+  dI <- eToI - iToR
+  dR <- iToR
+  dV <- sToV
+
+  # return a list
+  list(c(dS, dE, dI, dR, dV))
+}
+

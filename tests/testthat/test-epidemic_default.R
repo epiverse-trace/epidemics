@@ -29,8 +29,17 @@ pandemic <- infection(
   infectious_period = 7
 )
 
-test_that("Output of default epidemic model", {
-  # run epidemic model
+test_that("Output of default epidemic model Cpp", {
+  # run epidemic model, expect no condition
+  expect_no_condition(
+    epidemic_default_cpp(
+      population = uk_population,
+      infection = pandemic,
+      intervention = no_intervention(uk_population),
+      time_end = 100, increment = 1.0
+    )
+  )
+
   data <- epidemic_default_cpp(
     population = uk_population,
     infection = pandemic,
@@ -260,5 +269,118 @@ test_that("Group with more contacts has larger final size and infections", {
     data$time == max(data$time), ]$value
   expect_gt(
     current_infections[1], current_infections[2]
+  )
+})
+
+#### Tests for the R implementation of the default model ####
+# basic expectations
+test_that("Output of default epidemic model R", {
+  # run epidemic model, expect no conditions
+  expect_no_condition(
+    epidemic_default_r(
+      population = uk_population,
+      infection = pandemic,
+      intervention = no_intervention(uk_population),
+      time_end = 100, increment = 1.0
+    )
+  )
+
+  data <- epidemic_default_r(
+    population = uk_population,
+    infection = pandemic,
+    intervention = no_intervention(uk_population),
+    time_end = 100, increment = 1.0
+  )
+
+  # check for output type and contents
+  expect_s3_class(data, "data.table")
+  expect_length(data, 4L)
+  expect_named(
+    data, c("compartment", "demography_group", "value", "time"),
+    ignore.order = TRUE
+  )
+  expect_identical(
+    unique(data$compartment),
+    read_from_library(what = "compartments")
+  )
+
+  # check for all positive values within the range 0 and total population size
+  expect_true(
+    all(
+      data$value >= 0 & data$value <= sum(uk_population$demography_vector)
+    )
+  )
+
+  # check for identical numbers of individuals at start and end
+  # Note only valid for models without births and deaths
+  expect_identical(
+    sum(data[data$time == min(data$time), ]$value),
+    sum(data[data$time == max(data$time), ]$value),
+    tolerance = 1e-6
+  )
+
+  # check that all age groups in the simulation are the same
+  # size as the demography vector
+  final_state <- matrix(
+    unlist(data[data$time == max(data$time), ]$value),
+    nrow = nrow(contact_matrix)
+  )
+  expect_identical(
+    rowSums(final_state),
+    uk_population$demography_vector,
+    tolerance = 1e-6
+  )
+})
+
+# equivalence expectations
+test_that("Equivalence of default model R and Cpp", {
+  # create an intervention and vaccination
+  multi_intervention <- c(
+    intervention(
+      time_begin = 50, time_end = 100,
+      contact_reduction = matrix(
+        0.2, nrow(contact_matrix), 1
+      )
+    ),
+    intervention(
+      time_begin = 70, time_end = 90,
+      contact_reduction = matrix(
+        0.3, nrow(contact_matrix), 1
+      )
+    )
+  )
+  vax_regime <- vaccination(
+    time_begin = matrix(10, nrow(contact_matrix), 1),
+    time_end = matrix(100, nrow(contact_matrix), 1),
+    nu = matrix(0.01, nrow(contact_matrix), 1)
+  )
+
+  # run epidemic model, expect no conditions
+  data_r <- epidemic_default_r(
+    population = uk_population,
+    infection = pandemic,
+    intervention = multi_intervention,
+    vaccination = vax_regime,
+    time_end = 100, increment = 1.0
+  )
+
+  data_cpp <- epidemic_default_cpp(
+    population = uk_population,
+    infection = pandemic,
+    intervention = multi_intervention,
+    vaccination = vax_regime,
+    time_end = 100, increment = 1.0
+  )
+
+  expect_identical(
+    tail(data_r),
+    tail(data_cpp),
+    tolerance = 1.0 # tolerance of 1, although actual difference is around 0.1
+  )
+
+  expect_identical(
+    epidemic_size(data_r),
+    epidemic_size(data_cpp),
+    tolerance = 1.0
   )
 })

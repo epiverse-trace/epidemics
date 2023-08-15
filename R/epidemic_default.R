@@ -1,5 +1,8 @@
 #' @title Model an SEIR-V epidemic with interventions
 #'
+#' @name epidemic_default
+#' @rdname epidemic_default
+#'
 #' @description Simulate an epidemic using a deterministic, compartmental
 #' epidemic model with the compartments
 #' "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
@@ -35,16 +38,23 @@
 #' Taken as days, with a default value of 200 days.
 #' @param increment The size of the time increment. Taken as days, with a
 #' default value of 1 day.
-#' @details This is a wrapper function for [.epidemic_default_cpp()], a C++
-#' function that uses Boost _odeint_ solvers for an SEIR-V model.
+#' @details
+#'
+#' `epidemic_default_cpp()` is a wrapper function for [.epidemic_default_cpp()],
+#' an internal C++ function that uses Boost _odeint_ solvers for an SEIR-V model
+#' .
+#' [.epidemic_default_cpp()] accepts arguments that
+#' are created by processing the `population`, `infection`, `intervention` and
+#' `vaccination` arguments to the wrapper function into simpler forms.
+#'
+#' `epidemic_default_r()` is a wrapper around the internal function
+#' `.ode_epidemic_default()`, which is passed to [deSolve::lsoda()].
+#'
+#' Both models return equivalent results, but the C++ implementation is faster.
 #'
 #' This model only allows for single, population-wide rates of
 #' transition between the 'susceptible' and 'exposed' compartments, between the
 #' 'exposed' and 'infectious' compartments, and in the recovery rate.
-#'
-#' The internal C++ function [.epidemic_default_cpp()] accepts arguments that
-#' are created by processing the `population`, `infection`, `intervention` and
-#' `vaccination` arguments to the wrapper function into simpler forms.
 #'
 #' @return A `data.table` with the columns "time", "compartment", "age_group",
 #' "value". The compartments correspond to the compartments of the model
@@ -102,7 +112,7 @@ epidemic_default_cpp <- function(population,
   output_to_df(output, population, compartments)
 }
 
-#' Ordnary Differential Equations for the Default Model
+#' Ordinary Differential Equations for the Default Model
 #'
 #' @description Provides the ODEs for the default SEIR-V model in a format that
 #' is suitable for passing to [deSolve::lsoda()].
@@ -155,3 +165,70 @@ epidemic_default_cpp <- function(population,
   list(c(dS, dE, dI, dR, dV))
 }
 
+#' @title Model an SEIR-V epidemic with interventions
+#'
+#' @name epidemic_default
+#' @rdname epidemic_default
+#'
+#' @export
+epidemic_default_r <- function(population,
+                               infection,
+                               intervention = NULL,
+                               vaccination = NULL,
+                               time_end = 100,
+                               increment = 1) {
+  # check class on required inputs
+  checkmate::assert_class(population, "population")
+  checkmate::assert_class(infection, "infection")
+
+  # check the time end and increment
+  # restrict increment to lower limit of 1e-6
+  checkmate::assert_number(time_end, lower = 0, finite = TRUE)
+  checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
+
+  # collect population, infection, and model arguments passed as `...`
+  model_arguments <- list(
+    population = population, infection = infection,
+    time_end = time_end, increment = increment
+  )
+
+  # check class add intervention and vaccination if not NULL
+  if (!is.null(intervention)) {
+    checkmate::assert_class(intervention, "intervention")
+    model_arguments[["intervention"]] <- intervention
+  }
+  if (!is.null(vaccination)) {
+    checkmate::assert_class(vaccination, "vaccination")
+    model_arguments[["vaccination"]] <- vaccination
+  }
+
+  # prepare checked arguments for function
+  # this necessary as check_args adds intervention and vaccination
+  # if missing
+  model_arguments <- .prepare_args_epidemic_default(
+    .check_args_epidemic_default(model_arguments)
+  )
+
+  # get compartment names
+  compartments <- c(
+    "susceptible", "exposed", "infectious", "recovered", "vaccinated"
+  )
+
+  # get compartment states over timesteps
+  data <- deSolve::lsoda(
+    y = model_arguments[["initial_state"]],
+    times = seq(0, time_end, increment),
+    func = .ode_epidemic_default,
+    parms = model_arguments
+  )
+
+  # convert to long format using output_to_df() and return
+  output_to_df(
+    output = list(
+      x = data[, setdiff(colnames(data), "time")],
+      time = seq(0, time_end, increment)
+    ),
+    population = population,
+    compartments = compartments
+  )
+}

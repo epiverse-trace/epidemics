@@ -1,0 +1,213 @@
+---
+title: "Benchmarking R and Rcpp implementations of epidemic models"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+bibliography: references.json
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Benchmarking R and Rcpp implementations of epidemic models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This basic vignette shows speed benchmarks for the R and Rcpp implementations of the epidemic models.
+
+```{r setup}
+library(epidemics)
+library(microbenchmark)
+```
+
+## Benchmarking the default model
+
+The code to prepare the model arguments is hidden here, but can be expanded.
+
+```{r class.source = 'fold-hide'}
+# prepare arguments
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+contact_matrix <- t(contact_data$matrix)
+demography_vector <- contact_data$demography$population
+
+# Prepare some initial objects
+uk_population <- population(
+  name = "UK population",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = matrix(
+    c(0.9999, 0.0001, 0, 0, 0),
+    nrow = nrow(contact_matrix), ncol = 5L,
+    byrow = TRUE
+  )
+)
+
+# Prepare epi parameters
+pandemic <- infection(
+  r0 = 3,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
+
+# create a multi intervention
+multi_intervention <- c(
+  intervention(
+    time_begin = 50, time_end = 100,
+    contact_reduction = matrix(
+      0.2, nrow(contact_matrix), 1
+    )
+  ),
+  intervention(
+    time_begin = 70, time_end = 90,
+    contact_reduction = matrix(
+      0.3, nrow(contact_matrix), 1
+    )
+  )
+)
+
+# create a vaccination regime
+vax_regime <- vaccination(
+  time_begin = matrix(20, nrow(contact_matrix), 1),
+  time_end = matrix(100, nrow(contact_matrix), 1),
+  nu = matrix(0.01, nrow(contact_matrix), 1)
+)
+```
+
+```{r}
+microbenchmark(
+  # run epidemic model, expect no conditions
+  "epidemic default R" = epidemic_default_r(
+    population = uk_population,
+    infection = pandemic,
+    intervention = multi_intervention,
+    vaccination = vax_regime,
+    time_end = 100, increment = 1.0
+  ),
+  "epidemic default Rcpp" = epidemic_default_cpp(
+    population = uk_population,
+    infection = pandemic,
+    intervention = multi_intervention,
+    vaccination = vax_regime,
+    time_end = 100, increment = 1.0
+  ),
+  times = 100
+)
+```
+
+
+## Benchmarking the Vacamole model
+
+The code to prepare the model arguments is hidden here, but can be expanded.
+
+```{r class.source = 'fold-hide'}
+# prepare arguments
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+contact_matrix <- t(contact_data$matrix)
+demography_vector <- contact_data$demography$population
+
+# make initial conditions - order is important
+initial_conditions <- c(
+  S = 1 - 1e-6,
+  V1 = 0, V2 = 0,
+  E = 0, EV = 0,
+  I = 1e-6, IV = 0,
+  H = 0, HV = 0, D = 0, R = 0
+)
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+
+# Prepare some initial objects
+uk_population <- population(
+  name = "UK population",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+
+# Prepare epi parameters
+pandemic <- infection(
+  name = "covid", r0 = 5, infectious_period = 10,
+  preinfectious_period = 5,
+  eta = 1 / 1000, omega = 1 / 1000,
+  susc_reduction_vax = 0.5,
+  hosp_reduction_vax = 0.7,
+  mort_reduction_vax = 0.9
+)
+
+# create a multi intervention
+multi_intervention <- c(
+  intervention(
+    time_begin = 50, time_end = 100,
+    contact_reduction = matrix(
+      0.2, nrow(contact_matrix), 1
+    )
+  ),
+  intervention(
+    time_begin = 70, time_end = 90,
+    contact_reduction = matrix(
+      0.3, nrow(contact_matrix), 1
+    )
+  )
+)
+
+# prepare a two dose vaccination regime for three age groups
+double_vaccination <- vaccination(
+  name = "double_vaccination",
+  nu = matrix(
+    1e-3,
+    nrow = 3, ncol = 2
+  ),
+  time_begin = matrix(
+    20,
+    nrow = 3, ncol = 2
+  ),
+  time_end = matrix(
+    100,
+    nrow = 3, ncol = 2
+  )
+)
+```
+
+```{r}
+microbenchmark(
+  # run epidemic model, expect no conditions
+  "epidemic Vacamole R" = epidemic_vacamole_r(
+    population = uk_population,
+    infection = pandemic,
+    intervention = multi_intervention,
+    vaccination = double_vaccination,
+    time_end = 100, increment = 1.0
+  ),
+  "epidemic Vacamole Rcpp" = epidemic_vacamole_cpp(
+    population = uk_population,
+    infection = pandemic,
+    intervention = multi_intervention,
+    vaccination = double_vaccination,
+    time_end = 100, increment = 1.0
+  ),
+  times = 100
+)
+```

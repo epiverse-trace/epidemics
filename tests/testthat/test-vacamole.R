@@ -213,3 +213,113 @@ test_that("Vacamole model errors correctly", {
     )
   )
 })
+
+#### Tests for the R implementation of the Vacamole model ####
+# basic expectations
+test_that("Output of the Vacamole epidemic model R", {
+  # run epidemic model, expect no conditions
+  expect_no_condition(
+    epidemic_vacamole_r(
+      population = uk_population,
+      infection = infect,
+      intervention = no_intervention(uk_population),
+      vaccination = double_vaccination,
+      time_end = 100, increment = 1.0
+    )
+  )
+
+  data <- epidemic_vacamole_r(
+    population = uk_population,
+    infection = infect,
+    intervention = no_intervention(uk_population),
+    vaccination = double_vaccination,
+    time_end = 100, increment = 1.0
+  )
+
+  # check for output type and contents
+  expect_s3_class(data, "data.table")
+  expect_length(data, 4L)
+  expect_named(
+    data, c("compartment", "demography_group", "value", "time"),
+    ignore.order = TRUE
+  )
+  expect_identical(
+    unique(data$compartment),
+    read_from_library(model_name = "vacamole", what = "compartments")
+  )
+
+  # check for all positive values within the range 0 and total population size
+  expect_true(
+    all(
+      data$value >= 0 & data$value <= sum(uk_population$demography_vector)
+    )
+  )
+
+  # check for identical numbers of individuals at start and end
+  # Note only valid for models without births and deaths
+  expect_identical(
+    sum(data[data$time == min(data$time), ]$value),
+    sum(data[data$time == max(data$time), ]$value),
+    tolerance = 1e-6
+  )
+
+  # check that all age groups in the simulation are the same
+  # size as the demography vector
+  final_state <- matrix(
+    unlist(data[data$time == max(data$time), ]$value),
+    nrow = nrow(contact_matrix)
+  )
+  expect_identical(
+    rowSums(final_state),
+    uk_population$demography_vector,
+    tolerance = 1e-6
+  )
+})
+
+# equivalence expectations
+test_that("Equivalence of vacamole model R and Cpp", {
+  # create an intervention and vaccination
+  multi_intervention <- c(
+    intervention(
+      time_begin = 50, time_end = 100,
+      contact_reduction = matrix(
+        0.2, nrow(contact_matrix), 1
+      )
+    ),
+    intervention(
+      time_begin = 70, time_end = 90,
+      contact_reduction = matrix(
+        0.3, nrow(contact_matrix), 1
+      )
+    )
+  )
+
+  # run epidemic model, expect no conditions
+  data_r <- epidemic_vacamole_r(
+    population = uk_population,
+    infection = infect,
+    intervention = multi_intervention,
+    vaccination = double_vaccination,
+    time_end = 100, increment = 1.0
+  )
+
+  data_cpp <- epidemic_vacamole_cpp(
+    population = uk_population,
+    infection = infect,
+    intervention = multi_intervention,
+    vaccination = double_vaccination,
+    time_end = 100, increment = 1.0
+  )
+
+  expect_identical(
+    tail(data_r),
+    tail(data_cpp),
+    tolerance = 1.0 # tolerance of 1, although actual difference is around 0.1
+  )
+
+  expect_identical(
+    epidemic_size(data_r),
+    epidemic_size(data_cpp),
+    tolerance = 1.0
+  )
+})

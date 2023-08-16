@@ -441,23 +441,6 @@ c.intervention <- function(x, ...) {
 #' cumulative effect of any active interventions.
 #'
 cumulative_intervention <- function(t, time_begin, time_end, cr) {
-  # input checking --- may be removed as this is internal
-  checkmate::assert_number(t, lower = 0, finite = TRUE)
-  checkmate::assert_matrix(cr,
-    mode = "numeric",
-    any.missing = FALSE
-  )
-  checkmate::assert_numeric(
-    time_begin,
-    lower = 0, finite = TRUE,
-    any.missing = FALSE, len = ncol(cr)
-  )
-  checkmate::assert_numeric(
-    time_end,
-    lower = 0, finite = TRUE,
-    any.missing = FALSE, len = ncol(cr)
-  )
-
   # determine which interventions are active, promote to numeric
   interventions_active <- as.vector(t > time_begin & t < time_end)
 
@@ -490,9 +473,6 @@ cumulative_intervention <- function(t, time_begin, time_end, cr) {
 #'
 #' @keywords internal
 intervention_on_cm <- function(t, cm, time_begin, time_end, cr) {
-  # input checking --- may be removed
-  checkmate::assert_matrix(cm, mode = "numeric", any.missing = FALSE)
-
   # return values
   cm * (1.0 - cumulative_intervention(t, time_begin, time_end, cr))
 }

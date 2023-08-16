@@ -68,6 +68,7 @@ Suggests:
     colorspace,
     ggplot2,
     knitr,
+    microbenchmark,
     rmarkdown,
     scales,
     socialmixr,

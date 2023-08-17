@@ -64,21 +64,21 @@
   # we take the ceiling to ensure that models with only one
   # infectious individual can be accommodated
   initial_state <-
-    ceiling(mod_args[["population"]][["initial_conditions"]] *
-      mod_args[["population"]][["demography_vector"]])
+    ceiling(get_parameter(mod_args[["population"]], "initial_conditions") *
+      get_parameter(mod_args[["population"]], "demography_vector"))
 
   # prepare population size
   population_size <- sum(
-    mod_args[["population"]][["demography_vector"]]
+    get_parameter(mod_args[["population"]], "demography_vector")
   )
 
   # calculate beta, Erlang shape and rate parameters are passed
-  beta <- mod_args[["infection"]][["r0"]] /
-    mod_args[["infection"]][["infectious_period"]]
-  shape_E <- mod_args[["infection"]][["shape_E"]]
-  rate_E <- mod_args[["infection"]][["rate_E"]]
-  shape_I <- mod_args[["infection"]][["shape_I"]]
-  rate_I <- mod_args[["infection"]][["rate_I"]]
+  beta <- get_parameter(mod_args[["infection"]], "r0") /
+    get_parameter(mod_args[["infection"]], "infectious_period")
+  shape_E <- get_parameter(mod_args[["infection"]], "shape_E")
+  rate_E <- get_parameter(mod_args[["infection"]], "rate_E")
+  shape_I <- get_parameter(mod_args[["infection"]], "shape_I")
+  rate_I <- get_parameter(mod_args[["infection"]], "rate_I")
 
   # return only required list elements
   list(

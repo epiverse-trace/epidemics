@@ -44,6 +44,7 @@ at that stage of the epidemic."><meta property="og:image" content="/logo.svg"><!
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling ebolavirus disease with a stochastic model</a>
+    <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -82,7 +83,7 @@ at that stage of the epidemic.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>data</dt>
 <dd><p>A <code>data.table</code> (or <code>data.frame</code>) of model output, typically
-the output of <code><a href="epidemic_default_cpp.html">epidemic_default_cpp()</a></code> or similar functions.</p></dd>
+the output of <code><a href="epidemic_default.html">epidemic_default_cpp()</a></code> or similar functions.</p></dd>
 
 
 <dt>stage</dt>
@@ -141,7 +142,7 @@ group as well as the total epidemic size.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># run epidemic simulation with no vaccination or intervention</span></span></span>
-<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="epidemic_default_cpp.html">epidemic_default_cpp</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span></span>
 <span class="r-in"><span>  infection <span class="op">=</span> <span class="va">pandemic_influenza</span>,</span></span>
 <span class="r-in"><span>  time_end <span class="op">=</span> <span class="fl">200</span>,</span></span>

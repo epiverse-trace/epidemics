@@ -10,6 +10,9 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
+    <loc>/articles/benchmarking.html</loc>
+  </url>
+  <url>
     <loc>/articles/ebola_model.html</loc>
   </url>
   <url>
@@ -67,6 +70,9 @@
     <loc>/reference/check_prepare_vacamole_args.html</loc>
   </url>
   <url>
+    <loc>/reference/cumulative_intervention.html</loc>
+  </url>
+  <url>
     <loc>/reference/dot-epidemic_default_cpp.html</loc>
   </url>
   <url>
@@ -76,7 +82,13 @@
     <loc>/reference/dot-epidemic_vacamole_cpp.html</loc>
   </url>
   <url>
-    <loc>/reference/epidemic_default_cpp.html</loc>
+    <loc>/reference/dot-ode_epidemic_default.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-ode_epidemic_vacamole.html</loc>
+  </url>
+  <url>
+    <loc>/reference/epidemic_default.html</loc>
   </url>
   <url>
     <loc>/reference/epidemic_ebola.html</loc>
@@ -85,7 +97,7 @@
     <loc>/reference/epidemic_size.html</loc>
   </url>
   <url>
-    <loc>/reference/epidemic_vacamole_cpp.html</loc>
+    <loc>/reference/epidemic_vacamole.html</loc>
   </url>
   <url>
     <loc>/reference/epidemics-package.html</loc>

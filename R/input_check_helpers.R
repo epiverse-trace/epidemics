@@ -182,7 +182,7 @@ assert_vaccination <- function(x, doses, population) {
   # check that x has as many cols in `nu` as `doses`
   # all other elements are identical dims as `nu`
   checkmate::assert_matrix(
-    x[["nu"]],
+    get_parameter(x, "nu"),
     ncols = doses
   )
 
@@ -191,8 +191,8 @@ assert_vaccination <- function(x, doses, population) {
   if (!missing(population)) {
     checkmate::assert_class(population, "population")
     checkmate::assert_matrix(
-      x[["nu"]],
-      nrows = length(population[["demography_vector"]])
+      get_parameter(x, "nu"),
+      nrows = length(get_parameter(population, "demography_vector"))
     )
   }
 
@@ -227,10 +227,10 @@ assert_intervention <- function(x, population) {
   # of demographic groups
   n_demo_groups <- NULL
   if (!missing(population)) {
-    n_demo_groups <- length(population[["demography_vector"]])
+    n_demo_groups <- length(get_parameter(population, "demography_vector"))
   }
   checkmate::assert_matrix(
-    x[["contact_reduction"]],
+    get_parameter(x, "contact_reduction"),
     mode = "numeric",
     nrows = n_demo_groups
   )

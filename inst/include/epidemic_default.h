@@ -11,6 +11,8 @@
 #include "intervention.h"
 #include "vaccination.h"
 #include "population.h"
+
+#include <unordered_map>
 // clang-format on
 
 // add to namespace epidemics
@@ -20,7 +22,7 @@ namespace epidemics {
 
 /// @brief Struct containing the default epidemic ODE system
 struct epidemic_default {
-  const double beta, alpha, gamma;
+  std::unordered_map<std::string, double> infection_params;
   const Eigen::MatrixXd contact_matrix;
   Eigen::MatrixXd cm_temp;
   // related to interventions
@@ -29,6 +31,8 @@ struct epidemic_default {
   // related to vaccination
   const Eigen::MatrixXd vax_time_begin, vax_time_end, vax_nu;
   Eigen::MatrixXd vax_nu_current;
+  const std::unordered_map<std::string, intervention::intervention>
+      interventions;
 
   // npi, interv, pop
 
@@ -43,17 +47,16 @@ struct epidemic_default {
   /// @param vax_time_begin The age- and dose-specific vaccination start time
   /// @param vax_time_end The age- and dose-specific vaccination end time
   /// @param vax_nu The age- and dose-specific vaccination rate
-  epidemic_default(const double beta, const double alpha, const double gamma,
-                   const Eigen::MatrixXd contact_matrix,
-                   const Rcpp::NumericVector npi_time_begin,
-                   const Rcpp::NumericVector npi_time_end,
-                   const Rcpp::NumericMatrix npi_cr,
-                   const Eigen::MatrixXd vax_time_begin,
-                   const Eigen::MatrixXd vax_time_end,
-                   const Eigen::MatrixXd vax_nu)
-      : beta(beta),
-        alpha(alpha),
-        gamma(gamma),
+  epidemic_default(
+      std::unordered_map<std::string, double> infection_params,
+      const Eigen::MatrixXd contact_matrix,
+      const Rcpp::NumericVector npi_time_begin,
+      const Rcpp::NumericVector npi_time_end, const Rcpp::NumericMatrix npi_cr,
+      const Eigen::MatrixXd vax_time_begin, const Eigen::MatrixXd vax_time_end,
+      const Eigen::MatrixXd vax_nu,
+      const std::unordered_map<std::string, intervention::intervention>
+          interventions)
+      : infection_params(infection_params),
         contact_matrix(contact_matrix),
         cm_temp(contact_matrix),
         npi_time_begin(npi_time_begin),
@@ -62,7 +65,8 @@ struct epidemic_default {
         vax_time_begin(vax_time_begin),
         vax_time_end(vax_time_end),
         vax_nu(vax_nu),
-        vax_nu_current(vax_nu) {}
+        vax_nu_current(vax_nu),
+        interventions(interventions) {}
 
   /// @brief Operator for the default model
   /// @param x The initial state of the population - rows represent age groups
@@ -80,6 +84,14 @@ struct epidemic_default {
     cm_temp = intervention::intervention_on_cm(
         t, contact_matrix, npi_time_begin, npi_time_end, npi_cr);
 
+    // trial modification of beta
+    // if (std::abs(t - 100.0) < 1e-6) {
+    //   infection_params["beta"] *= 10.0;
+    // }
+
+    // trial interventions
+    apply_interventions(t, infection_params, interventions);
+
     // get current vaccination rate
     vax_nu_current =
         vaccination::current_nu(t, vax_nu, vax_time_begin, vax_time_end);
@@ -88,10 +100,10 @@ struct epidemic_default {
     // for vectorised operations
 
     // compartmental transitions without accounting for contacts
-    Eigen::ArrayXd sToE =
-        beta * x.col(0).array() * (cm_temp * x.col(2)).array();
-    Eigen::ArrayXd eToI = alpha * x.col(1).array();
-    Eigen::ArrayXd iToR = gamma * x.col(2).array();
+    Eigen::ArrayXd sToE = infection_params["beta"] * x.col(0).array() *
+                          (cm_temp * x.col(2)).array();
+    Eigen::ArrayXd eToI = infection_params["alpha"] * x.col(1).array();
+    Eigen::ArrayXd iToR = infection_params["gamma"] * x.col(2).array();
     Eigen::ArrayXd sToV = vax_nu_current.col(0).array() * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)

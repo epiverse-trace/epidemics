@@ -11,10 +11,47 @@
 #include <RcppEigen.h>
 
 #include <algorithm>
+#include <unordered_map>
+#include <string>
 // clang-format on
 
 // add to namespace ode
 namespace intervention {
+
+/// @brief
+struct intervention {
+  double time_begin;
+  double time_end;
+  double reduction;
+
+  /// @brief
+  /// @param time_begin
+  /// @param time_end
+  /// @param reduction
+  intervention(double time_begin, double time_end,
+               double reduction)
+      : time_begin(time_begin), time_end(time_end), reduction(reduction) {}
+};
+
+inline std::unordered_map<std::string, intervention> translate_interventions(
+    Rcpp::List &interventions) {
+  // to hold output
+  std::unordered_map<std::string, intervention> result;
+
+  Rcpp::CharacterVector intervention_targets = interventions.names();
+
+  for (size_t i = 0; i < interventions.length(); i++) {
+    intervention this_intervention(interventions[i]["time_begin"],
+                                   interventions[i]["time_end"],
+                                   interventions[i]["reduction)"]);
+
+    std::string name = Rcpp::as<std::string>(intervention_targets[i]);
+
+    result[name] = this_intervention;
+  }
+
+  return result;
+}
 
 /// @brief Get the cumulative effect of interventions
 /// @param t The current simulation time.
@@ -79,6 +116,20 @@ inline Eigen::MatrixXd intervention_on_cm(const double &t,
       cm.array().colwise() * (1.0 - contact_reduction);
   // transpose for rowwise array multiplication, as Eigen is col-major
   return modified_cm;
+}
+
+inline void apply_interventions(
+    const double &t, std::unordered_map<std::string, double> &infection_params,
+    const std::unordered_map<std::string, intervention> &interventions) {
+  // loop over interventions and check
+  for (const auto &pair : interventions) {
+    intervention temp = pair.second;
+    double effect = std::abs(t - temp.time_begin) < 1e-6
+                        ? temp.reduction
+                        : 0.0;
+
+    infection_params[pair.first] *= effect;
+  }
 }
 
 }  // namespace intervention

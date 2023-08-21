@@ -82,7 +82,7 @@ test_that("Default model with multiple interventions", {
     epidemic_default_cpp(
       population = uk_population,
       infection = pandemic,
-      intervention = multi_npi,
+      intervention = list(contacts = multi_npi),
       time_end = 100
     )
   )
@@ -91,13 +91,13 @@ test_that("Default model with multiple interventions", {
   data_1_npi <- epidemic_default_cpp(
     population = uk_population,
     infection = pandemic,
-    intervention = npi_2,
+    intervention = list(contacts = npi_2),
     time_end = 100
   )
   data_2_npi <- epidemic_default_cpp(
     population = uk_population,
     infection = pandemic,
-    intervention = multi_npi,
+    intervention = list(contacts = multi_npi),
     time_end = 100
   )
   expect_lte(

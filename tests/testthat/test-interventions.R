@@ -79,7 +79,9 @@ test_that("Intervention reduces final size", {
   data_intervention <- epidemic_default_cpp(
     population = uk_population,
     infection = pandemic,
-    intervention = close_schools,
+    intervention = list(
+      contacts = close_schools
+    ),
     time_end = 200, increment = 1.0
   )
 
@@ -87,7 +89,6 @@ test_that("Intervention reduces final size", {
   data <- epidemic_default_cpp(
     population = uk_population,
     infection = pandemic,
-    intervention = no_intervention(uk_population),
     time_end = 200, increment = 1.0
   )
 

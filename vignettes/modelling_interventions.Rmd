@@ -114,7 +114,7 @@ close_schools
 output <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic,
-  intervention = close_schools,
+  intervention = list(contacts = close_schools),
   time_end = 600, increment = 1.0
 )
 ```

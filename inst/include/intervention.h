@@ -35,20 +35,26 @@ struct intervention {
 };
 
 inline std::unordered_map<std::string, intervention> translate_interventions(
-    Rcpp::List &interventions) {
+    const Rcpp::List &interventions) {
   // to hold output
   std::unordered_map<std::string, intervention> result;
 
+  // get intervention names - these are the targets
   Rcpp::CharacterVector intervention_targets = interventions.names();
 
-  for (size_t i = 0; i < interventions.length(); i++) {
-    intervention this_intervention(interventions[i]["time_begin"],
-                                   interventions[i]["time_end"],
-                                   interventions[i]["reduction)"]);
+  // add intervention objects to map
+  for (size_t i = 0; i < interventions.size(); i++) {
+    // make a copy of the list element, which is also a list
+    Rcpp::List intervention_element = interventions[i];
 
+    // create new intervention object from list element members
+    intervention intervention_temp = intervention(
+        intervention_element["time_begin"], intervention_element["time_end"],
+        intervention_element["reduction"]);
+
+    // add to map
     std::string name = Rcpp::as<std::string>(intervention_targets[i]);
-
-    result[name] = this_intervention;
+    result[name] = intervention_temp;
   }
 
   return result;

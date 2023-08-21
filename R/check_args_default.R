@@ -76,8 +76,17 @@
   # add null intervention and vaccination if these are missing
   # if not missing, check that they conform to expectations
   if (!"intervention" %in% names(mod_args)) {
-    mod_args[["intervention"]] <- no_intervention(
-      mod_args[["population"]]
+    # add as a list element named "contacts", and one named "beta"
+    mod_args[["intervention"]] <- list(
+      contacts = no_intervention(
+        mod_args[["population"]]
+      ),
+      # a dummy intervention on the rate parameter beta
+      beta = list(
+        time_begin = 0,
+        time_end = 0,
+        reduction = 0
+      )
     )
   } else {
     assert_intervention(mod_args[["intervention"]], mod_args[["population"]])

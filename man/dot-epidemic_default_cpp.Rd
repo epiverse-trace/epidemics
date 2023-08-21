@@ -16,6 +16,7 @@
   vax_time_begin,
   vax_time_end,
   vax_nu,
+  rate_interventions,
   time_end = 100,
   increment = 0.1
 )

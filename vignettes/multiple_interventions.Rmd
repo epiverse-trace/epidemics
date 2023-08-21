@@ -192,7 +192,7 @@ We simulate the epidemic for 600 days as we expect the intervention to spread di
 data_schools_closed <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic,
-  intervention = close_schools,
+  intervention = list(contacts = close_schools),
   time_end = 600, increment = 1.0
 )
 
@@ -320,7 +320,7 @@ We simulate the epidemic for 600 days.
 data_combined <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic,
-  intervention = combined_interventions,
+  intervention = list(contacts = combined_interventions),
   time_end = 600, increment = 1.0
 )
 
@@ -437,7 +437,7 @@ We simulate an epidemic using the `epidemic_default_cpp()` function for 600 days
 data_combined <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic,
-  intervention = combined_interventions,
+  intervention = list(contacts = combined_interventions),
   time_end = 600, increment = 1.0
 )
 

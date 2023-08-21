@@ -239,7 +239,8 @@ Note that the final size here refers to the final size after 100 days, which is 
 ```{r}
 # apply the function over each replicate
 data_final_size <- Map(
-  data, f = epidemic_size, deaths = FALSE, by_group = FALSE
+  data,
+  f = epidemic_size, deaths = FALSE, by_group = FALSE
 )
 data_final_size <- unlist(data_final_size)
 ```

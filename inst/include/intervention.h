@@ -125,18 +125,26 @@ inline Eigen::MatrixXd intervention_on_cm(const double &t,
   return modified_cm;
 }
 
-inline void apply_interventions(
-    const double &t, std::unordered_map<std::string, double> &infection_params,
+/// @brief Apply interventions on the rate parameters
+/// @param t The current simulation time
+/// @param infection_params A map of the infection rate parameters
+/// @param interventions A map of the interventions
+inline std::unordered_map<std::string, double> intervention_on_params(
+    const double &t,
+    const std::unordered_map<std::string, double> &infection_params,
     const std::unordered_map<std::string, intervention> &interventions) {
+  // make copy of infection params
+  std::unordered_map<std::string, double> params_temp = infection_params;
+
   // loop over interventions and check
   for (const auto &pair : interventions) {
     intervention temp = pair.second;
-    double effect = std::abs(t - temp.time_begin) < 1e-6
-                        ? temp.reduction
-                        : 0.0;
-
-    infection_params[pair.first] *= effect;
+    if (t >= temp.time_begin && t <= temp.time_end) {
+      params_temp.at(pair.first) *= (1.0 - temp.reduction);
+    }
   }
+
+  return params_temp;
 }
 
 }  // namespace intervention

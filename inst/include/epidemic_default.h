@@ -6,13 +6,14 @@
 #include <Rcpp.h>
 #include <RcppEigen.h>
 
+#include <unordered_map>
+#include <string>
+
 #include <boost/numeric/odeint.hpp>
 #include "ode_tools.h"
 #include "intervention.h"
 #include "vaccination.h"
 #include "population.h"
-
-#include <unordered_map>
 // clang-format on
 
 // add to namespace epidemics
@@ -22,7 +23,9 @@ namespace epidemics {
 
 /// @brief Struct containing the default epidemic ODE system
 struct epidemic_default {
-  std::unordered_map<std::string, double> infection_params;
+  // two maps for the infection parameters, one for dynamic modification
+  const std::unordered_map<std::string, double> infection_params;
+  std::unordered_map<std::string, double> infection_params_temp;
   const Eigen::MatrixXd contact_matrix;
   Eigen::MatrixXd cm_temp;
   // related to interventions
@@ -48,15 +51,16 @@ struct epidemic_default {
   /// @param vax_time_end The age- and dose-specific vaccination end time
   /// @param vax_nu The age- and dose-specific vaccination rate
   epidemic_default(
-      std::unordered_map<std::string, double> infection_params,
+      const std::unordered_map<std::string, double>& infection_params,
       const Eigen::MatrixXd contact_matrix,
       const Rcpp::NumericVector npi_time_begin,
       const Rcpp::NumericVector npi_time_end, const Rcpp::NumericMatrix npi_cr,
       const Eigen::MatrixXd vax_time_begin, const Eigen::MatrixXd vax_time_end,
       const Eigen::MatrixXd vax_nu,
-      const std::unordered_map<std::string, intervention::intervention>
+      const std::unordered_map<std::string, intervention::intervention>&
           interventions)
       : infection_params(infection_params),
+        infection_params_temp(infection_params),
         contact_matrix(contact_matrix),
         cm_temp(contact_matrix),
         npi_time_begin(npi_time_begin),
@@ -84,13 +88,9 @@ struct epidemic_default {
     cm_temp = intervention::intervention_on_cm(
         t, contact_matrix, npi_time_begin, npi_time_end, npi_cr);
 
-    // trial modification of beta
-    // if (std::abs(t - 100.0) < 1e-6) {
-    //   infection_params["beta"] *= 10.0;
-    // }
-
     // trial interventions
-    apply_interventions(t, infection_params, interventions);
+    infection_params_temp = intervention::intervention_on_params(
+        t, infection_params, interventions);
 
     // get current vaccination rate
     vax_nu_current =
@@ -100,10 +100,10 @@ struct epidemic_default {
     // for vectorised operations
 
     // compartmental transitions without accounting for contacts
-    Eigen::ArrayXd sToE = infection_params["beta"] * x.col(0).array() *
+    Eigen::ArrayXd sToE = infection_params_temp["beta"] * x.col(0).array() *
                           (cm_temp * x.col(2)).array();
-    Eigen::ArrayXd eToI = infection_params["alpha"] * x.col(1).array();
-    Eigen::ArrayXd iToR = infection_params["gamma"] * x.col(2).array();
+    Eigen::ArrayXd eToI = infection_params_temp["alpha"] * x.col(1).array();
+    Eigen::ArrayXd iToR = infection_params_temp["gamma"] * x.col(2).array();
     Eigen::ArrayXd sToV = vax_nu_current.col(0).array() * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)

@@ -198,7 +198,7 @@ infectious period of 7 days, and a pre-infectious period of 3 days.
 output <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic_influenza,
-  intervention = close_schools,
+  intervention = list(contacts = close_schools),
   time_end = 600, increment = 1.0
 )
 ```

@@ -24,13 +24,14 @@ struct intervention {
   double time_end;
   double reduction;
 
-  /// @brief
-  /// @param time_begin
-  /// @param time_end
-  /// @param reduction
-  intervention(double time_begin, double time_end,
-               double reduction)
+  /// @brief A struct that holds intervention parameters
+  /// @param time_begin The start time of the intervention
+  /// @param time_end The end time of the intervention
+  /// @param reduction The proportional reduction in the parameter affected
+  intervention(double time_begin, double time_end, double reduction)
       : time_begin(time_begin), time_end(time_end), reduction(reduction) {}
+
+  intervention() : time_begin(0.0), time_end(0.0), reduction(0.0) {}
 };
 
 inline std::unordered_map<std::string, intervention> translate_interventions(

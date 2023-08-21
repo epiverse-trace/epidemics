@@ -476,3 +476,34 @@ intervention_on_cm <- function(t, cm, time_begin, time_end, cr) {
   # return values
   cm * (1.0 - cumulative_intervention(t, time_begin, time_end, cr))
 }
+
+#' Apply interventions to rate parameters
+#'
+#' @param t A single number for the simulation time.
+#' @param interventions A named list of `list`-like objects that each have at
+#' least the three members `"time_begin"`, `"time_end"`, and `"reduction"`.
+#' These are used to calculate the effect on each of the named parameters in the
+#' simulation.
+#' @param parameters A named list of numeric parameters affected by
+#' `interventions`.
+#' This represents the infection parameters, such as the transmission rate,
+#' \eqn{\beta}, or the recovery rate, \eqn{\gamma}.
+#' @return A named list of the same length as `parameters`, with the same names.
+#' These parameters can then be used in a timestep of an ODE model.
+intervention_on_params <- function(t, interventions, parameters) {
+  new_values <- Map(
+    interventions, names(interventions),
+    f = function(interv, name) {
+      parameters[[name]] * (1 - (interv[["reduction"]] *
+        (t >= interv[["time_begin"]] &&
+          t <= interv[["time_end"]])
+      )
+      )
+    }
+  )
+
+  parameters[names(new_values)] <- new_values
+
+  # return parameters
+  parameters
+}

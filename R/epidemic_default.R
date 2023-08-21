@@ -142,6 +142,15 @@ epidemic_default_cpp <- function(population,
     cr = params[["npi_cr"]]
   )
 
+  # modify parameters
+  infection_params <- params[c("beta", "alpha", "gamma")]
+
+  infection_params <- intervention_on_params(
+    t = t,
+    interventions = params[["rate_interventions"]],
+    parameters = infection_params
+  )
+
   # modify the vaccination rate depending on the regime
   # the number of doses is already checked before passing
   current_nu <- params[["vax_nu"]] *
@@ -149,9 +158,9 @@ epidemic_default_cpp <- function(population,
       (params[["vax_time_end"]] > t))
 
   # calculate transitions
-  sToE <- (params[["beta"]] * y[, 1] * contact_matrix_ %*% y[, 3])
-  eToI <- params[["alpha"]] * y[, 2]
-  iToR <- params[["gamma"]] * y[, 3]
+  sToE <- (infection_params[["beta"]] * y[, 1] * contact_matrix_ %*% y[, 3])
+  eToI <- infection_params[["alpha"]] * y[, 2]
+  iToR <- infection_params[["gamma"]] * y[, 3]
   sToV <- current_nu * y[, 1]
 
   # define compartmental changes
@@ -194,7 +203,10 @@ epidemic_default_r <- function(population,
 
   # check class add intervention and vaccination if not NULL
   if (!is.null(intervention)) {
-    checkmate::assert_list(intervention, types = "intervention")
+    checkmate::assert_list(
+      intervention,
+      types = c("intervention", "list")
+    )
     model_arguments[["intervention"]] <- intervention
   }
   if (!is.null(vaccination)) {

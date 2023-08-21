@@ -85,7 +85,7 @@ epidemic_default_cpp <- function(population,
 
   # check class add intervention and vaccination if not NULL
   if (!is.null(intervention)) {
-    checkmate::assert_class(intervention, "intervention")
+    checkmate::assert_list(intervention, types = "intervention")
     model_arguments[["intervention"]] <- intervention
   }
   if (!is.null(vaccination)) {
@@ -194,7 +194,7 @@ epidemic_default_r <- function(population,
 
   # check class add intervention and vaccination if not NULL
   if (!is.null(intervention)) {
-    checkmate::assert_class(intervention, "intervention")
+    checkmate::assert_list(intervention, types = "intervention")
     model_arguments[["intervention"]] <- intervention
   }
   if (!is.null(vaccination)) {

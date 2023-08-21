@@ -16,7 +16,7 @@ uk_population <- population(
   contact_matrix = contact_matrix,
   demography_vector = demography_vector,
   initial_conditions = matrix(
-    c(0.9999, 0.0001, 0, 0, 0),
+    c(0.9999, 0, 0.0001, 0, 0),
     nrow = nrow(contact_matrix), ncol = 5L,
     byrow = TRUE
   )
@@ -35,7 +35,9 @@ test_that("Output of default epidemic model Cpp", {
     epidemic_default_cpp(
       population = uk_population,
       infection = pandemic,
-      intervention = no_intervention(uk_population),
+      intervention = list(
+        contacts = no_intervention(uk_population)
+      ),
       time_end = 100, increment = 1.0
     )
   )
@@ -43,7 +45,9 @@ test_that("Output of default epidemic model Cpp", {
   data <- epidemic_default_cpp(
     population = uk_population,
     infection = pandemic,
-    intervention = no_intervention(uk_population),
+    intervention = list(
+      contacts = no_intervention(uk_population)
+    ),
     time_end = 100, increment = 1.0
   )
 
@@ -280,7 +284,6 @@ test_that("Output of default epidemic model R", {
     epidemic_default_r(
       population = uk_population,
       infection = pandemic,
-      intervention = no_intervention(uk_population),
       time_end = 100, increment = 1.0
     )
   )
@@ -288,7 +291,9 @@ test_that("Output of default epidemic model R", {
   data <- epidemic_default_r(
     population = uk_population,
     infection = pandemic,
-    intervention = no_intervention(uk_population),
+    intervention = list(
+      contacts = no_intervention(uk_population)
+    ),
     time_end = 100, increment = 1.0
   )
 
@@ -359,7 +364,9 @@ test_that("Equivalence of default model R and Cpp", {
   data_r <- epidemic_default_r(
     population = uk_population,
     infection = pandemic,
-    intervention = multi_intervention,
+    intervention = list(
+      contacts = multi_intervention
+    ),
     vaccination = vax_regime,
     time_end = 100, increment = 1.0
   )
@@ -367,7 +374,9 @@ test_that("Equivalence of default model R and Cpp", {
   data_cpp <- epidemic_default_cpp(
     population = uk_population,
     infection = pandemic,
-    intervention = multi_intervention,
+    intervention = list(
+      contacts = multi_intervention
+    ),
     vaccination = vax_regime,
     time_end = 100, increment = 1.0
   )

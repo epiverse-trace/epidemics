@@ -89,8 +89,29 @@
       )
     )
   } else {
-    assert_intervention(mod_args[["intervention"]], mod_args[["population"]])
+    # if a single intervention is passed
+    stopifnot(
+      "`intervention` must be a list of <intervention>s" =
+        checkmate::test_list(
+          mod_args[["intervention"]],
+          types = c("intervention", "list")
+        )
+    )
+
+    # check for any other intervention list element names
+    checkmate::assert_names(
+      names(mod_args[["intervention"]]),
+      subset.of = c("beta", "gamma", "alpha", "contacts")
+    )
+
+    if ("contacts" %in% names(mod_args[["intervention"]])) {
+      # check the intervention on contacts
+      assert_intervention(
+        mod_args[["intervention"]][["contacts"]], mod_args[["population"]]
+      )
+    }
   }
+
   if (!"vaccination" %in% names(mod_args)) {
     mod_args[["vaccination"]] <- no_vaccination(
       mod_args[["population"]]

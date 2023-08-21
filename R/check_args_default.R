@@ -155,9 +155,15 @@
     get_parameter(mod_args[["infection"]], "infectious_period")
 
   # get NPI related times and contact reductions
-  npi_time_begin <- get_parameter(mod_args[["intervention"]], "time_begin")
-  npi_time_end <- get_parameter(mod_args[["intervention"]], "time_end")
-  npi_cr <- get_parameter(mod_args[["intervention"]], "contact_reduction")
+  contact_interventions <- mod_args[["intervention"]][["contacts"]]
+  npi_time_begin <- get_parameter(contact_interventions, "time_begin")
+  npi_time_end <- get_parameter(contact_interventions, "time_end")
+  npi_cr <- get_parameter(contact_interventions, "contact_reduction")
+
+  # get other interventions if any
+  rate_interventions <- mod_args[["intervention"]][
+    setdiff(names(mod_args[["intervention"]]), "contacts")
+  ]
 
   # get vaccination related times and rates
   vax_time_begin <- get_parameter(mod_args[["vaccination"]], "time_begin")
@@ -173,6 +179,7 @@
     npi_cr = npi_cr,
     vax_time_begin = vax_time_begin, vax_time_end = vax_time_end,
     vax_nu = vax_nu,
+    rate_interventions = rate_interventions,
     time_end = mod_args$time_end,
     increment = mod_args$increment
   )

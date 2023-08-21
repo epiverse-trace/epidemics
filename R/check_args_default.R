@@ -94,7 +94,8 @@
       "`intervention` must be a list of <intervention>s" =
         checkmate::test_list(
           mod_args[["intervention"]],
-          types = c("intervention", "list")
+          types = c("intervention", "list"),
+          names = "unique"
         )
     )
 
@@ -108,6 +109,16 @@
       # check the intervention on contacts
       assert_intervention(
         mod_args[["intervention"]][["contacts"]], mod_args[["population"]]
+      )
+    }
+
+    # if there is only an intervention on contacts, add a dummy intervention
+    # on the transmission rate beta
+    if (identical(names(mod_args[["intervention"]]), "contacts")) {
+      mod_args[["intervention"]]$beta <- list(
+        time_begin = 0,
+        time_end = 0,
+        reduction = 0
       )
     }
   }

@@ -211,7 +211,7 @@ assert_vaccination <- function(x, doses, population) {
 #' @param x A [intervention] object.
 #' @param population An optional argument which is a [population] object.
 #' When present, this is used to check whether the intervention object `x` has
-#' corresponding values of `contact_reduction` for each demographic group in
+#' corresponding values of `reduction` for each demographic group in
 #' `population`.
 #'
 #' @keywords internal
@@ -223,14 +223,14 @@ assert_intervention <- function(x, population) {
   # check for input class
   checkmate::assert_class(x, "intervention")
 
-  # check that the length of contact_reduction is the same as the number
+  # check that the length of reduction is the same as the number
   # of demographic groups
   n_demo_groups <- NULL
   if (!missing(population)) {
     n_demo_groups <- length(get_parameter(population, "demography_vector"))
   }
   checkmate::assert_matrix(
-    get_parameter(x, "contact_reduction"),
+    get_parameter(x, "reduction"),
     mode = "numeric",
     nrows = n_demo_groups
   )

@@ -145,7 +145,7 @@ epidemic_default_cpp <- function(population,
   # modify parameters
   infection_params <- params[c("beta", "alpha", "gamma")]
 
-  infection_params <- intervention_on_params(
+  infection_params <- intervention_on_rates(
     t = t,
     interventions = params[["rate_interventions"]],
     parameters = infection_params

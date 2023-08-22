@@ -78,15 +78,11 @@
   if (!"intervention" %in% names(mod_args)) {
     # add as a list element named "contacts", and one named "beta"
     mod_args[["intervention"]] <- list(
-      contacts = no_intervention(
+      contacts = no_contacts_intervention(
         mod_args[["population"]]
       ),
       # a dummy intervention on the rate parameter beta
-      beta = list(
-        time_begin = 0,
-        time_end = 0,
-        reduction = 0
-      )
+      beta = no_rate_intervention()
     )
   } else {
     # if a single intervention is passed
@@ -94,7 +90,7 @@
       "`intervention` must be a list of <intervention>s" =
         checkmate::test_list(
           mod_args[["intervention"]],
-          types = c("intervention", "list"),
+          types = c("contacts_intervention", "rate_intervention"),
           names = "unique"
         )
     )
@@ -115,11 +111,7 @@
     # if there is only an intervention on contacts, add a dummy intervention
     # on the transmission rate beta
     if (identical(names(mod_args[["intervention"]]), "contacts")) {
-      mod_args[["intervention"]]$beta <- list(
-        time_begin = 0,
-        time_end = 0,
-        reduction = 0
-      )
+      mod_args[["intervention"]]$beta <- no_rate_intervention()
     }
   }
 
@@ -169,7 +161,7 @@
   contact_interventions <- mod_args[["intervention"]][["contacts"]]
   npi_time_begin <- get_parameter(contact_interventions, "time_begin")
   npi_time_end <- get_parameter(contact_interventions, "time_end")
-  npi_cr <- get_parameter(contact_interventions, "contact_reduction")
+  npi_cr <- get_parameter(contact_interventions, "reduction")
 
   # get other interventions if any
   rate_interventions <- mod_args[["intervention"]][

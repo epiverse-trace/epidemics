@@ -411,18 +411,21 @@ is_contacts_intervention <- function(x) {
 is_rate_intervention <- function(x) {
   inherits(x, c("rate_intervention", "intervention"))
 }
+
+#' Generate a null intervention on contacts
 #'
 #' @name intervention
 #' @rdname intervention
 #' @export
-no_intervention <- function(population) {
+no_contacts_intervention <- function(population) {
   checkmate::assert_class(population, "population")
   # message on identical value of time_begin and time_end suppressed
   # as this is a valid use case.
   suppressMessages(
     intervention(
-      name = "no_intervention", time_begin = 0, time_end = 0,
-      contact_reduction = matrix(0.0, nrow(population$contact_matrix))
+      name = "no_contacts_intervention", type = "contacts",
+      time_begin = 0, time_end = 0,
+      reduction = rep(0.0, nrow(population$contact_matrix))
     )
   )
 }

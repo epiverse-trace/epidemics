@@ -1,0 +1,176 @@
+---
+title: "Modelling interventions on model rates"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Modelling interventions on model rates}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 5,
+  fig.height = 4,
+  dpi = 300
+)
+```
+
+::: {.alert .alert-warning}
+**New to _epidemics_, or to modelling non-pharmaceutical interventions?** It may help to read the ["Get started"](epidemics.html) and ["Modelling a non-pharmaceutical intervention"](modelling_interventions.html) vignettes first!
+:::
+
+```{r setup}
+library(epidemics)
+library(data.table)
+library(ggplot2)
+```
+
+## Prepare population, initial conditions, and pathogen
+
+We prepare population and contact data from the U.K., with epidemiological compartments matching the default epidemic model (SEIR-V).
+
+We prepare an `infection` object to simulate a pathogen with an $R_0$ of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.
+
+We assume that one in every million people has been infected and is infectious, translating to about 67 total infections for a U.K. population of 67 million.
+
+The code for these steps is similar to that in the ["Getting started vignette"](epidemics.html) and is hidden here, although it can be expanded for reference.
+
+```{r class.source = 'fold-hide'}
+# load contact and population data from socialmixr::polymod
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 65),
+  symmetric = TRUE
+)
+
+# prepare contact matrix
+contact_matrix <- t(contact_data$matrix)
+
+# prepare the demography vector
+demography_vector <- contact_data$demography$population
+names(demography_vector) <- rownames(contact_matrix)
+```
+
+```{r class.source = 'fold-hide'}
+# initial conditions
+initial_i <- 1e-4
+initial_conditions <- c(
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
+)
+
+# build for all age groups
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+
+# assign rownames for clarity
+rownames(initial_conditions) <- rownames(contact_matrix)
+```
+
+```{r class.source = 'fold-hide'}
+uk_population <- population(
+  name = "UK",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+```
+
+```{r class.source = 'fold-hide'}
+# Prepare epidemiological parameters as an infection object
+pandemic <- infection(
+  r0 = 1.3,
+  preinfectious_period = 1.5,
+  infectious_period = 5
+)
+```
+
+## Modelling an intervention on transmission rates
+
+We model an intervention on the transmission rate $\beta$ that reduces it by 10%.
+This could represent interventions such as requiring people to wear masks that reduce transmission.
+
+```{r}
+# prepare an intervention that models mask mandates for ~3 months (100 days)
+mask_mandate <- intervention(
+  name = "mask mandate",
+  type = "rate",
+  time_begin = 60,
+  time_end = 60 + 100,
+  reduction = 0.1
+)
+
+# examine the intervention object
+mask_mandate
+
+# check the object
+is_intervention(mask_mandate)
+
+is_contacts_intervention(mask_mandate)
+
+is_rate_intervention(mask_mandate)
+```
+
+We simulate the epidemic for 200 days as we expect the intervention to spread disease incidence out over a longer period.
+
+```{r}
+# no intervention baseline scenario
+data <- epidemic_default_cpp(
+  population = uk_population,
+  infection = pandemic,
+  intervention = list(beta = mask_mandate),
+  time_end = 200, increment = 1.0
+)
+
+# get new infections
+data_infections <- new_infections(data, by_group = TRUE)
+```
+
+```{r}
+ggplot(data_infections) +
+  geom_line(
+    aes(time, new_infections, col = demography_group)
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  annotate(
+    geom = "rect",
+    xmin = get_parameter(mask_mandate, "time_begin"),
+    xmax = get_parameter(mask_mandate, "time_end"),
+    ymin = 0, ymax = 100e3,
+    fill = alpha("red", alpha = 0.2),
+    lty = "dashed"
+  ) +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  expand_limits(
+    y = c(0, 100e3)
+  ) +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    linetype = "Compartment",
+    y = "New infections"
+  )
+```
+

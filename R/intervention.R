@@ -518,30 +518,36 @@ format.intervention <- function(x, ...) {
 #' Convert a list to a intervention object
 #'
 #' @param x A list, or an object that inherits from a list.
+#' @param type A string for the type of intervention: `"contacts"` for a
+#' `<contact_intervention>` or `"rate"` for a `<rate_intervention>`.
 #' @return A [intervention] class object.
 #' @export
 #' @examples
 #' # prepare a list
 #' npi <- list(
 #'   name = "npi",
+#'   type = "contacts",
 #'   time_begin = 30,
 #'   time_end = 60,
-#'   contact_reduction = matrix(0.1, 3)
+#'   reduction = rep(0.1, 3)
 #' )
 #'
 #' as.intervention(npi)
-as.intervention <- function(x) {
+as.intervention <- function(x, type = c("contacts", "rate")) {
   # check that input is a list or intervention
   stopifnot(
     "Input must inherit from `list`" =
       is.list(x)
   )
+  # check type argument
+  type <- match.arg(type)
 
   x <- intervention(
     name = x[["name"]],
+    type = type,
     time_begin = x[["time_begin"]],
     time_end = x[["time_end"]],
-    contact_reduction = x[["contact_reduction"]]
+    reduction = x[["reduction"]]
   )
 
   # return x

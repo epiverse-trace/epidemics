@@ -178,7 +178,7 @@ close_schools <- intervention(
   name = "School closure",
   time_begin = 60,
   time_end = 60 + 180,
-  contact_reduction = matrix(c(0.3, 0.01, 0.01))
+  reduction = matrix(c(0.3, 0.01, 0.01))
 )
 
 # examine the intervention object
@@ -271,7 +271,7 @@ close_workplaces <- intervention(
   name = "Workplace closure",
   time_begin = 80,
   time_end = 80 + intervention_duration,
-  contact_reduction = matrix(c(0.01, 0.3, 0.01))
+  reduction = matrix(c(0.01, 0.3, 0.01))
 )
 
 # examine the intervention object
@@ -420,7 +420,7 @@ start_date <- min(
 workplace_closures_2 <- intervention(
   time_begin = start_date,
   time_end = start_date + 60,
-  contact_reduction = matrix(c(0.01, 0.3, 0.01))
+  reduction = matrix(c(0.01, 0.3, 0.01))
 )
 ```
 

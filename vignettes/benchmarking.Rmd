@@ -67,13 +67,13 @@ pandemic <- infection(
 multi_intervention <- c(
   intervention(
     time_begin = 50, time_end = 100,
-    contact_reduction = matrix(
+    reduction = matrix(
       0.2, nrow(contact_matrix), 1
     )
   ),
   intervention(
     time_begin = 70, time_end = 90,
-    contact_reduction = matrix(
+    reduction = matrix(
       0.3, nrow(contact_matrix), 1
     )
   )
@@ -161,13 +161,13 @@ pandemic <- infection(
 multi_intervention <- c(
   intervention(
     time_begin = 50, time_end = 100,
-    contact_reduction = matrix(
+    reduction = matrix(
       0.2, nrow(contact_matrix), 1
     )
   ),
   intervention(
     time_begin = 70, time_end = 90,
-    contact_reduction = matrix(
+    reduction = matrix(
       0.3, nrow(contact_matrix), 1
     )
   )

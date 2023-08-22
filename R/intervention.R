@@ -790,15 +790,16 @@ cumulative_rate_intervention <- function(t, time_begin, time_end, reduction) {
 #' \eqn{\beta}, or the recovery rate, \eqn{\gamma}.
 #' @return A named list of the same length as `parameters`, with the same names.
 #' These parameters can then be used in a timestep of an ODE model.
-intervention_on_params <- function(t, interventions, parameters) {
+intervention_on_rates <- function(t, interventions, parameters) {
   new_values <- Map(
     interventions, names(interventions),
     f = function(interv, name) {
-      parameters[[name]] * (1 - (interv[["reduction"]] *
-        (t >= interv[["time_begin"]] &&
-          t <= interv[["time_end"]])
+      effect <- cumulative_rate_intervention(
+        t = t,
+        time_begin = interv[["time_begin"]], time_end = interv[["time_end"]],
+        reduction = interv[["reduction"]]
       )
-      )
+      parameters[[name]] * (1 - effect)
     }
   )
 
@@ -807,3 +808,4 @@ intervention_on_params <- function(t, interventions, parameters) {
   # return parameters
   parameters
 }
+

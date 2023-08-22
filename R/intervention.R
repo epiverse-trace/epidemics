@@ -45,6 +45,29 @@ new_intervention <- function(name = NA_character_,
   )
 }
 
+#' Constructor for a new <contacts_intervention>
+#'
+#' @name intervention_constructor
+#' @rdname intervention_constructor
+new_contacts_intervention <- function(name, time_begin, time_end,
+                                      reduction) {
+  new_intervention(
+    name, time_begin, time_end,
+    reduction,
+    class = "contacts_intervention"
+  )
+}
+
+#' Constructor for a new <rate_intervention>
+#'
+#' @name intervention_constructor
+#' @rdname intervention_constructor
+new_rate_intervention <- function(name, time_begin, time_end,
+                                  reduction) {
+  new_intervention(
+    name, time_begin, time_end,
+    reduction,
+    class = "rate_intervention"
   )
 }
 

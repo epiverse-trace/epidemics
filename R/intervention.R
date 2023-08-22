@@ -262,62 +262,71 @@ intervention <- function(name = NA_character_,
   intervention_
 }
 
-#' Validate an intervention
+#' Validate objects that inherit from the <intervention> class
 #'
-#' @param object An object to be validated as an `<intervention>`.
+#' @name validate_intervention
+#' @rdname validate_intervention
 #'
-#' @return No return.
-#' @noRd
+#' @param x For `validate_contacts_intervention()`, an object to be validated as
+#' a `<contacts_intervention>`. For `validate_rate_intervention()`, an object to
+#' be validated as a `<rate_intervention>`.
+#'
+#' @return Invisibly returns the input `x`. Called primarily for its
+#' input checking as a validator for objects of the `<intervention>` superclass.
 #' @keywords internal
-validate_intervention <- function(object) {
+validate_contacts_intervention <- function(x) {
   # check for class and class invariants
   stopifnot(
-    "Object should be of class <intervention>" =
-      (is_intervention(object)),
-    "<intervention> does not contain the correct attributes" =
+    "`x` should be of class <contacts_intervention>" =
+      (is_contacts_intervention(x)),
+    "<contacts_intervention> does not contain the correct attributes" =
       (c(
-        "name", "time_begin", "time_end", "contact_reduction"
-      ) %in% attributes(object)$names)
+        "name", "time_begin", "time_end", "reduction"
+      ) %in% attributes(x)$names)
   )
 
   # check intervention class members
-  checkmate::assert_string(object$name, na.ok = TRUE)
-  checkmate::assert_matrix(object$contact_reduction, mode = "numeric")
-  checkmate::assert_matrix(
-    object$time_begin,
-    ncols = ncol(object$contact_reduction), nrows = 1L
+  checkmate::assert_string(x$name, na.ok = TRUE)
+
+  # checks for conformity of reduction and start and end times
+  checkmate::assert_matrix(x$reduction, mode = "numeric")
+  checkmate::assert_numeric(
+    x$time_begin,
+    len = ncol(x$reduction)
   )
-  checkmate::assert_matrix(
-    object$time_end,
-    ncols = ncol(object$contact_reduction), nrows = 1L
+  checkmate::assert_numeric(
+    x$time_end,
+    len = ncol(x$reduction)
   )
 
-  # stricter initialisation of interventions so that negative values and
-  # npi intervals are not allowed, and cumulative contact reductions > 1 are
-  # not allowed
+  # Checks intervention members so that single effect values are in the range
+  # 0 - 1 and negative npi intervals are not allowed
   stopifnot(
-    "`nu` should have positive or zero values" =
-      all(object$contact_reduction >= 0.0),
+    "`reduction` can only have values in the range 0.0 -- 1.0" =
+      all(x$reduction >= 0.0 & x$reduction <= 1.0),
     "`time_begin` should have positive or zero values" =
-      all(object$time_begin >= 0.0),
+      all(x$time_begin >= 0.0),
     "`time_end` should have values greater-than or equal-to `time_begin`" =
-      all(object$time_end >= object$time_begin),
-    "Rows of `contact_reduction` must sum to <= 1.0" =
-      all(rowSums(object$contact_reduction) <= 1.0)
+      all(x$time_end >= x$time_begin)
   )
 
   # message if any intervention intervals are badly formed
   # tackles the case of mistakenly setting all values the same
-  # this is explicitly used in no_intervention(), with message suppressed
+  # this is explicitly used in no_contacts_intervention(), with message
+  # suppressed
   # also accounts for eventual extension to group-specific start and end times
-  if (any(object$time_end <= object$time_begin)) {
+  if (any(x$time_end <= x$time_begin)) {
     message(
       "Intervention: some `time_end`s are not greater than `time_begin`s"
     )
   }
 
-  # checks on length of `contact_reduction` can only be made in the context
-  # of a population, see assert_intervention()
+  # checks on the number of rows of `reduction` can only be made in
+  # the context of a population, see assert_intervention()
+
+  # invisibly return x
+  invisible(x)
+}
 
   invisible(object)
 }

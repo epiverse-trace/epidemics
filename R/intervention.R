@@ -809,3 +809,16 @@ intervention_on_rates <- function(t, interventions, parameters) {
   parameters
 }
 
+#' Generate a null intervention on rates
+#'
+#' @name intervention
+#' @rdname intervention
+#' @export
+no_rate_intervention <- function() {
+  suppressMessages(
+    intervention(
+      type = "rate",
+      time_begin = 0, time_end = 0, reduction = 0
+    )
+  )
+}

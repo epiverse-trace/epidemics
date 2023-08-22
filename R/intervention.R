@@ -739,6 +739,42 @@ intervention_on_cm <- function(t, cm, time_begin, time_end, cr) {
   cm * (1.0 - cumulative_contacts_intervention(t, time_begin, time_end, cr))
 }
 
+#' Calculate the Cumulative Effect of Interventions on Rate Parameters
+#'
+#' @name cumulative_rate_intervention
+#' @rdname cumulative_rate_intervention
+#'
+#' @param t The current time.
+#' @param time_begin A numeric vector of the start times of all interventions
+#' being modelled.
+#' @param time_end A numeric vector of the end times of all interventions being
+#' modelled. Must be the same length as `time_begin`.
+#' @param reduction A numeric vector where each element gives the effect of the
+#' corresponding intervention on model rate parameters. When two interventions
+#' overlap, the proportions are _added_, for a maximum possible value of 1.0
+#' (i.e., rate set to zero).
+#'
+#' @keywords internal
+#'
+#' @return
+#' `cumulative_rate_intervention()` returns a number of the proportion
+#' reduction in a model rate parameter.
+#'
+#' `intervention_on_cm()` returns the contact matrix `cm` scaled by the
+#' cumulative effect of any active interventions.
+#'
+cumulative_rate_intervention <- function(t, time_begin, time_end, reduction) {
+  # determine which interventions are active, promote to numeric
+  interventions_active <- as.vector(t > time_begin & t < time_end)
+
+  # sum active effects --- if none are active the sum is automatically 0
+  cumulative_effect <- sum(reduction[interventions_active])
+
+  # fix values > 1.0
+  cumulative_effect[cumulative_effect > 1.0] <- 1.0
+
+  # return cumulative contact reduction
+  cumulative_effect
 }
 
 #' Apply interventions to rate parameters

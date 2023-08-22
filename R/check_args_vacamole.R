@@ -108,7 +108,7 @@
   # add null intervention if this is missing
   # if not missing, check that it conforms to expectations
   if (!"intervention" %in% names(mod_args)) {
-    mod_args[["intervention"]] <- no_intervention(
+    mod_args[["intervention"]] <- no_contacts_intervention(
       mod_args[["population"]]
     )
   } else {
@@ -160,7 +160,7 @@
   # get NPI related times and contact reductions
   npi_time_begin <- get_parameter(mod_args[["intervention"]], "time_begin")
   npi_time_end <- get_parameter(mod_args[["intervention"]], "time_end")
-  npi_cr <- get_parameter(mod_args[["intervention"]], "contact_reduction")
+  npi_cr <- get_parameter(mod_args[["intervention"]], "reduction")
 
   # get vaccination related times and rates
   vax_time_begin <- get_parameter(mod_args[["vaccination"]], "time_begin")

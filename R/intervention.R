@@ -554,27 +554,26 @@ as.intervention <- function(x, type = c("contacts", "rate")) {
   x
 }
 
-#' Concatenate interventions for use in an epidemic model
+#' Concatenate contact interventions for use in an epidemic model
 #'
 #' @name intervention
 #' @rdname intervention
 #'
-
 #' @export
-c.intervention <- function(x, ...) {
+c.contacts_intervention <- function(x, ...) {
   # collect inputs
   multi_npi <- list(x, ...)
   invisible(
-    lapply(multi_npi, validate_intervention)
+    lapply(multi_npi, validate_contacts_intervention)
   )
 
   # check that all intervention regimes have the same dimensions
   # of intervention rates --- these are identical to dims of start and end times
   stopifnot(
-    "All <intervention>s must have identical dimensions for c, start, and end" =
+    "All <contact_intervention> `reduction`s must have identical dimensions" =
       all(
         vapply(multi_npi, function(npi) {
-          identical(nrow(npi$contact_reduction), nrow(x$contact_reduction))
+          identical(nrow(npi$reduction), nrow(x$reduction))
         }, FUN.VALUE = logical(1))
       )
   )
@@ -596,10 +595,10 @@ c.intervention <- function(x, ...) {
 
   # generate intervention dose names as dose_1 ... dose_n
   # get total number of doses from the sum of all columns
-  npi_names <- glue::glue("npi_{seq_len(ncol(multi_npi$contact_reduction))}")
+  npi_names <- glue::glue("npi_{seq_len(ncol(multi_npi$reduction))}")
 
   # add names to doses for comprehension when printed
-  for (i in c("time_begin", "time_end", "contact_reduction")) {
+  for (i in c("time_begin", "time_end", "reduction")) {
     if (is.matrix(multi_npi[[i]])) {
       colnames(multi_npi[[i]]) <- npi_names
     } else {
@@ -612,11 +611,17 @@ c.intervention <- function(x, ...) {
     multi_npi$name,
     multi_npi$time_begin,
     multi_npi$time_end,
-    multi_npi$contact_reduction
+    multi_npi$reduction,
+    class = "contacts_intervention"
   )
 
   # validate new object
-  validate_intervention(multi_npi)
+  validate_contacts_intervention(multi_npi)
+
+  # return object
+  multi_npi
+}
+
 
   # return object
   multi_npi

@@ -400,7 +400,7 @@ is_intervention <- function(x) {
 #'
 #' @export
 is_contacts_intervention <- function(x) {
-  inherits(x, c("contacts_intervention", "intervention"))
+  inherits(x, c("contacts_intervention"))
 }
 
 #' Check whether an object is a `<rate_intervention>`
@@ -409,7 +409,7 @@ is_contacts_intervention <- function(x) {
 #'
 #' @export
 is_rate_intervention <- function(x) {
-  inherits(x, c("rate_intervention", "intervention"))
+  inherits(x, c("rate_intervention"))
 }
 
 #' Generate a null intervention on contacts

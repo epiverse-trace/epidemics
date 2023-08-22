@@ -430,18 +430,44 @@ no_contacts_intervention <- function(population) {
   )
 }
 
-#' Print a `<intervention>` object
+#' Print an object of the `<intervention>` super-class
 #'
-#' @param x A `<intervention>` object.
+#' @name print_intervention
+#' @rdname print_intervention
+#'
+#' @param x An object that inherits from the `<intervention>` class.
+#' For `print.contacts_intervention()`, an object of the
+#' `<contacts_intervention>` class. For `print.rate_intervention()`, an object
+#' of the `<rate_intervention>` class.
 #' @param ... Other parameters passed to [print()].
-#' @return Invisibly returns the `<intervention>` object `x`.
+#' @return Invisibly returns the object `x`.
 #' Called for printing side-effects.
 #' @export
 print.intervention <- function(x, ...) {
   format(x, ...)
 }
 
-#' Format a `<intervention>` object
+#' Print objects of the `<contact_intervention>` class
+#'
+#' @name print_intervention
+#' @rdname print_intervention
+print.contact_intervention <- function(x, ...) {
+  validate_contacts_intervention(x)
+
+  format(x, ...)
+}
+
+#' Print objects of the `<rate_intervention>` class
+#'
+#' @name print_intervention
+#' @rdname print_intervention
+
+print.rate_intervention <- function(x, ...) {
+  validate_rate_intervention(x)
+
+  format(x, ...)
+}
+
 #'
 #' @param x A `<intervention>` object.
 #' @param ... Other arguments passed to [format()].

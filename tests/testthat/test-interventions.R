@@ -32,8 +32,9 @@ pandemic <- infection(
 # prepare a basic intervention
 close_schools <- intervention(
   name = "close_schools",
+  type = "contacts",
   time_begin = 100, time_end = 150,
-  contact_reduction = matrix(c(0.2, 0.0))
+  reduction = matrix(c(0.2, 0.0))
 )
 
 # snapshot test for printing
@@ -43,9 +44,9 @@ test_that("Printing intervention class", {
 
 # test the intervention has expected structure
 test_that("Intervention is correctly initialised", {
-  expect_s3_class(close_schools, "intervention")
+  expect_s3_class(close_schools, "contacts_intervention")
   expect_named(
-    close_schools, c("name", "time_begin", "time_end", "contact_reduction")
+    close_schools, c("name", "time_begin", "time_end", "reduction")
   )
   expect_type(
     close_schools$name, "character"
@@ -66,10 +67,10 @@ test_that("Intervention is correctly initialised", {
     close_schools$time_end, 1L
   )
   expect_type(
-    close_schools$contact_reduction, "double"
+    close_schools$reduction, "double"
   )
   expect_length(
-    close_schools$contact_reduction,
+    close_schools$reduction,
     nrow(contact_matrix)
   )
 })
@@ -108,7 +109,7 @@ test_that("Intervention reduces final size", {
 badly_formed_intervention <- intervention(
   name = "close_schools",
   time_begin = 100, time_end = 150,
-  contact_reduction = matrix(0.2, 3) # too many values, 2 needed, 3 given
+  reduction = matrix(0.2, 3) # too many values, 2 needed, 3 given
 )
 
 test_that("Error on poorly specified intervention", {
@@ -124,20 +125,20 @@ test_that("Error on poorly specified intervention", {
 })
 
 test_that("Null intervention is correctly initialised", {
-  null_intervention <- no_intervention(uk_population)
-  # expect no message using helper function no_intervention()
+  null_intervention <- no_contacts_intervention(uk_population)
+  # expect no message using helper function no_contacts_intervention()
   expect_no_condition(
-    no_intervention(uk_population)
+    no_contacts_intervention(uk_population)
   )
   expect_identical(
     null_intervention$time_begin, null_intervention$time_end
   )
 
   expect_type(
-    null_intervention$contact_reduction, "double"
+    null_intervention$reduction, "double"
   )
   expect_length(
-    null_intervention$contact_reduction,
+    null_intervention$reduction,
     nrow(uk_population$contact_matrix)
   )
 })
@@ -146,14 +147,15 @@ test_that("Null intervention is correctly initialised", {
 npi_1 <- intervention(
   time_begin = 30,
   time_end = 60,
-  contact_reduction = matrix(0.15, nrow = 3)
+  reduction = matrix(0.15, nrow = 3)
 )
 
 # second dose regime
 npi_2 <- intervention(
+  type = "contacts",
   time_begin = 45,
   time_end = 75,
-  contact_reduction = matrix(0.1, nrow = 3)
+  reduction = matrix(0.1, nrow = 3)
 )
 
 multi_npi <- c(npi_1, npi_2)
@@ -162,12 +164,12 @@ multi_npi <- c(npi_1, npi_2)
 test_that("Concatenating `intervention`s works", {
   # expect that rows sum to expected values
   expect_identical(
-    rowSums(multi_npi$contact_reduction),
+    rowSums(multi_npi$reduction),
     rep(0.25, 3L)
   )
   # expect that there are only two columns
   expect_identical(
-    ncol(multi_npi$contact_reduction),
+    ncol(multi_npi$reduction),
     2L
   )
   # snapshot of the multi-NPI

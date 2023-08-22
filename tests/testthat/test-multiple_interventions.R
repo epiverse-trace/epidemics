@@ -31,22 +31,24 @@ pandemic <- infection(
 
 # Prepare a stacked intervention
 npi_1 <- intervention(
+  type = "contacts",
   time_begin = 30,
   time_end = 60,
-  contact_reduction = matrix(0.15, nrow = nrow(contact_matrix))
+  reduction = matrix(0.15, nrow = nrow(contact_matrix))
 )
 npi_2 <- intervention(
+  type = "contacts",
   time_begin = 45,
   time_end = 75,
-  contact_reduction = matrix(0.1, nrow = nrow(contact_matrix))
+  reduction = matrix(0.1, nrow = nrow(contact_matrix))
 )
 multi_npi <- c(npi_1, npi_2)
 
 # Tests for the value of contact reduction from overlapping NPIs
 test_that("Cumulative effect of NPIs", {
-  cumulative_cr <- cumulative_intervention(
+  cumulative_cr <- cumulative_contacts_intervention(
     t = 50, time_begin = multi_npi$time_begin, time_end = multi_npi$time_end,
-    cr = multi_npi$contact_reduction
+    reduction = multi_npi$reduction
   )
   expect_identical(
     cumulative_cr,
@@ -55,9 +57,9 @@ test_that("Cumulative effect of NPIs", {
 
   # when no intervention is active
   expect_identical(
-    cumulative_intervention(
+    cumulative_contacts_intervention(
       t = 10, time_begin = multi_npi$time_begin, time_end = multi_npi$time_end,
-      cr = multi_npi$contact_reduction
+      reduction = multi_npi$reduction
     ),
     numeric(nrow(contact_matrix))
   )
@@ -69,7 +71,7 @@ test_that("Cumulative effect of NPIs", {
       cm = contact_matrix,
       time_begin = multi_npi$time_begin,
       time_end = multi_npi$time_end,
-      cr = multi_npi$contact_reduction
+      cr = multi_npi$reduction
     ),
     contact_matrix * 0.75
   )

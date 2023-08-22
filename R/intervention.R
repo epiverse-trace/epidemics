@@ -390,15 +390,6 @@ validate_rate_intervention <- function(x) {
 #' @name intervention
 #' @rdname intervention
 #' @export
-#'
-#' @examples
-#' close_schools <- intervention(
-#'   name = "close schools",
-#'   time_begin = 50,
-#'   time_end = 80,
-#'   contact_reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
-#' )
-#' is_intervention(close_schools)
 is_intervention <- function(x) {
   inherits(x, "intervention")
 }

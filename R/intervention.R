@@ -622,6 +622,56 @@ c.contacts_intervention <- function(x, ...) {
   multi_npi
 }
 
+#' Concatenate interventions for use in an epidemic model
+#'
+#' @name intervention
+#' @rdname intervention
+#'
+#' @export
+c.rate_intervention <- function(x, ...) {
+  # collect inputs
+  multi_npi <- list(x, ...)
+  invisible(
+    lapply(multi_npi, validate_rate_intervention)
+  )
+
+  # no checking on reduction dimensions
+
+  # strip class and `name` member from `multi_npi`
+  multi_npi <- lapply(multi_npi, function(z) {
+    z <- unclass(z)
+    z$name <- NULL
+    z
+  })
+
+  # modify x to return a list object of multiple start and end times and nu-s
+  multi_npi <- do.call(
+    Map, c(f = c, multi_npi)
+  )
+
+  # add name parameter --- take "name" of `x`
+  multi_npi$name <- x$name
+
+  # generate intervention dose names as dose_1 ... dose_n
+  # get total number of doses from the sum of all columns
+  interv_names <- glue::glue("interv_{seq_along(multi_npi$reduction)}")
+
+  # add names to doses for comprehension when printed
+  for (i in c("time_begin", "time_end", "reduction")) {
+    names(multi_npi[[i]]) <- interv_names
+  }
+
+  # convert resulting object to intervention
+  multi_npi <- new_intervention(
+    multi_npi$name,
+    multi_npi$time_begin,
+    multi_npi$time_end,
+    multi_npi$reduction,
+    class = "rate_intervention"
+  )
+
+  # validate new object
+  validate_rate_intervention(multi_npi)
 
   # return object
   multi_npi

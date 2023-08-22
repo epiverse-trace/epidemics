@@ -3,35 +3,39 @@
     Code
       close_schools
     Output
-      <intervention>
+      <contacts_intervention>
       Intervention name: "close_schools"
+      
       Time begin:
-           [,1]
-      [1,]  100
+      [1] 100
+      
       Time end:
-           [,1]
-      [1,]  150
-      Contact reduction:
-           [,1]
-      [1,]  0.2
-      [2,]  0.0
+      [1] 150
+      
+      Reduction:
+                   Interv. 1
+      Demo. grp. 1       0.2
+      Demo. grp. 2       0.0
 
 # Concatenating `intervention`s works
 
     Code
       multi_npi
     Output
-      <intervention>
+      <contacts_intervention>
       Intervention name: NA
+      
       Time begin:
            npi_1 npi_2
       [1,]    30    45
+      
       Time end:
            npi_1 npi_2
       [1,]    60    75
-      Contact reduction:
-           npi_1 npi_2
-      [1,]  0.15   0.1
-      [2,]  0.15   0.1
-      [3,]  0.15   0.1
+      
+      Reduction:
+                   Interv. 1 Interv. 2
+      Demo. grp. 1      0.15       0.1
+      Demo. grp. 2      0.15       0.1
+      Demo. grp. 3      0.15       0.1
 

@@ -71,31 +71,48 @@ new_rate_intervention <- function(name, time_begin, time_end,
   )
 }
 
-#' Construct a new intervention for an epidemic model
+#' Create an intervention for an epidemic model
 #'
 #' @name intervention
 #' @rdname intervention
 #'
 #' @description
-#' Prepare an `<intervention>` object that specifies a non-pharmaceutical
-#' intervention regime that reduces contacts, for use in an epidemic model.
+#' Prepare an object of the `<intervention>` super-class that specifies a
+#' modification of the model parameters.
+#'
+#' A `<contacts_intervention>` is used to simulate a non-pharmaceutical
+#' intervention (NPI) regime that reduces the population's social contacts.
+#'
+#' A `<rate_intervention>` is used to simulate a reduction in the model's rate
+#' parameters (such as the transmission rate \eqn{\beta}), and can be used to
+#' represent pharmaceutical interventions such as improved treatment, but also
+#' NPIs such as wearing masks.
+#'
 #' Interventions have a single start and end time that applies to all
 #' demographic groups in the population, but can have groups-specific effects on
 #' the reduction of contacts.
 #'
-#' Combine `<intervention>` objects to create sequential and overlapping
-#' intervention regimes using `c()` on two or more `<intervention>` objects.
+#' Combine `<intervention>`-inheriting objects to create sequential or
+#' overlapping intervention regimes using `c()` on two or more
+#' `<intervention>`-inheriting objects.
 #'
 #' @param name String for the name of the intervention.
+#' @param type String for the type of intervention. May be one of `"contacts"`
+#' or `"rate"`, for a `<contacts_intervention>` or `<rate_intervention>`
+#' respectively.
 #' @param time_begin Single number for the start time of the intervention.
 #' @param time_end Single number for the end time of the intervention.
-#' @param contact_reduction A matrix \eqn{[i, 1]} with as many rows as the
-#' number of demographic groups in the target population, and a single column.
+#' @param reduction
+#'
+#' For `<contacts_intervention>`s, a matrix with as many rows as the
+#' number of demographic groups in the type population, and a single column.
 #' Each element gives the group-specific proportion reduction in contacts.
 #'
-#' When multiple interventions are combined using `c()`, they are stacked column
-#' wise to form a matrix \eqn{[i, j]}. See **Details** for how the effect of
-#' intervention \eqn{j} on group \eqn{i} is handled in epidemic models.
+#' For `<rate_intervention>`s, a single number giving the proportion reduction
+#' in a model parameter contacts.
+#'
+#' See details for how `c()` can be used to combine interventions of the same
+#' sub-class.
 #'
 #' @param x An `<intervention>` object, or an object to be checked as an
 #' `<intervention>` object.
@@ -105,40 +122,59 @@ new_rate_intervention <- function(name, time_begin, time_end,
 #' @param population A `<population>` object with a `contact_matrix` member.
 #'
 #' @details
-#' Epidemic models that can accommodate interventions are able to accommodate
-#' any number of interventions with different start and end times and different
-#' group-specific effects.
+#' Epidemic models that can accommodate interventions on contacts are able to
+#' accommodate any number of interventions with different start and end times
+#' and different group-specific effects.
+#'
+#' Epidemic models that can accommodate interventions on rates are also able to
+#' accommodate any number of interventions with different start and end times,
+#' but with only a uniform effect on the relevant rate.
+#'
+#' When multiple contact interventions are combined using `c()`, the reduction
+#' in contacts is stacked column wise to form a matrix \eqn{[i, j]}.
+#'
+#' When multiple rate interventions are combined using `c()`, the reduction
+#' in the rate is concatenated into a vector of the same length as the number of
+#' interventions.
 #'
 #' Models such as [epidemic_default_cpp()] are set up to treat interventions
 #' with overlapping periods (i.e., overlap between the time when they are active
-#' ) as having an _additive effect_ on contact reductions.
-#' The group-specific effect of \eqn{J} overlapping interventions is thus a
-#' vector \eqn{\sum_{j = 1}^J x_{ij}}.
-#' This is handled internally by the epidemic model code.
+#' ) as having an _additive effect_ on contact or rate reductions.
 #'
+#' For contact reductions, the group-specific effect of \eqn{J} overlapping
+#' interventions is thus a vector \eqn{\sum_{j = 1}^J x_{ij}}, for each
+#' demographic group \eqn{i}. This is handled internally by the epidemic model
+#' code.
 #' For example, a contact reduction matrix for two perfectly overlapping
 #' interventions (\eqn{J = 2}) with different effects across three demographic
 #' groups (\eqn{I = 3}) would be represented as:
-#'
 #' \eqn{\begin{bmatrix}0.1 & 0.05\\0.1 & 0.1\\0.1 & 0.0\end{bmatrix}}
-#'
 #' In epidemic models, the cumulative group-specific effect when both
 #' interventions are active would be \eqn{(0.15, 0.2, 0.1)}.
 #'
-#' @return An object of the `<intervention>` S3 class.
+#' For rate reductions, the effect of overlapping interventions that reduce a
+#' particular rate is also considered to be additive.
+#' @return An object of the `<intervention>` S3 super-class, with possible
+#' sub-classes `<contact_intervention>` and `<rate_intervention>`.
 #'
-#' Concatenating two or more `<intervention>` objects using `c()` also returns a
-#' `<intervention>` object. This object holds the intervention-specific start
-#' and end times, and group-specific contact reductions specified by all the
-#' constituent intervention actions. The combined effect of these actions on the
-#' population is handled internally by epidemic model functions.
+#' Concatenating two or more `<intervention>`-inheriting objects using `c()`
+#' also returns a `<intervention>`-inheriting object of the same sub-class.
+#' This object holds the intervention-specific start and end times, and
+#' reductions specified by all the constituent intervention actions (by
+#' demographic group if an intervention on contacts).
 #'
-#' A "null" intervention generated using `no_intervention(population)` returns
-#' an `<intervention>` that has start and end times, and contact reduction all
+#' The combined effect of these actions on the population is handled internally
+#' by epidemic model functions.
+#'
+#' A "null" intervention generated using `no_contacts_intervention(population)`
+#' or `no_rate_intervention()` returns a `<intervention>` of the appropriate
+#' sub-class that has its start and end times, and its effect all
 #' set to 0.0.
 #'
-#' `is_intervention()` returns a logical for whether the object is of the
-#' `<intervention>` class.
+#' `is_intervention()`, `is_contacts_intervention()`, and
+#' `is_rate_intervention()` each return a logical value for whether the object
+#' is of the `<intervention>`, `<contacts_intervention>`, or
+#' `<rate_intervention>` class, respectively.
 #' @export
 #'
 #' @examples
@@ -146,28 +182,31 @@ new_rate_intervention <- function(name, time_begin, time_end,
 #' # an example in which schools are closed for 30 days (or other time units)
 #' close_schools <- intervention(
 #'   name = "close schools",
+#'   type = "contacts",
 #'   time_begin = 50,
 #'   time_end = 80,
-#'   contact_reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
+#'   reduction = matrix(c(0.5, 0.01)) # reduces contacts differentially
 #' )
 #' close_schools
 #'
 #' # Check for intervention class
-#' is_intervention(close_schools)
+#' is_contacts_intervention(close_schools)
 #'
 #' # Concatenating interventions
 #' # create first intervention
 #' npi_1 <- intervention(
+#'   type = "contacts",
 #'   time_begin = 30,
 #'   time_end = 60,
-#'   contact_reduction = matrix(0.1)
+#'   reduction = matrix(0.1)
 #' )
 #'
 #' # second intervention
 #' npi_2 <- intervention(
+#'   type = "contacts",
 #'   time_begin = 45,
 #'   time_end = 75,
-#'   contact_reduction = matrix(0.1)
+#'   reduction = matrix(0.1)
 #' )
 #'
 #' c(npi_1, npi_2)
@@ -178,34 +217,46 @@ new_rate_intervention <- function(name, time_begin, time_end,
 #'   initial_conditions = matrix(c(0.99, 0.01, 0.0), nrow = 1)
 #' )
 #'
-#' no_intervention(pop)
+#' no_contacts_intervention(pop)
 intervention <- function(name = NA_character_,
+                         type = c("contacts", "rate"),
                          time_begin,
                          time_end,
-                         contact_reduction) {
+                         reduction) {
   # check input
   checkmate::assert_string(name, na.ok = TRUE)
-  checkmate::assert_matrix(contact_reduction, mode = "numeric")
+  checkmate::assert_numeric(reduction, lower = 0, upper = 1.0, finite = TRUE)
   checkmate::assert_number(time_begin, lower = 0, finite = TRUE)
   checkmate::assert_number(time_end, lower = 0, finite = TRUE)
 
-  # message if any vaccinations' intervals are badly formed
-  if (any(time_end <= time_begin)) {
+  # check type argument
+  type <- match.arg(type, several.ok = FALSE)
+  checkmate::assert_string(type)
+
+  # message if any intervention intervals are badly formed
+  if (time_end <= time_begin) {
     message(
-      "Vaccination: some `time_end`s are not greater than `time_begin`s"
+      "Intervention: `time_end` is not greater than `time_begin`"
     )
   }
 
-  # call intervention constructor
-  intervention_ <- new_intervention(
-    name = name,
-    time_begin = matrix(time_begin),
-    time_end = matrix(time_end),
-    contact_reduction = contact_reduction
-  )
-
-  # call intervention validator
-  validate_intervention(object = intervention_)
+  # call intervention constructor depending on type
+  # validate while returning
+  intervention_ <-
+    switch(type,
+      contacts = new_contacts_intervention(
+        name = name,
+        time_begin = time_begin,
+        time_end = time_end,
+        reduction = matrix(reduction) # matrix for contacts reduction
+      ),
+      rate = new_rate_intervention(
+        name = name,
+        time_begin = matrix(time_begin),
+        time_end = matrix(time_end),
+        reduction = reduction
+      )
+    )
 
   # return intervention object
   intervention_

@@ -4,10 +4,13 @@
 \alias{assert_intervention}
 \title{Assert properties of a \code{intervention} object}
 \usage{
-assert_intervention(x, population)
+assert_intervention(x, type = c("contacts", "rate"), population)
 }
 \arguments{
 \item{x}{A \link{intervention} object.}
+
+\item{type}{A string for the type of intervention to check for. May be one of
+\code{"contacts"} or \code{"rate"}.}
 
 \item{population}{An optional argument which is a \link{population} object.
 When present, this is used to check whether the intervention object \code{x} has

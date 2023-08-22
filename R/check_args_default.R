@@ -104,7 +104,8 @@
     if ("contacts" %in% names(mod_args[["intervention"]])) {
       # check the intervention on contacts
       assert_intervention(
-        mod_args[["intervention"]][["contacts"]], mod_args[["population"]]
+        mod_args[["intervention"]][["contacts"]], "contacts",
+        mod_args[["population"]]
       )
     }
 

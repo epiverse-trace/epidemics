@@ -728,15 +728,17 @@ cumulative_contacts_intervention <- function(t,
 
 #' Scale a Contact Matrix by all Active Interventions on Social Contacts
 #'
-#' @name cumulative_intervention
-#' @rdname cumulative_intervention
+#' @name cumulative_contacts_intervention
+#' @rdname cumulative_contacts_intervention
 #'
 #' @param cm A numeric matrix of social contacts between demographic groups.
 #'
 #' @keywords internal
 intervention_on_cm <- function(t, cm, time_begin, time_end, cr) {
   # return values
-  cm * (1.0 - cumulative_intervention(t, time_begin, time_end, cr))
+  cm * (1.0 - cumulative_contacts_intervention(t, time_begin, time_end, cr))
+}
+
 }
 
 #' Apply interventions to rate parameters

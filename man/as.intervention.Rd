@@ -4,10 +4,13 @@
 \alias{as.intervention}
 \title{Convert a list to a intervention object}
 \usage{
-as.intervention(x)
+as.intervention(x, type = c("contacts", "rate"))
 }
 \arguments{
 \item{x}{A list, or an object that inherits from a list.}
+
+\item{type}{A string for the type of intervention: \code{"contacts"} for a
+\verb{<contact_intervention>} or \code{"rate"} for a \verb{<rate_intervention>}.}
 }
 \value{
 A \link{intervention} class object.
@@ -19,9 +22,10 @@ Convert a list to a intervention object
 # prepare a list
 npi <- list(
   name = "npi",
+  type = "contacts",
   time_begin = 30,
   time_end = 60,
-  contact_reduction = matrix(0.1, 3)
+  reduction = rep(0.1, 3)
 )
 
 as.intervention(npi)

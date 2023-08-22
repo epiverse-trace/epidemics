@@ -209,6 +209,8 @@ assert_vaccination <- function(x, doses, population) {
 #' function is for internal use in argument checking functions.
 #'
 #' @param x A [intervention] object.
+#' @param type A string for the type of intervention to check for. May be one of
+#' `"contacts"` or `"rate"`.
 #' @param population An optional argument which is a [population] object.
 #' When present, this is used to check whether the intervention object `x` has
 #' corresponding values of `reduction` for each demographic group in
@@ -219,21 +221,35 @@ assert_vaccination <- function(x, doses, population) {
 #' @return Silently returns the `intervention` object `x`.
 #' Primarily called for its side effects of throwing errors when `x` does not
 #' meet certain requirements.
-assert_intervention <- function(x, population) {
+assert_intervention <- function(x, type = c("contacts", "rate"),
+                                population) {
   # check for input class
-  checkmate::assert_class(x, "intervention")
-
-  # check that the length of reduction is the same as the number
-  # of demographic groups
-  n_demo_groups <- NULL
-  if (!missing(population)) {
-    n_demo_groups <- length(get_parameter(population, "demography_vector"))
-  }
-  checkmate::assert_matrix(
-    get_parameter(x, "reduction"),
-    mode = "numeric",
-    nrows = n_demo_groups
+  type <- match.arg(type, several.ok = FALSE)
+  switch(type,
+    contacts = checkmate::assert_class(x, "contacts_intervention"),
+    rate = checkmate::assert_class(x, "rate_intervention")
   )
+
+  if (type == "contacts") {
+    # check the population
+    # check that the length of reduction is the same as the number
+    # of demographic groups
+    n_demo_groups <- NULL
+    if (!missing(population)) {
+      n_demo_groups <- length(get_parameter(population, "demography_vector"))
+    }
+    checkmate::assert_matrix(
+      get_parameter(x, "reduction"),
+      mode = "numeric",
+      nrows = n_demo_groups
+    )
+  } else if (type == "rate") {
+    checkmate::assert_numeric(
+      get_parameter(x, "reduction"),
+      lower = 0.0, upper = 1.0,
+      len = length(get_parameter(x, "time_begin"))
+    )
+  }
 
   # invisibly return x
   invisible(x)

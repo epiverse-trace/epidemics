@@ -112,7 +112,10 @@
       mod_args[["population"]]
     )
   } else {
-    assert_intervention(mod_args[["intervention"]], mod_args[["population"]])
+    assert_intervention(
+      mod_args[["intervention"]], "contacts",
+      mod_args[["population"]]
+    )
   }
 
   # return arguments invisibly

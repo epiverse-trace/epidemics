@@ -34,17 +34,20 @@ test_that("Interventions are checked correctly", {
   expect_no_condition(
     assert_intervention(
       test_intervention,
+      "contacts",
       population = test_population
     )
   )
   expect_no_condition(
     assert_intervention(
+      type = "contacts",
       test_intervention # with population missing
     )
   )
   expect_error(
     assert_intervention(
       test_intervention,
+      "contacts",
       population = "population" # population is wrong class
     )
   )
@@ -53,6 +56,7 @@ test_that("Interventions are checked correctly", {
   expect_error(
     assert_intervention(
       test_intervention_bad,
+      "contacts",
       population = test_population
     )
   )

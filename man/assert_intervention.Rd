@@ -11,7 +11,7 @@ assert_intervention(x, population)
 
 \item{population}{An optional argument which is a \link{population} object.
 When present, this is used to check whether the intervention object \code{x} has
-corresponding values of \code{contact_reduction} for each demographic group in
+corresponding values of \code{reduction} for each demographic group in
 \code{population}.}
 }
 \value{

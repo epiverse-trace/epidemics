@@ -85,7 +85,7 @@
       beta = no_rate_intervention()
     )
   } else {
-    # if a single intervention is passed
+    # if interventions are passed, check for the types and names
     stopifnot(
       "`intervention` must be a list of <intervention>s" =
         checkmate::test_list(
@@ -101,10 +101,16 @@
       subset.of = c("beta", "gamma", "alpha", "contacts")
     )
 
+    # if a contacts intervention is passed, check it
     if ("contacts" %in% names(mod_args[["intervention"]])) {
       # check the intervention on contacts
       assert_intervention(
         mod_args[["intervention"]][["contacts"]], "contacts",
+        mod_args[["population"]]
+      )
+    } else {
+      # if not contacts intervention is passed, add a dummy one
+      mod_args[["intervention"]]$contacts <- no_contacts_intervention(
         mod_args[["population"]]
       )
     }

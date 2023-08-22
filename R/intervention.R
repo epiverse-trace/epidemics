@@ -679,41 +679,42 @@ c.rate_intervention <- function(x, ...) {
 
 #' Calculate the Cumulative Effect of Interventions on Social Contacts
 #'
-#' @name cumulative_intervention
-#' @rdname cumulative_intervention
+#' @name cumulative_contacts_intervention
+#' @rdname cumulative_contacts_intervention
 #'
 #' @param t The current time.
 #' @param time_begin A numeric vector of the start times of all interventions
 #' being modelled.
 #' @param time_end A numeric vector of the end times of all interventions being
 #' modelled. Must be the same length as `time_begin`.
-#' @param cr A numeric matrix where rows give the effect of interventions on
-#' each demographic group, and the columns give the proportion reduction in
-#' contacts. When two interventions overlap, the proportions are _added_, for
-#' a maximum possible value of 1.0 (i.e., no contacts).
+#' @param reduction A numeric matrix where rows give the effect of interventions
+#' on each demographic group, and the columns give the proportion reduction in
+#' contacts. When two interventions overlap, the proportions are _added_, for a
+#' maximum possible value of 1.0 (i.e., no contacts).
 #'
 #' @keywords internal
 #'
 #' @return
-#' `cumulative_intervention()` returns a numeric vector of the proportion
-#' reduction in contacts for each demographic group.
+#' `cumulative_contacts_intervention()` returns a numeric vector of the
+#' proportion reduction in contacts for each demographic group.
 #'
 #' `intervention_on_cm()` returns the contact matrix `cm` scaled by the
 #' cumulative effect of any active interventions.
 #'
-cumulative_intervention <- function(t, time_begin, time_end, cr) {
+cumulative_contacts_intervention <- function(t,
+                                             time_begin, time_end, reduction) {
   # determine which interventions are active, promote to numeric
   interventions_active <- as.vector(t > time_begin & t < time_end)
 
   # check for null interventions where all values are zero
   # first, define value when no interventions are active
-  cumulative_cr <- numeric(nrow(cr))
+  cumulative_cr <- numeric(nrow(reduction))
   if (any(interventions_active)) {
     # multiply the columns of the contact reduction matrix by the
     # active interventions logical vector --- matrix multiplication is faster
     # than two uses of t()
     # then sum the rows for a vector of the cumulative effect
-    cumulative_cr <- rowSums(cr %*% diag(
+    cumulative_cr <- rowSums(reduction %*% diag(
       as.numeric(interventions_active)
     ))
   }

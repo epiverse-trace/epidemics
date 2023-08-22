@@ -1,28 +1,50 @@
-#' Construct a new intervention
+#' Constructor for the <intervention> super-class and sub-classes
+#'
+#' @name intervention_constructor
+#' @rdname intervention_constructor
 #'
 #' @param name String for the name of the intervention.
-#' @param time_begin Single number for the start time of the intervention.
-#' @param time_end Single number for the end time of the intervention.
-#' @param contact_reduction A vector of the same length as the
-#' number of demographic groups in the target population, which gives the
-#' overall or group-specific proportion reduction in contacts respectively.
+#' @param time_begin A matrix with a single element giving the start time of the
+#' intervention.
+#' @param time_end A matrix with a single element giving the end time of the
+#' intervention.
+#' @param reduction A matrix with a single column and as many rows as there are
+#' demographic groups to be targeted by the intervention. See [intervention()]
+#' for details on the types of intervention that can be created and the
+#' requirements for the type of `reduction`.
+#' @param ... Any other parameters to be passed to the constructor.
+#' @param class A string giving the type of the intervention; used to generate
+#' intervention sub-classes.
 #'
-#' @return An `<intervention>` class object.
+#' @return
+#' `new_intervention()` returns an object that inherits from the
+#' `<intervention>` class.
+#' `new_contacts_intervention()` returns an object that is a sub-class of
+#' `<intervention>` called `<contacts_intervention>`.
+#' `new_rate_intervention()` returns an object that is a sub-class of
+#' `<intervention>` called `<rate_intervention>`.
 #' @keywords internal
-#' @noRd
 new_intervention <- function(name = NA_character_,
                              time_begin,
                              time_end,
-                             contact_reduction) {
+                             reduction,
+                             ...,
+                             class) {
+  # argument class is empty to force interventions to have a sub-class
+
   # create and return intervention class
   structure(
     list(
       name = name,
       time_begin = time_begin,
       time_end = time_end,
-      contact_reduction = contact_reduction
+      reduction = reduction,
+      ...
     ),
-    class = "intervention"
+    class = c(class, "intervention")
+  )
+}
+
   )
 }
 

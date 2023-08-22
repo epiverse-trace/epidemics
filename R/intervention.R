@@ -468,6 +468,7 @@ print.rate_intervention <- function(x, ...) {
   format(x, ...)
 }
 
+#' Format an `<intervention>` object
 #'
 #' @param x A `<intervention>` object.
 #' @param ... Other arguments passed to [format()].
@@ -477,11 +478,8 @@ print.rate_intervention <- function(x, ...) {
 #' @keywords internal
 #' @noRd
 format.intervention <- function(x, ...) {
-  # validate the intervention object
-  validate_intervention(x)
-
   # header
-  header <- "<intervention>"
+  header <- glue::glue("<{class(x)[1]}>")
 
   # collect information on name
   name <- ifelse(
@@ -498,14 +496,21 @@ format.intervention <- function(x, ...) {
       name
     )
   )
-  writeLines("Time begin:")
+  writeLines("\nTime begin:")
   print(x$time_begin)
 
-  writeLines("Time end:")
+  writeLines("\nTime end:")
   print(x$time_end)
 
-  writeLines("Contact reduction:")
-  print(x$contact_reduction)
+  writeLines("\nReduction:")
+  effect <- x$reduction
+  if (is.matrix(effect)) {
+    colnames(effect) <- glue::glue("Interv. {seq(ncol(effect))}")
+    rownames(effect) <- glue::glue("Demo. grp. {seq(nrow(effect))}")
+  } else if (is.vector(effect, mode = "numeric")) {
+    names(effect) <- glue::glue("Interv. {seq_along(effect)}")
+  }
+  print(effect)
 
   invisible(x)
 }

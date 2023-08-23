@@ -73,17 +73,27 @@ Rcpp::List epidemic_vacamole_cpp_internal(
     const Rcpp::NumericVector &npi_time_begin,
     const Rcpp::NumericVector &npi_time_end, const Rcpp::NumericMatrix &npi_cr,
     const Eigen::MatrixXd &vax_time_begin, const Eigen::MatrixXd &vax_time_end,
-    const Eigen::MatrixXd &vax_nu,
+    const Eigen::MatrixXd &vax_nu, const Rcpp::List &rate_interventions,
     const double &time_end = 100.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input
   odetools::state_type x = initial_state;
 
+  // create a map of the infection parameters
+  std::unordered_map<std::string, double> infection_params{
+      {"beta", beta},   {"beta_v", beta_v}, {"alpha", alpha},
+      {"omega", omega}, {"omega_v", omega}, {"eta", eta},
+      {"eta_v", eta_v}, {"gamma", gamma}};
+
+  // create a map of the rate interventions
+  const std::unordered_map<std::string, intervention::rate_intervention>
+      rate_interventions_cpp =
+          intervention::rate_intervention_cpp(rate_interventions);
+
   // create a default epidemic with parameters
-  epidemics::epidemic_vacamole this_model(beta, beta_v, alpha, omega, omega_v,
-                                          eta, eta_v, gamma, contact_matrix,
-                                          npi_time_begin, npi_time_end, npi_cr,
-                                          vax_time_begin, vax_time_end, vax_nu);
+  epidemics::epidemic_vacamole this_model(
+      infection_params, contact_matrix, npi_time_begin, npi_time_end, npi_cr,
+      vax_time_begin, vax_time_end, vax_nu, rate_interventions_cpp);
 
   // prepare storage containers for the observer
   std::vector<odetools::state_type> x_vec;  // is a vector of MatrixXd

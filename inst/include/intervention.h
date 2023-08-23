@@ -45,23 +45,29 @@ struct rate_intervention {
         n_interventions(0) {}
 };
 
-inline std::unordered_map<std::string, intervention> translate_interventions(
-    const Rcpp::List &interventions) {
+inline std::unordered_map<std::string, rate_intervention> rate_intervention_cpp(
+    const Rcpp::List &rate_interventions) {
   // to hold output
-  std::unordered_map<std::string, intervention> result;
+  std::unordered_map<std::string, rate_intervention> result;
 
   // get intervention names - these are the targets
-  Rcpp::CharacterVector intervention_targets = interventions.names();
+  Rcpp::CharacterVector intervention_targets = rate_interventions.names();
 
   // add intervention objects to map
-  for (size_t i = 0; i < interventions.size(); i++) {
+  for (size_t i = 0; i < rate_interventions.size(); i++) {
     // make a copy of the list element, which is also a list
-    Rcpp::List intervention_element = interventions[i];
+    Rcpp::List intervention_element = rate_interventions[i];
+
+    // make copies of the intervention members
+    std::vector<double> time_begin =
+        Rcpp::as<std::vector<double> >(intervention_element["time_begin"]);
+    std::vector<double> time_end =
+        Rcpp::as<std::vector<double> >(intervention_element["time_end"]);
+    std::vector<double> reduction =
+        Rcpp::as<std::vector<double> >(intervention_element["reduction"]);
 
     // create new intervention object from list element members
-    intervention intervention_temp = intervention(
-        intervention_element["time_begin"], intervention_element["time_end"],
-        intervention_element["reduction"]);
+    rate_intervention intervention_temp(time_begin, time_end, reduction);
 
     // add to map
     std::string name = Rcpp::as<std::string>(intervention_targets[i]);

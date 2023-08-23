@@ -30,13 +30,14 @@ struct rate_intervention {
   /// @param time_begin The start time of the intervention
   /// @param time_end The end time of the intervention
   /// @param reduction The proportional reduction in the parameter affected
-  rate_intervention(std::vector<double> time_begin,
-                    std::vector<double> time_end, std::vector<double> reduction)
+  rate_intervention(const std::vector<double> &time_begin,
+                    const std::vector<double> &time_end,
+                    const std::vector<double> &reduction)
       : time_begin(time_begin),
         time_end(time_end),
         reduction(reduction),
         n_interventions(time_begin.size()) {}
-  
+
   /// @brief Constructor for the rate_intervention struct
   rate_intervention()
       : time_begin({0.0}),

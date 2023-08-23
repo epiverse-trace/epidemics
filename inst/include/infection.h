@@ -9,9 +9,6 @@
 // clang-format on
 
 /// @brief A namespace for helpers related to the infection class
-namespace infection {
-
-
-}  // namespace infection
+namespace infection {}  // namespace infection
 
 #endif  // INST_INCLUDE_INFECTION_H_

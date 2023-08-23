@@ -20,6 +20,7 @@ articles:
   - modelling_vaccination
   - modelling_interventions
   - multiple_interventions
+  - rate_interventions
 - title: Guides to library models
   navbar: Guides to library models
   contents:

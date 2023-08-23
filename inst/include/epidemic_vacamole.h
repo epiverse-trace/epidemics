@@ -15,6 +15,9 @@
 #include <Rcpp.h>
 #include <RcppEigen.h>
 
+#include <string>
+#include <unordered_map>
+
 #include <boost/numeric/odeint.hpp>
 #include "ode_tools.h"
 #include "intervention.h"

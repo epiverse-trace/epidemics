@@ -89,7 +89,7 @@ inline std::unordered_map<std::string, rate_intervention> rate_intervention_cpp(
 /// in the population. This is the number of rows of `cr`.
 /// The array gives the current cumulative effect of interventions on the
 /// corresponding age group.
-inline Eigen::ArrayXd cumulative_intervention(
+inline Eigen::ArrayXd cumulative_contacts_intervention(
     const double &t, const Rcpp::NumericVector &time_begin,
     const Rcpp::NumericVector &time_end, const Rcpp::NumericMatrix &cr) {
   // a vector with as elements as the number of rows, i.e., age groups
@@ -132,7 +132,7 @@ inline Eigen::MatrixXd intervention_on_cm(const double &t,
                                           const Rcpp::NumericMatrix &cr) {
   // create Eigen 1D array from R matrix passed in an list (class intervention)
   Eigen::ArrayXd contact_reduction =
-      cumulative_intervention(t, time_begin, time_end, cr);
+      cumulative_contacts_intervention(t, time_begin, time_end, cr);
 
   // modify the contact matrix as cm_mod = cm * (1 - intervention)
   // for a percentage reduction in contacts

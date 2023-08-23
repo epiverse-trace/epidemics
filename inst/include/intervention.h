@@ -170,22 +170,24 @@ inline double cumulative_rate_intervention(
 
   return effect;
 }
+
+/// @brief Apply rate_interventions on the rate parameters
 /// @param t The current simulation time
 /// @param infection_params A map of the infection rate parameters
-/// @param interventions A map of the interventions
-inline std::unordered_map<std::string, double> intervention_on_params(
+/// @param rate_interventions A map of the rate_interventions
+inline std::unordered_map<std::string, double> intervention_on_rates(
     const double &t,
     const std::unordered_map<std::string, double> &infection_params,
-    const std::unordered_map<std::string, intervention> &interventions) {
+    const std::unordered_map<std::string, rate_intervention>
+        &rate_interventions) {
   // make copy of infection params
   std::unordered_map<std::string, double> params_temp = infection_params;
 
-  // loop over interventions and check
-  for (const auto &pair : interventions) {
-    intervention temp = pair.second;
-    if (t >= temp.time_begin && t <= temp.time_end) {
-      params_temp.at(pair.first) *= (1.0 - temp.reduction);
-    }
+  // loop over rate_interventions and check
+  for (const auto &pair : rate_interventions) {
+    // assign the cumulative effect of each rate intervention to the rate params
+    params_temp.at(pair.first) *=
+        (1.0 - cumulative_rate_intervention(t, pair.second));
   }
 
   return params_temp;

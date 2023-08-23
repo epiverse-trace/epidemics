@@ -120,7 +120,10 @@ epidemic_vacamole_cpp <- function(population,
 
   # check class add intervention and vaccination if not NULL
   if (!is.null(intervention)) {
-    checkmate::assert_class(intervention, "intervention")
+    checkmate::assert_list(
+      intervention,
+      types = c("contacts_intervention", "rate_intervention")
+    )
     model_arguments[["intervention"]] <- intervention
   }
 
@@ -179,6 +182,20 @@ epidemic_vacamole_cpp <- function(population,
     time_begin = params[["npi_time_begin"]],
     time_end = params[["npi_time_end"]],
     cr = params[["npi_cr"]]
+  )
+
+  # modify parameters
+  infection_params <- params[
+    c(
+      "beta", "beta_v", "alpha", "eta", "eta_v",
+      "omega", "omega_v", "gamma"
+    )
+  ]
+
+  infection_params <- intervention_on_rates(
+    t = t,
+    interventions = params[["rate_interventions"]],
+    parameters = infection_params
   )
 
   # modify the vaccination rate depending on the regime
@@ -276,7 +293,10 @@ epidemic_vacamole_r <- function(population,
 
   # check class add intervention and vaccination if not NULL
   if (!is.null(intervention)) {
-    checkmate::assert_class(intervention, "intervention")
+    checkmate::assert_list(
+      intervention,
+      types = c("contacts_intervention", "rate_intervention")
+    )
     model_arguments[["intervention"]] <- intervention
   }
 

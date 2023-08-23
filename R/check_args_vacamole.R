@@ -108,14 +108,53 @@
   # add null intervention if this is missing
   # if not missing, check that it conforms to expectations
   if (!"intervention" %in% names(mod_args)) {
-    mod_args[["intervention"]] <- no_contacts_intervention(
-      mod_args[["population"]]
+    # add as a list element named "contacts", and one named "beta"
+    mod_args[["intervention"]] <- list(
+      contacts = no_contacts_intervention(
+        mod_args[["population"]]
+      ),
+      # a dummy intervention on the rate parameter beta
+      beta = no_rate_intervention()
     )
   } else {
-    assert_intervention(
-      mod_args[["intervention"]], "contacts",
-      mod_args[["population"]]
+    # if interventions are passed, check for the types and names
+    stopifnot(
+      "`intervention` must be a list of <intervention>s" =
+        checkmate::test_list(
+          mod_args[["intervention"]],
+          types = c("contacts_intervention", "rate_intervention"),
+          names = "unique"
+        )
     )
+
+    # check for any other intervention list element names
+    checkmate::assert_names(
+      names(mod_args[["intervention"]]),
+      subset.of = c(
+        "beta", "beta_v", "gamma", "alpha", "eta", "eta_v",
+        "omega", "omega_v", "contacts"
+      )
+    )
+
+    # if a contacts intervention is passed, check it
+    if ("contacts" %in% names(mod_args[["intervention"]])) {
+      # check the intervention on contacts
+      assert_intervention(
+        mod_args[["intervention"]][["contacts"]], "contacts",
+        mod_args[["population"]]
+      )
+    } else {
+      # if not contacts intervention is passed, add a dummy one
+      mod_args[["intervention"]]$contacts <- no_contacts_intervention(
+        mod_args[["population"]]
+      )
+    }
+
+    # if there is only an intervention on contacts, add a dummy intervention
+    # on the transmission rate beta
+    if (identical(names(mod_args[["intervention"]]), "contacts")) {
+      mod_args[["intervention"]]$beta <- no_rate_intervention()
+    }
   }
 
   # return arguments invisibly
@@ -161,9 +200,15 @@
     (1.0 - get_parameter(mod_args[["infection"]], "hosp_reduction_vax"))
 
   # get NPI related times and contact reductions
-  npi_time_begin <- get_parameter(mod_args[["intervention"]], "time_begin")
-  npi_time_end <- get_parameter(mod_args[["intervention"]], "time_end")
-  npi_cr <- get_parameter(mod_args[["intervention"]], "reduction")
+  contact_interventions <- mod_args[["intervention"]][["contacts"]]
+  npi_time_begin <- get_parameter(contact_interventions, "time_begin")
+  npi_time_end <- get_parameter(contact_interventions, "time_end")
+  npi_cr <- get_parameter(contact_interventions, "reduction")
+
+  # get other interventions if any
+  rate_interventions <- mod_args[["intervention"]][
+    setdiff(names(mod_args[["intervention"]]), "contacts")
+  ]
 
   # get vaccination related times and rates
   vax_time_begin <- get_parameter(mod_args[["vaccination"]], "time_begin")
@@ -182,6 +227,7 @@
     npi_cr = npi_cr,
     vax_time_begin = vax_time_begin, vax_time_end = vax_time_end,
     vax_nu = vax_nu,
+    rate_interventions = rate_interventions,
     time_end = mod_args$time_end,
     increment = mod_args$increment
   )

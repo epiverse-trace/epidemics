@@ -67,10 +67,10 @@ Rcpp::List epidemic_default_cpp_internal(
   std::unordered_map<std::string, double> infection_params{
       {"beta", beta}, {"alpha", alpha}, {"gamma", gamma}};
 
-  // create a map of the interventions
-  const std::unordered_map<std::string, intervention::intervention>
+  // create a map of the rate interventions
+  const std::unordered_map<std::string, intervention::rate_intervention>
       rate_interventions_cpp =
-          intervention::translate_interventions(rate_interventions);
+          intervention::rate_intervention_cpp(rate_interventions);
 
   // create a default epidemic with parameters
   epidemics::epidemic_default this_model(

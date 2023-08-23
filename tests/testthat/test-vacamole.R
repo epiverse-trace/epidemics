@@ -222,7 +222,7 @@ test_that("Output of the Vacamole epidemic model R", {
     epidemic_vacamole_r(
       population = uk_population,
       infection = infect,
-      intervention = no_contacts_intervention(uk_population),
+      intervention = list(contacts = no_contacts_intervention(uk_population)),
       vaccination = double_vaccination,
       time_end = 100, increment = 1.0
     )
@@ -231,7 +231,7 @@ test_that("Output of the Vacamole epidemic model R", {
   data <- epidemic_vacamole_r(
     population = uk_population,
     infection = infect,
-    intervention = no_contacts_intervention(uk_population),
+    intervention = list(contacts = no_contacts_intervention(uk_population)),
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0
   )
@@ -300,7 +300,7 @@ test_that("Equivalence of vacamole model R and Cpp", {
   data_r <- epidemic_vacamole_r(
     population = uk_population,
     infection = infect,
-    intervention = multi_intervention,
+    intervention = list(contacts = multi_intervention),
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0
   )
@@ -308,7 +308,7 @@ test_that("Equivalence of vacamole model R and Cpp", {
   data_cpp <- epidemic_vacamole_cpp(
     population = uk_population,
     infection = infect,
-    intervention = multi_intervention,
+    intervention = list(contacts = multi_intervention),
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0
   )

@@ -34,15 +34,18 @@ struct epidemic_default {
   // related to vaccination
   const Eigen::MatrixXd vax_time_begin, vax_time_end, vax_nu;
   Eigen::MatrixXd vax_nu_current;
-  const std::unordered_map<std::string, intervention::intervention>
+  const std::unordered_map<std::string, intervention::rate_intervention>
       interventions;
 
   // npi, interv, pop
 
   /// @brief Constructor for the default epidemic struct
-  /// @param beta The transmission rate
-  /// @param alpha The rate at which individuals become infectious
-  /// @param gamma The recovery rate
+  /// @param infection_params An unordered map of string-double pairs, with the
+  /// infection parameters as keys, and parameter values as values. The
+  /// model parameters are:
+  /// - beta The transmission rate
+  /// - alpha The rate at which individuals become infectious
+  /// - gamma The recovery rate
   /// @param contact_matrix The population contact matrix
   /// @param npi_time_begin The intervention start times
   /// @param npi_time_end The intervention end times
@@ -50,6 +53,9 @@ struct epidemic_default {
   /// @param vax_time_begin The age- and dose-specific vaccination start time
   /// @param vax_time_end The age- and dose-specific vaccination end time
   /// @param vax_nu The age- and dose-specific vaccination rate
+  /// @param interventions An unordered map of string-intervention pairs. The
+  /// keys must refer to parameters in `infection_params`. The `intervention`
+  /// struct is defined in `inst/include/intervention.h`,
   epidemic_default(
       const std::unordered_map<std::string, double>& infection_params,
       const Eigen::MatrixXd contact_matrix,
@@ -57,7 +63,7 @@ struct epidemic_default {
       const Rcpp::NumericVector npi_time_end, const Rcpp::NumericMatrix npi_cr,
       const Eigen::MatrixXd vax_time_begin, const Eigen::MatrixXd vax_time_end,
       const Eigen::MatrixXd vax_nu,
-      const std::unordered_map<std::string, intervention::intervention>&
+      const std::unordered_map<std::string, intervention::rate_intervention>&
           interventions)
       : infection_params(infection_params),
         infection_params_temp(infection_params),
@@ -88,9 +94,9 @@ struct epidemic_default {
     cm_temp = intervention::intervention_on_cm(
         t, contact_matrix, npi_time_begin, npi_time_end, npi_cr);
 
-    // trial interventions
-    infection_params_temp = intervention::intervention_on_params(
-        t, infection_params, interventions);
+    // rate interventions
+    infection_params_temp =
+        intervention::intervention_on_rates(t, infection_params, interventions);
 
     // get current vaccination rate
     vax_nu_current =

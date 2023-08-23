@@ -142,7 +142,34 @@ inline Eigen::MatrixXd intervention_on_cm(const double &t,
   return modified_cm;
 }
 
-/// @brief Apply interventions on the rate parameters
+/// @brief Get the cumulative effect of interventions
+/// @param t The current simulation time.
+/// @param rate_intervention A `rate_intervention` struct with the members:
+/// - time_begin The time for each intervention to begin.
+/// - time_end The time for each intervention to end.
+/// - reduction A vector with the intervention-specific effects on a model
+/// rate parameter. When two interventions are simultaneously active, their
+/// cumulative effect is additive, that is, the two interventions' effects on
+/// a model rate parameter are added together.
+/// @return An single double value for the proportional reduction in a model
+/// rate parameter. Values > 1.0 are capped at 1.0.
+inline double cumulative_rate_intervention(
+    const double &t, const rate_intervention &rate_interv) {
+  // a vector with as elements as the number of rows, i.e., age groups
+  double effect = 0.0;
+
+  // iterate over the rate interventions
+  for (size_t i = 0; i < rate_interv.n_interventions; i++) {
+    if (t >= rate_interv.time_begin[i] && t <= rate_interv.time_end[i]) {
+      effect += rate_interv.reduction[i];
+    }
+  }
+
+  // correct for reductions greater than 1.0
+  effect = effect > 1.0 ? 1.0 : effect;
+
+  return effect;
+}
 /// @param t The current simulation time
 /// @param infection_params A map of the infection rate parameters
 /// @param interventions A map of the interventions

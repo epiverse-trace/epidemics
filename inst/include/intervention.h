@@ -13,25 +13,36 @@
 #include <algorithm>
 #include <unordered_map>
 #include <string>
+#include <vector>
 // clang-format on
 
 // add to namespace ode
 namespace intervention {
 
-/// @brief
-struct intervention {
-  double time_begin;
-  double time_end;
-  double reduction;
+/// @brief A struct for rate interventions
+struct rate_intervention {
+  std::vector<double> time_begin;
+  std::vector<double> time_end;
+  std::vector<double> reduction;
+  int n_interventions;
 
-  /// @brief A struct that holds intervention parameters
+  /// @brief Constructor for the rate_intervention struct
   /// @param time_begin The start time of the intervention
   /// @param time_end The end time of the intervention
   /// @param reduction The proportional reduction in the parameter affected
-  intervention(double time_begin, double time_end, double reduction)
-      : time_begin(time_begin), time_end(time_end), reduction(reduction) {}
-
-  intervention() : time_begin(0.0), time_end(0.0), reduction(0.0) {}
+  rate_intervention(std::vector<double> time_begin,
+                    std::vector<double> time_end, std::vector<double> reduction)
+      : time_begin(time_begin),
+        time_end(time_end),
+        reduction(reduction),
+        n_interventions(time_begin.size()) {}
+  
+  /// @brief Constructor for the rate_intervention struct
+  rate_intervention()
+      : time_begin({0.0}),
+        time_end({0.0}),
+        reduction({0.0}),
+        n_interventions(0) {}
 };
 
 inline std::unordered_map<std::string, intervention> translate_interventions(

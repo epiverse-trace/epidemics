@@ -38,12 +38,12 @@ close_schools <- intervention(
 )
 
 # snapshot test for printing
-test_that("Printing intervention class", {
+test_that("Printing <contacts_intervention> class", {
   expect_snapshot(close_schools)
 })
 
 # test the intervention has expected structure
-test_that("Intervention is correctly initialised", {
+test_that("Contacts intervention is correctly initialised", {
   expect_s3_class(close_schools, "contacts_intervention")
   expect_named(
     close_schools, c("name", "time_begin", "time_end", "reduction")
@@ -75,7 +75,7 @@ test_that("Intervention is correctly initialised", {
   )
 })
 
-test_that("Intervention reduces final size", {
+test_that("Contacts intervention reduces final size", {
   # run model with intervention
   data_intervention <- epidemic_default_cpp(
     population = uk_population,
@@ -108,11 +108,12 @@ test_that("Intervention reduces final size", {
 # prepare a basic intervention
 badly_formed_intervention <- intervention(
   name = "close_schools",
+  type = "contacts",
   time_begin = 100, time_end = 150,
-  reduction = matrix(0.2, 3) # too many values, 2 needed, 3 given
+  reduction = rep(0.2, 3) # too many values, 2 needed, 3 given
 )
 
-test_that("Error on poorly specified intervention", {
+test_that("Error on poorly specified contacts intervention", {
   # expect failure for poorly specified intervention
   expect_error(
     epidemic_default_cpp(
@@ -124,7 +125,7 @@ test_that("Error on poorly specified intervention", {
   )
 })
 
-test_that("Null intervention is correctly initialised", {
+test_that("Null contacts intervention is correctly initialised", {
   null_intervention <- no_contacts_intervention(uk_population)
   # expect no message using helper function no_contacts_intervention()
   expect_no_condition(
@@ -143,11 +144,12 @@ test_that("Null intervention is correctly initialised", {
   )
 })
 
-# Tests for multiple stacked interventions
+# Tests for multiple stacked contact interventions
 npi_1 <- intervention(
+  type = "contacts",
   time_begin = 30,
   time_end = 60,
-  reduction = matrix(0.15, nrow = 3)
+  reduction = rep(0.15, 3)
 )
 
 # second dose regime
@@ -155,7 +157,7 @@ npi_2 <- intervention(
   type = "contacts",
   time_begin = 45,
   time_end = 75,
-  reduction = matrix(0.1, nrow = 3)
+  reduction = rep(0.1, 3)
 )
 
 multi_npi <- c(npi_1, npi_2)

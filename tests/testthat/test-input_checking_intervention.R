@@ -17,6 +17,7 @@ test_population <- population(
 
 # Prepare a intervention
 test_intervention <- intervention(
+  type = "contacts",
   time_begin = 60,
   time_end = 100,
   reduction = matrix(0.2, nrow(contact_matrix))
@@ -24,9 +25,10 @@ test_intervention <- intervention(
 
 # prepare a bad intervention that does not match the population
 test_intervention_bad <- intervention(
+  type = "contacts",
   time_begin = 60,
   time_end = 100,
-  reduction = matrix(0.2)
+  reduction = 0.2
 )
 
 test_that("Interventions are checked correctly", {

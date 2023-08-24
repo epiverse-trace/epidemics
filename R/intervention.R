@@ -235,7 +235,6 @@ intervention <- function(name = NA_character_,
     choices = c("contacts", "rate"),
     several.ok = FALSE
   )
-  message(type)
 
   # message if any intervention intervals are badly formed
   if (time_end <= time_begin) {

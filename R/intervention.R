@@ -219,7 +219,7 @@ new_rate_intervention <- function(name, time_begin, time_end,
 #'
 #' no_contacts_intervention(pop)
 intervention <- function(name = NA_character_,
-                         type = c("contacts", "rate"),
+                         type,
                          time_begin,
                          time_end,
                          reduction) {
@@ -230,8 +230,12 @@ intervention <- function(name = NA_character_,
   checkmate::assert_number(time_end, lower = 0, finite = TRUE)
 
   # check type argument
-  type <- match.arg(type, several.ok = FALSE)
-  checkmate::assert_string(type)
+  type <- match.arg(
+    type, 
+    choices = c("contacts", "rate"),
+    several.ok = FALSE
+  )
+  message(type)
 
   # message if any intervention intervals are badly formed
   if (time_end <= time_begin) {

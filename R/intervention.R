@@ -231,7 +231,7 @@ intervention <- function(name = NA_character_,
 
   # check type argument
   type <- match.arg(
-    type, 
+    type,
     choices = c("contacts", "rate"),
     several.ok = FALSE
   )

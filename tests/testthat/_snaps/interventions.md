@@ -1,4 +1,4 @@
-# Printing intervention class
+# Printing <contacts_intervention> class
 
     Code
       close_schools

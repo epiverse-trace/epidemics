@@ -176,6 +176,7 @@ This intervention is assumed to last 6 months or approximately 180 days, beginni
 # prepare an intervention that models school closures for ~3 months (100 days)
 close_schools <- intervention(
   name = "School closure",
+  type = "contacts",
   time_begin = 60,
   time_end = 60 + 180,
   reduction = matrix(c(0.3, 0.01, 0.01))
@@ -269,6 +270,7 @@ This intervention is assumed to last 60 days, beginning from the 80th day of the
 intervention_duration <- 60
 close_workplaces <- intervention(
   name = "Workplace closure",
+  type = "contacts",
   time_begin = 80,
   time_end = 80 + intervention_duration,
   reduction = matrix(c(0.01, 0.3, 0.01))
@@ -418,6 +420,7 @@ start_date <- min(
 
 # create a new workplace closures object
 workplace_closures_2 <- intervention(
+  type = "contacts",
   time_begin = start_date,
   time_end = start_date + 60,
   reduction = matrix(c(0.01, 0.3, 0.01))

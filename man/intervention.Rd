@@ -11,13 +11,7 @@
 \alias{no_rate_intervention}
 \title{Create an intervention for an epidemic model}
 \usage{
-intervention(
-  name = NA_character_,
-  type = c("contacts", "rate"),
-  time_begin,
-  time_end,
-  reduction
-)
+intervention(name = NA_character_, type, time_begin, time_end, reduction)
 
 is_intervention(x)
 

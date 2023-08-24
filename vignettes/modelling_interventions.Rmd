@@ -98,6 +98,7 @@ Prepare an intervention to simulate school closures.
 # prepare an intervention with a differential effect on age groups
 close_schools <- intervention(
   name = "School closure",
+  type = "contacts",
   time_begin = 200,
   time_end = 300,
   reduction = matrix(c(0.5, 0.001, 0.001))

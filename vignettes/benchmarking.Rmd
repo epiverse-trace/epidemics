@@ -66,12 +66,14 @@ pandemic <- infection(
 # create a multi intervention
 multi_intervention <- c(
   intervention(
+    type = "contacts",
     time_begin = 50, time_end = 100,
     reduction = rep(
       0.2, nrow(contact_matrix)
     )
   ),
   intervention(
+    type = "contacts",
     time_begin = 70, time_end = 90,
     reduction = rep(
       0.3, nrow(contact_matrix)
@@ -160,12 +162,14 @@ pandemic <- infection(
 # create a multi intervention
 multi_intervention <- c(
   intervention(
+    type = "contacts",
     time_begin = 50, time_end = 100,
     reduction = rep(
       0.2, nrow(contact_matrix)
     )
   ),
   intervention(
+    type = "contacts",
     time_begin = 70, time_end = 90,
     reduction = rep(
       0.3, nrow(contact_matrix)

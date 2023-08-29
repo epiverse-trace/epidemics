@@ -34,6 +34,11 @@
 #' vaccination regime with a single dose, followed during the course of the
 #' epidemic, with a start and end time, and age-specific vaccination rates.
 #' See [vaccination()].
+#' @param time_dependence A named list where each name
+#' is a model parameter (see `infection`), and each element is a function with
+#' the first two arguments being the current simulation `time`, and `x`, a value
+#' that is dependent on `time` (`x` represents a model parameter).
+#' See **Details** for more information.
 #' @param time_end The maximum number of timesteps over which to run the model.
 #' Taken as days, with a default value of 200 days.
 #' @param increment The size of the time increment. Taken as days, with a
@@ -56,6 +61,14 @@
 #' transition between the 'susceptible' and 'exposed' compartments, between the
 #' 'exposed' and 'infectious' compartments, and in the recovery rate.
 #'
+#' Model rates or parameters can be made time-dependent by passing a function
+#' which modifies the parameter based on the current ODE simulation time.
+#' For example, a function that modifies the transmission rate `beta` could be
+#' passed as `time_dependence = list(beta = function(time, x) x + sinpi(time))`.
+#' This functionality may be used to model events that are expected to have some
+#' effect on model parameters, such as seasonality or annual schedules such as
+#' holidays.
+#'
 #' @return A `data.table` with the columns "time", "compartment", "age_group",
 #' "value". The compartments correspond to the compartments of the model
 #' chosen with `model`.
@@ -66,6 +79,7 @@ epidemic_default_cpp <- function(population,
                                  infection,
                                  intervention = NULL,
                                  vaccination = NULL,
+                                 time_dependence = NULL,
                                  time_end = 100,
                                  increment = 1) {
   # check class on required inputs
@@ -91,6 +105,19 @@ epidemic_default_cpp <- function(population,
   if (!is.null(vaccination)) {
     checkmate::assert_class(vaccination, "vaccination")
     model_arguments[["vaccination"]] <- vaccination
+  }
+  # check that time-dependence functions are passed as a list with at least the
+  # arguments `time` and `x`
+  # time must be before x, and they must be first two args
+  if (!is.null(time_dependence)) {
+    checkmate::assert_list(time_dependence, "function")
+    invisible(
+      lapply(time_dependence, checkmate::check_function,
+        args = c("time", "x"),
+        ordered = TRUE
+      )
+    )
+    model_arguments[["time_dependence"]] <- time_dependence
   }
 
   # prepare checked arguments for function
@@ -142,8 +169,20 @@ epidemic_default_cpp <- function(population,
     cr = params[["npi_cr"]]
   )
 
-  # modify parameters
+  # get paramters to modify them
   infection_params <- params[c("beta", "alpha", "gamma")]
+
+  # apply time dependence before interventions
+  time_dependent_params <- Map(
+    infection_params[names(params$time_dependence)],
+    params$time_dependence,
+    f = function(x, func) {
+      func(time = t, x = x)
+    }
+  )
+
+  # assign time-modified param values
+  infection_params[names(time_dependent_params)] <- time_dependent_params
 
   infection_params <- intervention_on_rates(
     t = t,
@@ -184,6 +223,7 @@ epidemic_default_r <- function(population,
                                infection,
                                intervention = NULL,
                                vaccination = NULL,
+                               time_dependence = NULL,
                                time_end = 100,
                                increment = 1) {
   # check class on required inputs
@@ -198,7 +238,8 @@ epidemic_default_r <- function(population,
   # collect population, infection, and model arguments passed as `...`
   model_arguments <- list(
     population = population, infection = infection,
-    time_end = time_end, increment = increment
+    time_end = time_end, increment = increment,
+    time_dependence = time_dependence
   )
 
   # check class add intervention and vaccination if not NULL
@@ -212,6 +253,19 @@ epidemic_default_r <- function(population,
   if (!is.null(vaccination)) {
     checkmate::assert_class(vaccination, "vaccination")
     model_arguments[["vaccination"]] <- vaccination
+  }
+  # check that time-dependence functions are passed as a list with at least the
+  # arguments `time` and `x`
+  # time must be before x, and they must be first two args
+  if (!is.null(time_dependence)) {
+    checkmate::assert_list(time_dependence, "function")
+    invisible(
+      lapply(time_dependence, checkmate::check_function,
+        args = c("time", "x"),
+        ordered = TRUE
+      )
+    )
+    model_arguments[["time_dependence"]] <- time_dependence
   }
 
   # prepare checked arguments for function

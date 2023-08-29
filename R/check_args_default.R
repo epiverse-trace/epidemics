@@ -135,6 +135,11 @@
     )
   }
 
+  # handle time dependence if present
+  if (!"time_dependence" %in% names(mod_args)) {
+    mod_args[["time_dependence"]] <- no_time_dependence()
+  }
+
   # return arguments invisibly
   invisible(mod_args)
 }
@@ -190,6 +195,7 @@
     vax_time_begin = vax_time_begin, vax_time_end = vax_time_end,
     vax_nu = vax_nu,
     rate_interventions = rate_interventions,
+    time_dependence = mod_args$time_dependence,
     time_end = mod_args$time_end,
     increment = mod_args$increment
   )

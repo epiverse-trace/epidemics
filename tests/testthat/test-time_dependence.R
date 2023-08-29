@@ -85,6 +85,6 @@ test_that("Basic expectations for time dependence functions", {
 
   expect_identical(
     tail(data_r, 20),
-    tail(data_cpp, 20),
+    tail(data_cpp, 20)
   )
 })

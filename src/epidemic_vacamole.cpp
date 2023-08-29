@@ -76,7 +76,7 @@ Rcpp::List epidemic_vacamole_cpp_internal(
     const Eigen::MatrixXd &vax_nu, const Rcpp::List &rate_interventions,
     const Rcpp::List &time_dependence,
     const double &time_end = 100.0,  // double required by boost solver
-    const double &increment = 0.1) {
+    const double &increment = 1.0) {
   // initial conditions from input
   odetools::state_type x = initial_state;
 

@@ -17,6 +17,7 @@
 #include "intervention.h"
 #include "vaccination.h"
 #include "helpers.h"
+#include "time_dependence.h"
 #include "epidemic_default.h"
 #include "epidemic_vacamole.h"  // paths must be relative to this file
 #include "epidemic_ebola.h"

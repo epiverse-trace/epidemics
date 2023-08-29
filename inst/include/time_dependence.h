@@ -15,7 +15,7 @@ namespace time_dependence {
 /// @param t The time; this argument is passed to the functions in
 /// `time_dependence`
 /// @param infection_params The infection parameters as key-value pairs
-/// @param time_dependence The time-dependence functions as a list of 
+/// @param time_dependence The time-dependence functions as a list of
 /// Rcpp functions whose first argument is time, and whose second argument is
 /// the parameter.
 /// @return A map of the same size and with the same keys as `infection_params`.
@@ -29,8 +29,6 @@ inline const std::unordered_map<std::string, double> apply_time_dependence(
   // get time-dependence names - these are the target parameters
   Rcpp::CharacterVector time_dep_targets = time_dependence.names();
 
-  Rcpp::Rcout << "t = " << t << "\n";
-
   // loop over rate_interventions and check
   for (size_t i = 0; i < time_dependence.size(); i++) {
     std::string name = Rcpp::as<std::string>(time_dep_targets(i));
@@ -38,8 +36,6 @@ inline const std::unordered_map<std::string, double> apply_time_dependence(
     // get function output
     Rcpp::Function f = time_dependence[i];
     double t_mod_param = Rcpp::as<double>(f(t, params_temp.at(name)));
-
-    Rcpp::Rcout << "t_mod_param = " << t_mod_param << "\n";
 
     params_temp.at(name) = t_mod_param;
   }

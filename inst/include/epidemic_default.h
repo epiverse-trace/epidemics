@@ -39,8 +39,6 @@ struct epidemic_default {
       interventions;
   const Rcpp::List time_dependence;
 
-  // npi, interv, pop
-
   /// @brief Constructor for the default epidemic struct
   /// @param infection_params An unordered map of string-double pairs, with the
   /// infection parameters as keys, and parameter values as values. The
@@ -57,8 +55,11 @@ struct epidemic_default {
   /// @param vax_nu The age- and dose-specific vaccination rate
   /// @param interventions An unordered map of string-intervention pairs. The
   /// keys must refer to parameters in `infection_params`. The `intervention`
-  /// struct is defined in `inst/include/intervention.h`,
-  /// @aram time_dependence
+  /// struct is defined in `inst/include/intervention.h`.
+  /// @param time_dependence An Rcpp List with named elements, where each name
+  /// is a model parameter (see above), and each element is a function with
+  /// the first two arguments being the current simulation time, and x, a value
+  /// that is dependent on time (x is supposed to be a model parameter).
   epidemic_default(
       const std::unordered_map<std::string, double>& infection_params,
       const Eigen::MatrixXd contact_matrix,

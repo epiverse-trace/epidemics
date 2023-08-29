@@ -14,6 +14,7 @@
 #include "intervention.h"
 #include "vaccination.h"
 #include "population.h"
+#include "time_dependence.h"
 // clang-format on
 
 // add to namespace epidemics
@@ -36,6 +37,7 @@ struct epidemic_default {
   Eigen::MatrixXd vax_nu_current;
   const std::unordered_map<std::string, intervention::rate_intervention>
       interventions;
+  const Rcpp::List time_dependence;
 
   // npi, interv, pop
 
@@ -56,6 +58,7 @@ struct epidemic_default {
   /// @param interventions An unordered map of string-intervention pairs. The
   /// keys must refer to parameters in `infection_params`. The `intervention`
   /// struct is defined in `inst/include/intervention.h`,
+  /// @aram time_dependence
   epidemic_default(
       const std::unordered_map<std::string, double>& infection_params,
       const Eigen::MatrixXd contact_matrix,
@@ -64,7 +67,8 @@ struct epidemic_default {
       const Eigen::MatrixXd vax_time_begin, const Eigen::MatrixXd vax_time_end,
       const Eigen::MatrixXd vax_nu,
       const std::unordered_map<std::string, intervention::rate_intervention>&
-          interventions)
+          interventions,
+      const Rcpp::List& time_dependence)
       : infection_params(infection_params),
         infection_params_temp(infection_params),
         contact_matrix(contact_matrix),
@@ -76,7 +80,8 @@ struct epidemic_default {
         vax_time_end(vax_time_end),
         vax_nu(vax_nu),
         vax_nu_current(vax_nu),
-        interventions(interventions) {}
+        interventions(interventions),
+        time_dependence(time_dependence) {}
 
   /// @brief Operator for the default model
   /// @param x The initial state of the population - rows represent age groups
@@ -94,9 +99,13 @@ struct epidemic_default {
     cm_temp = intervention::intervention_on_cm(
         t, contact_matrix, npi_time_begin, npi_time_end, npi_cr);
 
+    // apply time dependence
+    infection_params_temp = time_dependence::apply_time_dependence(
+        t, infection_params, time_dependence);
+
     // rate interventions
-    infection_params_temp =
-        intervention::intervention_on_rates(t, infection_params, interventions);
+    infection_params_temp = intervention::intervention_on_rates(
+        t, infection_params_temp, interventions);
 
     // get current vaccination rate
     vax_nu_current =

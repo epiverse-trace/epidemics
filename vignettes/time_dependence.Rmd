@@ -3,8 +3,10 @@ title: "Modelling time-dependence in epidemic parameters"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Modelling time-dependence in epidemic parameters}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -87,7 +89,7 @@ ggplot() +
   )
 ```
 
-## Model with time-dependent transmisison
+## Model with time-dependent transmission
 
 Next we run an epidemic model while including the time dependence of $\beta$.
 

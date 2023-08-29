@@ -132,7 +132,7 @@
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.epidemic_vacamole_cpp <- function(initial_state, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 0.1) {
+.epidemic_vacamole_cpp <- function(initial_state, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
     .Call(`_epidemics_epidemic_vacamole_cpp_internal`, initial_state, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 

@@ -11,6 +11,7 @@ epidemic_default_cpp(
   infection,
   intervention = NULL,
   vaccination = NULL,
+  time_dependence = NULL,
   time_end = 100,
   increment = 1
 )
@@ -20,6 +21,7 @@ epidemic_default_r(
   infection,
   intervention = NULL,
   vaccination = NULL,
+  time_dependence = NULL,
   time_end = 100,
   increment = 1
 )
@@ -47,6 +49,12 @@ object.}
 vaccination regime with a single dose, followed during the course of the
 epidemic, with a start and end time, and age-specific vaccination rates.
 See \code{\link[=vaccination]{vaccination()}}.}
+
+\item{time_dependence}{A named list where each name
+is a model parameter (see \code{infection}), and each element is a function with
+the first two arguments being the current simulation \code{time}, and \code{x}, a value
+that is dependent on \code{time} (\code{x} represents a model parameter).
+See \strong{Details} for more information.}
 
 \item{time_end}{The maximum number of timesteps over which to run the model.
 Taken as days, with a default value of 200 days.}
@@ -90,4 +98,12 @@ Both models return equivalent results, but the C++ implementation is faster.
 This model only allows for single, population-wide rates of
 transition between the 'susceptible' and 'exposed' compartments, between the
 'exposed' and 'infectious' compartments, and in the recovery rate.
+
+Model rates or parameters can be made time-dependent by passing a function
+which modifies the parameter based on the current ODE simulation time.
+For example, a function that modifies the transmission rate \code{beta} could be
+passed as \code{time_dependence = list(beta = function(time, x) x + sinpi(time))}.
+This functionality may be used to model events that are expected to have some
+effect on model parameters, such as seasonality or annual schedules such as
+holidays.
 }

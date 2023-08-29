@@ -74,6 +74,7 @@ Rcpp::List epidemic_vacamole_cpp_internal(
     const Rcpp::NumericVector &npi_time_end, const Rcpp::NumericMatrix &npi_cr,
     const Eigen::MatrixXd &vax_time_begin, const Eigen::MatrixXd &vax_time_end,
     const Eigen::MatrixXd &vax_nu, const Rcpp::List &rate_interventions,
+    const Rcpp::List &time_dependence,
     const double &time_end = 100.0,  // double required by boost solver
     const double &increment = 0.1) {
   // initial conditions from input
@@ -93,7 +94,8 @@ Rcpp::List epidemic_vacamole_cpp_internal(
   // create a default epidemic with parameters
   epidemics::epidemic_vacamole this_model(
       infection_params, contact_matrix, npi_time_begin, npi_time_end, npi_cr,
-      vax_time_begin, vax_time_end, vax_nu, rate_interventions_cpp);
+      vax_time_begin, vax_time_end, vax_nu, rate_interventions_cpp,
+      time_dependence);
 
   // prepare storage containers for the observer
   std::vector<odetools::state_type> x_vec;  // is a vector of MatrixXd

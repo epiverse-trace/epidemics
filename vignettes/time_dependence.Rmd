@@ -1,0 +1,307 @@
+---
+title: "Modelling time-dependence in epidemic parameters"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Modelling time-dependence in epidemic parameters}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 5,
+  fig.height = 4
+)
+```
+
+```{r setup}
+library(epidemics)
+library(ggplot2)
+library(data.table)
+```
+
+::: {.alert .alert-warning}
+**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first, and to browse through some of the other vignettes such as ["Modelling a non-pharmaceutical intervention"](modelling_interventions.html), or ["Modelling a vaccination campaign"](modelling_vaccination.html).
+:::
+
+## Setup and initial conditions
+
+```{r}
+# set up initial conditions
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+contact_matrix <- t(contact_data$matrix)
+demography_vector <- contact_data$demography$population
+
+# Prepare some initial objects
+uk_population <- population(
+  name = "UK population",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = matrix(
+    c(1 - 1e-6, 0, 1e-6, 0, 0),
+    nrow = nrow(contact_matrix), ncol = 5L,
+    byrow = TRUE
+  )
+)
+
+# Prepare epi parameters
+pandemic <- infection(
+  r0 = 1.18,
+  preinfectious_period = 2,
+  infectious_period = 7
+)
+```
+
+## Defining a time-dependent function
+
+Next we prepare a function that affects the transmission rate $\beta$ in such a way that there are two peaks and two troughs in the transmission rate over the course of a year.
+
+```{r}
+# prepare function
+mod_beta <- function(time, x, tmax = 365 / 4) {
+  x + (x * sinpi(time / tmax))
+}
+```
+
+We can plot the output of this function over time to examine its effect on $\beta$.
+
+```{r}
+# get the function output
+# calculate beta - this is done automatically inside epidemic_*()
+output <- mod_beta(seq(0, 365), 1.3 / 7.0)
+
+# plot the effect of time dependence
+ggplot() +
+  geom_line(
+    aes(x = seq(0, 365), y = output)
+  )
+```
+
+## Model with time-dependent transmisison
+
+Next we run an epidemic model while including the time dependence of $\beta$.
+
+```{r}
+data <- epidemic_default_cpp(
+  population = uk_population,
+  infection = pandemic,
+  time_dependence = list(
+    beta = mod_beta
+  ),
+  time_end = 365, increment = 1
+)
+```
+
+We plot the number of newly infectious individuals to check the model dynamics.
+
+```{r}
+# get data on new infections
+data_infections <- new_infections(data)
+
+# plot data on new infections
+ggplot(data_infections) +
+  geom_line(
+    aes(x = time, y = new_infections, col = demography_group)
+  ) +
+  scale_y_continuous(
+    labels = scales::comma,
+    name = "New infections"
+  ) +
+  scale_color_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  theme_classic() +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  labs(
+    x = "Time (days)",
+    title = "Effect of time-dependence of transmission rate"
+  ) +
+  theme(
+    legend.position = "top",
+    plot.title = element_text(face = "bold")
+  )
+```
+
+Here, we can see that the epidemic has a large first wave, followed by a smaller second wave later in the model run (which represents one year).
+
+## Non-pharmaceutical interventions and time-dependence
+
+We can also model the effect of imposing non-pharmaceutical interventions that reduce social contacts, on the trajectory of an epidemic with some time-dependence.
+
+In this example, we impose an intervention with three phases: (1) closing schools, which primarily affects the age group 0 -- 19, then (2) closing workplaces, which affects the age groups > 20 years old, and then (3) partially reopening schools so that the intervention has a lower effect on the social contacts of the age group 0 -- 19.
+
+First we construct the intervention, an object of the `<intervention>` class.
+
+```{r}
+# school closures affecting younger age groups
+close_schools <- intervention(
+  type = "contacts", time_begin = 50, time_end = 120,
+  reduction = c(0.1, 0.01, 0.01)
+)
+
+# workplace closures affecting mostly adults
+close_workplaces <- intervention(
+  type = "contacts", time_begin = 65, time_end = 90,
+  reduction = c(0.01, 0.2, 0.2)
+)
+
+# partially reopen schools
+partial_schools <- intervention(
+  type = "contacts", time_begin = 120, time_end = 180,
+  reduction = c(0.05, 0.01, 0.01)
+)
+
+# combine interventions
+npis <- c(close_schools, close_workplaces, partial_schools)
+
+# print to examine
+npis
+```
+
+```{r}
+# run the model with interventions and time-dependence
+data_npi <- epidemic_default_cpp(
+  population = uk_population,
+  infection = pandemic,
+  intervention = list(contacts = npis),
+  time_dependence = list(
+    beta = mod_beta
+  ),
+  time_end = 365, increment = 1
+)
+
+# get the infections
+data_infections_npi <- new_infections(data_npi)
+```
+
+We assign scenario names to the data, combine them, and plot a comparison.
+
+```{r}
+data_infections$scenario <- "baseline"
+data_infections_npi$scenario <- "intervention"
+
+# combine the data
+data_npi_compare <- rbindlist(list(data_infections, data_infections_npi))
+```
+
+```{r class.source = 'fold-hide'}
+ggplot(data_npi_compare) +
+  geom_line(
+    aes(
+      x = time, y = new_infections,
+      col = demography_group, linetype = scenario
+    )
+  ) +
+  scale_y_continuous(
+    labels = scales::comma,
+    name = "New infections"
+  ) +
+  scale_color_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  scale_linetype(
+    name = "Scenario"
+  ) +
+  theme_classic() +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  labs(
+    x = "Time (days)",
+    title = "Effect of multiple interventions on contacts"
+  ) +
+  theme(
+    legend.position = "top",
+    plot.title = element_text(face = "bold")
+  )
+```
+
+We can observe that implementing interventions on social contacts can substantially reduce the number of infections in all age groups in both epidemic waves.
+
+## Timing vaccination to prevent epidemic peaks
+
+We can model the effect of timing vaccination doses to begin with the end of the first wave, at about 120 days.
+
+First we define a vaccination regime that targets adults aged over 40 years as a priority group.
+
+```{r}
+# define vaccination object
+vax_regime <- vaccination(
+  nu = matrix(0.002, nrow = 3, ncol = 1),
+  time_begin = matrix(c(0, 0, 120)),
+  time_end = matrix(c(0, 0, 220))
+)
+```
+
+We model the effect of administering vaccine doses, and plot the outcome.
+
+```{r}
+data_vax <- epidemic_default_cpp(
+  population = uk_population,
+  infection = pandemic,
+  vaccination = vax_regime,
+  # intervention = list(contacts = close_schools),
+  time_dependence = list(
+    beta = mod_beta
+  ),
+  time_end = 365, increment = 1
+)
+
+# collect data and add scenario
+data_vax_infections <- new_infections(
+  data_vax,
+  compartments_from_susceptible = c("exposed", "vaccinated")
+)
+data_vax_infections$scenario <- "vaccination"
+
+# combine data
+data_vax_compare <- rbindlist(list(data_infections, data_vax_infections))
+```
+
+```{r}
+ggplot(data_vax_compare) +
+  geom_line(
+    aes(
+      x = time, y = new_infections,
+      col = demography_group, linetype = scenario
+    )
+  ) +
+  scale_y_continuous(
+    labels = scales::comma,
+    name = "New infections"
+  ) +
+  scale_color_brewer(
+    palette = "Dark2",
+    name = "Age group"
+  ) +
+  scale_linetype(
+    name = "Scenario"
+  ) +
+  theme_classic() +
+  coord_cartesian(
+    expand = FALSE
+  ) +
+  labs(
+    x = "Time (days)",
+    title = "Effect of a vaccination regime"
+  ) +
+  theme(
+    legend.position = "top",
+    plot.title = element_text(face = "bold")
+  )
+```
+

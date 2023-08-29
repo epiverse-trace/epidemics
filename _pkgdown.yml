@@ -21,6 +21,7 @@ articles:
   - modelling_interventions
   - multiple_interventions
   - rate_interventions
+  - time_dependence
 - title: Guides to library models
   navbar: Guides to library models
   contents:

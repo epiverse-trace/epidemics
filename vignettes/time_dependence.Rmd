@@ -256,7 +256,6 @@ data_vax <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic,
   vaccination = vax_regime,
-  # intervention = list(contacts = close_schools),
   time_dependence = list(
     beta = mod_beta
   ),

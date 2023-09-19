@@ -75,16 +75,7 @@
 
   # add null intervention and vaccination if these are missing
   # if not missing, check that they conform to expectations
-  if (!"intervention" %in% names(mod_args)) {
-    # add as a list element named "contacts", and one named "beta"
-    mod_args[["intervention"]] <- list(
-      contacts = no_contacts_intervention(
-        mod_args[["population"]]
-      ),
-      # a dummy intervention on the rate parameter beta
-      beta = no_rate_intervention()
-    )
-  } else {
+  if ("intervention" %in% names(mod_args)) {
     # if interventions are passed, check for the types and names
     stopifnot(
       "`intervention` must be a list of <intervention>s" =
@@ -120,17 +111,26 @@
     if (identical(names(mod_args[["intervention"]]), "contacts")) {
       mod_args[["intervention"]]$beta <- no_rate_intervention()
     }
+  } else {
+    # add as a list element named "contacts", and one named "beta"
+    mod_args[["intervention"]] <- list(
+      contacts = no_contacts_intervention(
+        mod_args[["population"]]
+      ),
+      # a dummy intervention on the rate parameter beta
+      beta = no_rate_intervention()
+    )
   }
 
-  if (!"vaccination" %in% names(mod_args)) {
-    mod_args[["vaccination"]] <- no_vaccination(
-      mod_args[["population"]]
-    )
-  } else {
+  if ("vaccination" %in% names(mod_args)) {
     # default model only supports a single dose vaccination
     assert_vaccination(
       mod_args[["vaccination"]],
       doses = 1L,
+      mod_args[["population"]]
+    )
+  } else {
+    mod_args[["vaccination"]] <- no_vaccination(
       mod_args[["population"]]
     )
   }

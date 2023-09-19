@@ -107,16 +107,7 @@
 
   # add null intervention if this is missing
   # if not missing, check that it conforms to expectations
-  if (!"intervention" %in% names(mod_args)) {
-    # add as a list element named "contacts", and one named "beta"
-    mod_args[["intervention"]] <- list(
-      contacts = no_contacts_intervention(
-        mod_args[["population"]]
-      ),
-      # a dummy intervention on the rate parameter beta
-      beta = no_rate_intervention()
-    )
-  } else {
+  if ("intervention" %in% names(mod_args)) {
     # if interventions are passed, check for the types and names
     stopifnot(
       "`intervention` must be a list of <intervention>s" =
@@ -155,6 +146,15 @@
     if (identical(names(mod_args[["intervention"]]), "contacts")) {
       mod_args[["intervention"]]$beta <- no_rate_intervention()
     }
+  } else {
+    # add as a list element named "contacts", and one named "beta"
+    mod_args[["intervention"]] <- list(
+      contacts = no_contacts_intervention(
+        mod_args[["population"]]
+      ),
+      # a dummy intervention on the rate parameter beta
+      beta = no_rate_intervention()
+    )
   }
 
   # handle time dependence if present

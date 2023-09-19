@@ -175,19 +175,36 @@ pandemic_influenza
 Define an intervention to close schools for two months. This
 intervention mostly only affects individuals in the age range 0 – 19,
 and reduces their contacts by 50%, reducing the contacts of other age
-groups by 1%. This is an object of the class `<intervention>`, created
-using the function `intervention()`.
+groups by 1%. This is an object of the class `<contacts_intervention>`,
+created using the function `intervention()`, while setting
+`type = "contacts"`.
 
 ``` r
 # an intervention to close schools
 close_schools <- intervention(
+  type = "contacts",
   time_begin = 200,
   time_end = 260,
-  contact_reduction = matrix(c(0.5, 0.01, 0.01))
+  reduction = matrix(c(0.5, 0.01, 0.01))
 )
-```
 
-Prepare an infection
+# view the intervention
+close_schools
+#> <contacts_intervention>
+#> Intervention name: NA
+#> 
+#> Time begin:
+#> [1] 200
+#> 
+#> Time end:
+#> [1] 260
+#> 
+#> Reduction:
+#>              Interv. 1
+#> Demo. grp. 1      0.50
+#> Demo. grp. 2      0.01
+#> Demo. grp. 3      0.01
+```
 
 Run the default epidemic model, using the function `epidemic()`. We
 assume an $R_0$ of 1.5 which is similar to pandemic influenza, an

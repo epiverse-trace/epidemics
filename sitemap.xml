@@ -31,6 +31,9 @@
     <loc>/articles/multiple_interventions.html</loc>
   </url>
   <url>
+    <loc>/articles/rate_interventions.html</loc>
+  </url>
+  <url>
     <loc>/articles/vacamole.html</loc>
   </url>
   <url>
@@ -70,7 +73,10 @@
     <loc>/reference/check_prepare_vacamole_args.html</loc>
   </url>
   <url>
-    <loc>/reference/cumulative_intervention.html</loc>
+    <loc>/reference/cumulative_contacts_intervention.html</loc>
+  </url>
+  <url>
+    <loc>/reference/cumulative_rate_intervention.html</loc>
   </url>
   <url>
     <loc>/reference/dot-epidemic_default_cpp.html</loc>
@@ -118,6 +124,12 @@
     <loc>/reference/intervention.html</loc>
   </url>
   <url>
+    <loc>/reference/intervention_constructor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/intervention_on_rates.html</loc>
+  </url>
+  <url>
     <loc>/reference/model_library.html</loc>
   </url>
   <url>
@@ -133,13 +145,13 @@
     <loc>/reference/print.infection.html</loc>
   </url>
   <url>
-    <loc>/reference/print.intervention.html</loc>
-  </url>
-  <url>
     <loc>/reference/print.population.html</loc>
   </url>
   <url>
     <loc>/reference/print.vaccination.html</loc>
+  </url>
+  <url>
+    <loc>/reference/print_intervention.html</loc>
   </url>
   <url>
     <loc>/reference/prob_discrete_erlang.html</loc>
@@ -149,5 +161,8 @@
   </url>
   <url>
     <loc>/reference/vaccination.html</loc>
+  </url>
+  <url>
+    <loc>/reference/validate_intervention.html</loc>
   </url>
 </urlset>

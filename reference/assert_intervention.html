@@ -42,6 +42,7 @@ function is for internal use in argument checking functions."><meta property="og
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
     <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling multiple overlapping non-pharmaceutical interventions</a>
+    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling interventions on model rates</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
@@ -79,7 +80,7 @@ function is for internal use in argument checking functions.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assert_intervention</span><span class="op">(</span><span class="va">x</span>, <span class="va">population</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assert_intervention</span><span class="op">(</span><span class="va">x</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"contacts"</span>, <span class="st">"rate"</span><span class="op">)</span>, <span class="va">population</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -88,10 +89,15 @@ function is for internal use in argument checking functions.</p>
 <dd><p>A <a href="intervention.html">intervention</a> object.</p></dd>
 
 
+<dt>type</dt>
+<dd><p>A string for the type of intervention to check for. May be one of
+<code>"contacts"</code> or <code>"rate"</code>.</p></dd>
+
+
 <dt>population</dt>
 <dd><p>An optional argument which is a <a href="population.html">population</a> object.
 When present, this is used to check whether the intervention object <code>x</code> has
-corresponding values of <code>contact_reduction</code> for each demographic group in
+corresponding values of <code>reduction</code> for each demographic group in
 <code>population</code>.</p></dd>
 
 </dl></div>

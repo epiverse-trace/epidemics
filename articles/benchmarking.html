@@ -60,6 +60,7 @@
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
     <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling multiple overlapping non-pharmaceutical interventions</a>
+    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling interventions on model rates</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
@@ -142,24 +143,26 @@
 <span><span class="co"># create a multi intervention</span></span>
 <span><span class="va">multi_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
+<span>    type <span class="op">=</span> <span class="st">"contacts"</span>,</span>
 <span>    time_begin <span class="op">=</span> <span class="fl">50</span>, time_end <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>    contact_reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
-<span>      <span class="fl">0.2</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span>, <span class="fl">1</span></span>
+<span>    reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span></span>
+<span>      <span class="fl">0.2</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
+<span>    type <span class="op">=</span> <span class="st">"contacts"</span>,</span>
 <span>    time_begin <span class="op">=</span> <span class="fl">70</span>, time_end <span class="op">=</span> <span class="fl">90</span>,</span>
-<span>    contact_reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
-<span>      <span class="fl">0.3</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span>, <span class="fl">1</span></span>
+<span>    reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span></span>
+<span>      <span class="fl">0.3</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create a vaccination regime</span></span>
 <span><span class="va">vax_regime</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vaccination.html">vaccination</a></span><span class="op">(</span></span>
-<span>  time_begin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  nu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  time_begin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  time_end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  nu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span></span>
@@ -167,23 +170,23 @@
 <span>  <span class="st">"epidemic default R"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_r</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>    infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
-<span>    intervention <span class="op">=</span> <span class="va">multi_intervention</span>,</span>
+<span>    intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">multi_intervention</span><span class="op">)</span>,</span>
 <span>    vaccination <span class="op">=</span> <span class="va">vax_regime</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  <span class="st">"epidemic default Rcpp"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>    infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
-<span>    intervention <span class="op">=</span> <span class="va">multi_intervention</span>,</span>
+<span>    intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">multi_intervention</span><span class="op">)</span>,</span>
 <span>    vaccination <span class="op">=</span> <span class="va">vax_regime</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  times <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;                   expr     min      lq      mean   median       uq     max</span></span>
-<span><span class="co">#&gt;     epidemic default R 33.2559 34.0256 35.466447 34.26600 34.72910 54.2380</span></span>
-<span><span class="co">#&gt;  epidemic default Rcpp  2.5558  2.6992  3.088361  3.00065  3.10615 14.4514</span></span>
+<span><span class="co">#&gt;                   expr     min        lq       mean   median       uq      max</span></span>
+<span><span class="co">#&gt;     epidemic default R 99.9129 106.32130 110.349804 109.3877 113.1039 142.1494</span></span>
+<span><span class="co">#&gt;  epidemic default Rcpp  4.6618   5.21185   6.814755   5.4080   5.6782 139.8425</span></span>
 <span><span class="co">#&gt;  neval</span></span>
 <span><span class="co">#&gt;    100</span></span>
 <span><span class="co">#&gt;    100</span></span></code></pre></div>
@@ -242,15 +245,17 @@
 <span><span class="co"># create a multi intervention</span></span>
 <span><span class="va">multi_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
+<span>    type <span class="op">=</span> <span class="st">"contacts"</span>,</span>
 <span>    time_begin <span class="op">=</span> <span class="fl">50</span>, time_end <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>    contact_reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
-<span>      <span class="fl">0.2</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span>, <span class="fl">1</span></span>
+<span>    reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span></span>
+<span>      <span class="fl">0.2</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
+<span>    type <span class="op">=</span> <span class="st">"contacts"</span>,</span>
 <span>    time_begin <span class="op">=</span> <span class="fl">70</span>, time_end <span class="op">=</span> <span class="fl">90</span>,</span>
-<span>    contact_reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
-<span>      <span class="fl">0.3</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span>, <span class="fl">1</span></span>
+<span>    reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span></span>
+<span>      <span class="fl">0.3</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -277,26 +282,26 @@
 <span>  <span class="st">"epidemic Vacamole R"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_vacamole.html">epidemic_vacamole_r</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>    infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
-<span>    intervention <span class="op">=</span> <span class="va">multi_intervention</span>,</span>
+<span>    intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">multi_intervention</span><span class="op">)</span>,</span>
 <span>    vaccination <span class="op">=</span> <span class="va">double_vaccination</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  <span class="st">"epidemic Vacamole Rcpp"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_vacamole.html">epidemic_vacamole_cpp</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>    infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
-<span>    intervention <span class="op">=</span> <span class="va">multi_intervention</span>,</span>
+<span>    intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">multi_intervention</span><span class="op">)</span>,</span>
 <span>    vaccination <span class="op">=</span> <span class="va">double_vaccination</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  times <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;                    expr     min       lq      mean   median       uq     max</span></span>
-<span><span class="co">#&gt;     epidemic Vacamole R 49.8285 50.63720 52.452047 51.25775 52.11595 68.0232</span></span>
-<span><span class="co">#&gt;  epidemic Vacamole Rcpp  3.2752  3.48535  3.747742  3.73830  3.86860  9.9415</span></span>
-<span><span class="co">#&gt;  neval</span></span>
-<span><span class="co">#&gt;    100</span></span>
-<span><span class="co">#&gt;    100</span></span></code></pre></div>
+<span><span class="co">#&gt;                    expr      min        lq       mean    median       uq</span></span>
+<span><span class="co">#&gt;     epidemic Vacamole R 112.6212 119.89040 127.470467 123.99605 128.8989</span></span>
+<span><span class="co">#&gt;  epidemic Vacamole Rcpp   6.1493   6.92385   7.451161   7.31685   7.7166</span></span>
+<span><span class="co">#&gt;       max neval</span></span>
+<span><span class="co">#&gt;  376.3299   100</span></span>
+<span><span class="co">#&gt;   17.4980   100</span></span></code></pre></div>
 </details>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

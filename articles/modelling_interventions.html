@@ -60,6 +60,7 @@
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
     <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling multiple overlapping non-pharmaceutical interventions</a>
+    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling interventions on model rates</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
@@ -171,26 +172,28 @@
 <code class="sourceCode R"><span><span class="co"># prepare an intervention with a differential effect on age groups</span></span>
 <span><span class="va">close_schools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"School closure"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"contacts"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  contact_reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.001</span>, <span class="fl">0.001</span><span class="op">)</span><span class="op">)</span></span>
+<span>  reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.001</span>, <span class="fl">0.001</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># examine the intervention object</span></span>
 <span><span class="va">close_schools</span></span>
-<span><span class="co">#&gt; &lt;intervention&gt;</span></span>
+<span><span class="co">#&gt; &lt;contacts_intervention&gt;</span></span>
 <span><span class="co">#&gt; Intervention name: "School closure"</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time begin:</span></span>
-<span><span class="co">#&gt;      [,1]</span></span>
-<span><span class="co">#&gt; [1,]  200</span></span>
+<span><span class="co">#&gt; [1] 200</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time end:</span></span>
-<span><span class="co">#&gt;      [,1]</span></span>
-<span><span class="co">#&gt; [1,]  300</span></span>
-<span><span class="co">#&gt; Contact reduction:</span></span>
-<span><span class="co">#&gt;       [,1]</span></span>
-<span><span class="co">#&gt; [1,] 0.500</span></span>
-<span><span class="co">#&gt; [2,] 0.001</span></span>
-<span><span class="co">#&gt; [3,] 0.001</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 300</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Reduction:</span></span>
+<span><span class="co">#&gt;              Interv. 1</span></span>
+<span><span class="co">#&gt; Demo. grp. 1     0.500</span></span>
+<span><span class="co">#&gt; Demo. grp. 2     0.001</span></span>
+<span><span class="co">#&gt; Demo. grp. 3     0.001</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">
@@ -201,7 +204,7 @@
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
-<span>  intervention <span class="op">=</span> <span class="va">close_schools</span>,</span>
+<span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">close_schools</span><span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details>

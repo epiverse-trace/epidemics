@@ -60,6 +60,7 @@
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
     <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling multiple overlapping non-pharmaceutical interventions</a>
+    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling interventions on model rates</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
@@ -313,7 +314,8 @@ Note that the final size here refers to the final size after 100 days, which is 
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># apply the function over each replicate</span></span>
 <span><span class="va">data_final_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Map</a></span><span class="op">(</span></span>
-<span>  <span class="va">data</span>, f <span class="op">=</span> <span class="va">epidemic_size</span>, deaths <span class="op">=</span> <span class="cn">FALSE</span>, by_group <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  f <span class="op">=</span> <span class="va">epidemic_size</span>, deaths <span class="op">=</span> <span class="cn">FALSE</span>, by_group <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">data_final_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">data_final_size</span><span class="op">)</span></span></code></pre></div>
 </details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">

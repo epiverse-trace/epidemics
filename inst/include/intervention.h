@@ -132,14 +132,15 @@ inline Eigen::MatrixXd intervention_on_cm(const double &t,
                                           const Rcpp::NumericVector &time_end,
                                           const Rcpp::NumericMatrix &cr) {
   // create Eigen 1D array from R matrix passed in an list (class intervention)
-  Eigen::ArrayXd contact_reduction =
-      cumulative_contacts_intervention(t, time_begin, time_end, cr);
+  Eigen::ArrayXd contact_scaling =
+      1.0 - cumulative_contacts_intervention(t, time_begin, time_end, cr);
 
-  // modify the contact matrix as cm_mod = cm * (1 - intervention)
-  // for a percentage reduction in contacts
-  Eigen::MatrixXd modified_cm =
-      cm.array().colwise() * (1.0 - contact_reduction);
-  // transpose for rowwise array multiplication, as Eigen is col-major
+  // modify the contact matrix by multiplying each i-th row and column
+  // with the i-th element of the contact reduction array
+  // first multiply the rows. THIS REQUIRES COLWISE as Eigen is col-major!
+  Eigen::MatrixXd modified_cm = cm.array().colwise() * contact_scaling;
+  // then multiply the columns. THIS USES ROWWISE with array transpose.
+  modified_cm = modified_cm.array().rowwise() * contact_scaling.transpose();
   return modified_cm;
 }
 

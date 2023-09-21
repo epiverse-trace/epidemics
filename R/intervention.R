@@ -738,8 +738,13 @@ cumulative_contacts_intervention <- function(t,
 #'
 #' @keywords internal
 intervention_on_cm <- function(t, cm, time_begin, time_end, cr) {
-  # return values
-  cm * (1.0 - cumulative_contacts_intervention(t, time_begin, time_end, cr))
+  # cumulative cr
+  contact_scaling <- 1.0 -
+    cumulative_contacts_intervention(t, time_begin, time_end, cr)
+  # first multiply rows by reduction
+  cm_mod <- cm * contact_scaling
+  # then multiply cols by reduction and return
+  cm_mod %*% diag(contact_scaling)
 }
 
 #' Calculate the Cumulative Effect of Interventions on Rate Parameters

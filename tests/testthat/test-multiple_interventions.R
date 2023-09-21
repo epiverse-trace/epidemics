@@ -73,7 +73,7 @@ test_that("Cumulative effect of NPIs", {
       time_end = multi_npi$time_end,
       cr = multi_npi$reduction
     ),
-    contact_matrix * 0.75
+    (contact_matrix * 0.75) %*% diag(rep(0.75, nrow(contact_matrix)))
   )
 })
 

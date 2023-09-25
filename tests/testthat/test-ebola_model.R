@@ -1,14 +1,14 @@
 #### Tests for the ebola model ####
 
 # prepare data
-demography_vector <- 67e6
+demography_vector <- 67e3
 
 uk_pop <- population(
   name = "UK population",
   contact_matrix = matrix(1),
   demography_vector = demography_vector,
   initial_conditions = matrix(
-    c(1 - 1e-6, 0, 1e-6, 0),
+    c(1 - 1e-3, 1e-3 / 2, 1e-3 / 2, 0),
     nrow = 1, ncol = 4
   )
 )

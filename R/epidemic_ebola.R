@@ -111,7 +111,7 @@ epidemic_ebola_r <- function(initial_state, parameters, time_end = 100) {
     time = seq_len(time_end),
     S = NA, E = NA, I = NA, R = NA
   )
-  sim_data[1, seq(2, 5)] <- initial_state
+  sim_data[1, names(initial_state)] <- initial_state
 
   ## Initialise a matrix to store the states of the exposed sub-blocks
   # over time.

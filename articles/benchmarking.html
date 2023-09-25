@@ -61,6 +61,7 @@
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
     <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling multiple overlapping non-pharmaceutical interventions</a>
     <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling interventions on model rates</a>
+    <a class="dropdown-item" href="../articles/time_dependence.html">Modelling time-dependence in epidemic parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
@@ -184,9 +185,9 @@
 <span>  times <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;                   expr     min      lq      mean   median       uq     max</span></span>
-<span><span class="co">#&gt;     epidemic default R 54.9080 56.7427 59.019255 57.46580 61.41480 78.7768</span></span>
-<span><span class="co">#&gt;  epidemic default Rcpp  3.4695  3.6764  4.042428  3.91195  4.12415 16.5414</span></span>
+<span><span class="co">#&gt;                   expr     min       lq      mean  median      uq      max</span></span>
+<span><span class="co">#&gt;     epidemic default R 60.5052 61.80060 64.161542 62.2911 65.6764 118.6641</span></span>
+<span><span class="co">#&gt;  epidemic default Rcpp  3.7937  3.95105  4.210269  4.1022  4.2898   8.2269</span></span>
 <span><span class="co">#&gt;  neval</span></span>
 <span><span class="co">#&gt;    100</span></span>
 <span><span class="co">#&gt;    100</span></span></code></pre></div>
@@ -296,9 +297,9 @@
 <span>  times <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;                    expr     min      lq      mean   median      uq      max</span></span>
-<span><span class="co">#&gt;     epidemic Vacamole R 71.5393 72.4538 77.638679 74.46770 79.6505 269.6906</span></span>
-<span><span class="co">#&gt;  epidemic Vacamole Rcpp  4.7627  4.9793  5.341821  5.31165  5.5840  11.5752</span></span>
+<span><span class="co">#&gt;                    expr     min       lq      mean   median       uq      max</span></span>
+<span><span class="co">#&gt;     epidemic Vacamole R 67.9022 68.59730 72.228517 69.75485 73.67915 213.8925</span></span>
+<span><span class="co">#&gt;  epidemic Vacamole Rcpp  5.1816  5.36115  5.523887  5.46775  5.69695   6.3632</span></span>
 <span><span class="co">#&gt;  neval</span></span>
 <span><span class="co">#&gt;    100</span></span>
 <span><span class="co">#&gt;    100</span></span></code></pre></div>

@@ -34,6 +34,9 @@
     <loc>/articles/rate_interventions.html</loc>
   </url>
   <url>
+    <loc>/articles/time_dependence.html</loc>
+  </url>
+  <url>
     <loc>/articles/vacamole.html</loc>
   </url>
   <url>
@@ -134,6 +137,9 @@
   </url>
   <url>
     <loc>/reference/new_infections.html</loc>
+  </url>
+  <url>
+    <loc>/reference/no_time_dependence.html</loc>
   </url>
   <url>
     <loc>/reference/output_to_df.html</loc>

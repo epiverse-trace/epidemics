@@ -40,3 +40,15 @@ test_that("Errors in infection initialisation", {
     regexp = "Error: All infection parameters must be the same length!"
   )
 })
+
+#### Check for function to get the transmission rate ####
+test_that("Calculating transmission rate from an <infection>", {
+  # define r0 and infection period
+  r0 <- 1.3
+  infectious_period <- 5
+  ebola <- infection(r0 = r0, infectious_period = infectious_period)
+  expect_identical(
+    get_transmission_rate(ebola),
+    r0 / infectious_period
+  )
+})

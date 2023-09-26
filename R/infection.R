@@ -229,3 +229,22 @@ format.infection <- function(x, ...) {
 
   invisible(x)
 }
+
+#' Calculate the transmission rate of an `<infection>`
+#'
+#' @param infection An `<infection>` object, with the parameters `r0` for the
+#' basic reproductive number, and `infectious_period`, for the mean infectious
+#' period.
+#'
+#' @return A single number representing the transmission rate of the infection,
+#' \eqn{\beta}.
+#' @export
+#'
+#' @examples
+#' # create an infection
+#' ebola <- infection(r0 = 1.3, infectious_period = 5, preinfectious_period = 5)
+#' get_transmission_rate(infection = ebola)
+get_transmission_rate <- function(infection) {
+  checkmate::assert_class(infection, "infection")
+  get_parameter(infection, "r0") / get_parameter(infection, "infectious_period")
+}

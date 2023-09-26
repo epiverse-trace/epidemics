@@ -45,48 +45,76 @@ prob_discrete_erlang <- function(shape, rate) {
 #' @name epidemic_ebola
 #' @rdname epidemic_ebola
 #'
-#' @description Simulate an epidemic using a stochastic an SEIR compartmental
-#' model with Erlang passage times based on Getz and Dougherty (2017) in
-#' J. Biological Dynamics, and developed to model the West African
+#' @description Simulate an epidemic using a discrete-time, stochastic SEIR
+#' compartmental model with Erlang passage times based on Getz and Dougherty
+#' (2017) in J. Biological Dynamics, and developed to model the West African
 #' Ebola virus disease outbreak of 2014. See **Details** for more information.
 #'
-#' @param initial_state A vector that contains 4 numbers corresponding to the
-#' initial values of the 4 classes: S, E, I, and R.
-#' @param parameters A vector that contains 5 numbers corresponding to the
-#' following parameters:
+#' @param population An object of the `<population>` class, see [population()].
 #'
-#' 1. `shape_E`, a single integer value for the shape parameter of the Erlang
-#' distribution from which passage times are drawn for the 'exposed'
-#' compartment.
+#' This model only accepts a `<population>` without demographic structure, that
+#' is, the `demography_vector` must be a single number representing the total
+#' size of the affected population.
 #'
-#'  2. `rate_E`, a single integer value for the rate parameter of the Erlang
-#' distribution from which passage times are drawn for the 'exposed'
-#' compartment.
+#' The model also does not account for demographic differences in social
+#' contacts, which means that the `contact_matrix` is ignored. For consistency,
+#' the matrix must be square and have as many rows as demography groups, which
+#' is one.
 #'
-#'  3. `shape_I`, a single integer value for the shape parameter of the Erlang
-#' distribution from which passage times are drawn for the 'infectious'
-#' compartment.
+#' @param infection An `<infection>` object created using [infection()]. Must
+#' have the basic reproductive number \eqn{R_0} of the infection, the
+#' infectious period, and the pre-infectious period.
+#' These are used to calculate the baseline transmission rate \eqn{\beta},
+#' as well as the rates \eqn{\gamma^E} and \eqn{\gamma^I} at which individuals
+#' move from the 'exposed' to the 'infectious' compartment, and from the
+#' 'infectious' to the 'recovered' compartment, respectively.
+#' See **Details** for more information.
 #'
-#'  4. `rate_I`, a single integer value for the rate parameter of the Erlang
-#' distribution from which passage times are drawn for the 'infectious'
-#' compartment.
-#'
-#'  5. `beta`, a single number for the transmission rate of the infection.
-#' @param time_end The maximum number of timesteps over which to run the model.
-#' Taken as days, with a default value of 100 days.
+#' @param intervention An optional `<rate_intervention>` object representing
+#' pharmaceutical or non-pharmaceutical interventions applied to the infection's
+#' parameters, such as the transmission rate, over the epidemic.
+#' See [intervention()] for details on constructing rate interventions.
+#' Defaults to `NULL`, representing no interventions on model parameters.
+#' @param time_end The maximum number of timesteps over which to run the model,
+#' in days. Defaults to 100 days.
 #' @return
-#' For `epidemic_ebola_r()`, a `<data.frame>` containing the numbers of
-#' individuals in each compartment, "susceptible", "exposed", "infectious", and
-#' "recovered", over time (from 1 to `time_end`).
-#'
-#' For `epidemic_ebola_cpp()`, a `<data.table>` in long format with the columns
-#' "time", "compartment", "age_group", and "value", that gives the number of
-#' individuals in each model compartment over time (from 0 to `time_end`).
+#' A `<data.table>` in
+#' long format with the columns "time", "compartment", "age_group", and "value",
+#' that gives the number of individuals in each model compartment over time (
+#' from 1 to `time_end`).
 #' @details
+#'
+#' ## Discrete-time ebola virus disease model following Getz & Dougherty (2017)
+#'
 #' The R code for this model is taken from code by Hạ Minh Lâm and initially
 #' made available on _Epirecipes_ (https://github.com/epirecipes/epicookbook)
-#' under the MIT licence. The model is based on Getz and Dougherty (2017); see
+#' under the MIT licence. The model is based on Getz and Dougherty (2018); see
 #' **References**.
+#'
+#' This model differs from Getz and Dougherty (2018) in allowing users to set
+#' the basic reproductive number \eqn{R_0}, and the mean infectious
+#' (\eqn{\rho^I} in Getz and Dougherty) and pre-infectious periods in days (
+#' \eqn{\rho^E} in Getz and Dougherty). Getz and Dougherty instead calculate
+#' these periods from other model parameters, and our change aims to make
+#' the specification of the `<infection>` required for this model easier for
+#' non-specialists.
+#'
+#' The shape of the Erlang distributions of passage times through the exposed
+#' and infectious compartments (\eqn{k^E} and \eqn{k^I}) are fixed to 2 (this
+#' was allowed to vary in Getz and Dougherty).
+#'
+#' The transition rates between the exposed and infectious, and infectious and
+#' recovered compartments, \eqn{\gamma^E} and \eqn{\gamma^I} in Getz and
+#' Dougherty's notation, are calculated following their equation (6).
+#' \deqn{\gamma^E = \dfrac{k^E}{\rho^E} = \dfrac{2}{\rho^E} ~\text{and}~
+#' \gamma^I = \dfrac{k^I}{\rho^I} = \dfrac{2}{\rho^I}}
+#'
+#' In this discrete time model, \eqn{\gamma^E} and \eqn{\gamma^I} are used to
+#' determine the number of Erlang sub-compartments in each epidemiological
+#' compartment, and the probability of newly exposed or infectious individuals
+#' beginning in one of the compartments (thus allowing for variation in passage
+#' times).
+#'
 #' @references
 #'
 #' Getz, W. M., & Dougherty, E. R. (2018). Discrete stochastic analogs of Erlang
@@ -94,93 +122,136 @@ prob_discrete_erlang <- function(shape, rate) {
 #' \doi{10.1080/17513758.2017.1401677}
 #'
 #' @export
-epidemic_ebola_r <- function(initial_state, parameters, time_end = 100) {
+epidemic_ebola_r <- function(population, infection,
+                             intervention = NULL, time_end = 100) {
 
   # input checking for the ebola R model
-  checkmate::assert_integer(initial_state, lower = 0, any.missing = FALSE)
-  checkmate::assert_integer(initial_state, lower = 0, any.missing = FALSE)
-  names(initial_state) <- c("S", "E", "I", "R")
-  names(parameters) <- c(
-    "erlang_shape_for_E", "erlang_rate_for_E",
-    "erlang_shape_for_I", "erlang_rate_for_I",
-    "base_transmission_rate"
+  assert_population(
+    population,
+    demography_groups = 1L,
+    compartments = c("susceptible", "exposed", "infectious", "recovered")
   )
+  assert_infection(
+    infection,
+    default_params = c(
+      "r0", "infectious_period", "preinfectious_period"
+    )
+  )
+  if (!is.null(intervention)) {
+    assert_intervention(
+      intervention,
+      type = "rate", population = population
+    )
+  }
 
+  # set Erlang shape parameters, k^E and k^I; this is a modelling decision
+  shape_E <- 2L
+  shape_I <- 2L
+
+  # get Erlang rate parameters
+  rate_E <- shape_E / get_parameter(infection, "preinfectious_period")
+  rate_I <- shape_I / get_parameter(infection, "infectious_period")
+
+  # prepare base transmission rate beta
+  beta <- get_transmission_rate(infection = infection)
+
+  # get initial conditions
+  initial_state <- as.numeric(
+    get_parameter(population, "initial_conditions")
+  ) * get_parameter(population, "demography_vector")
+
+  # round to nearest integer
+  initial_state <- round(initial_state)
+  names(initial_state) <- c("susceptible", "exposed", "infectious", "recovered")
+
+  # prepare output data.frame
   population_size <- sum(initial_state)
-  sim_data <- data.frame(
-    time = seq_len(time_end),
-    S = NA, E = NA, I = NA, R = NA
-  )
-  sim_data[1, names(initial_state)] <- initial_state
+  sim_data <- matrix(NA_integer_, nrow = time_end, ncol = 4L)
+  colnames(sim_data) <- c("susceptible", "exposed", "infectious", "recovered")
 
-  ## Initialise a matrix to store the states of the exposed sub-blocks
-  # over time.
-  exposed_block_adm_rates <- prob_discrete_erlang(
-    shape = parameters["erlang_shape_for_E"],
-    rate = parameters["erlang_rate_for_E"]
-  )
-  n_exposed_blocks <- length(exposed_block_adm_rates)
-  exposed_blocks <- matrix(
-    data = 0, nrow = time_end,
-    ncol = n_exposed_blocks
-  )
-  exposed_blocks[1, n_exposed_blocks] <- sim_data$E[1]
+  # assign initial conditions
+  sim_data[1, ] <- initial_state
 
-  ## Initialise a matrix to store the states of the infectious
-  # sub-blocks over time.
-  infectious_block_adm_rates <- prob_discrete_erlang(
-    shape = parameters["erlang_shape_for_I"],
-    rate = parameters["erlang_rate_for_I"]
+  # prepare probability vectors for which Erlang sub-compartment (boxcar)
+  # will receive any newly exposed or infectious individuals
+  exposed_boxcar_rates <- prob_discrete_erlang(
+    shape = shape_E,
+    rate = rate_E
   )
-  n_infectious_blocks <- length(infectious_block_adm_rates)
-  infectious_blocks <- matrix(
-    data = 0, nrow = time_end,
-    ncol = n_infectious_blocks
+  infectious_boxcar_rates <- prob_discrete_erlang(
+    shape = shape_I,
+    rate = rate_I
   )
-  infectious_blocks[1, n_infectious_blocks] <- sim_data$I[1]
+
+  # count number of exposed and infectious blocks or boxcars
+  n_exposed_boxcars <- length(exposed_boxcar_rates)
+  n_infectious_boxcars <- length(infectious_boxcar_rates)
+
+  # prepare the current and past compartments
+  exposed_current <- numeric(n_exposed_boxcars)
+  exposed_past <- exposed_current
+
+  infectious_current <- numeric(n_infectious_boxcars)
+  infectious_past <- infectious_current
+
+  # initialise current conditions for exposed and infectious compartments
+  exposed_current[n_exposed_boxcars] <- sim_data[1, "exposed"]
+  infectious_current[n_infectious_boxcars] <- sim_data[1, "infectious"]
 
   ## Run the simulation from time t = 2 to t = time_end
   for (time in seq(2, time_end)) {
-    transmission_rate <-
-      parameters["base_transmission_rate"] * sim_data$I[time - 1] /
-        population_size
-    exposure_prob <- 1 - exp(-transmission_rate)
+    # get current transmission rate as base rate * p(infectious)
+    transmission_rate <- beta * sim_data[time - 1, "infectious"] /
+      population_size
+    exposure_prob <- 1.0 - exp(-transmission_rate)
 
-    new_exposed <- stats::rbinom(1, sim_data$S[time - 1], exposure_prob)
-    new_infectious <- exposed_blocks[time - 1, 1]
-    new_recovered <- infectious_blocks[time - 1, 1]
+    # calculate new exposures, infectious, and recovered
+    new_exposed <- stats::rbinom(
+      1, sim_data[time - 1, "susceptible"], exposure_prob
+    )
+    new_infectious <- exposed_past[1]
+    new_recovered <- infectious_past[1]
 
+    # handle non-zero new exposures
     if (new_exposed > 0) {
-      exposed_blocks[time, ] <- t(
-        stats::rmultinom(1,
-          size = new_exposed,
-          prob = exposed_block_adm_rates
-        )
+      exposed_current <- as.vector(
+        stats::rmultinom(1, size = new_exposed, prob = exposed_boxcar_rates)
       )
     }
-    exposed_blocks[time, ] <-
-      exposed_blocks[time, ] +
-      c(exposed_blocks[time - 1, seq(2, n_exposed_blocks)], 0)
+    # add new exposures to seq(2, last) past boxcar compartments
+    exposed_current <- exposed_current + c(exposed_past[-1], 0)
 
+    # handle non-zero new infectious
     if (new_infectious > 0) {
-      infectious_blocks[time, ] <- t(
-        stats::rmultinom(1,
-          size = new_infectious,
-          prob = infectious_block_adm_rates
+      infectious_current <- as.vector(
+        stats::rmultinom(
+          1,
+          size = new_infectious, prob = infectious_boxcar_rates
         )
       )
     }
-    infectious_blocks[time, ] <-
-      infectious_blocks[time, ] +
-      c(infectious_blocks[time - 1, seq(2, n_infectious_blocks)], 0)
+    # add new infectious to seq(2, last) past boxcar compartments
+    infectious_current <- infectious_current + c(infectious_past[-1], 0)
 
-    sim_data$S[time] <- sim_data$S[time - 1] - new_exposed
-    sim_data$E[time] <- sum(exposed_blocks[time, ])
-    sim_data$I[time] <- sum(infectious_blocks[time, ])
-    sim_data$R[time] <- sim_data$R[time - 1] + new_recovered
+    # set past vectors to current vectors
+    exposed_past <- exposed_current
+    infectious_past <- infectious_current
+
+    # prepare the data for output
+    sim_data[time, "susceptible"] <- sim_data[time - 1, "susceptible"] -
+      new_exposed
+    sim_data[time, "exposed"] <- sum(exposed_current)
+    sim_data[time, "infectious"] <- sum(infectious_current)
+    sim_data[time, "recovered"] <- sim_data[time - 1, "recovered"] +
+      new_recovered
   }
 
-  return(sim_data)
+  # convert to long format
+  output_to_df(
+    output = list(x = sim_data, time = seq_len(time_end)),
+    population = population,
+    compartments = c("susceptible", "exposed", "infectious", "recovered")
+  )
 }
 
 #' @title Model a stochastic epidemic with Erlang passage times using Rcpp

@@ -7,8 +7,8 @@
 assert_infection(
   x,
   default_params = c("name", "r0", "infectious_period"),
-  extra_parameters,
-  extra_parameters_limits
+  extra_parameters = NULL,
+  extra_parameters_limits = NULL
 )
 }
 \arguments{

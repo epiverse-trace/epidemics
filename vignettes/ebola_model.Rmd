@@ -61,11 +61,9 @@ We assume that only _one_ person is initially infected, in line with @getz2018.
 population_size <- 14e6
 
 # prepare initial conditions as proportions
-initial_i <- 1 / population_size
-
 initial_conditions <- c(
-  S = 1 - initial_i, E = 0, I = initial_i, R = 0
-)
+  S = population_size - 2, E = 1, I = 1, H = 0, F = 0, R = 0
+) / population_size
 ```
 
 
@@ -87,8 +85,10 @@ guinea_population
 
 We prepare an `<infection>` class object for ebola, with an $R_0$ taken from the value estimated for ebola in Guinea [@althaus2014].
 
-We assume that ebola has an infectious period of 5 days.
-While ebola has very high severity, our model does not yet have a "deaths" compartment so we assume that individuals recover after this period.
+We assume that ebola has a mean infectious period of 5 days, and that the time between exposure and symptom onset --- the pre-infectious period --- is also 5 days.
+While ebola has very high severity, our model does not yet have an explicit "deaths" compartment so we assume that individuals in the "recovered" compartment are a composite of those who have recovered and those who have died.
+Functionally, they are similar as they are not part of the model dynamics.
+However, this will change in future iterations as we incorporate funeral transmission.
 
 ```{r}
 # Prepare ebola parameters as an infection class object
@@ -96,8 +96,10 @@ ebola <- infection(
   name = "ebolavirus disease",
   r0 = 1.5,
   infectious_period = 5,
-  shape_E = 5L, rate_E = 1,
-  shape_I = 5L, rate_I = 1
+  preinfectious_period = 5,
+  prop_hospitalised = 0.5,
+  etu_safety = 0.8,
+  funeral_safety = 0.5
 )
 
 # print to visualise
@@ -106,7 +108,10 @@ ebola
 
 ## Run epidemic model
 
-We run the model for 100 days, with data reported on each day.
+We run the model using the function `epidemic_ebola_r()`.
+While there is a C++ equivalent of this model, it was not found to be much faster than the R-only version, and is not made available to users.
+
+The model is run for 365 days, with data reported on each day.
 This is an appropriate period over which to obtain initial predictions for the outbreak, and after which response efforts such as non-pharmaceutical interventions and vaccination campaigns are likely to be launched to bring the outbreak under control.
 
 ```{r}
@@ -115,10 +120,10 @@ set.seed(0)
 
 # run the epidemic model using `epidemic`
 # we call the model "ebola" from the library
-output <- epidemic_ebola_cpp(
+output <- epidemic_ebola_r(
   population = guinea_population,
   infection = ebola,
-  time_end = 100
+  time_end = 365
 )
 
 # view the head of the output
@@ -127,7 +132,7 @@ head(output)
 
 ## Prepare data and visualise infections
 
-We plot the ebola epidemic over time, showing only the number of individuals in the exposed and infected compartments.
+We plot the ebola epidemic over time, showing only the number of individuals in the exposed and infectious compartments.
 
 ```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
@@ -178,7 +183,7 @@ set.seed(1)
 data <- Map(
   x = seq(100),
   f = function(x) {
-    data <- epidemic_ebola_cpp(
+    data <- epidemic_ebola_r(
       population = guinea_population,
       infection = ebola,
       time_end = 100

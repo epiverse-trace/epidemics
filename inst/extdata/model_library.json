@@ -10,10 +10,10 @@
   {
     "model_type": "epidemic",
     "model_name": "ebola",
-    "model_function": ".epidemic_ebola_cpp",
+    "model_function": ".epidemic_ebola_r",
     "model_args_checker": ".check_args_epidemic_ebola",
     "model_args_prepper": ".prepare_args_epidemic_ebola",
-    "compartments": ["susceptible", "exposed", "infectious", "recovered"]
+    "compartments": ["susceptible", "exposed", "infectious", "hospitalised", "funeral", "removed"]
   },
   {
     "model_type": "epidemic",

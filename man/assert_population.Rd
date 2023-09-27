@@ -4,7 +4,7 @@
 \alias{assert_population}
 \title{Assert properties of a \code{population} object}
 \usage{
-assert_population(x, compartments)
+assert_population(x, demography_groups = NULL, compartments)
 }
 \arguments{
 \item{x}{A \link{population} object.}

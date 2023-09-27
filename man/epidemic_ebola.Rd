@@ -4,82 +4,147 @@
 \alias{epidemic_ebola}
 \alias{epidemic_ebola_r}
 \alias{epidemic_ebola_cpp}
-\title{Model a stochastic epidemic with Erlang passage times}
+\title{Model an Ebola virus disease epidemic}
 \usage{
-epidemic_ebola_r(initial_state, parameters, time_end = 100)
+epidemic_ebola_r(population, infection, intervention = NULL, time_end = 100)
 
 epidemic_ebola_cpp(population, infection, time_end = 100)
 }
 \arguments{
-\item{initial_state}{A vector that contains 4 numbers corresponding to the
-initial values of the 4 classes: S, E, I, and R.}
+\item{population}{An object of the \verb{<population>} class, see \code{\link[=population]{population()}}.
 
-\item{parameters}{A vector that contains 5 numbers corresponding to the
-following parameters:
-\enumerate{
-\item \code{shape_E}, a single integer value for the shape parameter of the Erlang
-distribution from which passage times are drawn for the 'exposed'
-compartment.
-\item \code{rate_E}, a single integer value for the rate parameter of the Erlang
-distribution from which passage times are drawn for the 'exposed'
-compartment.
-\item \code{shape_I}, a single integer value for the shape parameter of the Erlang
-distribution from which passage times are drawn for the 'infectious'
-compartment.
-\item \code{rate_I}, a single integer value for the rate parameter of the Erlang
-distribution from which passage times are drawn for the 'infectious'
-compartment.
-\item \code{beta}, a single number for the transmission rate of the infection.
-}}
+This model only accepts a \verb{<population>} without demographic structure, that
+is, the \code{demography_vector} must be a single number representing the total
+size of the affected population.
 
-\item{time_end}{The maximum number of timesteps over which to run the model.
-Taken as days, with a default value of 100 days.}
-
-\item{population}{An object of the \verb{<population>} class, which holds a
-population contact matrix, a demography vector, and the initial conditions
-of each demographic group. See \code{\link[=population]{population()}}.}
+The model also does not account for demographic differences in social
+contacts, which means that the \code{contact_matrix} is ignored. For consistency,
+the matrix must be square and have as many rows as demography groups, which
+is one.}
 
 \item{infection}{An \verb{<infection>} object created using \code{\link[=infection]{infection()}}. Must
-have the basic reproductive number \eqn{R_0} of the infection, and the
-infectious period.
-These are used to calculate the transmission rate \eqn{\beta}, the rate
-at which individuals move from the 'exposed' to the 'infectious' compartment.
-This differs from how \eqn{\beta} is passed directly as a parameter in
-\code{epidemic_ebola_r()}.
+have:
+\itemize{
+\item \code{r0}, a single number for the basic reproductive number \eqn{R_0} of the
+infection,
+\item \code{infectious_period}, a single number for the infectious period, taken to be
+in days,
+\item \code{preinfectious_period}, a single number for the pre-infectious period
+before the onset of symptoms, taken to be in days,
+\item \code{prop_hospitalised}, a single number in the range 0.0 -- 1.0 for the
+proportion of infectious (assumed symptomatic) individuals who are
+hospitalised,
+\item \code{etu_safety}, a single number in the range 0.0 -- 1.0 for the relative
+effectiveness of hospitalisation (in an Ebola Treatment Unit; ETU) in
+reducing transmission between hospitalised individuals and susceptible ones.
+0.0 would indicate that hospitalisation does not reduce transmission, while
+1.0 would indicate that it completely prevents transmission.
+\item \code{funeral_safety}, a single number in the range 0.0 -- 1.0 for the relative
+efficacy of practices designed to prevent transmission of Ebola virus disease
+associated with funerals; alternatively interpretable as the proportion
+of funerals following these practices.
+}
 
-The \verb{<infection>} object must hold the parameters of the Erlang distributions
-of passage times through the "exposed" and "infectious" compartments:
-\code{shape_E}, \code{rate_E}, \code{shape_I}, and \code{rate_I}.}
+\code{r0}, \code{infectious_period}, and \code{preinfectious_period} are used to calculate
+the baseline transmission rate \eqn{\beta},
+as well as the rates \eqn{\gamma^E} and \eqn{\gamma^I} at which individuals
+move from the 'exposed' to the 'infectious' compartment, and from the
+'infectious' to the 'recovered' compartment, respectively.
+See \strong{Details} for more information.}
+
+\item{intervention}{An optional \verb{<rate_intervention>} object representing
+pharmaceutical or non-pharmaceutical interventions applied to the infection's
+parameters, such as the transmission rate, over the epidemic.
+See \code{\link[=intervention]{intervention()}} for details on constructing rate interventions.
+Defaults to \code{NULL}, representing no interventions on model parameters.}
+
+\item{time_end}{The maximum number of timesteps over which to run the model,
+in days. Defaults to 100 days.}
 }
 \value{
-For \code{epidemic_ebola_r()}, a \verb{<data.frame>} containing the numbers of
-individuals in each compartment, "susceptible", "exposed", "infectious", and
-"recovered", over time (from 1 to \code{time_end}).
-
-For \code{epidemic_ebola_cpp()}, a \verb{<data.table>} in long format with the columns
-"time", "compartment", "age_group", and "value", that gives the number of
-individuals in each model compartment over time (from 0 to \code{time_end}).
+A \verb{<data.table>} in
+long format with the columns "time", "compartment", "age_group", and "value",
+that gives the number of individuals in each model compartment over time (
+from 1 to \code{time_end}).
 }
 \description{
-Simulate an epidemic using a stochastic an SEIR compartmental
-model with Erlang passage times based on Getz and Dougherty (2017) in
-J. Biological Dynamics, and developed to model the West African
-Ebola virus disease outbreak of 2014. See \strong{Details} for more information.
-}
-\details{
-The R code for this model is taken from code by Hạ Minh Lâm and initially
-made available on \emph{Epirecipes} (https://github.com/epirecipes/epicookbook)
-under the MIT licence. The model is based on Getz and Dougherty (2017); see
-\strong{References}.
+Simulate an epidemic using a discrete-time, stochastic SEIR
+compartmental model with compartments based on Li et al. (2019), and with
+Erlang passage times based on a model developed by Getz and Dougherty (2017),
+developed to model the West African Ebola virus disease outbreak of 2014.
+See \strong{Details} for more information.
 
-\code{epidemic_ebola_cpp()} is a wrapper function for
-\code{\link[=.epidemic_ebola_cpp]{.epidemic_ebola_cpp()}}, a C++ function that is exposed to R via \emph{Rcpp}.
-The internal C++ function \code{\link[=.epidemic_ebola_cpp]{.epidemic_ebola_cpp()}} accepts arguments that
-are created by processing the \code{population}, \code{infection}, \code{intervention} and
-\code{vaccination} arguments to the wrapper function into simpler forms. This
-processing is performed internally.
+\code{epidemic_ebola_cpp()} is an Rcpp implementation of this model that currently
+lags behind the R implementation, and is likely to be removed.
 }
+\section{Details: Discrete-time ebola virus disease model}{
+This model has compartments adopted from the consensus model for Ebola virus
+disease presented in Li et al. (2019), and with transitions between
+epidemiological compartments modelled using Erlang sub-compartments adapted
+from Getz and Dougherty (2018); see \strong{References}.
+
+The R code for this model is adapted from code by Hạ Minh Lâm and initially
+made available on \emph{Epirecipes} (https://github.com/epirecipes/epicookbook)
+under the MIT licence.
+
+The model implementation differs from Getz and Dougherty's (2018) in
+allowing users to set the basic reproductive number \eqn{R_0}, and the mean
+infectious (\eqn{\rho^I} in Getz and Dougherty) and pre-infectious periods in
+days (\eqn{\rho^E} in Getz and Dougherty).
+Getz and Dougherty instead calculate these from other model parameters.
+
+The shape of the Erlang distributions of passage times through the exposed
+and infectious compartments (\eqn{k^E} and \eqn{k^I}) are fixed to 2 (this
+was allowed to vary in Getz and Dougherty).
+
+The transition rates between the exposed and infectious, and infectious and
+funeral compartments, \eqn{\gamma^E} and \eqn{\gamma^I} in Getz and
+Dougherty's notation, are calculated following their equation (6).
+\deqn{\gamma^E = \dfrac{k^E}{\rho^E} = \dfrac{2}{\rho^E} ~\text{and}~
+\gamma^I = \dfrac{k^I}{\rho^I} = \dfrac{2}{\rho^I}}
+
+In this discrete time model, \eqn{\gamma^E} and \eqn{\gamma^I} are used to
+determine the number of Erlang sub-compartments in each epidemiological
+compartment, and the probability of newly exposed or infectious individuals
+beginning in one of the compartments (thus allowing for variation in passage
+times).
+\subsection{Hospitalisation, funerals, and removal}{
+
+Infectious individuals have a probability of \code{prop_hospitalised} of being
+transferred to the hospitalised compartment.
+This compartment has the same number of sub-compartments, which means that
+an infectious individual with \eqn{N} timesteps before exiting the
+infectious compartment will exit the hospitalised compartment in the same
+time.
+
+Hospitalised individuals can contribute to transmission of Ebola to
+susceptibles depending on the value of \code{etu_safety} passed as part of the
+\code{infection} argument, which scales the
+baseline transmission rate \eqn{\beta} for hospitalised individuals.
+
+We assume that deaths in hospital lead to Ebola-safe funerals, and
+individuals exiting the hospitalised compartment move to the 'removed'
+compartment, which holds both recoveries and deaths.
+
+We assume that deaths outside of hospital lead to funerals that are
+potentially not Ebola-safe, and the \code{funeral_safety} passed as part of the
+\code{infection} argument scales the baseline transmission rate \eqn{\beta} for
+funeral transmission of Ebola to susceptibles.
+
+Individuals are assumed to spend only a single timestep in the funeral
+transmission compartment, before they move into the 'removed' compartment.
+
+Individuals in the 'removed' compartment do no affect model dynamics.
+}
+}
+
 \references{
+Li, S.-L., Ferrari, M. J., Bjørnstad, O. N., Runge, M. C., Fonnesbeck, C. J.,
+Tildesley, M. J., Pannell, D., & Shea, K. (2019). Concurrent assessment of
+epidemiological and operational uncertainties for optimal outbreak control:
+Ebola as a case study. Proceedings of the Royal Society B: Biological
+Sciences, 286(1905), 20190774. \doi{10.1098/rspb.2019.0774}
+
 Getz, W. M., & Dougherty, E. R. (2018). Discrete stochastic analogs of Erlang
 epidemic models. Journal of Biological Dynamics, 12(1), 16–38.
 \doi{10.1080/17513758.2017.1401677}

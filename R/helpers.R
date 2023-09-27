@@ -168,8 +168,10 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
   checkmate::assert_number(stage, lower = 0.0, upper = 1.0, finite = TRUE)
 
   stopifnot(
-    "No 'recovered' compartment found in `data`, check model compartments" =
-      "recovered" %in% unique(data$compartment)
+    "No 'recovered' or 'removed' compartment in `data`, check compartments" =
+      any(c("removed", "recovered") %in% unique(data$compartment)),
+    "`data` should have only one of 'recovered' or 'removed' compartments" =
+      !all(c("removed", "recovered") %in% unique(data$compartment))
   )
   # if deaths are requested to be counted, but no "dead" compartment exists
   # throw a message
@@ -180,7 +182,10 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
     )
   }
   # add deaths to compartments to search
-  size_compartments <- "recovered"
+  size_compartments <- ifelse(
+    "recovered" %in% unique(data$compartment),
+    "recovered", "removed"
+  )
   if (deaths) {
     size_compartments <- c(size_compartments, "deaths")
   }

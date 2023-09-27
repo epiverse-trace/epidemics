@@ -43,9 +43,20 @@ assert_infection <- function(x,
                              default_params = c(
                                "name", "r0", "infectious_period"
                              ),
-                             extra_parameters, extra_parameters_limits) {
+                             extra_parameters = NULL,
+                             extra_parameters_limits = NULL) {
   # check for input class and expected names
   checkmate::assert_class(x, "infection")
+  checkmate::assert_character(
+    default_params,
+    min.len = 1, any.missing = FALSE
+  )
+  checkmate::assert_character(extra_parameters, null.ok = TRUE)
+  checkmate::assert_list(
+    extra_parameters_limits,
+    types = "numeric",
+    null.ok = TRUE
+  )
 
   # check that there are no extra parameters other than the ones specified
   # collect names other than default names
@@ -70,7 +81,7 @@ assert_infection <- function(x,
   # most development will not use this but there may be
   # specialised models that require limits on some parameters
   # in this case both the upper and lower limits should be passed
-  if (!missing(extra_parameters_limits)) {
+  if (!is.null(extra_parameters_limits)) {
     # check that extra params limits are a list
     checkmate::assert_list(
       extra_parameters_limits,
@@ -138,15 +149,22 @@ assert_infection <- function(x,
 #' @return Silently returns the `population` object `x`.
 #' Primarily called for its side effects of throwing errors when `x` does not
 #' meet certain requirements.
-assert_population <- function(x, compartments) {
+assert_population <- function(x, demography_groups = NULL, compartments) {
   # check for input class
   checkmate::assert_class(x, "population")
+
+  # check that population has a set number of demography groups
+  checkmate::assert_numeric(
+    get_parameter(x, "demography_vector"),
+    len = demography_groups # checked against NULL in most models
+  )
 
   # check that population has as many compartments in initial conditions
   # matrix as the length of `compartments`
   checkmate::assert_matrix(
-    x$initial_conditions,
+    get_parameter(x, "initial_conditions"),
     mode = "numeric", # this is also checked when initialising a population
+    nrows = demography_groups, # this is NULL for most models
     ncols = length(compartments)
   )
 

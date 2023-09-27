@@ -50,6 +50,9 @@ prob_discrete_erlang <- function(shape, rate) {
 #' Erlang passage times based on a model developed by Getz and Dougherty (2017),
 #' developed to model the West African Ebola virus disease outbreak of 2014.
 #' See **Details** for more information.
+#' 
+#' `epidemic_ebola_cpp()` is an Rcpp implementation of this model that currently
+#' lags behind the R implementation, and is likely to be removed.
 #'
 #' @param population An object of the `<population>` class, see [population()].
 #'
@@ -392,31 +395,9 @@ epidemic_ebola_r <- function(population, infection,
 }
 
 #' @title Model a stochastic epidemic with Erlang passage times using Rcpp
+#'
+#' @name epidemic_ebola
 #' @rdname epidemic_ebola
-#'
-#' @param population An object of the `<population>` class, which holds a
-#' population contact matrix, a demography vector, and the initial conditions
-#' of each demographic group. See [population()].
-#' @param infection An `<infection>` object created using [infection()]. Must
-#' have the basic reproductive number \eqn{R_0} of the infection, and the
-#' infectious period.
-#' These are used to calculate the transmission rate \eqn{\beta}, the rate
-#' at which individuals move from the 'exposed' to the 'infectious' compartment.
-#' This differs from how \eqn{\beta} is passed directly as a parameter in
-#' `epidemic_ebola_r()`.
-#'
-#' The `<infection>` object must hold the parameters of the Erlang distributions
-#' of passage times through the "exposed" and "infectious" compartments:
-#' `shape_E`, `rate_E`, `shape_I`, and `rate_I`.
-#'
-#' @details `epidemic_ebola_cpp()` is a wrapper function for
-#' [.epidemic_ebola_cpp()], a C++ function that is exposed to R via _Rcpp_.
-#' The internal C++ function [.epidemic_ebola_cpp()] accepts arguments that
-#' are created by processing the `population`, `infection`, `intervention` and
-#' `vaccination` arguments to the wrapper function into simpler forms. This
-#' processing is performed internally.
-#'
-#' @export
 epidemic_ebola_cpp <- function(population, infection,
                                time_end = 100) {
   # check class on required inputs
@@ -441,7 +422,7 @@ epidemic_ebola_cpp <- function(population, infection,
 
   # get compartment names
   compartments <- c(
-    "susceptible", "exposed", "infectious", "recovered"
+    "susceptible", "exposed", "infectious", "removed"
   )
 
   # run model over arguments

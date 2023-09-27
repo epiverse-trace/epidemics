@@ -41,14 +41,15 @@ prob_discrete_erlang <- function(shape, rate) {
   return(density_prob)
 }
 
-#' @title Model a stochastic epidemic with Erlang passage times
+#' @title Model an Ebola virus disease epidemic
 #' @name epidemic_ebola
 #' @rdname epidemic_ebola
 #'
 #' @description Simulate an epidemic using a discrete-time, stochastic SEIR
-#' compartmental model with Erlang passage times based on Getz and Dougherty
-#' (2017) in J. Biological Dynamics, and developed to model the West African
-#' Ebola virus disease outbreak of 2014. See **Details** for more information.
+#' compartmental model with compartments based on Li et al. (2019), and with
+#' Erlang passage times based on a model developed by Getz and Dougherty (2017),
+#' developed to model the West African Ebola virus disease outbreak of 2014.
+#' See **Details** for more information.
 #'
 #' @param population An object of the `<population>` class, see [population()].
 #'
@@ -62,9 +63,34 @@ prob_discrete_erlang <- function(shape, rate) {
 #' is one.
 #'
 #' @param infection An `<infection>` object created using [infection()]. Must
-#' have the basic reproductive number \eqn{R_0} of the infection, the
-#' infectious period, and the pre-infectious period.
-#' These are used to calculate the baseline transmission rate \eqn{\beta},
+#' have:
+#'
+#' - `r0`, a single number for the basic reproductive number \eqn{R_0} of the
+#' infection,
+#'
+#' - `infectious_period`, a single number for the infectious period, taken to be
+#' in days,
+#'
+#' - `preinfectious_period`, a single number for the pre-infectious period
+#' before the onset of symptoms, taken to be in days,
+#'
+#' - `prop_hospitalised`, a single number in the range 0.0 -- 1.0 for the
+#' proportion of infectious (assumed symptomatic) individuals who are
+#' hospitalised,
+#'
+#' - `etu_safety`, a single number in the range 0.0 -- 1.0 for the relative
+#' effectiveness of hospitalisation (in an Ebola Treatment Unit; ETU) in
+#' reducing transmission between hospitalised individuals and susceptible ones.
+#' 0.0 would indicate that hospitalisation does not reduce transmission, while
+#' 1.0 would indicate that it completely prevents transmission.
+#'
+#' - `funeral_safety`, a single number in the range 0.0 -- 1.0 for the relative
+#' efficacy of practices designed to prevent transmission of Ebola virus disease
+#' associated with funerals; alternatively interpretable as the proportion
+#' of funerals following these practices.
+#'
+#' `r0`, `infectious_period`, and `preinfectious_period` are used to calculate
+#' the baseline transmission rate \eqn{\beta},
 #' as well as the rates \eqn{\gamma^E} and \eqn{\gamma^I} at which individuals
 #' move from the 'exposed' to the 'infectious' compartment, and from the
 #' 'infectious' to the 'recovered' compartment, respectively.
@@ -84,27 +110,29 @@ prob_discrete_erlang <- function(shape, rate) {
 #' from 1 to `time_end`).
 #' @details
 #'
-#' ## Discrete-time ebola virus disease model following Getz & Dougherty (2017)
+#' # Details: Discrete-time ebola virus disease model
 #'
-#' The R code for this model is taken from code by Hạ Minh Lâm and initially
+#' This model has compartments adopted from the consensus model for Ebola virus
+#' disease presented in Li et al. (2019), and with transitions between
+#' epidemiological compartments modelled using Erlang sub-compartments adapted
+#' from Getz and Dougherty (2018); see **References**.
+#'
+#' The R code for this model is adapted from code by Hạ Minh Lâm and initially
 #' made available on _Epirecipes_ (https://github.com/epirecipes/epicookbook)
-#' under the MIT licence. The model is based on Getz and Dougherty (2018); see
-#' **References**.
+#' under the MIT licence.
 #'
-#' This model differs from Getz and Dougherty (2018) in allowing users to set
-#' the basic reproductive number \eqn{R_0}, and the mean infectious
-#' (\eqn{\rho^I} in Getz and Dougherty) and pre-infectious periods in days (
-#' \eqn{\rho^E} in Getz and Dougherty). Getz and Dougherty instead calculate
-#' these periods from other model parameters, and our change aims to make
-#' the specification of the `<infection>` required for this model easier for
-#' non-specialists.
+#' The model implementation differs from Getz and Dougherty's (2018) in
+#' allowing users to set the basic reproductive number \eqn{R_0}, and the mean
+#' infectious (\eqn{\rho^I} in Getz and Dougherty) and pre-infectious periods in
+#' days (\eqn{\rho^E} in Getz and Dougherty).
+#' Getz and Dougherty instead calculate these from other model parameters.
 #'
 #' The shape of the Erlang distributions of passage times through the exposed
 #' and infectious compartments (\eqn{k^E} and \eqn{k^I}) are fixed to 2 (this
 #' was allowed to vary in Getz and Dougherty).
 #'
 #' The transition rates between the exposed and infectious, and infectious and
-#' recovered compartments, \eqn{\gamma^E} and \eqn{\gamma^I} in Getz and
+#' funeral compartments, \eqn{\gamma^E} and \eqn{\gamma^I} in Getz and
 #' Dougherty's notation, are calculated following their equation (6).
 #' \deqn{\gamma^E = \dfrac{k^E}{\rho^E} = \dfrac{2}{\rho^E} ~\text{and}~
 #' \gamma^I = \dfrac{k^I}{\rho^I} = \dfrac{2}{\rho^I}}
@@ -115,7 +143,40 @@ prob_discrete_erlang <- function(shape, rate) {
 #' beginning in one of the compartments (thus allowing for variation in passage
 #' times).
 #'
+#' ## Hospitalisation, funerals, and removal
+#'
+#' Infectious individuals have a probability of `prop_hospitalised` of being
+#' transferred to the hospitalised compartment.
+#' This compartment has the same number of sub-compartments, which means that
+#' an infectious individual with \eqn{N} timesteps before exiting the
+#' infectious compartment will exit the hospitalised compartment in the same
+#' time.
+#'
+#' Hospitalised individuals can contribute to transmission of Ebola to
+#' susceptibles depending on the value of `etu_safety` passed as part of the
+#' `infection` argument, which scales the
+#' baseline transmission rate \eqn{\beta} for hospitalised individuals.
+#'
+#' We assume that deaths in hospital lead to Ebola-safe funerals, and
+#' individuals exiting the hospitalised compartment move to the 'removed'
+#' compartment, which holds both recoveries and deaths.
+#'
+#' We assume that deaths outside of hospital lead to funerals that are
+#' potentially not Ebola-safe, and the `funeral_safety` passed as part of the
+#' `infection` argument scales the baseline transmission rate \eqn{\beta} for
+#' funeral transmission of Ebola to susceptibles.
+#'
+#' Individuals are assumed to spend only a single timestep in the funeral
+#' transmission compartment, before they move into the 'removed' compartment.
+#'
+#' Individuals in the 'removed' compartment do no affect model dynamics.
+#'
 #' @references
+#' Li, S.-L., Ferrari, M. J., Bjørnstad, O. N., Runge, M. C., Fonnesbeck, C. J.,
+#' Tildesley, M. J., Pannell, D., & Shea, K. (2019). Concurrent assessment of
+#' epidemiological and operational uncertainties for optimal outbreak control:
+#' Ebola as a case study. Proceedings of the Royal Society B: Biological
+#' Sciences, 286(1905), 20190774. \doi{10.1098/rspb.2019.0774}
 #'
 #' Getz, W. M., & Dougherty, E. R. (2018). Discrete stochastic analogs of Erlang
 #' epidemic models. Journal of Biological Dynamics, 12(1), 16–38.
@@ -129,12 +190,23 @@ epidemic_ebola_r <- function(population, infection,
   assert_population(
     population,
     demography_groups = 1L,
-    compartments = c("susceptible", "exposed", "infectious", "recovered")
+    compartments = c(
+      "susceptible", "exposed", "infectious",
+      "hospitalised", "funeral", "removed"
+    )
   )
   assert_infection(
     infection,
     default_params = c(
-      "r0", "infectious_period", "preinfectious_period"
+      "name", "r0", "infectious_period", "preinfectious_period"
+    ),
+    extra_parameters = c(
+      "prop_hospitalised", "etu_safety", "funeral_safety"
+    ),
+    extra_parameters_limits = list(
+      prop_hospitalised = c(lower = 0, upper = 1),
+      etu_safety = c(lower = 0, upper = 1),
+      funeral_safety = c(lower = 0, upper = 1)
     )
   )
   if (!is.null(intervention)) {
@@ -154,6 +226,8 @@ epidemic_ebola_r <- function(population, infection,
 
   # prepare base transmission rate beta
   beta <- get_transmission_rate(infection = infection)
+  # prepare hospitalisation probability/proportion p_hosp
+  p_hosp <- get_parameter(infection, "prop_hospitalised")
 
   # get initial conditions
   initial_state <- as.numeric(
@@ -162,12 +236,17 @@ epidemic_ebola_r <- function(population, infection,
 
   # round to nearest integer
   initial_state <- round(initial_state)
-  names(initial_state) <- c("susceptible", "exposed", "infectious", "recovered")
+  names(initial_state) <- c(
+    "susceptible", "exposed", "infectious",
+    "hospitalised", "funeral", "removed"
+  )
 
   # prepare output data.frame
   population_size <- sum(initial_state)
-  sim_data <- matrix(NA_integer_, nrow = time_end, ncol = 4L)
-  colnames(sim_data) <- c("susceptible", "exposed", "infectious", "recovered")
+  sim_data <- matrix(NA_integer_, nrow = time_end, ncol = 6L)
+  colnames(sim_data) <- c(
+    "susceptible", "exposed", "infectious", "hospitalised", "funeral", "removed"
+  )
 
   # assign initial conditions
   sim_data[1, ] <- initial_state
@@ -194,23 +273,43 @@ epidemic_ebola_r <- function(population, infection,
   infectious_current <- numeric(n_infectious_boxcars)
   infectious_past <- infectious_current
 
+  hospitalised_current <- numeric(n_infectious_boxcars)
+  hospitalised_past <- hospitalised_current
+
+  funeral_trans_current <- 0
+  funeral_trans_past <- 0
+
   # initialise current conditions for exposed and infectious compartments
   exposed_current[n_exposed_boxcars] <- sim_data[1, "exposed"]
   infectious_current[n_infectious_boxcars] <- sim_data[1, "infectious"]
+  hospitalised_current[n_infectious_boxcars] <- sim_data[1, "hospitalised"]
+  funeral_trans_current <- sim_data[1, "funeral"]
+
+  # define a fixed rounding factor for all timesteps to save function calls
+  rounding_factor <- stats::rnorm(n_infectious_boxcars - 1, 0, 1e-2)
+
+  # transmission modifiers - 1.0 for baseline, user-provided for etu_safety and
+  # funeral safety
+  beta_modifiers <- c(
+    1.0,
+    1.0 - get_parameter(infection, "etu_safety"),
+    1.0 - get_parameter(infection, "funeral_safety")
+  )
 
   ## Run the simulation from time t = 2 to t = time_end
   for (time in seq(2, time_end)) {
     # get current transmission rate as base rate * p(infectious)
-    transmission_rate <- beta * sim_data[time - 1, "infectious"] /
+    # TODO: check if transmission rates should be summed or averaged
+    transmission_rate <- sum(beta * beta_modifiers *
+      sim_data[time - 1, c("infectious", "hospitalised", "funeral")]) /
       population_size
     exposure_prob <- 1.0 - exp(-transmission_rate)
 
-    # calculate new exposures, infectious, and recovered
+    # calculate new exposures, infectious, and hospitalisations
     new_exposed <- stats::rbinom(
       1, sim_data[time - 1, "susceptible"], exposure_prob
     )
     new_infectious <- exposed_past[1]
-    new_recovered <- infectious_past[1]
 
     # handle non-zero new exposures
     if (new_exposed > 0) {
@@ -230,27 +329,65 @@ epidemic_ebola_r <- function(population, infection,
         )
       )
     }
-    # add new infectious to seq(2, last) past boxcar compartments
-    infectious_current <- infectious_current + c(infectious_past[-1], 0)
+    # deal with adding new infections after determining new/current hospitalised
+
+    # handle outcomes of the infectious compartment
+    # new hospitalisations are a proportion of individuals from infectious
+    # sub-compartments. Add a small normally distributed error to proportion
+    # hospitalised to facilitate rounding to avoid fractional individuals
+    hospitalised_current <- round(
+      # the SD of the normal distribution is small enough that values
+      # added to zero lead to rounding to zero
+      # first infectious_past compartment cannot be hospitalised and is
+      # transferred to funeral compartment
+      (infectious_past[-1] * p_hosp) + rounding_factor
+    )
+
+    # add new infectious to seq(2, last) past boxcar compartments,
+    # subtract individuals who are hospitalised
+    infectious_current <- infectious_current + c(
+      infectious_past[-1] - hospitalised_current, 0
+    )
+
+    # continue handling hospitalisations
+    # concat zero to hospitalised_current at start as no infectious can go to
+    # this
+    # compartment
+    hospitalised_current <- c(0, hospitalised_current) +
+      c(hospitalised_past[-1], 0)
+
+    # calculate new individuals in the funeral transmission class
+    funeral_trans_current <- infectious_past[1]
+
+    # calculate new safely removed as the final hospitalised sub-compartments
+    # and new burials of potentially transmitting funerals
+    new_removed <- hospitalised_past[1] + funeral_trans_past
 
     # set past vectors to current vectors
     exposed_past <- exposed_current
     infectious_past <- infectious_current
+    hospitalised_past <- hospitalised_current
+    funeral_trans_past <- funeral_trans_current
 
     # prepare the data for output
     sim_data[time, "susceptible"] <- sim_data[time - 1, "susceptible"] -
       new_exposed
     sim_data[time, "exposed"] <- sum(exposed_current)
     sim_data[time, "infectious"] <- sum(infectious_current)
-    sim_data[time, "recovered"] <- sim_data[time - 1, "recovered"] +
-      new_recovered
+    sim_data[time, "hospitalised"] <- sum(hospitalised_current)
+    sim_data[time, "funeral"] <- funeral_trans_current
+    sim_data[time, "removed"] <- sim_data[time - 1, "removed"] +
+      new_removed
   }
 
   # convert to long format
   output_to_df(
     output = list(x = sim_data, time = seq_len(time_end)),
     population = population,
-    compartments = c("susceptible", "exposed", "infectious", "recovered")
+    compartments = c(
+      "susceptible", "exposed", "infectious",
+      "hospitalised", "funeral", "removed"
+    )
   )
 }
 

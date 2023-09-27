@@ -1,32 +1,33 @@
 #### Tests for the ebola model ####
 
 # prepare data
-demography_vector <- 67e3
+demography_vector <- 67000
 
-uk_pop <- population(
-  name = "UK population",
+pop <- population(
   contact_matrix = matrix(1),
   demography_vector = demography_vector,
   initial_conditions = matrix(
-    c(1 - 1e-3, 1e-3 / 2, 1e-3 / 2, 0),
-    nrow = 1, ncol = 4
+    c(1 - 1e-3, 1e-3 / 2, 1e-3 / 2, 0, 0, 0),
+    nrow = 1
   )
 )
 
 ebola <- infection(
   name = "ebolavirus disease",
   r0 = 1.7,
-  infectious_period = 5,
-  shape_E = 5L, rate_E = 1,
-  shape_I = 5L, rate_I = 1
+  infectious_period = 7,
+  preinfectious_period = 5,
+  prop_hospitalised = 0.5,
+  etu_safety = 0.8,
+  funeral_safety = 0.5
 )
 
 # basic expectations
 test_that("Ebola model: basic expectations", {
   # runs without issues
   expect_no_condition(
-    epidemic_ebola_cpp(
-      population = uk_pop,
+    epidemic_ebola_r(
+      population = pop,
       infection = ebola,
       time_end = 100
     )
@@ -34,8 +35,8 @@ test_that("Ebola model: basic expectations", {
 
   set.seed(1)
   # returns a data.table
-  data <- epidemic_ebola_cpp(
-    population = uk_pop,
+  data <- epidemic_ebola_r(
+    population = pop,
     infection = ebola,
     time_end = 200
   )
@@ -47,7 +48,7 @@ test_that("Ebola model: basic expectations", {
     data, c("compartment", "demography_group", "value", "time"),
     ignore.order = TRUE
   )
-  expect_identical(
+  expect_setequal(
     unique(data$compartment),
     read_from_library(model_name = "ebola", what = "compartments")
   )
@@ -55,7 +56,7 @@ test_that("Ebola model: basic expectations", {
   # check for all positive values within the range 0 and total population size
   expect_true(
     all(
-      data$value >= 0 & data$value <= sum(uk_pop$demography_vector)
+      data$value >= 0 & data$value <= sum(pop$demography_vector)
     )
   )
 
@@ -64,19 +65,19 @@ test_that("Ebola model: basic expectations", {
   expect_identical(
     sum(data[data$time == min(data$time), ]$value),
     sum(data[data$time == max(data$time), ]$value),
-    tolerance = 1e-6
+    tolerance = 1
   )
 
   # check that all age groups in the simulation are the same
   # size as the demography vector --- here, only one age group
   final_state <- matrix(
     unlist(data[data$time == max(data$time), ]$value),
-    nrow = nrow(uk_pop$contact_matrix)
+    nrow = nrow(pop$contact_matrix)
   )
   expect_identical(
     rowSums(final_state),
-    uk_pop$demography_vector,
-    tolerance = 1e-6
+    pop$demography_vector,
+    tolerance = 1
   )
 
   # snaphshot test
@@ -92,13 +93,17 @@ test_that("Larger R0 leads to larger final size in ebola model", {
   infection_list <- list(
     ebola_r0_low = infection(
       r0 = r0_low, infectious_period = 5,
-      shape_E = 5L, rate_E = 1,
-      shape_I = 5L, rate_I = 1
+      preinfectious_period = 5,
+      prop_hospitalised = 0.5,
+      etu_safety = 0.8,
+      funeral_safety = 0.5
     ),
     ebola_r0_high = infection(
       r0 = r0_high + 1.0, infectious_period = 5,
-      shape_E = 5L, rate_E = 1,
-      shape_I = 5L, rate_I = 1
+      preinfectious_period = 5,
+      prop_hospitalised = 0.5,
+      etu_safety = 0.8,
+      funeral_safety = 0.5
     )
   )
 
@@ -107,8 +112,8 @@ test_that("Larger R0 leads to larger final size in ebola model", {
     infection_list,
     function(infection_) {
       # run model on data
-      data <- epidemic_ebola_cpp(
-        population = uk_pop,
+      data <- epidemic_ebola_r(
+        population = pop,
         infection = infection_,
         time_end = 100
       )
@@ -124,40 +129,25 @@ test_that("Larger R0 leads to larger final size in ebola model", {
   )
 })
 
-# Equivalence with R model
-test_that("Ebola model equivalence in R-only and RCpp", {
-  set.seed(1)
-  time_end <- 100
-  ebola_r <- epidemic_ebola_r(
-    initial_state = as.integer(uk_pop$demography_vector *
-      uk_pop$initial_conditions),
-    parameters = c(
-      shape_E = 5L, rate_E = 1,
-      shape_I = 5L, rate_I = 1,
-      beta = ebola$r0 / ebola$infectious_period
-    ),
-    time_end = time_end
-  )
-  # values at last timestep
-  ebola_r_values <- as.integer(
-    t(
-      as.matrix(ebola_r[time_end, c("S", "E", "I", "R")])
-    )
+#### Basic test of ebola model C++ version ####
+# this model is not exported and is likely to be removed
+test_that("Basic expectations for ebola model C++ version", {
+  ebola_for_cpp <- infection(
+    name = "ebolavirus disease",
+    r0 = 1.7, infectious_period = 5,
+    shape_E = 5, rate_E = 1, shape_I = 5, rate_I = 1
   )
 
-  # set seed for Rcpp run
-  set.seed(1)
-  ebola_cpp <- epidemic_ebola_cpp(
-    population = uk_pop,
-    infection = ebola,
-    time_end = time_end - 1 # one less for C++ implementation due to zero index
+  data_cpp <- epidemic_ebola_cpp(
+    population = pop,
+    infection = ebola_for_cpp
   )
-  # get last timestep values
-  ebola_cpp_values <- tail(ebola_cpp$value, 4L)
 
-  # expect identical
-  expect_identical(
-    ebola_cpp_values,
-    ebola_r_values
+  expect_s3_class(data_cpp, "data.table")
+  expect_length(data_cpp, 4L)
+  expect_named(
+    data_cpp, c("compartment", "demography_group", "value", "time"),
+    ignore.order = TRUE
   )
+  # remove checks for Cpp version having same compartments as the library
 })

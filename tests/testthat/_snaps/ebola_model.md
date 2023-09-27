@@ -3,11 +3,11 @@
     Code
       head(data)
     Output
-         time demography_group compartment    value
-      1:    0     demo_group_1 susceptible 66999933
-      2:    0     demo_group_1     exposed        0
-      3:    0     demo_group_1  infectious       67
-      4:    0     demo_group_1   recovered        0
-      5:    1     demo_group_1 susceptible 66999913
-      6:    1     demo_group_1     exposed       20
+         time demography_group  compartment value
+      1:    1     demo_group_1  susceptible 66933
+      2:    1     demo_group_1      exposed    34
+      3:    1     demo_group_1   infectious    34
+      4:    1     demo_group_1 hospitalised     0
+      5:    1     demo_group_1      funeral     0
+      6:    1     demo_group_1      removed     0
 

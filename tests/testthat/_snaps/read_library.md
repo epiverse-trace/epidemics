@@ -13,6 +13,6 @@
       3 .prepare_args_epidemic_vacamole
                                                                                                                                                                          compartments
       1                                                                                                                       susceptible, exposed, infectious, recovered, vaccinated
-      2                                                                                                                                   susceptible, exposed, infectious, recovered
+      2                                                                                                              susceptible, exposed, infectious, hospitalised, funeral, removed
       3 susceptible, vaccinated_one_dose, vaccinated_two_dose, exposed, exposed_vaccinated, infectious, infectious_vaccinated, hospitalised, hospitalised_vaccinated, dead, recovered
 

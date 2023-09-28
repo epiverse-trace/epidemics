@@ -56,6 +56,9 @@ See \strong{Details} for more information.}
 pharmaceutical or non-pharmaceutical interventions applied to the infection's
 parameters, such as the transmission rate, over the epidemic.
 See \code{\link[=intervention]{intervention()}} for details on constructing rate interventions.
+
+Currently, only interventions on the transmission rate \code{beta} are supported,
+and should be passed as \code{list(beta = intervention(type = "rate", ...))}.
 Defaults to \code{NULL}, representing no interventions on model parameters.}
 
 \item{time_end}{The maximum number of timesteps over which to run the model,

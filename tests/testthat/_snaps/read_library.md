@@ -5,7 +5,7 @@
     Output
         model_type model_name         model_function            model_args_checker
       1   epidemic    default  .epidemic_default_cpp  .check_args_epidemic_default
-      2   epidemic      ebola    .epidemic_ebola_cpp    .check_args_epidemic_ebola
+      2   epidemic      ebola      .epidemic_ebola_r    .check_args_epidemic_ebola
       3   epidemic   vacamole .epidemic_vacamole_cpp .check_args_epidemic_vacamole
                      model_args_prepper
       1  .prepare_args_epidemic_default

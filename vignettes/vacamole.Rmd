@@ -263,8 +263,8 @@ ggplot(data_scenarios) +
     scales = "free_y",
     labeller = labeller(
       variable = c(
-        "total_deaths" = "Total deaths",
-        "total_recovered" = "Epidemic size (infections, not counting deaths)"
+        total_deaths = "Total deaths",
+        total_recovered = "Epidemic size (infections, not counting deaths)"
       )
     )
   ) +

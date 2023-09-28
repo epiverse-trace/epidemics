@@ -193,7 +193,7 @@ ggplot(output[compartment == "infectious", ]) +
   labs(
     x = "Model time (days)"
   ) +
-  theme_classic() +
+  theme_bw() +
   theme(
     legend.position = "top"
   )

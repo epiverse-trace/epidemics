@@ -199,7 +199,7 @@ ggplot(data_combined) +
   coord_cartesian(
     expand = FALSE
   ) +
-  theme_classic() +
+  theme_bw() +
   theme(
     legend.position = "top"
   ) +

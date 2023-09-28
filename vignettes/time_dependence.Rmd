@@ -98,7 +98,7 @@ ggplot() +
     aes(x = seq(0, 365), y = output)
   ) +
   labs(x = "Days", y = "Transmission rate (beta)") +
-  theme_classic()
+  theme_bw()
 ```
 
 ## Model with time-dependent transmission
@@ -136,7 +136,7 @@ ggplot(data_infections) +
     palette = "Dark2",
     name = "Age group"
   ) +
-  theme_classic() +
+  theme_bw() +
   coord_cartesian(
     expand = FALSE
   ) +
@@ -238,7 +238,7 @@ ggplot(data_npi_compare) +
       intervention = "solid"
     )
   ) +
-  theme_classic() +
+  theme_bw() +
   coord_cartesian(
     expand = FALSE
   ) +
@@ -350,7 +350,7 @@ ggplot(data_vax_compare) +
       vaccination = "solid"
     )
   ) +
-  theme_classic() +
+  theme_bw() +
   coord_cartesian(
     ylim = c(0, 20e3),
     expand = FALSE

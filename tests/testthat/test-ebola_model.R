@@ -120,12 +120,165 @@ test_that("Larger R0 leads to larger final size in ebola model", {
     }
   )
 
-  # get final size as total recoveries
+  # get final size as total removed
   final_sizes <- lapply(data, epidemic_size)
 
   # test for effect of R0
   expect_true(
     all(final_sizes[["r0_high"]] > final_sizes[["r0_low"]])
+  )
+})
+
+#### Correctness of the ebola model ####
+# the Ebola model is stochastic, but can be tested by setting some parameters
+# and applying certain interventions
+# prepare population size and object
+popsize <- 10e3
+total_cases <- 20
+
+population <- population(
+  name = "dummy population",
+  contact_matrix = matrix(1),
+  demography_vector = 10e3,
+  initial_conditions = matrix(
+    c(popsize - total_cases, 10, 10, 0, 0, 0) / popsize,
+    nrow = 1L, ncol = 6L,
+    byrow = TRUE
+  )
+)
+
+# Ebola model with interventions that prevent any transmission
+test_that("Ebola model works with rate interventions", {
+  intervention <- list(
+    beta = intervention(
+      type = "rate",
+      time_begin = 1, time_end = 100, reduction = 1
+    )
+  )
+
+  # ideally no conditions are triggered
+  data <- epidemic_ebola_r(
+    population = population,
+    infection = ebola,
+    intervention = intervention,
+    time_end = 100
+  )
+
+  # expect basic outcomes
+  expect_s3_class(data, "data.table")
+  expect_length(data, 4L)
+  expect_named(
+    data, c("compartment", "demography_group", "value", "time"),
+    ignore.order = TRUE
+  )
+  expect_setequal(
+    unique(data$compartment),
+    read_from_library(model_name = "ebola", what = "compartments")
+  )
+
+  # expect epidemiological correctness
+  # epidemic size is the same as `total_cases` for the rate intervention
+  # which completely stops transmission
+  expect_equal(
+    epidemic_size(data),
+    total_cases,
+    ignore_attr = TRUE
+  )
+})
+
+# test that hospitalisations work
+test_that("Ebola model with hospitalisation", {
+  # ebola model with NO hospitalisation
+  ebola <- infection(
+    name = "ebolavirus disease",
+    r0 = 1.7,
+    infectious_period = 7,
+    preinfectious_period = 5,
+    prop_hospitalised = 0.0,
+    etu_safety = 0.8,
+    funeral_safety = 0.5
+  )
+  data <- epidemic_ebola_r(
+    population = population,
+    infection = ebola,
+    time_end = 100
+  )
+  # expect that there are no hospitalisations
+  expect_identical(
+    unique(data[data$compartment == "hospitalised", ]$value),
+    0
+  )
+
+  # ebola model with full ETU safety leads to a fixed final size
+  population <- population(
+    name = "dummy population",
+    contact_matrix = matrix(1),
+    demography_vector = 10e3,
+    initial_conditions = matrix(
+      # all infectious are in hospital, no exposed
+      c(popsize - total_cases, 0, 0, total_cases, 0, 0) / popsize,
+      nrow = 1L, ncol = 6L,
+      byrow = TRUE
+    )
+  )
+
+  ebola <- infection(
+    name = "ebolavirus disease",
+    r0 = 1.7,
+    infectious_period = 7,
+    preinfectious_period = 5,
+    prop_hospitalised = 1.0,
+    etu_safety = 1.0,
+    funeral_safety = 0.5
+  )
+  # expect that the final size is the same as `total_cases` (20)
+  data <- epidemic_ebola_r(
+    population = population,
+    infection = ebola,
+    time_end = 100
+  )
+  expect_equal(
+    epidemic_size(data),
+    total_cases,
+    ignore_attr = TRUE
+  )
+})
+
+# test that funeral safety works
+test_that("Ebola model with funeral safety", {
+  # ebola model with full funeral safety leads to a fixed final size
+  population <- population(
+    name = "dummy population",
+    contact_matrix = matrix(1),
+    demography_vector = 10e3,
+    initial_conditions = matrix(
+      # multiple ebola-related funerals, no other infectious or exposed
+      c(popsize - total_cases, 0, 0, 0, total_cases, 0) / popsize,
+      nrow = 1L, ncol = 6L,
+      byrow = TRUE
+    )
+  )
+
+  ebola <- infection(
+    name = "ebolavirus disease",
+    r0 = 1.7,
+    infectious_period = 7,
+    preinfectious_period = 5,
+    prop_hospitalised = 0.0,
+    etu_safety = 0.0,
+    funeral_safety = 1.0
+  )
+
+  # expect that the final size is the same as `total_cases` (20)
+  data <- epidemic_ebola_r(
+    population = population,
+    infection = ebola,
+    time_end = 100
+  )
+  expect_equal(
+    epidemic_size(data),
+    total_cases,
+    ignore_attr = TRUE
   )
 })
 

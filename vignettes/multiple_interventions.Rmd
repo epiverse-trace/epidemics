@@ -140,7 +140,7 @@ plot_baseline <- ggplot() +
   coord_cartesian(
     expand = FALSE
   ) +
-  theme_classic() +
+  theme_bw() +
   theme(
     legend.position = "top"
   ) +
@@ -240,7 +240,7 @@ plot_noschool <-
   coord_cartesian(
     expand = FALSE
   ) +
-  theme_classic() +
+  theme_bw() +
   theme(
     legend.position = "top"
   ) +
@@ -385,7 +385,7 @@ plot_intervention_cases <-
   coord_cartesian(
     expand = FALSE
   ) +
-  theme_classic() +
+  theme_bw() +
   theme(
     legend.position = "top"
   ) +
@@ -507,7 +507,7 @@ plot_three_interventions <-
   coord_cartesian(
     expand = FALSE
   ) +
-  theme_classic() +
+  theme_bw() +
   theme(
     legend.position = "top"
   ) +

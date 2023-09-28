@@ -279,7 +279,7 @@ ggplot(data_scenarios) +
       scale = 1e-6, suffix = "M"
     )
   ) +
-  theme_classic() +
+  theme_bw() +
   theme(
     legend.position = "bottom",
     legend.key.height = unit(2, "mm"),

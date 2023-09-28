@@ -50,7 +50,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #' Erlang passage times based on a model developed by Getz and Dougherty (2017),
 #' developed to model the West African Ebola virus disease outbreak of 2014.
 #' See **Details** for more information.
-#' 
+#'
 #' `epidemic_ebola_cpp()` is an Rcpp implementation of this model that currently
 #' lags behind the R implementation, and is likely to be removed.
 #'
@@ -103,6 +103,9 @@ prob_discrete_erlang <- function(shape, rate) {
 #' pharmaceutical or non-pharmaceutical interventions applied to the infection's
 #' parameters, such as the transmission rate, over the epidemic.
 #' See [intervention()] for details on constructing rate interventions.
+#'
+#' Currently, only interventions on the transmission rate `beta` are supported,
+#' and should be passed as `list(beta = intervention(type = "rate", ...))`.
 #' Defaults to `NULL`, representing no interventions on model parameters.
 #' @param time_end The maximum number of timesteps over which to run the model,
 #' in days. Defaults to 100 days.
@@ -213,9 +216,11 @@ epidemic_ebola_r <- function(population, infection,
     )
   )
   if (!is.null(intervention)) {
-    assert_intervention(
+    checkmate::assert_list(
       intervention,
-      type = "rate", population = population
+      min.len = 1,
+      names = "unique", any.missing = FALSE,
+      types = "rate_intervention"
     )
   }
 
@@ -298,11 +303,23 @@ epidemic_ebola_r <- function(population, infection,
     1.0 - get_parameter(infection, "funeral_safety")
   )
 
+  # place parameter beta in list for rate interventions function
+  parameters <- list(beta = beta)
+
   ## Run the simulation from time t = 2 to t = time_end
   for (time in seq(2, time_end)) {
-    # get current transmission rate as base rate * p(infectious)
+    # check if an intervention is active
+    params <- intervention_on_rates(
+      t = time,
+      interventions = intervention[
+        setdiff(names(intervention), "contacts")
+      ],
+      parameters = parameters
+    )
+
+    # get current transmission rate as base rate * intervention * p(infectious)
     # TODO: check if transmission rates should be summed or averaged
-    transmission_rate <- sum(beta * beta_modifiers *
+    transmission_rate <- sum(params[["beta"]] * beta_modifiers *
       sim_data[time - 1, c("infectious", "hospitalised", "funeral")]) /
       population_size
     exposure_prob <- 1.0 - exp(-transmission_rate)

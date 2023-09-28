@@ -269,24 +269,23 @@ epidemic_ebola_r <- function(population, infection,
   n_exposed_boxcars <- length(exposed_boxcar_rates)
   n_infectious_boxcars <- length(infectious_boxcar_rates)
 
-  # prepare the current and past compartments
+  # prepare the current compartments
   exposed_current <- numeric(n_exposed_boxcars)
-  exposed_past <- exposed_current
-
   infectious_current <- numeric(n_infectious_boxcars)
-  infectious_past <- infectious_current
-
   hospitalised_current <- numeric(n_infectious_boxcars)
-  hospitalised_past <- hospitalised_current
-
-  funeral_trans_current <- 0
-  funeral_trans_past <- 0
 
   # initialise current conditions for exposed and infectious compartments
   exposed_current[n_exposed_boxcars] <- sim_data[1, "exposed"]
+  exposed_past <- exposed_current
+
   infectious_current[n_infectious_boxcars] <- sim_data[1, "infectious"]
+  infectious_past <- infectious_current
+
   hospitalised_current[n_infectious_boxcars] <- sim_data[1, "hospitalised"]
+  hospitalised_past <- hospitalised_current
+
   funeral_trans_current <- sim_data[1, "funeral"]
+  funeral_trans_past <- funeral_trans_current
 
   # define a fixed rounding factor for all timesteps to save function calls
   rounding_factor <- stats::rnorm(n_infectious_boxcars - 1, 0, 1e-2)
@@ -308,33 +307,23 @@ epidemic_ebola_r <- function(population, infection,
       population_size
     exposure_prob <- 1.0 - exp(-transmission_rate)
 
-    # calculate new exposures, infectious, and hospitalisations
+    # calculate new exposures
     new_exposed <- stats::rbinom(
       1, sim_data[time - 1, "susceptible"], exposure_prob
     )
-    new_infectious <- exposed_past[1]
-
     # handle non-zero new exposures
     if (new_exposed > 0) {
+      # distribute new exposures and add past exposures moved forward by one
+      # timestep
       exposed_current <- as.vector(
         stats::rmultinom(1, size = new_exposed, prob = exposed_boxcar_rates)
-      )
+      ) +
+        c(exposed_past[-1], 0)
+    } else {
+      exposed_current <- c(exposed_past[-1], 0)
     }
-    # add new exposures to seq(2, last) past boxcar compartments
-    exposed_current <- exposed_current + c(exposed_past[-1], 0)
 
-    # handle non-zero new infectious
-    if (new_infectious > 0) {
-      infectious_current <- as.vector(
-        stats::rmultinom(
-          1,
-          size = new_infectious, prob = infectious_boxcar_rates
-        )
-      )
-    }
-    # deal with adding new infections after determining new/current hospitalised
-
-    # handle outcomes of the infectious compartment
+    # handle hospitalisations first, as required for infectious compartment
     # new hospitalisations are a proportion of individuals from infectious
     # sub-compartments. Add a small normally distributed error to proportion
     # hospitalised to facilitate rounding to avoid fractional individuals
@@ -346,16 +335,24 @@ epidemic_ebola_r <- function(population, infection,
       (infectious_past[-1] * p_hosp) + rounding_factor
     )
 
-    # add new infectious to seq(2, last) past boxcar compartments,
-    # subtract individuals who are hospitalised
-    infectious_current <- infectious_current + c(
-      infectious_past[-1] - hospitalised_current, 0
-    )
+    # calculate new infectious individuals
+    new_infectious <- exposed_past[1]
+    # handle non-zero new infectious
+    if (new_infectious > 0) {
+      infectious_current <- as.vector(
+        stats::rmultinom(
+          1,
+          size = new_infectious, prob = infectious_boxcar_rates
+        ) +
+          c(infectious_past[-1] - hospitalised_current, 0)
+      )
+    } else {
+      infectious_current <- c(infectious_past[-1] - hospitalised_current, 0)
+    }
 
     # continue handling hospitalisations
     # concat zero to hospitalised_current at start as no infectious can go to
-    # this
-    # compartment
+    # this compartment
     hospitalised_current <- c(0, hospitalised_current) +
       c(hospitalised_past[-1], 0)
 

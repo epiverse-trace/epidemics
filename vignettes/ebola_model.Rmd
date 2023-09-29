@@ -22,7 +22,9 @@ knitr::opts_chunk$set(
   comment = "#>",
   message = FALSE,
   warning = FALSE,
-  dpi = 150
+  fig.width = 5,
+  fig.height = 4,
+  dpi = 300
 )
 ```
 
@@ -33,9 +35,9 @@ knitr::opts_chunk$set(
 This vignette shows how to model an epidemic in which stochasticity is expected to play an important role.
 This is often the case with outbreaks of infections such as ebolavirus disease (EVD, or simply, ebola).
 
-_epidemics_ includes a compartmental model of ebola based on @getz2018 and adapted from [Epirecipes](http://epirecip.es/epicookbook/chapters/erlang/r).
+_epidemics_ includes a discrete time, stochastic compartmental model of ebola based on a consensus model presented in @li2019, with six compartments --- susceptible, exposed, infectious, hospitalised, funeral, and removed.
+The transitions between compartments are based on an Erlang model developed by @getz2018 for the 2014 West African EVD outbreak, with the code adapted from [Epirecipes](http://epirecip.es/epicookbook/chapters/erlang/r).
 
-This model has six compartments --- susceptible, exposed, infectious, hospitalised, funeral, and recovered [@li2019].
 The model does not include demographic variation in contacts, as ebola spreads primarily among contacts caring for infected individuals, making age or demographic structure less important.
 
 This model can currently accommodate interventions on model rates only (as there are no demographic groups for contacts interventions).
@@ -143,7 +145,7 @@ head(data)
 
 We plot the ebola epidemic over time, showing the number of individuals exposed and infectious.
 
-```{r class.source = 'fold-hide'}
+```{r class.source = 'fold-hide', fig.cap="Model results from a single run showing the number of individuals in the exposed and infectious compartments over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others."}
 # plot figure of epidemic curve
 ggplot(
   data[compartment %in% c("exposed", "infectious"), ],
@@ -207,7 +209,7 @@ data_timeseries <- rbindlist(data)
 
 We plot the data.
 
-```{r class.source = 'fold-hide'}
+```{r class.source = 'fold-hide', fig.cap="Model results from 100 runs showing the number of individuals in the infectious compartments over 100 days of each outbreak. All models assume that 1 initially infectious person has exposed 10 others. A simple summary using the mean (black line with standard error as shaded red regions), plotted over the individual model runs (grey) show that there can be wide variation in individual outbreak trajectories."}
 ggplot(data_timeseries[compartment == "infectious", ]) +
   geom_line(
     aes(time, value, group = replicate),
@@ -256,7 +258,7 @@ data_final_size <- Map(
 data_final_size <- unlist(data_final_size)
 ```
 
-```{r class.source = 'fold-hide'}
+```{r class.source = 'fold-hide', fig.cap="Histogram of the final outbreak sizes of 100 ebola outbreaks. These are taken from the 100 model runs presented in the earlier figure, and show that most outbreaks may affect fewer than 500 individuals within their first 100 days."}
 # plot a histogram of the replicates
 ggplot() +
   geom_histogram(
@@ -279,7 +281,7 @@ ggplot() +
   )
 ```
 
-We see that while some replicates affect over 3,000 individuals within the first 100 days, most replicates have fewer than 500 cases, suggesting that responses to halt the spread of ebola may be quite effective in most real outbreaks.
+We see that while some replicates affect over 600 individuals within the first 100 days, most replicates have fewer than 500 cases, suggesting that responses to halt the spread of ebola could be quite effective in most real outbreaks.
 
 ## Applying interventions that reduce transmission
 
@@ -328,7 +330,7 @@ data_intervention$scenario <- "intervention"
 data_scenarios <- rbindlist(list(data_baseline, data_intervention))
 ```
 
-```{r}
+```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 30th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."}
 ggplot(data_scenarios[compartment == "infectious", ]) +
   geom_vline(
     xintercept = 30,
@@ -352,12 +354,12 @@ ggplot(data_scenarios[compartment == "infectious", ]) +
   )
 ```
 
+We see that applying an intervention that reduces transmission can be effective in reducing the number of individuals infected over the outbreak.
+This model will soon be able to accommodate interventions that act on other processes, such as hospitalisation and funeral safety, to model the effect of campaigns to tackle these as sources of infections.
 
 ## Details: Discrete-time ebola virus disease model
 
-This model has compartments adopted from a consensus model for Ebola virus disease presented in [@li2019], and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from [@getz2018].
-
-The R code for this model is adapted from code by Hạ Minh Lâm and initially made available on _Epirecipes_ (https://github.com/epirecipes/epicookbook) under the MIT licence.
+This model has compartments adopted from a consensus model for Ebola virus disease presented in [@li2019], but some of the compartmental transitions allowed have been simplified (see sub-section on hospitalisation).
 
 The model implementation differs from @getz2018 in allowing users to set the basic reproductive number $R_0$, and the mean infectious ($\rho^I$ in Getz and Dougherty) and pre-infectious periods in days ($\rho^E$ in Getz and Dougherty).
 Getz and Dougherty instead calculate these from other model parameters.
@@ -373,8 +375,15 @@ In this discrete time model, $\gamma^E$ and $\gamma^I$ are used to determine the
 
 ### Hospitalisation, funerals, and removal
 
+@li2019 present a consensus model for EVD in which individuals can follow multiple pathways from the infectious compartment --- to hospitalisation, funeral transmission, and safe burial or recovery (removed), with the possibility of skipping some compartments in this sequence (e.g. directly from infectious to removed, infectious to hospitalisation to removed etc.).
+This model simplifies these transitions to only two pathways:
+
+1. Infectious → funeral → removed (safe burial)
+
+2. Infectious → hospitalised → removed (recovery or safe burial)
+
 Infectious individuals have a probability $p_\text{hosp}$ of being transferred to the hospitalised compartment.
-This compartment has the same number of sub-compartments, which means that an infectious individual with $N$ timesteps before exiting the infectious compartment will exit the hospitalised compartment in the same time.
+Infectious individual with $N$ timesteps before exiting the infectious compartment will exit the hospitalised compartment in the same time.
 
 Hospitalised individuals can contribute to transmission of Ebola to susceptibles depending on the value of $p_\text{ETU}$, which is the probability (or proportion) of hospitalised cases contributing to the infection of susceptibles.
 This is interpreted as the relative safety of Ebolavirus treatment units (ETUs), with a range of 0.0 -- 1.0, where 0.0 indicates that hospitalisation does not reduce transmission at all, while 1.0 indicates that hospitalisation prevents onward transmission entirely.
@@ -382,9 +391,9 @@ This is passed as the `etu_safety` value of the `<infection>`-class object passe
 
 We assume that deaths in hospital lead to Ebola-safe funerals, and individuals exiting the hospitalised compartment move to the 'removed' compartment, which holds both recoveries and deaths.
 
-We assume that deaths outside of hospital lead to funerals that are potentially not Ebola-safe, and the contribution of funerals to Ebola transmission is determined by $p_{funeral}$, which can be interpreted as the probability of transmission at a funeral, or the proportion of funerals that are Ebola-safe.
+We assume that infectious individuals who are not hospitalised die, and that deaths outside of hospital lead to funerals that are potentially not Ebola-safe, and the contribution of funerals to Ebola transmission is determined by $p_\text{funeral}$, which can be interpreted as the probability of transmission at a funeral, or the proportion of funerals that are Ebola-safe.
 The relative safety of funerals is passed as the `funeral_safety` value of the `infection` argument.
 
-Individuals are assumed to spend only a single timestep in the funeral transmission compartment, before they move into the 'removed' compartment. Individuals in the 'removed' compartment do no affect model dynamics.
+Individuals are assumed to spend only a single timestep in the funeral transmission compartment, before they move into the 'removed' compartment. Individuals in the 'removed' compartment do not affect model dynamics.
 
 ## References

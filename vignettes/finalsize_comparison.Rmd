@@ -16,4 +16,99 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(epidemics)
+library(tidyverse)
 ```
+
+# Comparison with simple SEIR-V model
+
+## SEIR-V model
+
+```{r}
+# load contact and population data from socialmixr::polymod
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+
+# run an epidemic model using `epidemic()`
+output <- epidemic_default_cpp(
+  population = uk_population,
+  infection = pandemic_influenza,
+  #intervention = list(contacts = close_schools),
+  time_end = 600, increment = 1.0
+)
+
+# prepare contact matrix
+contact_matrix <- t(contact_data$matrix)
+
+# prepare the demography vector
+demography_vector <- contact_data$demography$population
+names(demography_vector) <- rownames(contact_matrix)
+
+# initial conditions: one in every 1 million is infected
+initial_i <- 1e-6
+initial_conditions <- c(
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
+)
+
+# build for all age groups
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+rownames(initial_conditions) <- rownames(contact_matrix)
+
+# prepare the population to model as affected by the epidemic
+uk_population <- population(
+  name = "UK",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+
+# simulate a pandemic, with an R0,
+# an infectious period, and an pre-infectious period
+pandemic_influenza <- infection(
+  r0 = 1.5,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
+
+# run an epidemic model using `epidemic()`
+output <- epidemic_default_cpp(
+  population = uk_population,
+  infection = pandemic_influenza,
+  time_end = 600, increment = 1.0
+)
+output |>
+  dplyr::filter(compartment %in% c("susceptible", "recovered")) -> plot_dat
+
+ggplot(plot_dat) +
+  geom_line(aes(x = time, y = value, colour = compartment)) +
+  facet_grid(demography_group ~ .)
+```
+
+```{r}
+# Calculate the attack rate using the fraction of recovered
+output |>
+  dplyr::filter(time == max(time)) |>
+  dplyr::reframe(value = value/sum(value), compartment, .by = c("demography_group")) |>
+  dplyr::filter(compartment == "recovered") -> finalsize_dat
+
+finalsize_dat
+```
+
+- Final size model using the same contact matrix and demography
+- Compare values
+
+## Susceptibility
+
+- Do we want to discuss susceptiblity structure?
+
+## Vaccination
+
+Final size does not allow us to implement a dynamic vaccination calendar, but if the vaccine is delivered before the main wave, then we the overall outcome is comparable. 

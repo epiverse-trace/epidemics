@@ -102,8 +102,42 @@ output |>
 finalsize_dat
 ```
 
-- Final size model using the same contact matrix and demography
-- Compare values
+## Final size
+
+```{r}
+library(finalsize)
+
+# Define population in each age group
+scalar <- max(eigen(contact_data$matrix)$values)
+contact_matrix <- apply(contact_data$matrix, 1, function(x) x/demography_vector)/scalar
+# Define susceptibility of each group
+susceptibility <- matrix(
+  data = c(1.0, 1, 1),
+  nrow = length(demography_vector),
+  ncol = 1
+)
+
+# Assume uniform susceptibility within age groups
+p_susceptibility <- matrix(
+  data = 1.0,
+  nrow = length(demography_vector),
+  ncol = 1
+)
+
+# Calculate the proportion of individuals infected in each age group
+final_size(
+  r0 = pandemic_influenza$r0,
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  susceptibility = susceptibility,
+  p_susceptibility = p_susceptibility
+) |>
+  dplyr::select(demo_grp, finalsize = p_infected) -> dat
+
+finalsize_dat |>
+  dplyr::select(demo_grp = demography_group, seir_v = value) |>
+  dplyr::left_join(dat)
+```
 
 ## Susceptibility
 

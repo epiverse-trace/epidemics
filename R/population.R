@@ -72,7 +72,7 @@ new_population <- function(name = NA_character_,
 #' is_population(uk_pop)
 population <- function(name = NA_character_,
                        contact_matrix = matrix(1),
-                       demography_vector = 67e6,
+                       demography_vector = numeric(),
                        initial_conditions = matrix()) {
   # check input
   checkmate::assert_string(name, na.ok = TRUE)

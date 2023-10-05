@@ -20,7 +20,7 @@ test_that("Infections are checked correctly", {
       extra_parameters = c("preinfectious_period", "mortality_rate"),
       extra_parameters_limits = list(
         preinfectious_period = c(
-          "lower" = 0, "upper" = 5
+          lower = 0, upper = 5
         )
       )
     )

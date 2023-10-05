@@ -33,14 +33,6 @@ contact_data <- socialmixr::contact_matrix(
   symmetric = TRUE
 )
 
-# run an epidemic model using `epidemic()`
-output <- epidemic_default_cpp(
-  population = uk_population,
-  infection = pandemic_influenza,
-  #intervention = list(contacts = close_schools),
-  time_end = 600, increment = 1.0
-)
-
 # prepare contact matrix
 contact_matrix <- t(contact_data$matrix)
 
@@ -146,3 +138,5 @@ finalsize_dat |>
 ## Vaccination
 
 Final size does not allow us to implement a dynamic vaccination calendar, but if the vaccine is delivered before the main wave, then we the overall outcome is comparable. 
+
+

@@ -1,5 +1,5 @@
-linters: linters_with_tags(
-    tags = NULL, # include all linters
+linters: all_linters(
+    packages = c("lintr", "etdev"),
     object_name_linter = NULL,
     undesirable_function_linter = NULL,
     implicit_integer_linter = NULL,
@@ -14,5 +14,8 @@ linters: linters_with_tags(
   )
 exclusions: list(
     "tests/testthat.R" = list(unused_import_linter = Inf),
-    "R/RcppExports.R"
+    "data-raw" = list(
+      missing_package_linter = Inf,
+      namespace_linter = Inf
+    )
   )

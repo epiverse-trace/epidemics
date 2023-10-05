@@ -139,4 +139,72 @@ finalsize_dat |>
 
 Final size does not allow us to implement a dynamic vaccination calendar, but if the vaccine is delivered before the main wave, then we the overall outcome is comparable. 
 
+```{r}
+# prepare a vaccination object
+vaccinate_elders <- vaccination(
+  name = "vaccinate elders",
+  time_begin = matrix(1, nrow(contact_matrix)),
+  time_end = matrix(150, nrow(contact_matrix)),
+  nu = matrix(c(0.0, 0.0, 0.001))
+)
+
+output <- epidemic_default_cpp(
+  population = uk_population,
+  infection = pandemic_influenza,
+  vaccination = vaccinate_elders,
+  time_end = 600, increment = 1.0
+)
+
+# Calculate the attack rate using the fraction of recovered
+output |>
+  dplyr::filter(time == max(time)) |>
+  dplyr::reframe(value = value/sum(value), compartment, .by = c("demography_group")) -> prop_dat
+prop_dat |>
+  dplyr::filter(compartment == "recovered") -> finalsize_dat
+
+finalsize_dat
+```
+
+```{r}
+# Proportion of the individuals vaccinated 
+prop_dat |>
+  dplyr::filter(compartment == "vaccinated") |>
+  dplyr::pull(value) -> p_vacc
+
+susceptibility <- matrix(
+  data = 1,
+  nrow = length(demography_vector),
+  ncol = 2
+)
+# Second column holds the vaccinated (who are prettected fully)
+susceptibility[,2] <- 0
+# Assume uniform susceptibility within age groups
+p_susceptibility <- matrix(
+  data = 1.0,
+  nrow = length(demography_vector),
+  ncol = 2
+)
+p_susceptibility[,2] <- p_vacc
+p_susceptibility[,1] <- 1 - p_vacc
+
+# Calculate the proportion of individuals infected in each age group
+final_size(
+  r0 = pandemic_influenza$r0,
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  susceptibility = susceptibility,
+  p_susceptibility = p_susceptibility
+) -> dat1
+
+# Final size returns the proportion infected in each susceptibility group (i.e. non vaccinated and vaccinated)
+# here we calculate the proportion of infected for the age group as a whole
+dat1 |>
+  dplyr::select(-susceptibility) |>
+  tidyr::pivot_wider(names_from = susc_grp, values_from = p_infected) -> dat3
+fs <- rowSums(dat3[,2:3]*p_susceptibility)
+
+finalsize_dat |>
+  dplyr::select(demo_grp = demography_group, seir_v = value) |>
+  dplyr::mutate(finalsize = fs)
+```
 

@@ -39,8 +39,11 @@ effectiveness of pharmaceutical and non-pharmaceutical interventions.
     pandemic, with a focus on scenario modelling for hospitalisation and
     vaccination ([Ainslie et al. 2022](#ref-ainslie2022)),
 
-3.  A stochastic SEIR model of Ebola virus disease adapted from Getz and
-    Dougherty ([2018](#ref-getz2018)).
+3.  A stochastic, discrete-time, compartmental SEIR model suitable for
+    modelling haemorrhagic fevers such as Ebola Virus Disease, including
+    hospitalisation and hospital and funeral transmissions, adapted from
+    Li et al. ([2019](#ref-li2019)) and Getz and Dougherty
+    ([2018](#ref-getz2018)).
 
 More models are planned to be added in the near future. Please get in
 touch if you would like to see your model added to the *epidemics* model
@@ -288,6 +291,17 @@ Methods* 17 (6): 557–58. <https://doi.org/10.1038/s41592-020-0856-2>.
 Getz, Wayne M., and Eric R. Dougherty. 2018. “Discrete Stochastic
 Analogs of Erlang Epidemic Models.” *Journal of Biological Dynamics* 12
 (1): 16–38. <https://doi.org/10.1080/17513758.2017.1401677>.
+
+</div>
+
+<div id="ref-li2019" class="csl-entry">
+
+Li, Shou-Li, Matthew J. Ferrari, Ottar N. Bjørnstad, Michael C. Runge,
+Christopher J. Fonnesbeck, Michael J. Tildesley, David Pannell, and
+Katriona Shea. 2019. “Concurrent Assessment of Epidemiological and
+Operational Uncertainties for Optimal Outbreak Control: Ebola as a Case
+Study.” *Proceedings of the Royal Society B: Biological Sciences* 286
+(1905): 20190774. <https://doi.org/10.1098/rspb.2019.0774>.
 
 </div>
 

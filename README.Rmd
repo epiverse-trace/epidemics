@@ -36,7 +36,7 @@ _{{ packagename }}_ currently provides three models:
 
 2. The deterministic Vacamole model developed at [RIVM, the Dutch Public Health Institute](https://www.rivm.nl/) for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination [@ainslie2022],
 
-3. A stochastic SEIR model of Ebola virus disease adapted from @getz2018.
+3. A stochastic, discrete-time, compartmental SEIR model suitable for modelling haemorrhagic fevers such as Ebola Virus Disease, including hospitalisation and hospital and funeral transmissions, adapted from @li2019 and @getz2018.
 
 More models are planned to be added in the near future.
 Please get in touch if you would like to see your model added to the _{{ packagename }}_ model library --- we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.

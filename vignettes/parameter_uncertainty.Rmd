@@ -1,0 +1,161 @@
+---
+title: "Passing R uncertainty into epidemic model"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+bibliography: references.json
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Generating R estimate and passing into epidemics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Load libraries
+```{r}
+# Load packages from GitHub
+if(!require("pak")){install.packages("pak")}
+pak::pak(c("epiverse-trace/epidemics",
+           "epiverse-trace/epiparameter",
+           "epiverse-trace/scenarios")
+)
+
+library(epidemics)
+library(epiparameter)
+library(scenarios)
+
+# Load CRAN packages
+if(!require("EpiEstim")){install.packages("EpiEstim")}
+if(!require("dplyr")){install.packages("dplyr")}
+
+library(EpiEstim)
+library(dplyr)
+```
+
+Run simple example of R estimation with EpiEstim and epiparameter, and generate 100 samples:
+
+```{r}
+# Get 2009 influenza data for school in Pennsylvania
+data(Flu2009)
+flu_early_data <- Flu2009$incidence |> filter(dates<"2009-05-10")
+
+# Get serial interval
+serial_flu <- epidist_db(
+  disease = "Influenza",
+  epi_dist = "serial_interval",
+  single_epidist = TRUE
+)
+
+serial_pdf <- density(serial_flu,at=c(0:25))
+serial_pdf <- serial_pdf/sum(serial_pdf) # check sum to 1
+
+# Use EpiEstim to estimate R with uncertainty
+# Uses Gamma distribution by default
+output_R <- estimate_R(incid = flu_early_data,
+                       method = "non_parametric_si",
+                       config = make_config(list(si_distr = serial_pdf))
+                       )
+
+# Plot output
+plot(output_R, "R")
+
+# Generate 10 R samples
+r_samples <- rnorm(10,output_R$R$`Mean(R)`,output_R$R$`Std(R)`)
+```
+
+
+## Run README epidemics model
+
+Define a simple influenza pandemic model using the README example:
+
+```{r}
+
+# load contact and population data from socialmixr::polymod
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+
+# prepare contact matrix
+contact_matrix <- t(contact_data$matrix)
+
+# prepare the demography vector
+demography_vector <- contact_data$demography$population
+names(demography_vector) <- rownames(contact_matrix)
+
+# initial conditions: one in every 1 million is infected
+initial_i <- 1e-6
+initial_conditions <- c(
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
+)
+
+# build for all age groups
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+rownames(initial_conditions) <- rownames(contact_matrix)
+
+# prepare the population to model as affected by the epidemic
+uk_population <- population(
+  name = "UK",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+
+# an intervention to close schools
+close_schools <- intervention(
+  type = "contacts",
+  time_begin = 200,
+  time_end = 260,
+  reduction = matrix(c(0.5, 0.01, 0.01))
+)
+
+```
+
+# Run with R uncertainty
+
+Loop over sampled R values to generate model with uncertainty - this could potentially be adapted as a function in `scenarios`, rather than having to define whole model in each case in `comparisons`.
+
+```{r}
+
+output_samples <- sapply(r_samples,function(x){
+
+# Prepare an <infection> class object to store the parameters of the infection which is causing the epidemic which is being modelled.
+
+# simulate a pandemic, with an R0,
+# an infectious period, and an pre-infectious period
+pandemic_influenza <- infection(
+  r0 = 1.5,
+  preinfectious_period = 3,
+  infectious_period = 7
+)
+
+# run an epidemic model using `epidemic()`
+output <- epidemic_default_cpp(
+  population = uk_population,
+  infection = pandemic_influenza,
+  intervention = list(contacts = close_schools),
+  time_end = 600, increment = 1.0
+)
+
+output
+
+})
+
+```

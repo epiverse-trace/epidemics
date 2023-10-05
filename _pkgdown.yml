@@ -1,4 +1,4 @@
-url: ~
+url: https://epiverse.github.io/epidemics
 template:
   bslib:
     font_weight_base : 300

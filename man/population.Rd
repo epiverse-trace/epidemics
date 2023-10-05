@@ -8,7 +8,7 @@
 population(
   name = NA_character_,
   contact_matrix = matrix(1),
-  demography_vector = 6.7e+07,
+  demography_vector = numeric(),
   initial_conditions = matrix()
 )
 

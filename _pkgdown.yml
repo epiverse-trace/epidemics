@@ -1,18 +1,8 @@
 url: ~
 template:
-  bootstrap: 5
   bslib:
     font_weight_base : 300
-  includes:
-    in_header: |
-      <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-XZ471458FQ"></script>
-      <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XZ471458FQ');
-      </script>
+  package: epiversetheme
 articles:
 - title: Package vignettes
   navbar: Package vignettes

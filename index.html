@@ -101,7 +101,7 @@
 <ol style="list-style-type: decimal">
 <li><p>A deterministic SEIR-V model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates,</p></li>
 <li><p>The deterministic Vacamole model developed at <a href="https://www.rivm.nl/" class="external-link">RIVM, the Dutch Public Health Institute</a> for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination (<a href="#ref-ainslie2022">Ainslie et al. 2022</a>),</p></li>
-<li><p>A stochastic SEIR model of Ebola virus disease adapted from Getz and Dougherty (<a href="#ref-getz2018">2018</a>).</p></li>
+<li><p>A stochastic, discrete-time, compartmental SEIR model suitable for modelling haemorrhagic fevers such as Ebola Virus Disease, including hospitalisation and hospital and funeral transmissions, adapted from Li et al. (<a href="#ref-li2019">2019</a>) and Getz and Dougherty (<a href="#ref-getz2018">2018</a>).</p></li>
 </ol>
 <p>More models are planned to be added in the near future. Please get in touch if you would like to see your model added to the <em>epidemics</em> model library — we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.</p>
 <p><em>epidemics</em> relies on <a href="https://gitlab.com/libeigen/eigen" class="external-link">Eigen</a> via <a href="https://cran.r-project.org/web/packages/RcppEigen/index.html" class="external-link">{RcppEigen}</a>, and on <a href="https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html" class="external-link">Boost Odeint</a> via <a href="https://cran.r-project.org/web/packages/BH/index.html" class="external-link">{BH}</a>, and is developed at the <a href="https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases" class="external-link">Centre for the Mathematical Modelling of Infectious Diseases</a> at the London School of Hygiene and Tropical Medicine as part of the <a href="https://data.org/initiatives/epiverse/" class="external-link">Epiverse-TRACE initiative</a>.</p>
@@ -261,6 +261,9 @@ Bjørnstad, Ottar N., Katriona Shea, Martin Krzywinski, and Naomi Altman. 2020a.
 </div>
 <div id="ref-getz2018" class="csl-entry">
 Getz, Wayne M., and Eric R. Dougherty. 2018. “Discrete Stochastic Analogs of Erlang Epidemic Models.” <em>Journal of Biological Dynamics</em> 12 (1): 16–38. <a href="https://doi.org/10.1080/17513758.2017.1401677" class="external-link uri">https://doi.org/10.1080/17513758.2017.1401677</a>.
+</div>
+<div id="ref-li2019" class="csl-entry">
+Li, Shou-Li, Matthew J. Ferrari, Ottar N. Bjørnstad, Michael C. Runge, Christopher J. Fonnesbeck, Michael J. Tildesley, David Pannell, and Katriona Shea. 2019. “Concurrent Assessment of Epidemiological and Operational Uncertainties for Optimal Outbreak Control: Ebola as a Case Study.” <em>Proceedings of the Royal Society B: Biological Sciences</em> 286 (1905): 20190774. <a href="https://doi.org/10.1098/rspb.2019.0774" class="external-link uri">https://doi.org/10.1098/rspb.2019.0774</a>.
 </div>
 </div>
 </div>

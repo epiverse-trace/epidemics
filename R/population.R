@@ -171,7 +171,7 @@ format.population <- function(x, ...) {
   validate_population(x)
 
   # header
-  header <- "<population>"
+  header <- class(x)
 
   # collect information on name
   name <- ifelse(

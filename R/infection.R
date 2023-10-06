@@ -206,10 +206,14 @@ format.infection <- function(x, ...) {
   # other parameters
   extra_argument_names <- names(x)[!names(x)
   %in% c("name", "r0", "infectious_period")]
-  extra_argument_names <- glue::glue_collapse(
-    glue::double_quote(extra_argument_names),
-    sep = ", "
-  )
+  extra_argument_names <- if (length(extra_argument_names) == 0) {
+    "None"
+    } else {
+      glue::glue_collapse(
+      glue::double_quote(extra_argument_names),
+      sep = ", "
+      )
+    }
 
   # print to screen
   cli::cli_rule(left = "Created {.cls {header}} object")

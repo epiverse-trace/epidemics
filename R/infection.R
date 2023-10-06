@@ -193,7 +193,7 @@ format.infection <- function(x, ...) {
   validate_infection(x)
 
   # header
-  header <- "<infection>"
+  header <- class(x)
 
   # collect information on name
   name <- ifelse(

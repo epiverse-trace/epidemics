@@ -201,7 +201,6 @@ format.infection <- function(x, ...) {
     "NA",
     glue::double_quote(x$name)
   )
-  name <- glue::glue("infection name: {name}")
 
   # other parameters
   extra_argument_names <- names(x)[!names(x)

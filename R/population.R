@@ -221,7 +221,12 @@ format.population <- function(x, ...) {
 
   # print to screen
   cli::cli_rule(left = "Created {.cls {header}} object")
-  cli::cli_text("Population name: {.val {name}}")
+  cli::cli_text(
+    "
+    Population name:
+    {cli_format({name}, style = list(string_quote = \"\"))}
+    "
+  )
   cli::cli_text("Demography:")
   cli::cli_text("{.val {demography_print}}")
   cli::cli_text("Contact matrix:")

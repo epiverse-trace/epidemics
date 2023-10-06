@@ -69,7 +69,8 @@ Imports:
     glue,
     utils,
     stats,
-    deSolve
+    deSolve,
+    cli
 Suggests: 
     bookdown,
     colorspace,

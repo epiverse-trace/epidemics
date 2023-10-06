@@ -212,20 +212,11 @@ format.infection <- function(x, ...) {
   )
 
   # print to screen
-  writeLines(
-    c(
-      header,
-      name,
-      glue::glue(
-        "
-        R0: {x$r0}
-        Infectious period: {x$infectious_period}
-        Other infection parameters:
-        {extra_argument_names}
-        "
-      )
-    )
-  )
+  cli::cli_rule(left = "Created {.cls {header}} object")
+  cli::cli_text("Name: {.val {name}}")
+  cli::cli_text("R0: {.val {x$r0}}")
+  cli::cli_text("Infectious period: {.val {x$infectious_period}}")
+  cli::cli_text("Other infection parameters: {.val {extra_argument_names}}")
 
   invisible(x)
 }

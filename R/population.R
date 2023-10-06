@@ -228,9 +228,9 @@ format.population <- function(x, ...) {
     "
   )
   cli::cli_text("Demography:")
-  cli::cli_text("{.val {demography_print}}")
+  print(demography_print)
   cli::cli_text("Contact matrix:")
-  cli::cli_text("{.val {contact_matrix}}")
+  print(contact_matrix)
 
   invisible(x)
 }

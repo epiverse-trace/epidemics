@@ -179,7 +179,6 @@ format.population <- function(x, ...) {
     "NA",
     glue::double_quote(x$name)
   )
-  name <- glue::glue("Population name: {name}")
 
   # copy demography vector
   demography_print <- prettyNum(
@@ -221,29 +220,11 @@ format.population <- function(x, ...) {
 
 
   # print to screen
-  writeLines(
-    c(
-      header,
-      name,
-      glue::glue(
-        "
-
-        Demography:
-        "
-      )
-    )
-  )
-  print(
-    demography_print
-  )
-  print(
-    glue::glue(
-      "
-
-    Contact matrix:
-    "
-    )
-  )
+  cli::cli_rule(left = "Created {.cls {header}} object")
+  cli::cli_text("Population name: {.val name}")
+  cli::cli_par("Demography:")
+  print(demography_print)
+  cli::cli_text("Contact matrix:")
   print(round(contact_matrix, 1))
 
   invisible(x)

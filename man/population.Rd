@@ -7,9 +7,9 @@
 \usage{
 population(
   name = NA_character_,
-  contact_matrix = matrix(1),
-  demography_vector = numeric(),
-  initial_conditions = matrix()
+  contact_matrix,
+  demography_vector,
+  initial_conditions
 )
 
 is_population(x)

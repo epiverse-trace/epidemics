@@ -4,7 +4,7 @@ initial_conditions <- matrix(
   nrow = 1, ncol = 5L,
   byrow = TRUE
 )
-colnames(initial_conditions) <- read_from_library(what = "compartments")
+colnames(initial_conditions) <- c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
 
 # create a population where there are no contacts between groups
 # this helps test the expectation that the final size proportions

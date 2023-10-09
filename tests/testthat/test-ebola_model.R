@@ -50,7 +50,7 @@ test_that("Ebola model: basic expectations", {
   )
   expect_setequal(
     unique(data$compartment),
-    read_from_library(model_name = "ebola", what = "compartments")
+    c("susceptible", "exposed", "infectious", "recovered")
   )
 
   # check for all positive values within the range 0 and total population size

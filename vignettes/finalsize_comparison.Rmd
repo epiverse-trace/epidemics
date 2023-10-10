@@ -16,7 +16,13 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(epidemics)
-library(tidyverse)
+library(finalsize)
+
+library(dplyr)
+library(tibble)
+library(tidyr)
+library(ggplot2)
+library(socialmixr)
 ```
 
 # Comparison with simple SEIR-V model
@@ -25,8 +31,8 @@ library(tidyverse)
 
 ```{r}
 # load contact and population data from socialmixr::polymod
-polymod <- socialmixr::polymod
-contact_data <- socialmixr::contact_matrix(
+polymod <- polymod
+contact_data <- contact_matrix(
   polymod,
   countries = "United Kingdom",
   age.limits = c(0, 20, 40),
@@ -70,26 +76,26 @@ pandemic_influenza <- infection(
   infectious_period = 7
 )
 
-# run an epidemic model using `epidemic()`
+# run an epidemic model using `epidemic_default_*()`
 output <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic_influenza,
   time_end = 600, increment = 1.0
 )
-output |>
-  dplyr::filter(compartment %in% c("susceptible", "recovered")) -> plot_dat
+
+plot_dat <- filter(output, compartment %in% c("susceptible", "recovered"))
 
 ggplot(plot_dat) +
   geom_line(aes(x = time, y = value, colour = compartment)) +
-  facet_grid(demography_group ~ .)
+  facet_grid(rows = vars(demography_group))
 ```
 
 ```{r}
 # Calculate the attack rate using the fraction of recovered
-output |>
-  dplyr::filter(time == max(time)) |>
-  dplyr::reframe(value = value/sum(value), compartment, .by = c("demography_group")) |>
-  dplyr::filter(compartment == "recovered") -> finalsize_dat
+finalsize_dat <- tibble(
+  demography_group = names(demography_vector),
+  value = epidemic_size(output) / demography_vector
+)
 
 finalsize_dat
 ```
@@ -97,11 +103,10 @@ finalsize_dat
 ## Final size
 
 ```{r}
-library(finalsize)
-
 # Define population in each age group
 scalar <- max(eigen(contact_data$matrix)$values)
-contact_matrix <- apply(contact_data$matrix, 1, function(x) x/demography_vector)/scalar
+contact_matrix <- (contact_data$matrix / demography_vector) / scalar
+
 # Define susceptibility of each group
 susceptibility <- matrix(
   data = c(1.0, 1, 1),
@@ -117,23 +122,24 @@ p_susceptibility <- matrix(
 )
 
 # Calculate the proportion of individuals infected in each age group
-final_size(
+dat <- final_size(
   r0 = pandemic_influenza$r0,
   contact_matrix = contact_matrix,
   demography_vector = demography_vector,
   susceptibility = susceptibility,
   p_susceptibility = p_susceptibility
-) |>
-  dplyr::select(demo_grp, finalsize = p_infected) -> dat
+)
 
-finalsize_dat |>
-  dplyr::select(demo_grp = demography_group, seir_v = value) |>
-  dplyr::left_join(dat)
+dat <- select(dat, demo_grp, final_size = p_infected)
+
+finalsize_dat %>%
+  select(demo_grp = demography_group, seir_v = value) %>%
+  left_join(dat)
 ```
 
 ## Susceptibility
 
-- Do we want to discuss susceptiblity structure?
+- Do we want to discuss susceptibility structure?
 
 ## Vaccination
 
@@ -156,55 +162,63 @@ output <- epidemic_default_cpp(
 )
 
 # Calculate the attack rate using the fraction of recovered
-output |>
-  dplyr::filter(time == max(time)) |>
-  dplyr::reframe(value = value/sum(value), compartment, .by = c("demography_group")) -> prop_dat
-prop_dat |>
-  dplyr::filter(compartment == "recovered") -> finalsize_dat
+finalsize_dat <- tibble(
+  demography_group = names(demography_vector),
+  value = epidemic_size(output) / demography_vector
+)
 
 finalsize_dat
 ```
 
 ```{r}
-# Proportion of the individuals vaccinated 
-prop_dat |>
-  dplyr::filter(compartment == "vaccinated") |>
-  dplyr::pull(value) -> p_vacc
+# Proportion of the individuals vaccinated
+p_vacc <- filter(output, compartment == "vaccinated", time == max(time))
+p_vacc <- p_vacc$value / demography_vector
 
 susceptibility <- matrix(
   data = 1,
   nrow = length(demography_vector),
-  ncol = 2
+  ncol = 2,
+  dimnames = list(
+    names(demography_vector),
+    c("unvaccinated", "vaccinated")
+  )
 )
-# Second column holds the vaccinated (who are prettected fully)
-susceptibility[,2] <- 0
+
+# Second column holds the vaccinated (who are protected fully)
+susceptibility[, "vaccinated"] <- 0
+
 # Assume uniform susceptibility within age groups
 p_susceptibility <- matrix(
   data = 1.0,
   nrow = length(demography_vector),
-  ncol = 2
+  ncol = 2,
+  dimnames = list(
+    names(demography_vector),
+    c("unvaccinated", "vaccinated")
+  )
 )
-p_susceptibility[,2] <- p_vacc
-p_susceptibility[,1] <- 1 - p_vacc
+p_susceptibility[, "vaccinated"] <- p_vacc
+p_susceptibility[, "unvaccinated"] <- 1 - p_vacc
 
 # Calculate the proportion of individuals infected in each age group
-final_size(
+dat1 <- final_size(
   r0 = pandemic_influenza$r0,
   contact_matrix = contact_matrix,
   demography_vector = demography_vector,
   susceptibility = susceptibility,
   p_susceptibility = p_susceptibility
-) -> dat1
+)
 
-# Final size returns the proportion infected in each susceptibility group (i.e. non vaccinated and vaccinated)
+# Final size returns the proportion infected in each susceptibility group
+# (i.e. non vaccinated and vaccinated)
 # here we calculate the proportion of infected for the age group as a whole
-dat1 |>
-  dplyr::select(-susceptibility) |>
-  tidyr::pivot_wider(names_from = susc_grp, values_from = p_infected) -> dat3
-fs <- rowSums(dat3[,2:3]*p_susceptibility)
+dat3 <- dat1 %>%
+  select(-susceptibility) %>%
+  pivot_wider(names_from = susc_grp, values_from = p_infected)
+fs <- dat3$unvaccinated * p_susceptibility[, "unvaccinated"]
 
-finalsize_dat |>
-  dplyr::select(demo_grp = demography_group, seir_v = value) |>
-  dplyr::mutate(finalsize = fs)
+finalsize_dat %>%
+  select(demo_grp = demography_group, seir_v = value) %>%
+  mutate(final_size = fs)
 ```
-

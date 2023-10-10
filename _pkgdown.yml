@@ -13,6 +13,7 @@ articles:
   - rate_interventions
   - time_dependence
   - parameter_uncertainty
+  - finalsize_comparison
 - title: Guides to library models
   navbar: Guides to library models
   contents:

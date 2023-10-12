@@ -1,18 +1,41 @@
 ---
-title: "finalsize_comparison"
-output: rmarkdown::html_vignette
+title: "Comparing epidemic sizes from ODE models against an analytical method"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+bibliography: references.json
+link-citations: true
 vignette: >
-  %\VignetteIndexEntry{finalsize_comparison}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Comparing epidemic sizes from ODE models against an analytical method}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 5,
+  fig.height = 4,
+  dpi = 300
 )
 ```
+
+::: {.alert .alert-warning}
+**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first!
+
+Additionally, see how to quickly [calculate the final size of an epidemic](https://epiverse-trace.github.io/finalsize/) using an analytical method with the _finalsize_ package.
+:::
+
+The total number of individuals expected to have been infected over an epidemic is called the epidemic final size [@miller2012].
+This vignette compares the final size obtained by modelling transmission dynamics in an ordinary differential equation model, such as those available in _epidemics_, against an analytical method which entails solving a final size equation [@miller2012].
 
 ```{r setup}
 library(epidemics)
@@ -25,11 +48,18 @@ library(ggplot2)
 library(socialmixr)
 ```
 
-# Comparison with simple SEIR-V model
+## Comparing final size without vaccination
 
-## SEIR-V model
+### Calculate final size from ODE model
 
-```{r}
+This example compares the final size of an epidemic as modelled using the 'default' model in _epidemics_, against the final size estimated using `finalsize::final_size()`.
+
+We first prepare the population (modelled on the U.K.), initial conditions, and infection parameters, before passing them to `epidemics::epidemic_default_cpp()`.
+This example does not include any interventions or vaccination regimes.
+
+Code to prepare model inputs is folded below for brevity. See the ["Get started"](epidemics.html) vignette for an explanation of how to prepare these inputs.
+
+```{r class.source = 'fold-hide'}
 # load contact and population data from socialmixr::polymod
 polymod <- polymod
 contact_data <- contact_matrix(
@@ -59,8 +89,12 @@ initial_conditions <- rbind(
   initial_conditions
 )
 rownames(initial_conditions) <- rownames(contact_matrix)
+```
 
+```{r}
 # prepare the population to model as affected by the epidemic
+# the contact_matrix, demography_vector, and initial_conditions
+# have been prepared in the folded code above
 uk_population <- population(
   name = "UK",
   contact_matrix = contact_matrix,
@@ -68,6 +102,13 @@ uk_population <- population(
   initial_conditions = initial_conditions
 )
 
+# view the population
+uk_population
+```
+
+Create an `<infection>` to model the spread of influenza with pandemic potential, assuming $R_0 = $ 1.5, a pre-infectious period of 3 days, and an infectious period of 7 days.
+
+```{r}
 # simulate a pandemic, with an R0,
 # an infectious period, and an pre-infectious period
 pandemic_influenza <- infection(
@@ -75,20 +116,21 @@ pandemic_influenza <- infection(
   preinfectious_period = 3,
   infectious_period = 7
 )
+```
 
+Run an epidemic model with the prepared population and infection.
+
+```{r}
 # run an epidemic model using `epidemic_default_*()`
 output <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic_influenza,
   time_end = 600, increment = 1.0
 )
-
-plot_dat <- filter(output, compartment %in% c("susceptible", "recovered"))
-
-ggplot(plot_dat) +
-  geom_line(aes(x = time, y = value, colour = compartment)) +
-  facet_grid(rows = vars(demography_group))
 ```
+
+Calculate the number of individuals recovered using the function `epidemics::epidemic_size()`, which calculates the number of individuals recovered at the last timestep of the epidemic model by default.
+We assume this to be the final size from the ODE model.
 
 ```{r}
 # Calculate the attack rate using the fraction of recovered
@@ -97,12 +139,18 @@ finalsize_dat <- tibble(
   value = epidemic_size(output) / demography_vector
 )
 
+# View final size from ODE model
 finalsize_dat
 ```
 
-## Final size
+### Calculate final size using analytical method
 
-```{r}
+We prepare the arguments to `finalsize::final_size()` in the form of a contact matrix scaled by the largest real eigenvalue and the demography, a susceptibility matrix, and a demography-in-susceptibility matrix.
+The code for these preparatory steps is folded. A more complete explanation of these steps can be found in the ["Get started" vignette for _finalsize_.](https://epiverse-trace.github.io/finalsize/articles/finalsize.html)
+
+We pass these arguments to the final size function.
+
+```{r class.source = 'fold-hide'}
 # Define population in each age group
 scalar <- max(eigen(contact_data$matrix)$values)
 contact_matrix <- (contact_data$matrix / demography_vector) / scalar
@@ -120,7 +168,9 @@ p_susceptibility <- matrix(
   nrow = length(demography_vector),
   ncol = 1
 )
+```
 
+```{r}
 # Calculate the proportion of individuals infected in each age group
 dat <- final_size(
   r0 = pandemic_influenza$r0,
@@ -130,20 +180,72 @@ dat <- final_size(
   p_susceptibility = p_susceptibility
 )
 
+# select the age group and the final size as a proportion
 dat <- select(dat, demo_grp, final_size = p_infected)
-
-finalsize_dat %>%
-  select(demo_grp = demography_group, seir_v = value) %>%
-  left_join(dat)
 ```
 
-## Susceptibility
+Join the final size estimates from both methods and compare them with a simple bar plot.
 
-- Do we want to discuss susceptibility structure?
+```{r}
+# join data from both methods
+finalsize_dat <- finalsize_dat %>%
+  select(demo_grp = demography_group, seir_v = value) %>%
+  left_join(dat) %>%
+  pivot_longer(
+    cols = c("seir_v", "final_size"),
+    names_to = "method"
+  )
+```
 
-## Vaccination
+Visualise the difference in the estimates based on the two methods.
 
-Final size does not allow us to implement a dynamic vaccination calendar, but if the vaccine is delivered before the main wave, then we the overall outcome is comparable. 
+```{r class.source = 'fold-hide'}
+ggplot(finalsize_dat) +
+  geom_col(
+    aes(
+      x = demo_grp, y = value, fill = method
+    ),
+    position = "dodge",
+    colour = "black"
+  ) +
+  scale_fill_brewer(
+    name = NULL,
+    labels = c("Analytical method", "ODE model")
+  ) +
+  scale_y_continuous(
+    labels = scales::label_percent()
+  ) +
+  labs(
+    x = "Demographic group",
+    y = "Total % infected"
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  )
+```
+
+## Comparing final size for a vaccinated population
+
+We can use _epidemics_ to model the effect of vaccination on the trajectory of an epidemic.
+While _finalsize_ does not allow for the implementation of a _dynamic_ vaccination calendar, we can model reduced susceptibility to infection in the population, such as due to prior vaccination.
+
+The two methods are comparable if we model vaccination in _epidemics_ as occurring before the main wave of the epidemic, as this sets up underlying susceptibility.
+
+In this section, most code blocks are unfolded for clarity.
+
+### Implementing vaccination in _epidemics_
+
+For simplicity, we implement a vaccination regime in which vaccines are delivered to individuals over the age of 40 over the course of roughly six months (150 days) before the main epidemic peak.
+We assume that 1 in every 1000 individuals in this age group is vaccinated every day; this translates to approximately 28,900 individuals per day.
+
+We assume that the vaccination is non-leaky, protecting vaccinated individuals from infection, and this due to the model structure of the 'default' SEIR-V model in _epidemics_ that we use here.
+
+::: {.alert .alert-info}
+**New to modelling vaccination using _epidemics_?** It may help to read the ["Modelling a vaccination campaign"](modelling_vaccination.html) vignette first.
+:::
+
+We first create a `<vaccination>` object to represent this vaccination regime.
 
 ```{r}
 # prepare a vaccination object
@@ -153,7 +255,13 @@ vaccinate_elders <- vaccination(
   time_end = matrix(150, nrow(contact_matrix)),
   nu = matrix(c(0.0, 0.0, 0.001))
 )
+```
 
+We then pass this vaccination regime to the epidemic function in the optional `vaccination` argument, and model 600 days of the epidemic.
+We obtain the 'final' epidemic size using `epidemics::epidemic_size()`.
+
+```{r}
+# model epidemic with vaccination prior to the main epidemic wave
 output <- epidemic_default_cpp(
   population = uk_population,
   infection = pandemic_influenza,
@@ -161,20 +269,40 @@ output <- epidemic_default_cpp(
   time_end = 600, increment = 1.0
 )
 
-# Calculate the attack rate using the fraction of recovered
+# Calculate the epidemic size using the helper function
 finalsize_dat <- tibble(
   demography_group = names(demography_vector),
   value = epidemic_size(output) / demography_vector
 )
 
+# View the data
 finalsize_dat
 ```
+
+### Calculating individuals vaccinated in epidemic model
+
+To compare the results of the ODE model against the analytical method, it is necessary to set up the population's susceptibility and demography-in-susceptibility matrices to reflect the proportion of individuals in each age group vaccinated before the outbreak.
+
+To do this, we need to calculate the total proportion of individuals in each age group vaccinated at the end of the epidemic model run.
 
 ```{r}
 # Proportion of the individuals vaccinated
 p_vacc <- filter(output, compartment == "vaccinated", time == max(time))
 p_vacc <- p_vacc$value / demography_vector
+```
 
+### Implementing vaccination in _finalsize_
+
+We use the proportion of individuals vaccinated in each age group to set up matrices to pass to the `susceptibility` and `p_susceptibility` arguments of `finalsize::final_size()`.
+
+::: {.alert .alert-info}
+**New to final size estimation with heterogeneity in susceptibility to infection?** It may help to read the ["Modelling heterogeneous susceptibility" vignette](https://epiverse-trace.github.io/finalsize/articles/varying_susceptibility.html), and the ["Guide to constructing susceptibility matrices"](https://epiverse-trace.github.io/finalsize/articles/susceptibility_matrices.html) for _finalsize_ first.
+:::
+
+We create the susceptibility matrix to have two groups, 'unvaccinated', with full susceptibility, and 'vaccinated', who are immune to infection.
+
+```{r}
+# create the susceptibility matrix
 susceptibility <- matrix(
   data = 1,
   nrow = length(demography_vector),
@@ -184,11 +312,16 @@ susceptibility <- matrix(
     c("unvaccinated", "vaccinated")
   )
 )
+```
 
+We then create the demography-in-susceptibility matrix to reflect that only some individuals in the >40 age group are vaccinated.
+Since vaccination has not been implemented for other age groups, we assume that all individuals in those groups are fully susceptible.
+
+```{r}
 # Second column holds the vaccinated (who are protected fully)
 susceptibility[, "vaccinated"] <- 0
 
-# Assume uniform susceptibility within age groups
+# Assume susceptibility varies within age groups
 p_susceptibility <- matrix(
   data = 1.0,
   nrow = length(demography_vector),
@@ -200,7 +333,11 @@ p_susceptibility <- matrix(
 )
 p_susceptibility[, "vaccinated"] <- p_vacc
 p_susceptibility[, "unvaccinated"] <- 1 - p_vacc
+```
 
+We then calculate the expected final size using the modified susceptibility matrices, and combine this data with the output of the ODE model as in the previous example.
+
+```{r}
 # Calculate the proportion of individuals infected in each age group
 dat1 <- final_size(
   r0 = pandemic_influenza$r0,
@@ -214,11 +351,85 @@ dat1 <- final_size(
 # (i.e. non vaccinated and vaccinated)
 # here we calculate the proportion of infected for the age group as a whole
 dat3 <- dat1 %>%
-  select(-susceptibility) %>%
-  pivot_wider(names_from = susc_grp, values_from = p_infected)
+  select(
+    -susceptibility,
+    final_size = p_infected
+  ) %>%
+  filter(susc_grp == "unvaccinated") %>%
+  select(-susc_grp)
+
 fs <- dat3$unvaccinated * p_susceptibility[, "unvaccinated"]
 
-finalsize_dat %>%
+finalsize_dat <- finalsize_dat %>%
   select(demo_grp = demography_group, seir_v = value) %>%
-  mutate(final_size = fs)
+  left_join(dat3) %>%
+  pivot_longer(
+    cols = c("seir_v", "final_size"),
+    names_to = "method"
+  )
 ```
+
+We then visualise the data to view the differences between the methods.
+
+```{r class.source = 'fold-hide'}
+ggplot(finalsize_dat) +
+  geom_col(
+    aes(
+      x = demo_grp, y = value, fill = method
+    ),
+    position = "dodge",
+    colour = "black"
+  ) +
+  scale_fill_brewer(
+    name = NULL,
+    labels = c("Analytical method", "ODE model")
+  ) +
+  scale_y_continuous(
+    labels = scales::label_percent()
+  ) +
+  labs(
+    x = "Demographic group",
+    y = "Total % infected"
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  )
+```
+
+We observe that a larger proportion of the vaccinated group (> 40 years old) are infected in the ODE model than in the analytical method.
+This is because some individuals in the ODE model are infected before they can be vaccinated, as the final proportion of vaccinated individuals is only reached later.
+The final sizes for the other age groups are more comparable across models.
+
+## Choosing an appropriate method for final size calculations
+
+An important reason to use _finalsize_ for final size calculations is speed --- `finalsize::final_size()` is much faster than `epidemics::epidemic_size()` applied to `epidemics::epidemic_default_cpp()` as the benchmarking shows.
+This makes it much more suitable for applications such as fitting to data.
+
+However, this suitability depends on whether the assumptions underlying a final size calculation are met.
+For example, in cases where vaccinations are concurrent with a large number of infections, or when interventions are applied to reduce transmission, the final size assumptions are not met.
+In these cases, users are advised to use a dynamical model such as those in _epidemics_ instead.
+
+```{r warning=FALSE, message=FALSE}
+# create functions from the
+microbenchmark::microbenchmark(
+  analytical_method = final_size(
+    r0 = pandemic_influenza$r0,
+    contact_matrix = contact_matrix,
+    demography_vector = demography_vector,
+    susceptibility = susceptibility,
+    p_susceptibility = p_susceptibility
+  ),
+  ode_model = epidemic_size(
+    epidemic_default_cpp(
+      population = uk_population,
+      infection = pandemic_influenza,
+      vaccination = vaccinate_elders,
+      time_end = 600, increment = 1.0
+    )
+  )
+)
+```
+
+
+## References

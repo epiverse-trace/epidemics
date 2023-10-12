@@ -1,4 +1,3 @@
-
 #' Get parameters from \{epidemics\} classes
 #'
 #' @param x An object of one of the classes provided by _epidemics_:

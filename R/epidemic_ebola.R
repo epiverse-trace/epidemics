@@ -191,7 +191,6 @@ prob_discrete_erlang <- function(shape, rate) {
 #' @export
 epidemic_ebola_r <- function(population, infection,
                              intervention = NULL, time_end = 100) {
-
   # input checking for the ebola R model
   assert_population(
     population,

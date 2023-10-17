@@ -359,14 +359,17 @@ references:
     orcid: https://orcid.org/0000-0001-8814-9421
   year: '2023'
 - type: software
-  title: microbenchmark
-  abstract: 'microbenchmark: Accurate Timing Functions'
+  title: bench
+  abstract: 'bench: High Precision Timing of R Expressions'
   notes: Suggests
-  url: https://github.com/joshuaulrich/microbenchmark/
-  repository: https://CRAN.R-project.org/package=microbenchmark
+  url: https://bench.r-lib.org/
+  repository: https://CRAN.R-project.org/package=bench
   authors:
-  - family-names: Mersmann
-    given-names: Olaf
+  - family-names: Hester
+    given-names: Jim
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
   year: '2023'
 - type: software
   title: rmarkdown

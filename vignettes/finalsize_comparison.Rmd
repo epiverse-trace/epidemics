@@ -47,7 +47,6 @@ library(finalsize)
 library(dplyr)
 library(tibble)
 library(tidyr)
-library(ggplot2)
 library(socialmixr)
 ```
 
@@ -65,13 +64,13 @@ However, most models allow for some modification of the initial characteristics 
 For the infection, this includes interventions (such as masking or treatments) that reduce the number of forward transmissions or deaths, but also seasonal effects which may increase or decrease the transmission rate.
 For the population, initial conditions of social contacts can be influenced by interventions as well.
 
-This makes it much easier to model the temporal dynamics of public-health policy decisions which are taken during epidemic response.
+This makes it much easier to model the temporal dynamics of public-health policy decisions which are taken during epidemic response as _epidemics_ has many more features that allow for such modelling.
 
-Overall, users wishing to examine temporal dynamics, and the effects of policy decisions over time, will find that _epidemics_ has many more features that allow for such modelling.
 However, it is more difficult to model scenarios in which more complicated susceptibility structure is required, such as when some demographic groups have underlying immunity to infection due to past exposure or vaccination.
 Thus _epidemics_ is likely to be especially useful for outbreaks of novel pathogens (such as the Covid-19 pandemic) where there is little population immunity to infection.
 
 It is easier to configure _finalsize_ out-of-the-box for scenarios with complex demographic patterns of underlying susceptibility to (or immunity against) infection, potentially due to a history of previous outbreaks and the policy responses (such as vaccination).
+
 Thus, while it cannot model temporal dynamics, it can quickly provide useful initial estimates of the final size of outbreaks, without having to write compartmental models which implement multiple policy decisions.
 
 ## Converting scenarios between _finalsize_ and _epidemics_

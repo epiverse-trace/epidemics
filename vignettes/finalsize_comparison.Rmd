@@ -1,5 +1,5 @@
 ---
-title: "Comparing epidemic sizes from ODE models against an analytical method"
+title: "When to use ODE models or analytical methods for epidemic size modelling"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Comparing epidemic sizes from ODE models against an analytical method}
+  %\VignetteIndexEntry{When to use ODE models or analytical methods for epidemic size modelling}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -48,9 +48,10 @@ library(dplyr)
 library(tibble)
 library(tidyr)
 library(socialmixr)
+library(bench)
 ```
 
-## Choosing between _finalsize_ and _epidemics_
+## Different use cases of _finalsize_ and _epidemics_
 
 While both _finalsize_ and _epidemics_ can be used to calculate the epidemic final size, they are aimed at different use cases.
 
@@ -305,7 +306,7 @@ epidemic_size(data = output, stage = 0.1)
 epidemic_size(data = output, stage = 0.5)
 ```
 
-## Choosing an appropriate method for final size calculations
+## Consideration of computational speed
 
 An important reason to use _finalsize_ for final size calculations may be speed --- `finalsize::final_size()` is much faster than `epidemics::epidemic_size()` applied to `epidemics::epidemic_default_cpp()`.
 This makes it much more suitable for high-performance applications such as fitting to data.
@@ -313,8 +314,8 @@ This makes it much more suitable for high-performance applications such as fitti
 The benchmarking shows that the total time taken for 1,000 runs using both methods is very low, and both methods could be used to scan across multiple values of the input parameters, such as when dealing with parameter uncertainty.
 
 ```{r warning=FALSE, message=FALSE}
-# create functions from the
-bench::mark(
+# run benchmarks using {bench}
+benchmark <- mark(
   analytical_method = final_size(
     r0 = pandemic_influenza$r0,
     contact_matrix = contact_matrix,
@@ -334,7 +335,12 @@ bench::mark(
   time_unit = "s",
   check = FALSE
 )
+
+# view the total time for 1000 runs in seconds
+select(as_tibble(benchmark), expression, total_time)
 ```
+
+**Note** that some model runs using _epidemics_ that implement more complex compartmental structure, or multiple interventions and vaccination regimes are likely to be slower than the example shown here.
 
 However, users should choose _finalsize_ only when the assumptions underlying a final size calculation are met.
 For example, in cases where vaccinations are concurrent with a large number of infections, or when interventions are applied to reduce transmission, the final size assumptions are not met.

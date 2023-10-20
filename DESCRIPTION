@@ -25,6 +25,13 @@ Authors@R:
             comment = c(ORCID = "https://orcid.org/0000-0002-2383-5305")
         ),
         person(
+            given = "Adam",
+            family = "Kucharski",
+            role = c("ctb", "rev"),
+            email = "adam.kucharski@lshtm.ac.uk",
+            comment = c(ORCID = "https://orcid.org/0000-0001-8814-9421")
+        ),
+        person(
             given = "Tim",
             family = "Taylor",
             role = c("ctb", "rev"),
@@ -74,7 +81,9 @@ Suggests:
     socialmixr,
     spelling,
     testthat (>= 3.0.0),
-    withr
+    withr,
+    dplyr,
+    EpiEstim
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 LinkingTo: 

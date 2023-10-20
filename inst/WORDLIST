@@ -14,6 +14,7 @@ ETUs
 EVD
 Ebolavirus
 Eigen
+EpiEstim
 Epirecipes
 Epiverse
 Eurosurveillance
@@ -75,6 +76,7 @@ doi
 ebola
 ebolavirus
 epicookbook
+epiparameter
 epirecipes
 etc
 ggplot
@@ -88,7 +90,6 @@ org
 packagename
 pkg
 prepper
-rspb
 stochasticity
 susceptibles
 svg

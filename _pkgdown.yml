@@ -12,6 +12,7 @@ articles:
   - multiple_interventions
   - rate_interventions
   - time_dependence
+  - parameter_uncertainty
 - title: Guides to library models
   navbar: Guides to library models
   contents:

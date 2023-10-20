@@ -1,5 +1,5 @@
 ---
-title: "Passing R uncertainty into epidemic model"
+title: "Generating and modelling R uncertainty"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Generating R estimate and passing into epidemics}
+  %\VignetteIndexEntry{Generating and modelling R uncertainty}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,69 +17,80 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 5,
+  fig.height = 4,
+  dpi = 300
 )
 ```
 
-Load libraries
-```{r}
-# Load packages from GitHub
-if(!require("pak")){install.packages("pak")}
-pak::pak(c("epiverse-trace/epidemics",
-           "epiverse-trace/epiparameter",
-           "epiverse-trace/scenarios")
-)
+Uncertainty in the characteristics of an epidemic is a key element and roadblock in epidemic response [@shea2020].
+This vignette aims to show how to model parameter uncertainty using _epidemics_, as well as how it might affect conclusions regarding the implementation of response measures such as non-pharmaceutical interventions.
 
+::: {.alert .alert-warning}
+**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first!
+:::
+
+```{r}
+# load epidemics
 library(epidemics)
-library(epiparameter)
-library(scenarios)
 
 # Load CRAN packages
-if(!require("EpiEstim")){install.packages("EpiEstim")}
-if(!require("dplyr")){install.packages("dplyr")}
-
 library(EpiEstim)
 library(dplyr)
+library(ggplot2)
 ```
 
-Run simple example of R estimation with EpiEstim and epiparameter, and generate 100 samples:
+## Prepare $R$ estimates
+
+For this example, we consider influenza with pandemic potential [@ghani2010], and prepare multiple samples of the estimated $R$.
+
+We obtain the probability distribution function (PDF) from the distribution of the serial intervals; this is a Gamma distribution with shape $k$ = 2.622 and scale $\theta$ = 0.957 [@ghani2010].
+
+We use this PDF to estimate the $R$ of the 2009 influenza pandemic in the U.K., using [the _EpiEstim_ package](https://cran.r-project.org/package=EpiEstim).
+We use the $R$ estimate (the mean and standard deviation) from _EpiEstim_ to generate 100 samples of $R$, assuming that it is normally distributed.
 
 ```{r}
 # Get 2009 influenza data for school in Pennsylvania
 data(Flu2009)
-flu_early_data <- Flu2009$incidence |> filter(dates<"2009-05-10")
+flu_early_data <- filter(Flu2009$incidence, dates < "2009-05-10")
 
-# Get serial interval
-serial_flu <- epidist_db(
-  disease = "Influenza",
-  epi_dist = "serial_interval",
-  single_epidist = TRUE
-)
-
-serial_pdf <- density(serial_flu,at=c(0:25))
-serial_pdf <- serial_pdf/sum(serial_pdf) # check sum to 1
+# get the PDF of the distribution of serial intervals
+serial_pdf <- dgamma(seq(0, 25), shape = 2.622, scale = 0.957)
+serial_pdf <- serial_pdf / sum(serial_pdf) # check sum to 1
 
 # Use EpiEstim to estimate R with uncertainty
 # Uses Gamma distribution by default
-output_R <- estimate_R(incid = flu_early_data,
-                       method = "non_parametric_si",
-                       config = make_config(list(si_distr = serial_pdf))
-                       )
+output_R <- estimate_R(
+  incid = flu_early_data,
+  method = "non_parametric_si",
+  config = make_config(list(si_distr = serial_pdf))
+)
 
-# Plot output
+# Plot output to visualise
 plot(output_R, "R")
-
-# Generate 10 R samples
-r_samples <- rnorm(10,output_R$R$`Mean(R)`,output_R$R$`Std(R)`)
 ```
 
-
-## Run README epidemics model
-
-Define a simple influenza pandemic model using the README example:
+Generate 100 samples of $R$.
 
 ```{r}
+# Generate 100 R samples
+set.seed(1)
+r_samples <- rnorm(
+  n = 100, mean = output_R$R$`Mean(R)`, sd = output_R$R$`Std(R)`
+)
+```
 
+## Prepare epidemic model inputs
+
+We define inputs for the default, SEIR-V model in _epidemics_ in the form of `<population>` and `<infection>` objects.
+We omit non-pharmaceutical interventions and vaccinations for this example.
+
+Since this step is identical to that in previous vignettes, the code is folded, but can be expanded for clarity.
+
+```{r class.source = 'fold-hide'}
 # load contact and population data from socialmixr::polymod
 polymod <- socialmixr::polymod
 contact_data <- socialmixr::contact_matrix(
@@ -125,37 +136,110 @@ close_schools <- intervention(
   time_end = 260,
   reduction = matrix(c(0.5, 0.01, 0.01))
 )
-
 ```
 
-# Run with R uncertainty
+## Run with $R$ uncertainty
 
-Loop over sampled R values to generate model with uncertainty - this could potentially be adapted as a function in `scenarios`, rather than having to define whole model in each case in `comparisons`.
+Loop over sampled $R$ values to generate epidemic model outputs with uncertainty.
 
 ```{r}
+# iterate over the R samples, running the epidemic model for each value of R
+output_samples <- Map(
+  r_samples,
+  seq_along(r_samples),
+  f = function(x, i) {
+    # Prepare an <infection> class object to store the parameters of
+    # the infection which is causing the epidemic which is being modelled.
 
-output_samples <- sapply(r_samples,function(x){
+    # simulate a pandemic, with an R0,
+    # an infectious period, and an pre-infectious period
+    pandemic_influenza <- infection(
+      r0 = x,
+      preinfectious_period = 3,
+      infectious_period = 7
+    )
 
-# Prepare an <infection> class object to store the parameters of the infection which is causing the epidemic which is being modelled.
+    # run an epidemic model using `epidemic()`
+    output <- epidemic_default_cpp(
+      population = uk_population,
+      infection = pandemic_influenza,
+      intervention = list(contacts = close_schools),
+      time_end = 600, increment = 1.0
+    )
 
-# simulate a pandemic, with an R0,
-# an infectious period, and an pre-infectious period
-pandemic_influenza <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
+    # calculate new infections
+    output <- new_infections(output)
+
+    # assign scenario number
+    output[, c("scenario", "R") := list(i, x)]
+
+    output
+  }
 )
-
-# run an epidemic model using `epidemic()`
-output <- epidemic_default_cpp(
-  population = uk_population,
-  infection = pandemic_influenza,
-  intervention = list(contacts = close_schools),
-  time_end = 600, increment = 1.0
-)
-
-output
-
-})
-
 ```
+
+We view the output of a few scenario runs.
+
+```{r}
+# View the firt few rows of the first two runs
+lapply(output_samples[1:2], head)
+
+# combine to prepare for plotting
+output_samples <- bind_rows(output_samples)
+```
+
+
+We obtain the epidemic runs and plot the number of new infections in each scenario; the plotting code is folded for brevity.
+
+```{r class.source = 'fold-hide', fig.cap="Modelling scenarios of the spread of influenza with pandemic potential in the U.K., with uncertainty in the reproduction number $R$. Each scenario represents one of 1,000 runs with different values of $R$ estimated from the case data for the 2009 influenza pandemic in the U.K. Scenarios are coloured by $R$, which is divided into four bins for visual clarity. Values of $R <$ 1.0 do not lead to large epidemics. The duration of a non-pharmaceutical intervention to close schools for two months (affecting the social contacts of all individuals under age 20) is also shown. For example, in high $R$ scenarios (green), school closures have little effect, as the epidemic has peaked before the intervention can take effect; this demonstrates how uncertainty in epidemic characterists may influence the effectiveness of response measures.", fig.width=6}
+ggplot(output_samples) +
+  geom_vline(
+    xintercept = c(200, 260),
+    colour = alpha("black", 0.5),
+    linetype = "dashed"
+  ) +
+  annotate(
+    geom = "text",
+    x = 230, y = 600e3,
+    label = "Schools closed",
+    colour = alpha("black", 0.5),
+    angle = 90,
+    hjust = "inward"
+  ) +
+  geom_line(
+    aes(
+      time, new_infections,
+      group = scenario,
+      colour = R
+    ),
+    alpha = 0.3
+  ) +
+  scale_colour_fermenter(
+    palette = "Dark2",
+    breaks = c(0, 1, 1.5, 2.0, 3.0),
+    limits = c(0, 3)
+  ) +
+  scale_y_continuous(
+    name = "New infections",
+    labels = scales::label_comma(scale = 1e-3, suffix = "K")
+  ) +
+  labs(
+    x = "Time (days since start of epidemic)"
+  ) +
+  facet_grid(
+    cols = vars(demography_group)
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top",
+    legend.key.height = unit(2, "mm")
+  )
+```
+
+## Links to other Epiverse packages
+
+The [forthcoming Epiverse package _scenarios_](https://epiverse-trace.github.io/scenarios/) is expected to include functionality that wraps the iteration step shown in this vignette, to make it easier to model parameter uncertainty.
+
+Furthermore, [the forthcoming Epiverse package _epiparameter_](https://epiverse-trace.github.io/epiparameter/) is expected to make it substantially easier to access and use epidemiological parameters, such as the serial interval, reported in the literature, making it easier to model scenarios differing in the intrinsic characteristics of the pathogen causing the outbreak.
+
+## References

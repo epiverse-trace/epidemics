@@ -269,23 +269,33 @@ epidemic_ebola_r <- function(population, infection,
     rate = rate_I
   )
 
-  # count number of exposed and infectious blocks or boxcars
-  n_exposed_boxcars <- length(exposed_boxcar_rates)
+  # count number of infectious blocks or boxcars
   n_infectious_boxcars <- length(infectious_boxcar_rates)
 
-  # prepare the current compartments
-  exposed_current <- numeric(n_exposed_boxcars)
-  infectious_current <- numeric(n_infectious_boxcars)
-  hospitalised_current <- numeric(n_infectious_boxcars)
-
   # initialise current conditions for exposed and infectious compartments
-  exposed_current[n_exposed_boxcars] <- sim_data[1, "exposed"]
+  exposed_current <- as.vector(
+    stats::rmultinom(
+      1,
+      size = sim_data[1, "exposed"],
+      prob = exposed_boxcar_rates
+    )
+  )
   exposed_past <- exposed_current
 
-  infectious_current[n_infectious_boxcars] <- sim_data[1, "infectious"]
+  infectious_current <- as.vector(
+    stats::rmultinom(1,
+      size = sim_data[1, "infectious"],
+      prob = infectious_boxcar_rates
+    )
+  )
   infectious_past <- infectious_current
 
-  hospitalised_current[n_infectious_boxcars] <- sim_data[1, "hospitalised"]
+  hospitalised_current <- as.vector(
+    stats::rmultinom(1,
+      size = sim_data[1, "hospitalised"],
+      prob = infectious_boxcar_rates
+    )
+  )
   hospitalised_past <- hospitalised_current
 
   funeral_trans_current <- sim_data[1, "funeral"]

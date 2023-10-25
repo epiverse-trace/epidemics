@@ -63,6 +63,7 @@
     <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling multiple overlapping non-pharmaceutical interventions</a>
     <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling interventions on model rates</a>
     <a class="dropdown-item" href="../articles/time_dependence.html">Modelling time-dependence in epidemic parameters</a>
+    <a class="dropdown-item" href="../articles/parameter_uncertainty.html">Generating and modelling R uncertainty</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
@@ -118,7 +119,7 @@
 <span>  age.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
 <span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Using POLYMOD social contact data. To cite this in a publication, use the 'cite' function</span></span>
+<span><span class="co">#&gt; Using POLYMOD social contact data. To cite this in a publication, use the 'get_citation()' function</span></span>
 <span><span class="co">#&gt; Removing participants that have contacts without age information. To change this behaviour, set the 'missing.contact.age' option</span></span>
 <span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
@@ -186,9 +187,9 @@
 <span>  times <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;                   expr      min       lq       mean   median        uq      max</span></span>
-<span><span class="co">#&gt;     epidemic default R 109.1337 113.2843 118.605913 116.1900 121.48590 151.0020</span></span>
-<span><span class="co">#&gt;  epidemic default Rcpp   4.2985   4.6698   5.161245   5.1273   5.47135   7.7148</span></span>
+<span><span class="co">#&gt;                   expr     min      lq      mean   median       uq      max</span></span>
+<span><span class="co">#&gt;     epidemic default R 67.3023 69.6970 72.601313 70.50105 75.06205 104.6100</span></span>
+<span><span class="co">#&gt;  epidemic default Rcpp  4.2308  4.4229  4.957633  4.72460  5.07860  12.1859</span></span>
 <span><span class="co">#&gt;  neval</span></span>
 <span><span class="co">#&gt;    100</span></span>
 <span><span class="co">#&gt;    100</span></span></code></pre></div>
@@ -207,7 +208,7 @@
 <span>  age.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
 <span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Using POLYMOD social contact data. To cite this in a publication, use the 'cite' function</span></span>
+<span><span class="co">#&gt; Using POLYMOD social contact data. To cite this in a publication, use the 'get_citation()' function</span></span>
 <span><span class="co">#&gt; Removing participants that have contacts without age information. To change this behaviour, set the 'missing.contact.age' option</span></span>
 <span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
@@ -298,12 +299,12 @@
 <span>  times <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;                    expr      min        lq       mean   median       uq</span></span>
-<span><span class="co">#&gt;     epidemic Vacamole R 102.0267 109.76370 117.578920 114.9032 118.6679</span></span>
-<span><span class="co">#&gt;  epidemic Vacamole Rcpp   5.6053   6.14265   6.765414   6.6523   7.1498</span></span>
-<span><span class="co">#&gt;       max neval</span></span>
-<span><span class="co">#&gt;  333.3879   100</span></span>
-<span><span class="co">#&gt;    9.1051   100</span></span></code></pre></div>
+<span><span class="co">#&gt;                    expr     min      lq      mean   median       uq      max</span></span>
+<span><span class="co">#&gt;     epidemic Vacamole R 73.3636 74.6064 80.233633 76.75925 82.81495 283.6546</span></span>
+<span><span class="co">#&gt;  epidemic Vacamole Rcpp  5.7062  6.0007  6.491362  6.28100  6.65795  15.1161</span></span>
+<span><span class="co">#&gt;  neval</span></span>
+<span><span class="co">#&gt;    100</span></span>
+<span><span class="co">#&gt;    100</span></span></code></pre></div>
 </details>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

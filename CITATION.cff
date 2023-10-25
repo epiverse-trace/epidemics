@@ -494,30 +494,6 @@ references:
     given-names: Winston
   year: '2023'
 - type: software
-  title: dplyr
-  abstract: 'dplyr: A Grammar of Data Manipulation'
-  notes: Suggests
-  url: https://dplyr.tidyverse.org
-  repository: https://CRAN.R-project.org/package=dplyr
-  authors:
-  - family-names: Wickham
-    given-names: Hadley
-    email: hadley@posit.co
-    orcid: https://orcid.org/0000-0003-4757-117X
-  - family-names: François
-    given-names: Romain
-    orcid: https://orcid.org/0000-0002-2444-4226
-  - family-names: Henry
-    given-names: Lionel
-  - family-names: Müller
-    given-names: Kirill
-    orcid: https://orcid.org/0000-0002-1416-3412
-  - family-names: Vaughan
-    given-names: Davis
-    email: davis@posit.co
-    orcid: https://orcid.org/0000-0003-4777-038X
-  year: '2023'
-- type: software
   title: EpiEstim
   abstract: 'EpiEstim: Estimate Time Varying Reproduction Numbers from Epidemic Curves'
   notes: Suggests

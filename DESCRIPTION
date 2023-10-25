@@ -86,7 +86,6 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     withr,
-    dplyr,
     EpiEstim
 Config/testthat/edition: 3
 VignetteBuilder: knitr

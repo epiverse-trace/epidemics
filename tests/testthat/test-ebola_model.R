@@ -17,9 +17,9 @@ ebola <- infection(
   r0 = 1.7,
   infectious_period = 7,
   preinfectious_period = 5,
-  prop_hospitalised = 0.5,
-  etu_safety = 0.8,
-  funeral_safety = 0.5
+  prop_community = 0.5,
+  etu_risk = 0.2,
+  funeral_risk = 0.5
 )
 
 # basic expectations
@@ -97,16 +97,16 @@ test_that("Larger R0 leads to larger final size in ebola model", {
     ebola_r0_low = infection(
       r0 = r0_low, infectious_period = 5,
       preinfectious_period = 5,
-      prop_hospitalised = 0.5,
-      etu_safety = 0.8,
-      funeral_safety = 0.5
+      prop_community = 0.5,
+      etu_risk = 0.2,
+      funeral_risk = 0.5
     ),
     ebola_r0_high = infection(
       r0 = r0_high + 1.0, infectious_period = 5,
       preinfectious_period = 5,
-      prop_hospitalised = 0.5,
-      etu_safety = 0.8,
-      funeral_safety = 0.5
+      prop_community = 0.5,
+      etu_risk = 0.2,
+      funeral_risk = 0.5
     )
   )
 
@@ -200,9 +200,9 @@ test_that("Ebola model with hospitalisation", {
     r0 = 1.7,
     infectious_period = 7,
     preinfectious_period = 5,
-    prop_hospitalised = 0.0,
-    etu_safety = 0.8,
-    funeral_safety = 0.5
+    prop_community = 1.0,
+    etu_risk = 0.2,
+    funeral_risk = 0.5
   )
   data <- epidemic_ebola_r(
     population = population,
@@ -233,9 +233,9 @@ test_that("Ebola model with hospitalisation", {
     r0 = 1.7,
     infectious_period = 7,
     preinfectious_period = 5,
-    prop_hospitalised = 1.0,
-    etu_safety = 1.0,
-    funeral_safety = 0.5
+    prop_community = 0.0,
+    etu_risk = 0.0,
+    funeral_risk = 0.5
   )
   # expect that the final size is the same as `total_cases` (20)
   data <- epidemic_ebola_r(
@@ -270,9 +270,9 @@ test_that("Ebola model with funeral safety", {
     r0 = 1.7,
     infectious_period = 7,
     preinfectious_period = 5,
-    prop_hospitalised = 0.0,
-    etu_safety = 0.0,
-    funeral_safety = 1.0
+    prop_community = 1.0,
+    etu_risk = 1.0,
+    funeral_risk = 0.0
   )
 
   # expect that the final size is the same as `total_cases` (20)

@@ -64,6 +64,7 @@
     <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling interventions on model rates</a>
     <a class="dropdown-item" href="../articles/time_dependence.html">Modelling time-dependence in epidemic parameters</a>
     <a class="dropdown-item" href="../articles/parameter_uncertainty.html">Generating and modelling R uncertainty</a>
+    <a class="dropdown-item" href="../articles/finalsize_comparison.html">When to use ODE models or analytical methods for epidemic size modelling</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
@@ -105,7 +106,7 @@
 <p>This basic vignette shows speed benchmarks for the R and Rcpp implementations of the epidemic models.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/joshuaulrich/microbenchmark/" class="external-link">microbenchmark</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bench.r-lib.org/" class="external-link">bench</a></span><span class="op">)</span></span></code></pre></div>
 </details><div class="section level2">
 <h2 id="benchmarking-the-default-model">Benchmarking the default model<a class="anchor" aria-label="anchor" href="#benchmarking-the-default-model"></a>
 </h2>
@@ -168,7 +169,7 @@
 <span>  nu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span><span class="op">(</span></span>
 <span>  <span class="co"># run epidemic model, expect no conditions</span></span>
 <span>  <span class="st">"epidemic default R"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_r</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
@@ -184,15 +185,15 @@
 <span>    vaccination <span class="op">=</span> <span class="va">vax_regime</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  times <span class="op">=</span> <span class="fl">100</span></span>
+<span>  iterations <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  time_unit <span class="op">=</span> <span class="st">"s"</span>,</span>
+<span>  check <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;                   expr     min      lq      mean   median       uq      max</span></span>
-<span><span class="co">#&gt;     epidemic default R 67.3023 69.6970 72.601313 70.50105 75.06205 104.6100</span></span>
-<span><span class="co">#&gt;  epidemic default Rcpp  4.2308  4.4229  4.957633  4.72460  5.07860  12.1859</span></span>
-<span><span class="co">#&gt;  neval</span></span>
-<span><span class="co">#&gt;    100</span></span>
-<span><span class="co">#&gt;    100</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
+<span><span class="co">#&gt;   expression                min  median `itr/sec` mem_alloc `gc/sec`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic default R    0.064<span style="text-decoration: underline;">3</span>  0.066<span style="text-decoration: underline;">6</span>       15.1    2.49MB     6.10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic default Rcpp 0.003<span style="text-decoration: underline;">85</span> 0.004<span style="text-decoration: underline;">02</span>     248.   224.93KB     2.76</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">
@@ -280,7 +281,7 @@
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span><span class="op">(</span></span>
 <span>  <span class="co"># run epidemic model, expect no conditions</span></span>
 <span>  <span class="st">"epidemic Vacamole R"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_vacamole.html">epidemic_vacamole_r</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
@@ -296,15 +297,15 @@
 <span>    vaccination <span class="op">=</span> <span class="va">double_vaccination</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  times <span class="op">=</span> <span class="fl">100</span></span>
+<span>  iterations <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  time_unit <span class="op">=</span> <span class="st">"s"</span>,</span>
+<span>  check <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;                    expr     min      lq      mean   median       uq      max</span></span>
-<span><span class="co">#&gt;     epidemic Vacamole R 73.3636 74.6064 80.233633 76.75925 82.81495 283.6546</span></span>
-<span><span class="co">#&gt;  epidemic Vacamole Rcpp  5.7062  6.0007  6.491362  6.28100  6.65795  15.1161</span></span>
-<span><span class="co">#&gt;  neval</span></span>
-<span><span class="co">#&gt;    100</span></span>
-<span><span class="co">#&gt;    100</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
+<span><span class="co">#&gt;   expression                 min  median `itr/sec` mem_alloc `gc/sec`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic Vacamole R    0.070<span style="text-decoration: underline;">8</span>  0.073<span style="text-decoration: underline;">0</span>       13.7    1.62MB     6.21</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic Vacamole Rcpp 0.005<span style="text-decoration: underline;">30</span> 0.005<span style="text-decoration: underline;">63</span>     177.   367.24KB     2.15</span></span></code></pre></div>
 </details>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

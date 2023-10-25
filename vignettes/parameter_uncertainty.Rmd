@@ -49,10 +49,14 @@ For this example, we consider influenza with pandemic potential [@ghani2010], an
 
 We obtain the probability distribution function (PDF) from the distribution of the serial intervals; this is a Gamma distribution with shape $k$ = 2.622 and scale $\theta$ = 0.957 [@ghani2010].
 
+::: {.alert .alert-info}
+The [forthcoming Epiverse package _epiparameter_](https://epiverse-trace.github.io/epiparameter/) is expected to make it substantially easier to access and use epidemiological parameters, such as the serial interval, reported in the literature, making it easier to model scenarios differing in the intrinsic characteristics of the pathogen causing the outbreak.
+:::
+
 We use this PDF to estimate the $R$ of the 2009 influenza pandemic in the U.K., using [the _EpiEstim_ package](https://cran.r-project.org/package=EpiEstim).
 We use the $R$ estimate (the mean and standard deviation) from _EpiEstim_ to generate 100 samples of $R$, assuming that it is normally distributed.
 
-```{r}
+```{r fig.width=6, fig.height=3}
 # Get 2009 influenza data for school in Pennsylvania
 data(Flu2009)
 flu_early_data <- filter(Flu2009$incidence, dates < "2009-05-10")
@@ -236,10 +240,6 @@ ggplot(output_samples) +
   )
 ```
 
-## Links to other Epiverse packages
-
 The [forthcoming Epiverse package _scenarios_](https://epiverse-trace.github.io/scenarios/) is expected to include functionality that wraps the iteration step shown in this vignette, to make it easier to model parameter uncertainty.
-
-Furthermore, [the forthcoming Epiverse package _epiparameter_](https://epiverse-trace.github.io/epiparameter/) is expected to make it substantially easier to access and use epidemiological parameters, such as the serial interval, reported in the literature, making it easier to model scenarios differing in the intrinsic characteristics of the pathogen causing the outbreak.
 
 ## References

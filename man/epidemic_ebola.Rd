@@ -31,18 +31,25 @@ infection,
 in days,
 \item \code{preinfectious_period}, a single number for the pre-infectious period
 before the onset of symptoms, taken to be in days,
-\item \code{prop_hospitalised}, a single number in the range 0.0 -- 1.0 for the
-proportion of infectious (assumed symptomatic) individuals who are
-hospitalised,
-\item \code{etu_safety}, a single number in the range 0.0 -- 1.0 for the relative
-effectiveness of hospitalisation (in an Ebola Treatment Unit; ETU) in
-reducing transmission between hospitalised individuals and susceptible ones.
-0.0 would indicate that hospitalisation does not reduce transmission, while
-1.0 would indicate that it completely prevents transmission.
-\item \code{funeral_safety}, a single number in the range 0.0 -- 1.0 for the relative
-efficacy of practices designed to prevent transmission of Ebola virus disease
-associated with funerals; alternatively interpretable as the proportion
-of funerals following these practices.
+\item \code{prop_community}, a single number in the range 0.0 -- 1.0 for the
+proportion of infectious (assumed symptomatic) individuals who are not
+hospitalised, and are instead infectious in the community,
+\item \code{etu_risk}, a single number in the range 0.0 -- 1.0 for the relative
+risk of EVD transmission in hospital settings (in Ebola Treatment Units; ETU)
+between hospitalised individuals and susceptible ones.
+This is understood to be a proportion of the baseline transmission rate
+\eqn{\beta}, which is calculated from the \verb{<infection>}.
+0.0 would indicate that hospitalisation completely eliminates transmission,
+while 1.0 would indicate that transmission between hospitalised individuals
+and susceptibles is the same as the baseline, which is transmission in the
+community.
+\item \code{funeral_risk}, a single number in the range 0.0 -- 1.0 for the relative
+risk of funeral practices that may lead to transmission of EVD in a funeral
+setting.
+This is understood to be a proportion of the baseline transmission rate
+\eqn{\beta}, which is calculated from the \verb{<infection>}. It can alternatively
+be interpreted as the proportion of funerals at which the risk of
+transmission is the same as of infectious individuals in the community.
 }
 
 \code{r0}, \code{infectious_period}, and \code{preinfectious_period} are used to calculate
@@ -56,9 +63,6 @@ See \strong{Details} for more information.}
 pharmaceutical or non-pharmaceutical interventions applied to the infection's
 parameters, such as the transmission rate, over the epidemic.
 See \code{\link[=intervention]{intervention()}} for details on constructing rate interventions.
-
-Currently, only interventions on the transmission rate \code{beta} are supported,
-and should be passed as \code{list(beta = intervention(type = "rate", ...))}.
 Defaults to \code{NULL}, representing no interventions on model parameters.}
 
 \item{time_end}{The maximum number of timesteps over which to run the model,
@@ -113,15 +117,18 @@ beginning in one of the compartments (thus allowing for variation in passage
 times).
 \subsection{Hospitalisation, funerals, and removal}{
 
-Infectious individuals have a probability of \code{prop_hospitalised} of being
-transferred to the hospitalised compartment.
-This compartment has the same number of sub-compartments, which means that
+Infectious individuals have a probability of 1.0 - \code{prop_community} of being
+transferred to the hospitalised compartment, representing Ebola Treatment
+Units (ETUs), and are considered to be infectious but no longer in the
+community.
+This compartment has the same number of sub-compartments as the infectious
+compartment (i.e., infectious in the community), which means that
 an infectious individual with \eqn{N} timesteps before exiting the
 infectious compartment will exit the hospitalised compartment in the same
 time.
 
 Hospitalised individuals can contribute to transmission of Ebola to
-susceptibles depending on the value of \code{etu_safety} passed as part of the
+susceptibles depending on the value of \code{etu_risk} passed as part of the
 \code{infection} argument, which scales the
 baseline transmission rate \eqn{\beta} for hospitalised individuals.
 
@@ -130,7 +137,7 @@ individuals exiting the hospitalised compartment move to the 'removed'
 compartment, which holds both recoveries and deaths.
 
 We assume that deaths outside of hospital lead to funerals that are
-potentially not Ebola-safe, and the \code{funeral_safety} passed as part of the
+potentially not Ebola-safe, and the \code{funeral_risk} passed as part of the
 \code{infection} argument scales the baseline transmission rate \eqn{\beta} for
 funeral transmission of Ebola to susceptibles.
 

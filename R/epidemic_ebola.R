@@ -77,20 +77,27 @@ prob_discrete_erlang <- function(shape, rate) {
 #' - `preinfectious_period`, a single number for the pre-infectious period
 #' before the onset of symptoms, taken to be in days,
 #'
-#' - `prop_hospitalised`, a single number in the range 0.0 -- 1.0 for the
-#' proportion of infectious (assumed symptomatic) individuals who are
-#' hospitalised,
+#' - `prop_community`, a single number in the range 0.0 -- 1.0 for the
+#' proportion of infectious (assumed symptomatic) individuals who are not
+#' hospitalised, and are instead infectious in the community,
 #'
-#' - `etu_safety`, a single number in the range 0.0 -- 1.0 for the relative
-#' effectiveness of hospitalisation (in an Ebola Treatment Unit; ETU) in
-#' reducing transmission between hospitalised individuals and susceptible ones.
-#' 0.0 would indicate that hospitalisation does not reduce transmission, while
-#' 1.0 would indicate that it completely prevents transmission.
+#' - `etu_risk`, a single number in the range 0.0 -- 1.0 for the relative
+#' risk of EVD transmission in hospital settings (in Ebola Treatment Units; ETU)
+#' between hospitalised individuals and susceptible ones.
+#' This is understood to be a proportion of the baseline transmission rate
+#' \eqn{\beta}, which is calculated from the `<infection>`.
+#' 0.0 would indicate that hospitalisation completely eliminates transmission,
+#' while 1.0 would indicate that transmission between hospitalised individuals
+#' and susceptibles is the same as the baseline, which is transmission in the
+#' community.
 #'
-#' - `funeral_safety`, a single number in the range 0.0 -- 1.0 for the relative
-#' efficacy of practices designed to prevent transmission of Ebola virus disease
-#' associated with funerals; alternatively interpretable as the proportion
-#' of funerals following these practices.
+#' - `funeral_risk`, a single number in the range 0.0 -- 1.0 for the relative
+#' risk of funeral practices that may lead to transmission of EVD in a funeral
+#' setting.
+#' This is understood to be a proportion of the baseline transmission rate
+#' \eqn{\beta}, which is calculated from the `<infection>`. It can alternatively
+#' be interpreted as the proportion of funerals at which the risk of
+#' transmission is the same as of infectious individuals in the community.
 #'
 #' `r0`, `infectious_period`, and `preinfectious_period` are used to calculate
 #' the baseline transmission rate \eqn{\beta},
@@ -103,9 +110,6 @@ prob_discrete_erlang <- function(shape, rate) {
 #' pharmaceutical or non-pharmaceutical interventions applied to the infection's
 #' parameters, such as the transmission rate, over the epidemic.
 #' See [intervention()] for details on constructing rate interventions.
-#'
-#' Currently, only interventions on the transmission rate `beta` are supported,
-#' and should be passed as `list(beta = intervention(type = "rate", ...))`.
 #' Defaults to `NULL`, representing no interventions on model parameters.
 #' @param time_end The maximum number of timesteps over which to run the model,
 #' in days. Defaults to 100 days.
@@ -151,15 +155,18 @@ prob_discrete_erlang <- function(shape, rate) {
 #'
 #' ## Hospitalisation, funerals, and removal
 #'
-#' Infectious individuals have a probability of `prop_hospitalised` of being
-#' transferred to the hospitalised compartment.
-#' This compartment has the same number of sub-compartments, which means that
+#' Infectious individuals have a probability of 1.0 - `prop_community` of being
+#' transferred to the hospitalised compartment, representing Ebola Treatment
+#' Units (ETUs), and are considered to be infectious but no longer in the
+#' community.
+#' This compartment has the same number of sub-compartments as the infectious
+#' compartment (i.e., infectious in the community), which means that
 #' an infectious individual with \eqn{N} timesteps before exiting the
 #' infectious compartment will exit the hospitalised compartment in the same
 #' time.
 #'
 #' Hospitalised individuals can contribute to transmission of Ebola to
-#' susceptibles depending on the value of `etu_safety` passed as part of the
+#' susceptibles depending on the value of `etu_risk` passed as part of the
 #' `infection` argument, which scales the
 #' baseline transmission rate \eqn{\beta} for hospitalised individuals.
 #'
@@ -168,7 +175,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #' compartment, which holds both recoveries and deaths.
 #'
 #' We assume that deaths outside of hospital lead to funerals that are
-#' potentially not Ebola-safe, and the `funeral_safety` passed as part of the
+#' potentially not Ebola-safe, and the `funeral_risk` passed as part of the
 #' `infection` argument scales the baseline transmission rate \eqn{\beta} for
 #' funeral transmission of Ebola to susceptibles.
 #'
@@ -206,12 +213,12 @@ epidemic_ebola_r <- function(population, infection,
       "name", "r0", "infectious_period", "preinfectious_period"
     ),
     extra_parameters = c(
-      "prop_hospitalised", "etu_safety", "funeral_safety"
+      "prop_community", "etu_risk", "funeral_risk"
     ),
     extra_parameters_limits = list(
-      prop_hospitalised = c(lower = 0, upper = 1),
-      etu_safety = c(lower = 0, upper = 1),
-      funeral_safety = c(lower = 0, upper = 1)
+      prop_community = c(lower = 0, upper = 1),
+      etu_risk = c(lower = 0, upper = 1),
+      funeral_risk = c(lower = 0, upper = 1)
     )
   )
   if (!is.null(intervention)) {
@@ -233,8 +240,6 @@ epidemic_ebola_r <- function(population, infection,
 
   # prepare base transmission rate beta
   beta <- get_transmission_rate(infection = infection)
-  # prepare hospitalisation probability/proportion p_hosp
-  p_hosp <- get_parameter(infection, "prop_hospitalised")
 
   # get initial conditions
   initial_state <- as.numeric(
@@ -304,16 +309,13 @@ epidemic_ebola_r <- function(population, infection,
   # define a fixed rounding factor for all timesteps to save function calls
   rounding_factor <- stats::rnorm(n_infectious_boxcars - 1, 0, 1e-2)
 
-  # transmission modifiers - 1.0 for baseline, user-provided for etu_safety and
-  # funeral safety
-  beta_modifiers <- c(
-    1.0,
-    1.0 - get_parameter(infection, "etu_safety"),
-    1.0 - get_parameter(infection, "funeral_safety")
-  )
-
   # place parameter beta in list for rate interventions function
-  parameters <- list(beta = beta)
+  parameters <- list(
+    beta = beta,
+    prop_community = get_parameter(infection, "prop_community"),
+    etu_risk = get_parameter(infection, "etu_risk"),
+    funeral_risk = get_parameter(infection, "funeral_risk")
+  )
 
   ## Run the simulation from time t = 2 to t = time_end
   for (time in seq(2, time_end)) {
@@ -325,6 +327,10 @@ epidemic_ebola_r <- function(population, infection,
       ],
       parameters = parameters
     )
+
+    # transmission modifiers - 1.0 for baseline, user-provided for ETU risk and
+    # funeral risk
+    beta_modifiers <- c(1.0, params[["etu_risk"]], params[["funeral_risk"]])
 
     # get current transmission rate as base rate * intervention * p(infectious)
     # TODO: check if transmission rates should be summed or averaged
@@ -353,12 +359,14 @@ epidemic_ebola_r <- function(population, infection,
     # new hospitalisations are a proportion of individuals from infectious
     # sub-compartments. Add a small normally distributed error to proportion
     # hospitalised to facilitate rounding to avoid fractional individuals
+    # NOTE: proportion hospitalised = 1 - proportion community
     hospitalised_current <- round(
       # the SD of the normal distribution is small enough that values
       # added to zero lead to rounding to zero
       # first infectious_past compartment cannot be hospitalised and is
       # transferred to funeral compartment
-      (infectious_past[-1] * p_hosp) + rounding_factor
+      (infectious_past[-1] * (1.0 - params[["prop_community"]])) +
+        rounding_factor
     )
 
     # calculate new infectious individuals

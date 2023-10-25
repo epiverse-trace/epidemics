@@ -108,9 +108,9 @@ ebola <- infection(
   r0 = 1.5,
   infectious_period = 12,
   preinfectious_period = 5,
-  prop_hospitalised = 0.1,
-  etu_safety = 0.3,
-  funeral_safety = 0.5
+  prop_community = 0.9,
+  etu_risk = 0.7,
+  funeral_risk = 0.5
 )
 
 # print to visualise
@@ -287,13 +287,13 @@ We see that while some replicates affect over 600 individuals within the first 1
 
 An intervention that reduces transmission can be applied by passing a `<rate_intervention>` on the transmission rate parameter, `beta`.
 
-We model an intervention that begins 30 days into the outbreak, and reduces transmission by 20%. T
+We begin with an initial simple example that models an intervention that begins 15 days into the outbreak, and reduces transmission by 20%.
 
 ```{r}
 # create an intervention on the transmission rate
 reduce_transmission <- intervention(
   type = "rate",
-  time_begin = 30, time_end = 100, reduction = 0.2
+  time_begin = 15, time_end = 100, reduction = 0.2
 )
 ```
 
@@ -330,10 +330,10 @@ data_intervention$scenario <- "intervention"
 data_scenarios <- rbindlist(list(data_baseline, data_intervention))
 ```
 
-```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 30th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."}
-ggplot(data_scenarios[compartment == "infectious", ]) +
+```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."}
+ggplot(data_scenarios[compartment == "removed", ]) +
   geom_vline(
-    xintercept = 30,
+    xintercept = 15,
     linetype = "dotted"
   ) +
   geom_line(
@@ -350,12 +350,255 @@ ggplot(data_scenarios[compartment == "infectious", ]) +
   ) +
   labs(
     x = "Days",
-    y = "Number of individuals infectious"
+    y = "Outbreak size"
   )
 ```
 
 We see that applying an intervention that reduces transmission can be effective in reducing the number of individuals infected over the outbreak.
 This model will soon be able to accommodate interventions that act on other processes, such as hospitalisation and funeral safety, to model the effect of campaigns to tackle these as sources of infections.
+
+## Modelling a multi-pronged ebola response
+
+Since EVD is a severe disease with a high case fatality risk, responses to an outbreak may require the simultaneous implementation of a number of measures to reduce transmission to end the outbreak quickly.
+
+We can use the EVD model and existing functionality in _epidemics_ to model the implementation of a multi-pronged response to ebola that aims to:
+
+- Improve detection of cases and hospitalise them,
+
+- Improve the safety of hospitals and reduce the risk of individuals being treated there passing on ebola to susceptibles in the community, and
+
+- Improve the safety of funeral practices to reduce the risk of transmission from individuals who died while infectious with ebola.
+
+Here, we show the effects of these interventions separately, before showing their combined effect.
+
+### Improving hospitalisation
+
+We first model an intervention that begins 30 days into the outbreak, and reduces the proportion of individuals who are infectious in the community by 30%, thus improving the proportion that are hospitalised.
+
+```{r}
+# create an intervention on the transmission rate
+improve_hospitalisation <- intervention(
+  type = "rate",
+  time_begin = 15, time_end = 100, reduction = 0.3
+)
+```
+
+We can pass the interventions to the model function's `intervention` argument as a named list, with the names indicating the infection parameters to target.
+
+```{r}
+# set a seed for comparison with the baseline model
+set.seed(0)
+# note that the intervention is passed within a list,
+# where it is named for the rate it is targeting
+data_improve_hosp <- epidemic_ebola_r(
+  population = guinea_population,
+  infection = ebola,
+  intervention = list(
+    prop_community = improve_hospitalisation
+  ),
+  time_end = 100
+)
+
+# assign scenario name
+data_improve_hosp$scenario <- "improve_hosp"
+
+# bind the data together
+data_scenarios <- rbindlist(list(data_baseline, data_improve_hosp))
+```
+
+```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the proportion of infectious cases in the community by transferring them to a hospitalisation setting."}
+ggplot(data_scenarios[compartment == "removed", ]) +
+  geom_vline(
+    xintercept = 15,
+    linetype = "dotted"
+  ) +
+  geom_line(
+    aes(time, value, colour = scenario)
+  ) +
+  scale_colour_brewer(
+    palette = "Set1",
+    name = "Scenario",
+    labels = c("Baseline", "Improve hospitalisation")
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Days",
+    y = "Outbreak size"
+  )
+```
+
+### Improve ETU safety
+
+We next model an intervention to improve the safety of ETUs by reducing transmission risk by 70%, alongside the earlier improvement in hospitalisation.
+
+```{r}
+# create an intervention on the transmission rate
+improve_etu_safety <- intervention(
+  type = "rate",
+  time_begin = 15, time_end = 100, reduction = 0.7
+)
+```
+
+```{r}
+# set a seed for comparison with the baseline model
+set.seed(0)
+# note that the intervention is passed within a list,
+# where it is named for the rate it is targeting
+data_improve_etu <- epidemic_ebola_r(
+  population = guinea_population,
+  infection = ebola,
+  intervention = list(
+    etu_risk = improve_etu_safety
+  ),
+  time_end = 100
+)
+
+# assign scenario name
+data_improve_etu$scenario <- "improve_etu"
+
+# bind the data together
+data_scenarios <- rbindlist(list(data_baseline, data_improve_etu))
+```
+
+```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the risk of ebola transmission in a hospitalisation context."}
+ggplot(data_scenarios[compartment == "removed", ]) +
+  geom_vline(
+    xintercept = 15,
+    linetype = "dotted"
+  ) +
+  geom_line(
+    aes(time, value, colour = scenario)
+  ) +
+  scale_colour_brewer(
+    palette = "Set1",
+    name = "Scenario",
+    labels = c("Baseline", "Improve ETU safety")
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Days",
+    y = "Outbreak size"
+  )
+```
+
+Note that the reason that this intervention has little to no effect is that it is only likely to be effective when the proportion of cases hospitalised is high.
+In this model, the large majority of cases remain in the community, and improving the safety of ETUs is not an effective intervention.
+
+### Improve funeral safety
+
+We next model an intervention to improve the safety of funeral practices, by reducing transmission risk associated with funerals by 50%.
+
+```{r}
+# create an intervention on the transmission rate
+reduce_funeral_risk <- intervention(
+  type = "rate",
+  time_begin = 15, time_end = 100, reduction = 0.5
+)
+```
+
+```{r}
+# set a seed for comparison with the baseline model
+set.seed(0)
+# note that the intervention is passed within a list,
+# where it is named for the rate it is targeting
+data_improve_funeral <- epidemic_ebola_r(
+  population = guinea_population,
+  infection = ebola,
+  intervention = list(
+    funeral_risk = reduce_funeral_risk
+  ),
+  time_end = 100
+)
+
+# assign scenario name
+data_improve_funeral$scenario <- "improve_funeral"
+
+# bind the data together
+data_scenarios <- rbindlist(list(data_baseline, data_improve_funeral))
+```
+
+```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the risk of ebola transmission in a funeral context."}
+ggplot(data_scenarios[compartment == "removed", ]) +
+  geom_vline(
+    xintercept = 30,
+    linetype = "dotted"
+  ) +
+  geom_line(
+    aes(time, value, colour = scenario)
+  ) +
+  scale_colour_brewer(
+    palette = "Set1",
+    name = "Scenario",
+    labels = c("Baseline", "Improve funeral safety")
+  ) +
+  scale_y_sqrt() +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Days",
+    y = "Outbreak size"
+  )
+```
+
+### Combined interventions
+
+```{r}
+# set a seed for comparison with the baseline model
+set.seed(0)
+# note that the intervention is passed within a list,
+# where it is named for the rate it is targeting
+data_combined_interventions <- epidemic_ebola_r(
+  population = guinea_population,
+  infection = ebola,
+  intervention = list(
+    beta = reduce_transmission,
+    prop_community = improve_hospitalisation,
+    etu_risk = improve_etu_safety,
+    funeral_risk = reduce_funeral_risk
+  ),
+  time_end = 100
+)
+
+# assign scenario name
+data_combined_interventions$scenario <- "combined_interventions"
+
+# bind the data together
+data_scenarios <- rbindlist(
+  list(data_baseline, data_combined_interventions)
+)
+```
+
+```{r class.source = 'fold-hide', fig.cap="Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days."}
+ggplot(data_scenarios[compartment == "removed", ]) +
+  geom_vline(
+    xintercept = 30,
+    linetype = "dotted"
+  ) +
+  geom_line(
+    aes(time, value, colour = scenario)
+  ) +
+  scale_colour_brewer(
+    palette = "Set1",
+    name = "Scenario",
+    labels = c("Baseline", "Combined interventions")
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Days",
+    y = "Outbreak size"
+  )
+```
 
 ## Details: Discrete-time ebola virus disease model
 

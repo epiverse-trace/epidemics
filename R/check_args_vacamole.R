@@ -3,13 +3,13 @@
 #' @rdname check_prepare_vacamole_args
 #'
 #' @description Check and prepare the four main arguments to
-#' [epidemic_vacamole_cpp()] for use with [.epidemic_vacamole_cpp()].
+#' [model_vacamole_cpp()] for use with [.model_vacamole_cpp()].
 #'
 #' `.check_args_epidemic_vacamole()` adds an empty `<intervention>` object if
 #' this is missing from the model arguments.
 #'
 #' `.prepare_args_epidemics_vacamole()` prepares arguments for
-#' [.epidemic_vacamole_cpp()], which is the C++ function that solves the default
+#' [.model_vacamole_cpp()], which is the C++ function that solves the default
 #' ODE system using a Boost _odeint_ solver.
 #' `.prepare_args_epidemics_vacamole()` converts the arguments collected in
 #' `mod_args` into simpler structures such as lists and numeric or integer
@@ -24,7 +24,7 @@
 #' corresponding classes.
 #'
 #' `.prepare_args_epidemic_vacamole()` returns a list of model arguments
-#' suitable for [.epidemic_vacamole_cpp()]. This is a named list consisting of:
+#' suitable for [.model_vacamole_cpp()]. This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
 #' rather than proportional values;

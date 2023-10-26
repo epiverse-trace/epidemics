@@ -65,7 +65,7 @@ infect <- infection(
 test_that("Vacamole model works", {
   # check model runs silently
   expect_no_condition(
-    epidemic_vacamole_cpp(
+    model_vacamole_cpp(
       population = uk_population,
       infection = infect,
       vaccination = double_vaccination,
@@ -73,7 +73,7 @@ test_that("Vacamole model works", {
     )
   )
 
-  data <- epidemic_vacamole_cpp(
+  data <- model_vacamole_cpp(
     population = uk_population,
     infection = infect,
     vaccination = double_vaccination,
@@ -137,7 +137,7 @@ infect <- infection(
 
 test_that("Vacamole model with no vaccination", {
   # check model runs silently
-  data <- epidemic_vacamole_cpp(
+  data <- model_vacamole_cpp(
     population = uk_population,
     infection = infect,
     vaccination = no_vaccination,
@@ -164,7 +164,7 @@ nonlethal_infect <- infection(
 )
 
 test_that("Vacamole with non-fatal infection", {
-  data <- epidemic_vacamole_cpp(
+  data <- model_vacamole_cpp(
     population = uk_population,
     infection = nonlethal_infect,
     vaccination = no_vaccination,
@@ -190,7 +190,7 @@ no_hospitalisation <- infection(
 )
 
 test_that("Vacamole with no hospitalisation", {
-  data <- epidemic_vacamole_cpp(
+  data <- model_vacamole_cpp(
     population = uk_population,
     infection = no_hospitalisation,
     vaccination = no_vaccination,
@@ -208,7 +208,7 @@ test_that("Vacamole with no hospitalisation", {
 #### Test for Vacamole model run with wrong inputs ####
 test_that("Vacamole model errors correctly", {
   expect_error(
-    epidemic_vacamole_cpp(
+    model_vacamole_cpp(
       model_name = "vacamole",
       population = uk_population,
       infection = infect,
@@ -223,7 +223,7 @@ test_that("Vacamole model errors correctly", {
 test_that("Output of the Vacamole epidemic model R", {
   # run epidemic model, expect no conditions
   expect_no_condition(
-    epidemic_vacamole_r(
+    model_vacamole_r(
       population = uk_population,
       infection = infect,
       intervention = list(contacts = no_contacts_intervention(uk_population)),
@@ -232,7 +232,7 @@ test_that("Output of the Vacamole epidemic model R", {
     )
   )
 
-  data <- epidemic_vacamole_r(
+  data <- model_vacamole_r(
     population = uk_population,
     infection = infect,
     intervention = list(contacts = no_contacts_intervention(uk_population)),
@@ -305,7 +305,7 @@ test_that("Equivalence of vacamole model R and Cpp", {
   )
 
   # run epidemic model, expect no conditions
-  data_r <- epidemic_vacamole_r(
+  data_r <- model_vacamole_r(
     population = uk_population,
     infection = infect,
     intervention = list(contacts = multi_intervention),
@@ -313,7 +313,7 @@ test_that("Equivalence of vacamole model R and Cpp", {
     time_end = 100, increment = 1.0
   )
 
-  data_cpp <- epidemic_vacamole_cpp(
+  data_cpp <- model_vacamole_cpp(
     population = uk_population,
     infection = infect,
     intervention = list(contacts = multi_intervention),

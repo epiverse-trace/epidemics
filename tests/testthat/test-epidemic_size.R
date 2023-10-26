@@ -104,7 +104,7 @@ uk_population <- population(
 )
 
 test_that("Epidemic size with no deaths is correct", {
-  data <- epidemic_vacamole_cpp(
+  data <- model_vacamole_cpp(
     population = uk_population,
     infection = nonlethal_infect,
     vaccination = no_vaccination(uk_population, doses = 2L),

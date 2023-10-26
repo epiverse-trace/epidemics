@@ -64,8 +64,8 @@
 //' as specified in the initial conditions matrix (see [population()]).
 //' The second list element is a vector of timesteps.
 //' @keywords internal
-// [[Rcpp::export(name=".epidemic_vacamole_cpp")]]
-Rcpp::List epidemic_vacamole_cpp_internal(
+// [[Rcpp::export(name=".model_vacamole_cpp")]]
+Rcpp::List model_vacamole_cpp_internal(
     const Eigen::MatrixXd &initial_state, const double &beta,
     const double &beta_v, const double &alpha, const double &omega,
     const double &omega_v, const double &eta, const double &eta_v,

@@ -15,7 +15,7 @@
 in \code{mod_args}.
 
 \code{.prepare_args_epidemic_ebola()} returns a list of model arguments suitable
-for \code{\link[=.epidemic_ebola_cpp]{.epidemic_ebola_cpp()}}. This is a named list consisting of:
+for \code{\link[=.model_ebola_cpp]{.model_ebola_cpp()}}. This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
 rather than proportional values;
@@ -31,6 +31,6 @@ compartment;
 }
 \description{
 Check and prepare the four main arguments to
-\code{\link[=epidemic_ebola_cpp]{epidemic_ebola_cpp()}} for use with \code{\link[=.epidemic_ebola_cpp]{.epidemic_ebola_cpp()}}.
+\code{\link[=model_ebola_cpp]{model_ebola_cpp()}} for use with \code{\link[=.model_ebola_cpp]{.model_ebola_cpp()}}.
 }
 \keyword{internal}

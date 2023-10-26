@@ -119,7 +119,7 @@ ebola
 
 ## Run epidemic model
 
-We run the model using the function `epidemic_ebola_r()`.
+We run the model using the function `model_ebola_r()`.
 While there is a C++ equivalent of this model, it was not found to be much faster than the R-only version, and is not made available to users.
 
 The model is run for 100 days, with data reported on each day.
@@ -131,7 +131,7 @@ set.seed(0)
 
 # run the epidemic model using `epidemic`
 # we call the model "ebola" from the library
-data <- epidemic_ebola_r(
+data <- model_ebola_r(
   population = guinea_population,
   infection = ebola,
   time_end = 100
@@ -191,7 +191,7 @@ set.seed(1)
 data <- Map(
   x = seq(100),
   f = function(x) {
-    data <- epidemic_ebola_r(
+    data <- model_ebola_r(
       population = guinea_population,
       infection = ebola,
       time_end = 100
@@ -304,7 +304,7 @@ We can pass the intervention to the model function's `intervention` argument.
 set.seed(0)
 
 # run the epidemic model and save data as the baseline
-data_baseline <- epidemic_ebola_r(
+data_baseline <- model_ebola_r(
   population = guinea_population,
   infection = ebola,
   time_end = 100
@@ -313,7 +313,7 @@ data_baseline <- epidemic_ebola_r(
 set.seed(0)
 # note that the intervention is passed within a list,
 # where it is named for the rate it is targeting
-data_intervention <- epidemic_ebola_r(
+data_intervention <- model_ebola_r(
   population = guinea_population,
   infection = ebola,
   intervention = list(
@@ -705,7 +705,7 @@ Infectious individual with $N$ timesteps before exiting the infectious compartme
 
 Hospitalised individuals can contribute to transmission of Ebola to susceptibles depending on the value of $p_\text{ETU}$, which is the probability (or proportion) of hospitalised cases contributing to the infection of susceptibles.
 This is interpreted as the relative safety of Ebolavirus treatment units (ETUs), with a range of 0.0 -- 1.0, where 0.0 indicates that hospitalisation does not reduce transmission at all, while 1.0 indicates that hospitalisation prevents onward transmission entirely.
-This is passed as the `etu_safety` value of the `<infection>`-class object passed to the `infection` argument in `epidemic_ebola_r()`.
+This is passed as the `etu_safety` value of the `<infection>`-class object passed to the `infection` argument in `model_ebola_r()`.
 
 We assume that deaths in hospital lead to Ebola-safe funerals, and individuals exiting the hospitalised compartment move to the 'removed' compartment, which holds both recoveries and deaths.
 

@@ -111,6 +111,12 @@ prob_discrete_erlang <- function(shape, rate) {
 #' parameters, such as the transmission rate, over the epidemic.
 #' See [intervention()] for details on constructing rate interventions.
 #' Defaults to `NULL`, representing no interventions on model parameters.
+#'
+#' @param time_dependence A named list where each name
+#' is a model parameter (see `infection`), and each element is a function with
+#' the first two arguments being the current simulation `time`, and `x`, a value
+#' that is dependent on `time` (`x` represents a model parameter).
+#' See **Details** for more information.
 #' @param time_end The maximum number of timesteps over which to run the model,
 #' in days. Defaults to 100 days.
 #' @return
@@ -184,6 +190,18 @@ prob_discrete_erlang <- function(shape, rate) {
 #'
 #' Individuals in the 'removed' compartment do no affect model dynamics.
 #'
+#' ## Implementing vaccination
+#'
+#' Vaccination cannot currently be implemented in this model as it does not have
+#' a "vaccinated" epidemiological compartment. This prevents the use of a
+#' `<vaccination>` object.
+#'
+#' Instead, users can use the `time_dependence` argument to pass a function that
+#' modifies model parameters --- specifically, the transmission rate --- in a
+#' way that is consistent with the effect of vaccination.
+#' An example is shown in the vignette about this model; run this code to open
+#' the vignette: \code{vignette("ebola_model", package = "epidemics")}
+#'
 #' @references
 #' Li, S.-L., Ferrari, M. J., Bjørnstad, O. N., Runge, M. C., Fonnesbeck, C. J.,
 #' Tildesley, M. J., Pannell, D., & Shea, K. (2019). Concurrent assessment of
@@ -197,7 +215,9 @@ prob_discrete_erlang <- function(shape, rate) {
 #'
 #' @export
 epidemic_ebola_r <- function(population, infection,
-                             intervention = NULL, time_end = 100) {
+                             intervention = NULL,
+                             time_dependence = NULL,
+                             time_end = 100) {
   # input checking for the ebola R model
   assert_population(
     population,
@@ -226,6 +246,18 @@ epidemic_ebola_r <- function(population, infection,
       min.len = 1,
       names = "unique", any.missing = FALSE,
       types = "rate_intervention"
+    )
+  }
+  # check that time-dependence functions are passed as a list with at least the
+  # arguments `time` and `x`
+  # time must be before x, and they must be first two args
+  if (!is.null(time_dependence)) {
+    checkmate::assert_list(time_dependence, "function")
+    invisible(
+      lapply(time_dependence, checkmate::check_function,
+        args = c("time", "x"),
+        ordered = TRUE
+      )
     )
   }
 
@@ -318,13 +350,27 @@ epidemic_ebola_r <- function(population, infection,
 
   ## Run the simulation from time t = 2 to t = time_end
   for (time in seq(2, time_end)) {
-    # check if an intervention is active
+    # make a copy to assign time-dependent and intervention-affected values
+    params <- parameters
+
+    # apply time dependence before interventions
+    time_dependent_params <- Map(
+      parameters[names(time_dependence)],
+      time_dependence,
+      f = function(x, func) {
+        func(time = time, x = x) # NOTE: time taken from loop index!
+      }
+    )
+    # assign time-modified param values
+    params[names(time_dependent_params)] <- time_dependent_params
+
+    # check if an intervention is active and apply it to rates
     params <- intervention_on_rates(
       t = time,
       interventions = intervention[
         setdiff(names(intervention), "contacts")
       ],
-      parameters = parameters
+      parameters = params
     )
 
     # transmission modifiers - 1.0 for baseline, user-provided for ETU risk and

@@ -126,7 +126,7 @@ test_that("Multi-dose vaccination using `c()`", {
 })
 
 # run model with vaccination
-data_vaccination <- epidemic_default_cpp(
+data_vaccination <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   vaccination = elder_vaccination,
@@ -134,7 +134,7 @@ data_vaccination <- epidemic_default_cpp(
 )
 
 # run model without vaccination
-data <- epidemic_default_cpp(
+data <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   time_end = 200, increment = 1.0

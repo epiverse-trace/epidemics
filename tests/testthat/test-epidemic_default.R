@@ -32,7 +32,7 @@ pandemic <- infection(
 test_that("Output of default epidemic model Cpp", {
   # run epidemic model, expect no condition
   expect_no_condition(
-    epidemic_default_cpp(
+    model_default_cpp(
       population = uk_population,
       infection = pandemic,
       intervention = list(
@@ -42,7 +42,7 @@ test_that("Output of default epidemic model Cpp", {
     )
   )
 
-  data <- epidemic_default_cpp(
+  data <- model_default_cpp(
     population = uk_population,
     infection = pandemic,
     intervention = list(
@@ -112,7 +112,7 @@ test_that("Larger R0 leads to larger final size in default epidemic model", {
     infection_list,
     function(infection_) {
       # run model on data
-      data <- epidemic_default_cpp(
+      data <- model_default_cpp(
         population = uk_population,
         infection = infection_,
         time_end = 10, increment = 1.0
@@ -157,7 +157,7 @@ pandemic <- infection(
 )
 
 test_that("Identical population sizes lead to identical final size", {
-  data <- epidemic_default_cpp(
+  data <- model_default_cpp(
     population = dummy_population,
     infection = pandemic,
     time_end = 200, increment = 0.1
@@ -191,7 +191,7 @@ test_that("Lower preinfectious period leads to larger final size", {
   data <- lapply(
     infection_list,
     function(infection_) {
-      epidemic_default_cpp(
+      model_default_cpp(
         population = dummy_population,
         infection = infection_,
         time_end = 200, increment = 0.1
@@ -226,7 +226,7 @@ test_that("Lower infectious period leads to larger final size", {
   data <- lapply(
     infection_list,
     function(infection_) {
-      epidemic_default_cpp(
+      model_default_cpp(
         population = dummy_population,
         infection = infection_,
         time_end = 200, increment = 0.1
@@ -254,7 +254,7 @@ test_that("Group with more contacts has larger final size and infections", {
   # add to dummy pop
   dummy_population$contact_matrix <- contact_matrix
 
-  data <- epidemic_default_cpp(
+  data <- model_default_cpp(
     population = dummy_population,
     infection = pandemic,
     time_end = 200, increment = 0.1
@@ -281,14 +281,14 @@ test_that("Group with more contacts has larger final size and infections", {
 test_that("Output of default epidemic model R", {
   # run epidemic model, expect no conditions
   expect_no_condition(
-    epidemic_default_r(
+    model_default_r(
       population = uk_population,
       infection = pandemic,
       time_end = 100, increment = 1.0
     )
   )
 
-  data <- epidemic_default_r(
+  data <- model_default_r(
     population = uk_population,
     infection = pandemic,
     intervention = list(
@@ -366,7 +366,7 @@ test_that("Equivalence of default model R and Cpp", {
   )
 
   # run epidemic model, expect no conditions
-  data_r <- epidemic_default_r(
+  data_r <- model_default_r(
     population = uk_population,
     infection = pandemic,
     intervention = list(
@@ -376,7 +376,7 @@ test_that("Equivalence of default model R and Cpp", {
     time_end = 100, increment = 1.0
   )
 
-  data_cpp <- epidemic_default_cpp(
+  data_cpp <- model_default_cpp(
     population = uk_population,
     infection = pandemic,
     intervention = list(

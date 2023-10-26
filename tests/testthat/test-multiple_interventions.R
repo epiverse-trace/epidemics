@@ -81,7 +81,7 @@ test_that("Cumulative effect of NPIs", {
 test_that("Default model with multiple interventions", {
   # run epidemic model
   expect_no_condition(
-    epidemic_default_cpp(
+    model_default_cpp(
       population = uk_population,
       infection = pandemic,
       intervention = list(contacts = multi_npi),
@@ -90,13 +90,13 @@ test_that("Default model with multiple interventions", {
   )
 
   # expect final size is smaller with stacked interventions
-  data_1_npi <- epidemic_default_cpp(
+  data_1_npi <- model_default_cpp(
     population = uk_population,
     infection = pandemic,
     intervention = list(contacts = npi_2),
     time_end = 100
   )
-  data_2_npi <- epidemic_default_cpp(
+  data_2_npi <- model_default_cpp(
     population = uk_population,
     infection = pandemic,
     intervention = list(contacts = multi_npi),

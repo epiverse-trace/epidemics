@@ -112,7 +112,7 @@ pandemic <- infection(
 
 ```{r}
 # run an epidemic model using `epidemic`
-output <- epidemic_default_cpp(
+output <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   time_end = 600, increment = 1.0

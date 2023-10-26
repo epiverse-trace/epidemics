@@ -106,7 +106,7 @@ ggplot() +
 Next we run an epidemic model while including the time dependence of $\beta$.
 
 ```{r}
-data <- epidemic_default_cpp(
+data <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   time_dependence = list(
@@ -190,7 +190,7 @@ Then we run the model while specifying the time-dependence of the transmission r
 
 ```{r}
 # run the model with interventions and time-dependence
-data_npi <- epidemic_default_cpp(
+data_npi <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   intervention = list(contacts = npis),
@@ -279,7 +279,7 @@ We model the effect of administering vaccine doses between the expected peaks of
 
 ```{r}
 # pass time dependence and vaccination. Note no interventions
-data_vax <- epidemic_default_cpp(
+data_vax <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   vaccination = vax_regime,

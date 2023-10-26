@@ -92,14 +92,14 @@ vax_regime <- vaccination(
 ```{r}
 mark(
   # run epidemic model, expect no conditions
-  "epidemic default R" = epidemic_default_r(
+  "epidemic default R" = model_default_r(
     population = uk_population,
     infection = pandemic,
     intervention = list(contacts = multi_intervention),
     vaccination = vax_regime,
     time_end = 100, increment = 1.0
   ),
-  "epidemic default Rcpp" = epidemic_default_cpp(
+  "epidemic default Rcpp" = model_default_cpp(
     population = uk_population,
     infection = pandemic,
     intervention = list(contacts = multi_intervention),

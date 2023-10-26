@@ -7,7 +7,7 @@
 #' intervention and an optional vaccination regime.
 #'
 #' This function is intended to only be called internally from
-#' [epidemic_default_cpp()].
+#' [model_default_cpp()].
 #'
 #' Allows heterogeneity in social contact patterns, and variable sizes of
 #' demographic groups.
@@ -41,16 +41,8 @@
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.epidemic_default_cpp <- function(
-    initial_state, beta, alpha, gamma, contact_matrix, npi_time_begin,
-    npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu,
-    rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(
-        `_epidemics_epidemic_default_cpp_internal`, initial_state,
-        beta, alpha, gamma, contact_matrix, npi_time_begin, npi_time_end,
-        npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions,
-        time_dependence, time_end, increment
-    )
+.model_default_cpp <- function(initial_state, beta, alpha, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_default_cpp_internal`, initial_state, beta, alpha, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 
 #' @title Run an SEIR model with Erlang passage times

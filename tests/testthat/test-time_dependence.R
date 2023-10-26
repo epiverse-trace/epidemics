@@ -45,7 +45,7 @@ mod_beta <- function(time, x, tmax = 365 / 4) x + (x * sinpi(time / tmax))
 #### Tests for functioning and equivalence ####
 test_that("Basic expectations for time dependence functions", {
   expect_no_condition(
-    epidemic_default_cpp(
+    model_default_cpp(
       population = uk_population,
       infection = pandemic,
       time_dependence = list(
@@ -56,7 +56,7 @@ test_that("Basic expectations for time dependence functions", {
   )
 
   expect_no_condition(
-    epidemic_default_cpp(
+    model_default_cpp(
       population = uk_population,
       infection = pandemic,
       time_dependence = list(
@@ -66,7 +66,7 @@ test_that("Basic expectations for time dependence functions", {
     )
   )
 
-  data_cpp <- epidemic_default_cpp(
+  data_cpp <- model_default_cpp(
     population = uk_population,
     infection = pandemic,
     time_dependence = list(
@@ -74,7 +74,7 @@ test_that("Basic expectations for time dependence functions", {
     ),
     time_end = 365, increment = 1
   )
-  data_r <- epidemic_default_cpp(
+  data_r <- model_default_cpp(
     population = uk_population,
     infection = pandemic,
     time_dependence = list(

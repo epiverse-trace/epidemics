@@ -78,13 +78,13 @@ pandemic <- infection(
 )
 
 # run model with different populations
-data_full_pop <- epidemic_default_cpp(
+data_full_pop <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   time_end = 200, increment = 1.0
 )
 
-data_half_pop <- epidemic_default_cpp(
+data_half_pop <- model_default_cpp(
   population = half_population,
   infection = pandemic,
   time_end = 200, increment = 1.0

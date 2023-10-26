@@ -27,7 +27,7 @@ pandemic <- infection(
 )
 
 # run epidemic simulation with no vaccination or intervention
-data <- epidemic_default_cpp(
+data <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   time_end = 200,

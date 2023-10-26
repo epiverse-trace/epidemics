@@ -51,7 +51,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #' developed to model the West African Ebola virus disease outbreak of 2014.
 #' See **Details** for more information.
 #'
-#' `epidemic_ebola_cpp()` is an Rcpp implementation of this model that currently
+#' `model_ebola_cpp()` is an Rcpp implementation of this model that currently
 #' lags behind the R implementation, and is likely to be removed.
 #'
 #' @param population An object of the `<population>` class, see [population()].
@@ -216,10 +216,9 @@ prob_discrete_erlang <- function(shape, rate) {
 #' \doi{10.1080/17513758.2017.1401677}
 #'
 #' @export
-epidemic_ebola_r <- function(population, infection,
-                             intervention = NULL,
-                             time_dependence = NULL,
-                             time_end = 100) {
+model_ebola_r <- function(population, infection,
+                          intervention = NULL,
+                          time_dependence = NULL, time_end = 100) {
   # input checking for the ebola R model
   assert_population(
     population,
@@ -477,8 +476,8 @@ epidemic_ebola_r <- function(population, infection,
 #'
 #' @name epidemic_ebola
 #' @rdname epidemic_ebola
-epidemic_ebola_cpp <- function(population, infection,
-                               time_end = 100) {
+model_ebola_cpp <- function(population, infection,
+                            time_end = 100) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
   checkmate::assert_class(infection, "infection")
@@ -505,7 +504,7 @@ epidemic_ebola_cpp <- function(population, infection,
   )
 
   # run model over arguments
-  output <- do.call(.epidemic_ebola_cpp, model_arguments)
+  output <- do.call(.model_ebola_cpp, model_arguments)
 
   # prepare output and return
   output_to_df(output, population, compartments)

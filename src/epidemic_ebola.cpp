@@ -32,8 +32,8 @@
 //' This output is intended to be passed to [output_to_df()] to be converted
 //' into a data.frame for further analysis.
 //' @keywords internal
-// [[Rcpp::export(name=".epidemic_ebola_cpp")]]
-Rcpp::List epidemic_ebola_cpp_internal(const Rcpp::IntegerVector &initial_state,
+// [[Rcpp::export(name=".model_ebola_cpp")]]
+Rcpp::List model_ebola_cpp_internal(const Rcpp::IntegerVector &initial_state,
                                        const int &population_size,
                                        const double &beta, const int &shape_E,
                                        const double &rate_E, const int &shape_I,

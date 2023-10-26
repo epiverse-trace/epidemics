@@ -26,7 +26,7 @@ ebola <- infection(
 test_that("Ebola model: basic expectations", {
   # runs without issues
   expect_no_condition(
-    epidemic_ebola_r(
+    model_ebola_r(
       population = pop,
       infection = ebola,
       time_end = 100
@@ -35,7 +35,7 @@ test_that("Ebola model: basic expectations", {
 
   set.seed(1)
   # returns a data.table
-  data <- epidemic_ebola_r(
+  data <- model_ebola_r(
     population = pop,
     infection = ebola,
     time_end = 200
@@ -115,7 +115,7 @@ test_that("Larger R0 leads to larger final size in ebola model", {
     infection_list,
     function(infection_) {
       # run model on data
-      data <- epidemic_ebola_r(
+      data <- model_ebola_r(
         population = pop,
         infection = infection_,
         time_end = 100
@@ -160,7 +160,7 @@ test_that("Ebola model works with rate interventions", {
   )
 
   # ideally no conditions are triggered
-  data <- epidemic_ebola_r(
+  data <- model_ebola_r(
     population = population,
     infection = ebola,
     intervention = intervention,
@@ -204,7 +204,7 @@ test_that("Ebola model with hospitalisation", {
     etu_risk = 0.2,
     funeral_risk = 0.5
   )
-  data <- epidemic_ebola_r(
+  data <- model_ebola_r(
     population = population,
     infection = ebola,
     time_end = 100
@@ -238,7 +238,7 @@ test_that("Ebola model with hospitalisation", {
     funeral_risk = 0.5
   )
   # expect that the final size is the same as `total_cases` (20)
-  data <- epidemic_ebola_r(
+  data <- model_ebola_r(
     population = population,
     infection = ebola,
     time_end = 100
@@ -276,7 +276,7 @@ test_that("Ebola model with funeral safety", {
   )
 
   # expect that the final size is the same as `total_cases` (20)
-  data <- epidemic_ebola_r(
+  data <- model_ebola_r(
     population = population,
     infection = ebola,
     time_end = 100
@@ -297,7 +297,7 @@ test_that("Basic expectations for ebola model C++ version", {
     shape_E = 5, rate_E = 1, shape_I = 5, rate_I = 1
   )
 
-  data_cpp <- epidemic_ebola_cpp(
+  data_cpp <- model_ebola_cpp(
     population = pop,
     infection = ebola_for_cpp
   )

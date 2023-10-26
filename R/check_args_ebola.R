@@ -3,14 +3,14 @@
 #' @rdname check_prepare_ebola_args
 #'
 #' @description Check and prepare the four main arguments to
-#' [epidemic_ebola_cpp()] for use with [.epidemic_ebola_cpp()].
+#' [model_ebola_cpp()] for use with [.model_ebola_cpp()].
 #' @return
 #'
 #' `.check_args_epidemic_ebola()` invisibly returns the model arguments passed
 #' in `mod_args`.
 #'
 #' `.prepare_args_epidemic_ebola()` returns a list of model arguments suitable
-#' for [.epidemic_ebola_cpp()]. This is a named list consisting of:
+#' for [.model_ebola_cpp()]. This is a named list consisting of:
 #'
 #' - `initial_state`: the initial conditions modified to represent absolute
 #' rather than proportional values;

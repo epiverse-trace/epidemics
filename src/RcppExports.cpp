@@ -37,9 +37,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// epidemic_ebola_cpp_internal
-Rcpp::List epidemic_ebola_cpp_internal(const Rcpp::IntegerVector& initial_state, const int& population_size, const double& beta, const int& shape_E, const double& rate_E, const int& shape_I, const double& rate_I, const int& time_end);
-RcppExport SEXP _epidemics_epidemic_ebola_cpp_internal(SEXP initial_stateSEXP, SEXP population_sizeSEXP, SEXP betaSEXP, SEXP shape_ESEXP, SEXP rate_ESEXP, SEXP shape_ISEXP, SEXP rate_ISEXP, SEXP time_endSEXP) {
+// model_ebola_cpp_internal
+Rcpp::List model_ebola_cpp_internal(const Rcpp::IntegerVector& initial_state, const int& population_size, const double& beta, const int& shape_E, const double& rate_E, const int& shape_I, const double& rate_I, const int& time_end);
+RcppExport SEXP _epidemics_model_ebola_cpp_internal(SEXP initial_stateSEXP, SEXP population_sizeSEXP, SEXP betaSEXP, SEXP shape_ESEXP, SEXP rate_ESEXP, SEXP shape_ISEXP, SEXP rate_ISEXP, SEXP time_endSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -51,7 +51,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type shape_I(shape_ISEXP);
     Rcpp::traits::input_parameter< const double& >::type rate_I(rate_ISEXP);
     Rcpp::traits::input_parameter< const int& >::type time_end(time_endSEXP);
-    rcpp_result_gen = Rcpp::wrap(epidemic_ebola_cpp_internal(initial_state, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end));
+    rcpp_result_gen = Rcpp::wrap(model_ebola_cpp_internal(initial_state, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -100,7 +100,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_epidemics_model_default_cpp_internal", (DL_FUNC) &_epidemics_model_default_cpp_internal, 15},
-    {"_epidemics_epidemic_ebola_cpp_internal", (DL_FUNC) &_epidemics_epidemic_ebola_cpp_internal, 8},
+    {"_epidemics_model_ebola_cpp_internal", (DL_FUNC) &_epidemics_model_ebola_cpp_internal, 8},
     {"_epidemics_epidemic_vacamole_cpp_internal", (DL_FUNC) &_epidemics_epidemic_vacamole_cpp_internal, 20},
     {"_epidemics_prob_discrete_erlang_cpp", (DL_FUNC) &_epidemics_prob_discrete_erlang_cpp, 2},
     {NULL, NULL, 0}

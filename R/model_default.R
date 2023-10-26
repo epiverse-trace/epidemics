@@ -77,12 +77,12 @@
 #' "infectious", "recovered", and "vaccinated".
 #' @export
 model_default_cpp <- function(population,
-                                 infection,
-                                 intervention = NULL,
-                                 vaccination = NULL,
-                                 time_dependence = NULL,
-                                 time_end = 100,
-                                 increment = 1) {
+                              infection,
+                              intervention = NULL,
+                              vaccination = NULL,
+                              time_dependence = NULL,
+                              time_end = 100,
+                              increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
   checkmate::assert_class(infection, "infection")
@@ -221,12 +221,12 @@ model_default_cpp <- function(population,
 #'
 #' @export
 model_default_r <- function(population,
-                               infection,
-                               intervention = NULL,
-                               vaccination = NULL,
-                               time_dependence = NULL,
-                               time_end = 100,
-                               increment = 1) {
+                            infection,
+                            intervention = NULL,
+                            vaccination = NULL,
+                            time_dependence = NULL,
+                            time_end = 100,
+                            increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
   checkmate::assert_class(infection, "infection")

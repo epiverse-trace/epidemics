@@ -304,11 +304,12 @@ test_that("Output of default epidemic model R", {
     data, c("compartment", "demography_group", "value", "time"),
     ignore.order = TRUE
   )
+  compartments_default <- c(
+    "susceptible", "exposed", "infectious", "recovered", "vaccinated"
+  )
   expect_identical(
     unique(data$compartment),
-    compartments_default = c(
-      "susceptible", "exposed", "infectious", "recovered", "vaccinated"
-    )
+    compartments_default
   )
 
   # check for all positive values within the range 0 and total population size

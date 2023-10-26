@@ -43,7 +43,9 @@
   )
 
   # load number of compartments to check initial conditions matrix
-  compartments_ebola <- c("susceptible", "exposed", "infectious", "recovered")
+  compartments_ebola <- c(
+    "susceptible", "exposed", "infectious", "hospitalised", "funeral", "removed"
+  )
 
   assert_population(
     mod_args[["population"]],

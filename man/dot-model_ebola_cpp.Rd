@@ -41,6 +41,7 @@ corresponding to an SEIR model.}
 \value{
 A list with two elements, \code{x}, and integer matrix with as many rows
 as the number of timesteps (given by \code{time_end}), and four columns, one for
+https://lintr.r-lib.org/reference/object_usage_linter.html
 each compartment, susceptible, exposed, infectious, recovered, in that order
 ; and \code{times}, a vector of the simulation times, taken to be days.
 This output is intended to be passed to \code{\link[=output_to_df]{output_to_df()}} to be converted

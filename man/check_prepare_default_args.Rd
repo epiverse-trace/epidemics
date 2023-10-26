@@ -17,7 +17,7 @@ named \code{intervention} and \code{vaccination}, these are added as dummy objec
 the corresponding classes.
 
 \code{.prepare_args_epidemic_default()} returns a list of model arguments suitable
-for \code{\link[=.epidemic_default_cpp]{.epidemic_default_cpp()}}. This is a named list consisting of:
+for \code{\link[=.model_default_cpp]{.model_default_cpp()}}. This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
 rather than proportional values;
@@ -40,13 +40,13 @@ is incremented.
 }
 \description{
 Check and prepare the four main arguments to
-\code{\link[=epidemic_default_cpp]{epidemic_default_cpp()}} for use with \code{\link[=.epidemic_default_cpp]{.epidemic_default_cpp()}}.
+\code{\link[=model_default_cpp]{model_default_cpp()}} for use with \code{\link[=.model_default_cpp]{.model_default_cpp()}}.
 
 \code{.check_args_epidemic_default()} adds an empty \verb{<intervention>} and
 \verb{<vaccination>} object if these are missing from the model arguments.
 
 \code{.prepare_args_epidemics_default()} prepares arguments for
-\code{\link[=.epidemic_default_cpp]{.epidemic_default_cpp()}}, which is the C++ function that solves the default
+\code{\link[=.model_default_cpp]{.model_default_cpp()}}, which is the C++ function that solves the default
 ODE system using a Boost \emph{odeint} solver.
 \code{.prepare_args_epidemics_default()} converts the arguments collected in
 \code{mod_args} into simpler structures such as lists and numeric or integer

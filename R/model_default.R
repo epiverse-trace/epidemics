@@ -46,15 +46,15 @@
 #' default value of 1 day.
 #' @details
 #'
-#' `epidemic_default_cpp()` is a wrapper function for [.epidemic_default_cpp()],
+#' `model_default_cpp()` is a wrapper function for [.model_default_cpp()],
 #' an internal C++ function that uses Boost _odeint_ solvers for an SEIR-V model
 #' .
-#' [.epidemic_default_cpp()] accepts arguments that
+#' [.model_default_cpp()] accepts arguments that
 #' are created by processing the `population`, `infection`, `intervention` and
 #' `vaccination` arguments to the wrapper function into simpler forms.
 #'
-#' `epidemic_default_r()` is a wrapper around the internal function
-#' `.ode_epidemic_default()`, which is passed to [deSolve::lsoda()].
+#' `model_default_r()` is a wrapper around the internal function
+#' `.ode_model_default()`, which is passed to [deSolve::lsoda()].
 #'
 #' Both models return equivalent results, but the C++ implementation is faster.
 #'
@@ -76,7 +76,7 @@
 #' The current default model has the compartments "susceptible", "exposed",
 #' "infectious", "recovered", and "vaccinated".
 #' @export
-epidemic_default_cpp <- function(population,
+model_default_cpp <- function(population,
                                  infection,
                                  intervention = NULL,
                                  vaccination = NULL,
@@ -134,7 +134,7 @@ epidemic_default_cpp <- function(population,
   )
 
   # run model over arguments
-  output <- do.call(.epidemic_default_cpp, model_arguments)
+  output <- do.call(.model_default_cpp, model_arguments)
 
   # prepare output and return
   output_to_df(output, population, compartments)
@@ -144,7 +144,7 @@ epidemic_default_cpp <- function(population,
 #'
 #' @description Provides the ODEs for the default SEIR-V model in a format that
 #' is suitable for passing to [deSolve::lsoda()].
-#' See [epidemic_default_r()] for a list of required parameters.
+#' See [model_default_r()] for a list of required parameters.
 #'
 #' @param t A single number of the timestep at which to integrate.
 #' @param y The conditions of the epidemiological compartments.
@@ -154,8 +154,8 @@ epidemic_default_cpp <- function(population,
 #' demographic groups times the number of epidemiological compartments. Each
 #' value gives the change in the number of individuals in that compartment.
 #' @keywords internal
-.ode_epidemic_default <- function(t, y, params) {
-  # no input checking, fn is expected to be called only in epidemic_default_r()
+.ode_model_default <- function(t, y, params) {
+  # no input checking, fn is expected to be called only in model_default_r()
   n_age <- nrow(params[["contact_matrix"]])
 
   # create a matrix
@@ -220,7 +220,7 @@ epidemic_default_cpp <- function(population,
 #' @rdname epidemic_default
 #'
 #' @export
-epidemic_default_r <- function(population,
+model_default_r <- function(population,
                                infection,
                                intervention = NULL,
                                vaccination = NULL,
@@ -285,7 +285,7 @@ epidemic_default_r <- function(population,
   data <- deSolve::lsoda(
     y = model_arguments[["initial_state"]],
     times = seq(0, time_end, increment),
-    func = .ode_epidemic_default,
+    func = .ode_model_default,
     parms = model_arguments
   )
 

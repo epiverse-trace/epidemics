@@ -3,13 +3,13 @@
 #' @rdname check_prepare_default_args
 #'
 #' @description Check and prepare the four main arguments to
-#' [epidemic_default_cpp()] for use with [.epidemic_default_cpp()].
+#' [model_default_cpp()] for use with [.model_default_cpp()].
 #'
 #' `.check_args_epidemic_default()` adds an empty `<intervention>` and
 #' `<vaccination>` object if these are missing from the model arguments.
 #'
 #' `.prepare_args_epidemics_default()` prepares arguments for
-#' [.epidemic_default_cpp()], which is the C++ function that solves the default
+#' [.model_default_cpp()], which is the C++ function that solves the default
 #' ODE system using a Boost _odeint_ solver.
 #' `.prepare_args_epidemics_default()` converts the arguments collected in
 #' `mod_args` into simpler structures such as lists and numeric or integer
@@ -24,7 +24,7 @@
 #' the corresponding classes.
 #'
 #' `.prepare_args_epidemic_default()` returns a list of model arguments suitable
-#' for [.epidemic_default_cpp()]. This is a named list consisting of:
+#' for [.model_default_cpp()]. This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
 #' rather than proportional values;

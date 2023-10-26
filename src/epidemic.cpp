@@ -15,7 +15,7 @@
 //' intervention and an optional vaccination regime.
 //'
 //' This function is intended to only be called internally from
-//' [epidemic_default_cpp()].
+//' [model_default_cpp()].
 //'
 //' Allows heterogeneity in social contact patterns, and variable sizes of
 //' demographic groups.
@@ -49,8 +49,8 @@
 //' as specified in the initial conditions matrix (see [population()]).
 //' The second list element is a vector of timesteps.
 //' @keywords internal
-// [[Rcpp::export(name=".epidemic_default_cpp")]]
-Rcpp::List epidemic_default_cpp_internal(
+// [[Rcpp::export(name=".model_default_cpp")]]
+Rcpp::List model_default_cpp_internal(
     const Eigen::MatrixXd &initial_state, const double &beta,
     const double &alpha, const double &gamma,
     const Eigen::MatrixXd &contact_matrix,

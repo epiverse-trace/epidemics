@@ -152,7 +152,7 @@ Run the default epidemic model, using the function `epidemic()`. We assume an $R
 
 ```{r message=FALSE}
 # run an epidemic model using `epidemic()`
-output <- epidemic_default_cpp(
+output <- model_default_cpp(
   population = uk_population,
   infection = pandemic_influenza,
   intervention = list(contacts = close_schools),

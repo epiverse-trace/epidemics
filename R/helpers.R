@@ -111,7 +111,7 @@ output_to_df <- function(output, population, compartments) {
 #' group as well as the total epidemic size.
 #'
 #' @param data A `data.table` (or `data.frame`) of model output, typically
-#' the output of [epidemic_default_cpp()] or similar functions.
+#' the output of [model_default_cpp()] or similar functions.
 #' @param stage The stage of the epidemic at which to return the epidemic size;
 #' here, 0.0 represents the initial conditions of the epidemic (0% of model time
 #' ), while 1.0 represents the end of the epidemic model (100% of model time).
@@ -147,7 +147,7 @@ output_to_df <- function(output, population, compartments) {
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' data <- epidemic_default_cpp(
+#' data <- model_default_cpp(
 #'   population = uk_population,
 #'   infection = pandemic_influenza,
 #'   time_end = 200,
@@ -208,7 +208,7 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
 #' Get new infections
 #'
 #' @param data A `data.table` (or `data.frame`) of model output, typically
-#' the output of [epidemic_default_cpp()] or similar functions.
+#' the output of [model_default_cpp()] or similar functions.
 #' @param compartments_from_susceptible An optional argument, for a character
 #' vector of the names of model compartments into which individuals transition
 #' from the "susceptible" compartment, and which are not related to infection.
@@ -239,7 +239,7 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' data <- epidemic_default_cpp(
+#' data <- model_default_cpp(
 #'   population = uk_population,
 #'   infection = pandemic_influenza,
 #'   time_end = 200,

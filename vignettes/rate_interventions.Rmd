@@ -127,20 +127,20 @@ is_rate_intervention(mask_mandate)
 ```
 
 We first run a baseline scenario --- no interventions are implemented to slow the spread of the epidemic --- and visualise the outcomes in terms of daily new infections.
-We simulate an epidemic using `epidemic_default_cpp()`, calling the default model outlined in the ["Get started vignette"](epidemics.html).
+We simulate an epidemic using `model_default_cpp()`, calling the default model outlined in the ["Get started vignette"](epidemics.html).
 
 To examine the effect of a mask mandate, we simulate the epidemic for 200 days as we expect the intervention to spread disease incidence out over a longer period.
 
 ```{r}
 # no intervention baseline scenario
-data <- epidemic_default_cpp(
+data <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   time_end = 200, increment = 1.0
 )
 
 # with a mask mandate
-data_masks <- epidemic_default_cpp(
+data_masks <- model_default_cpp(
   population = uk_population,
   infection = pandemic,
   intervention = list(beta = mask_mandate),

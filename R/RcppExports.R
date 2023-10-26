@@ -76,7 +76,6 @@
 #' assumed to be in days.
 #' @return A list with two elements, `x`, and integer matrix with as many rows
 #' as the number of timesteps (given by `time_end`), and four columns, one for
-#' https://lintr.r-lib.org/reference/object_usage_linter.html
 #' each compartment, susceptible, exposed, infectious, recovered, in that order
 #' ; and `times`, a vector of the simulation times, taken to be days.
 #' This output is intended to be passed to [output_to_df()] to be converted

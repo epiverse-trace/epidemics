@@ -355,7 +355,80 @@ ggplot(data_scenarios[compartment == "removed", ]) +
 ```
 
 We see that applying an intervention that reduces transmission can be effective in reducing the number of individuals infected over the outbreak.
-This model will soon be able to accommodate interventions that act on other processes, such as hospitalisation and funeral safety, to model the effect of campaigns to tackle these as sources of infections.
+
+## Modelling the roll-out of vaccination
+
+We can also model the rollout of vaccination against EVD, but because this model is structured differently from other models in _epidemics_, vaccination must be modelled differently too.
+
+`epidemic_ebola_r()` does not accept a vaccination regime as a `<vaccination>` object, but we can still model the effect of vaccination as a gradual decrease in the transmission rate $\beta$ over time.
+
+This is done by using the _time dependence_ functionality of _epidemics_.
+
+**NOTE ON TIME DEPENDENCE**
+
+We first define a function suitable for the `time_dependence` argument.
+This function assumes that the baseline transmission rate of ebola decreases over time, with a 5% reduction each day due to vaccination.
+
+```{r}
+# we assume a maximum time of 100 days, and a 5% daily reduction
+# we assume that this vaccination begins on the 15th day
+time_dep_vax <- function(
+    time, x, max_time = 100, time_start = 15,
+    reduction = 0.05) {
+  if (time < time_start) {
+    x
+  } else {
+    x * ((1.0 - reduction)^(time / max_time))
+  }
+}
+```
+
+```{r}
+# set a seed for comparison with the baseline model
+set.seed(0)
+# note that the intervention is passed within a list,
+# where it is named for the rate it is targeting
+data_apply_vax <- epidemic_ebola_r(
+  population = guinea_population,
+  infection = ebola,
+  time_dependence = list(
+    beta = time_dep_vax
+  ),
+  time_end = 100
+)
+
+# assign scenario name
+data_apply_vax$scenario <- "apply_vaccination"
+
+# bind the data together
+data_scenarios <- rbindlist(list(data_baseline, data_apply_vax))
+```
+
+```{r class.source = 'fold-hide', fig.cap="Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality."}
+ggplot(data_scenarios[compartment == "removed", ]) +
+  geom_vline(
+    xintercept = 15,
+    linetype = "dotted"
+  ) +
+  geom_line(
+    aes(time, value, colour = scenario)
+  ) +
+  scale_colour_brewer(
+    palette = "Set1",
+    name = "Scenario",
+    labels = c("Baseline", "Implementing vaccination")
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Days",
+    y = "Outbreak size"
+  )
+```
+
+Similar functionality can be used to affect other model parameters more flexibly than allowed by the `<rate_intervention>` class.
 
 ## Modelling a multi-pronged ebola response
 

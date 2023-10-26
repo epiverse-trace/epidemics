@@ -6,7 +6,13 @@
 \alias{epidemic_ebola_cpp}
 \title{Model an Ebola virus disease epidemic}
 \usage{
-epidemic_ebola_r(population, infection, intervention = NULL, time_end = 100)
+epidemic_ebola_r(
+  population,
+  infection,
+  intervention = NULL,
+  time_dependence = NULL,
+  time_end = 100
+)
 
 epidemic_ebola_cpp(population, infection, time_end = 100)
 }
@@ -64,6 +70,12 @@ pharmaceutical or non-pharmaceutical interventions applied to the infection's
 parameters, such as the transmission rate, over the epidemic.
 See \code{\link[=intervention]{intervention()}} for details on constructing rate interventions.
 Defaults to \code{NULL}, representing no interventions on model parameters.}
+
+\item{time_dependence}{A named list where each name
+is a model parameter (see \code{infection}), and each element is a function with
+the first two arguments being the current simulation \code{time}, and \code{x}, a value
+that is dependent on \code{time} (\code{x} represents a model parameter).
+See \strong{Details} for more information.}
 
 \item{time_end}{The maximum number of timesteps over which to run the model,
 in days. Defaults to 100 days.}
@@ -145,6 +157,19 @@ Individuals are assumed to spend only a single timestep in the funeral
 transmission compartment, before they move into the 'removed' compartment.
 
 Individuals in the 'removed' compartment do no affect model dynamics.
+}
+
+\subsection{Implementing vaccination}{
+
+Vaccination cannot currently be implemented in this model as it does not have
+a "vaccinated" epidemiological compartment. This prevents the use of a
+\verb{<vaccination>} object.
+
+Instead, users can use the \code{time_dependence} argument to pass a function that
+modifies model parameters --- specifically, the transmission rate --- in a
+way that is consistent with the effect of vaccination.
+An example is shown in the vignette about this model; run this code to open
+the vignette: \code{vignette("ebola_model", package = "epidemics")}
 }
 }
 

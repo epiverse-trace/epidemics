@@ -70,16 +70,16 @@
 #' rate, as well as reduced rates of moving into states considered more serious,
 #' such as 'hospitalised' or 'dead'.
 #'
-#' `epidemic_vacamole_cpp()` is a wrapper function for
-#' [.epidemic_vacamole_cpp()], a C++ function that uses Boost _odeint_ solvers
+#' `model_vacamole_cpp()` is a wrapper function for
+#' [.model_vacamole_cpp()], a C++ function that uses Boost _odeint_ solvers
 #' to implement the RIVM Vacamole model.
 #'
-#' `epidemic_vacamole_r()` is a wrapper around the internal function
-#' `.ode_epidemic_vacamole()`, which is passed to [deSolve::lsoda()].
+#' `model_vacamole_r()` is a wrapper around the internal function
+#' `.ode_model_vacamole()`, which is passed to [deSolve::lsoda()].
 #'
 #' Both models return equivalent results, but the C++ implementation is faster.
 #'
-#' `.epidemic_vacamole_cpp()` and `.ode_epidemic_vacamole()` both accept
+#' `.model_vacamole_cpp()` and `.ode_model_vacamole()` both accept
 #' arguments that are created by processing the `population`, `infection`,
 #' `intervention` and `vaccination` arguments to the wrapper function into
 #' simpler forms.
@@ -109,7 +109,7 @@
 #' \doi{10.2807/1560-7917.ES.2022.27.44.2101090}
 #'
 #' @export
-epidemic_vacamole_cpp <- function(population,
+model_vacamole_cpp <- function(population,
                                   infection,
                                   intervention = NULL,
                                   vaccination,
@@ -172,7 +172,7 @@ epidemic_vacamole_cpp <- function(population,
   )
 
   # run model over arguments
-  output <- do.call(.epidemic_vacamole_cpp, model_arguments)
+  output <- do.call(.model_vacamole_cpp, model_arguments)
 
   # prepare output and return
   output_to_df(output, population, compartments)
@@ -182,7 +182,7 @@ epidemic_vacamole_cpp <- function(population,
 #'
 #' @description Provides the ODEs for the RIVM Vacamole model in a format that
 #' is suitable for passing to [deSolve::lsoda()].
-#' See [epidemic_vacamole_r()] for a list of required parameters.
+#' See [model_vacamole_r()] for a list of required parameters.
 #'
 #' @param t A single number of the timestep at which to integrate.
 #' @param y The conditions of the epidemiological compartments.
@@ -192,8 +192,8 @@ epidemic_vacamole_cpp <- function(population,
 #' demographic groups times the number of epidemiological compartments. Each
 #' value gives the change in the number of individuals in that compartment.
 #' @keywords internal
-.ode_epidemic_vacamole <- function(t, y, params) {
-  # no input checking, fn is expected to be called only in epidemic_vacamole_r()
+.ode_model_vacamole <- function(t, y, params) {
+  # no input checking, fn is expected to be called only in model_vacamole_r()
   n_age <- nrow(params[["contact_matrix"]])
 
   # create a matrix
@@ -295,7 +295,7 @@ epidemic_vacamole_cpp <- function(population,
 #' @rdname epidemic_vacamole
 #'
 #' @export
-epidemic_vacamole_r <- function(population,
+model_vacamole_r <- function(population,
                                 infection,
                                 intervention = NULL,
                                 vaccination,
@@ -363,7 +363,7 @@ epidemic_vacamole_r <- function(population,
   data <- deSolve::lsoda(
     y = model_arguments[["initial_state"]],
     times = seq(0, time_end, increment),
-    func = .ode_epidemic_vacamole,
+    func = .ode_model_vacamole,
     parms = model_arguments
   )
 

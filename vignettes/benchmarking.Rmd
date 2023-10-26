@@ -200,14 +200,14 @@ double_vaccination <- vaccination(
 ```{r}
 mark(
   # run epidemic model, expect no conditions
-  "epidemic Vacamole R" = epidemic_vacamole_r(
+  "epidemic Vacamole R" = model_vacamole_r(
     population = uk_population,
     infection = pandemic,
     intervention = list(contacts = multi_intervention),
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0
   ),
-  "epidemic Vacamole Rcpp" = epidemic_vacamole_cpp(
+  "epidemic Vacamole Rcpp" = model_vacamole_cpp(
     population = uk_population,
     infection = pandemic,
     intervention = list(contacts = multi_intervention),

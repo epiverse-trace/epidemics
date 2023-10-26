@@ -17,7 +17,7 @@ elements named \code{intervention} this is added as dummy objects of the
 corresponding classes.
 
 \code{.prepare_args_epidemic_vacamole()} returns a list of model arguments
-suitable for \code{\link[=.epidemic_vacamole_cpp]{.epidemic_vacamole_cpp()}}. This is a named list consisting of:
+suitable for \code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}. This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
 rather than proportional values;
@@ -50,13 +50,13 @@ is incremented.
 }
 \description{
 Check and prepare the four main arguments to
-\code{\link[=epidemic_vacamole_cpp]{epidemic_vacamole_cpp()}} for use with \code{\link[=.epidemic_vacamole_cpp]{.epidemic_vacamole_cpp()}}.
+\code{\link[=model_vacamole_cpp]{model_vacamole_cpp()}} for use with \code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}.
 
 \code{.check_args_epidemic_vacamole()} adds an empty \verb{<intervention>} object if
 this is missing from the model arguments.
 
 \code{.prepare_args_epidemics_vacamole()} prepares arguments for
-\code{\link[=.epidemic_vacamole_cpp]{.epidemic_vacamole_cpp()}}, which is the C++ function that solves the default
+\code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}, which is the C++ function that solves the default
 ODE system using a Boost \emph{odeint} solver.
 \code{.prepare_args_epidemics_vacamole()} converts the arguments collected in
 \code{mod_args} into simpler structures such as lists and numeric or integer

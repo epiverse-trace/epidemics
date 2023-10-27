@@ -490,22 +490,7 @@ format.intervention <- function(x, ...) {
     "NA",
     glue::double_quote(x$name)
   )
-  name <- glue::glue("Intervention name: {name}")
-
-  # print to screen
-  writeLines(
-    c(
-      header,
-      name
-    )
-  )
-  writeLines("\nTime begin:")
-  print(x$time_begin)
-
-  writeLines("\nTime end:")
-  print(x$time_end)
-
-  writeLines("\nReduction:")
+  # Prepare reduction effect for printing
   effect <- x$reduction
   if (is.matrix(effect)) {
     colnames(effect) <- glue::glue("Interv. {seq(ncol(effect))}")
@@ -513,6 +498,44 @@ format.intervention <- function(x, ...) {
   } else if (is.vector(effect, mode = "numeric")) {
     names(effect) <- glue::glue("Interv. {seq_along(effect)}")
   }
+
+  # print to screen
+  cli::cli_rule(left = "Created {.cls {header}} object")
+  # intervention name
+  cat(
+    "\n",
+    cli::col_magenta(
+      "Intervention name: ",
+      "\n"
+      )
+  )
+  cli::cli_text(
+    "{cli::cli_format({name}, style = list(string_quote = \"\"))}"
+  )
+  # intervention time begin
+  cat(
+    "\n",
+    cli::col_magenta("Begins at:"),
+    "\n"
+  )
+  print(x$time_begin)
+  # intervention time end
+  cat(
+    "\n",
+    cli::col_magenta(
+      "Ends at:"
+    ),
+    "\n"
+  )
+  print(x$time_end)
+  # intervention impact
+  cat(
+    "\n",
+    cli::col_magenta(
+      "Reduction:"
+    ),
+    "\n"
+  )
   print(effect)
 
   invisible(x)

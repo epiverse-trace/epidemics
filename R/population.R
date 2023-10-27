@@ -221,15 +221,31 @@ format.population <- function(x, ...) {
 
   # print to screen
   cli::cli_rule(left = "Created {.cls {header}} object")
-  cli::cli_text(
-    "
-    Population name:
-    {cli_format({name}, style = list(string_quote = \"\"))}
-    "
+  cat(
+    "\n",
+    cli::col_blue(
+      "Population name"
+    ),
+    "\n"
   )
-  cli::cli_text("Demography:")
+  cli::cli_text(
+    "{cli::cli_format({name}, style = list(string_quote = \"\"))}"
+  )
+  cat(
+    "\n",
+    cli::col_blue(
+      "Demography"
+    ),
+    "\n"
+  )
   print(demography_print)
-  cli::cli_text("Contact matrix:")
+  cat(
+    "\n",
+    cli::col_blue(
+      "Contact matrix"
+    ),
+    "\n"
+  )
   print(contact_matrix)
 
   invisible(x)

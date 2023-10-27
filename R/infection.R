@@ -216,15 +216,42 @@ format.infection <- function(x, ...) {
 
   # print to screen
   cli::cli_rule(left = "Created {.cls {header}} object")
+  cat(
+    "\n",
+    cli::col_red(
+      "Name: "
+      )
+    )
   cli::cli_text(
-    "
-    Name:
-    {cli::cli_format({name}, style = list(string_quote = \"\"))}
-    "
+    "{cli::cli_format({name}, style = list(string_quote = \"\"))}"
   )
-  cli::cli_text("R0: {.val {x$r0}}")
-  cli::cli_text("Infectious period: {.val {x$infectious_period}}")
-  cli::cli_text("Other infection parameters: {.val {extra_argument_names}}")
+  cat(
+    "\n",
+    cli::col_red(
+      "R0: "
+      )
+  )
+  cli::cli_text(
+    "{.val {x$r0}}"
+    )
+  cat(
+    "\n",
+    cli::col_red(
+      "Infectious period: "
+      )
+  )
+  cli::cli_text(
+    "{.val {x$infectious_period}}"
+    )
+  cat(
+    "\n",
+    cli::col_red(
+      "Preinfectious period: "
+      )
+  )
+  cli::cli_text(
+    "{cli::cli_format({extra_argument_names}, style = list(string_quote = \"\"))}"
+    )
 
   invisible(x)
 }

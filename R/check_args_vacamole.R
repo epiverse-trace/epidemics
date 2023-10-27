@@ -88,8 +88,10 @@
   )
 
   # load number of compartments to check initial conditions matrix
-  compartments_vacamole <- read_from_library(
-    model_name = "vacamole", what = "compartments"
+  compartments_vacamole <- c(
+    "susceptible", "vaccinated_one_dose", "vaccinated_two_dose",
+    "exposed", "exposed_vaccinated", "infectious", "infectious_vaccinated",
+    "hospitalised", "hospitalised_vaccinated", "dead", "recovered"
   )
   # input checking on population parameters
   assert_population(

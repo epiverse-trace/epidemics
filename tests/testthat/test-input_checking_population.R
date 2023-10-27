@@ -20,8 +20,8 @@ test_that("Population are checked correctly", {
   expect_no_condition(
     assert_population(
       test_population,
-      compartments = read_from_library(
-        model_name = "default", what = "compartments"
+      compartments = c(
+        "susceptible", "exposed", "infectious", "recovered", "vaccinated"
       )
     )
   )
@@ -31,8 +31,10 @@ test_that("Population are checked correctly", {
   expect_error(
     assert_population(
       test_population,
-      compartments = read_from_library(
-        model_name = "vacamole", what = "compartments"
+      compartments = c(
+        "susceptible", "vaccinated_one_dose", "vaccinated_two_dose",
+        "exposed", "exposed_vaccinated", "infectious", "infectious_vaccinated",
+        "hospitalised", "hospitalised_vaccinated", "dead", "recovered"
       )
     )
   )

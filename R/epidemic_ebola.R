@@ -194,7 +194,6 @@ epidemic_ebola_r <- function(population, infection,
   # input checking for the ebola R model
   assert_population(
     population,
-    demography_groups = 1L,
     compartments = c(
       "susceptible", "exposed", "infectious",
       "hospitalised", "funeral", "removed"

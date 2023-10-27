@@ -65,8 +65,8 @@
   )
 
   # load number of compartments to check initial conditions matrix
-  compartments_default <- read_from_library(
-    model_name = "default", what = "compartments"
+  compartments_default <- c(
+    "susceptible", "exposed", "infectious", "recovered", "vaccinated"
   )
   assert_population(
     mod_args[["population"]],

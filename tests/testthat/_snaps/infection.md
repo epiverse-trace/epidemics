@@ -2,11 +2,26 @@
 
     Code
       print(pandemic_flu)
+    Message
+      -- Created <infection> object --------------------------------------------------
     Output
-      <infection>
-      infection name: "pandemic_influenza"
-      R0: 1.3
-      Infectious period: 5
-      Other infection parameters:
+      
+       Name: 
+    Message
+      "pandemic_influenza"
+    Output
+      
+       R0: 
+    Message
+      1.3
+    Output
+      
+       Infectious period: 
+    Message
+      5
+    Output
+      
+       Preinfectious period: 
+    Message
       "preinfectious_period"
 

@@ -2,17 +2,22 @@
 
     Code
       close_schools
+    Message
+      -- Created <contacts_intervention> object --------------------------------------
     Output
-      <contacts_intervention>
-      Intervention name: "close_schools"
       
-      Time begin:
+       Intervention name: 
+    Message
+      "close_schools"
+    Output
+      
+       Begins at: 
       [1] 100
       
-      Time end:
+       Ends at: 
       [1] 150
       
-      Reduction:
+       Reduction: 
                    Interv. 1
       Demo. grp. 1       0.2
       Demo. grp. 2       0.0
@@ -21,19 +26,24 @@
 
     Code
       multi_npi
+    Message
+      -- Created <contacts_intervention> object --------------------------------------
     Output
-      <contacts_intervention>
-      Intervention name: NA
       
-      Time begin:
+       Intervention name: 
+    Message
+      NA
+    Output
+      
+       Begins at: 
            npi_1 npi_2
       [1,]    30    45
       
-      Time end:
+       Ends at: 
            npi_1 npi_2
       [1,]    60    75
       
-      Reduction:
+       Reduction: 
                    Interv. 1 Interv. 2
       Demo. grp. 1      0.15       0.1
       Demo. grp. 2      0.15       0.1

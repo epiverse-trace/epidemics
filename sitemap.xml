@@ -52,9 +52,6 @@
     <loc>https://epiverse.github.io/epidemics/index.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/reference/add_to_library.html</loc>
-  </url>
-  <url>
     <loc>https://epiverse.github.io/epidemics/reference/as.intervention.html</loc>
   </url>
   <url>
@@ -118,9 +115,6 @@
     <loc>https://epiverse.github.io/epidemics/reference/epidemics-package.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/reference/get_model_names.html</loc>
-  </url>
-  <url>
     <loc>https://epiverse.github.io/epidemics/reference/get_parameter.html</loc>
   </url>
   <url>
@@ -140,9 +134,6 @@
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/intervention_on_rates.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/reference/model_library.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/new_infections.html</loc>
@@ -170,9 +161,6 @@
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/prob_discrete_erlang.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/reference/read_from_library.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/vaccination.html</loc>

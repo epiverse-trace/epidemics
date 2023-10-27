@@ -6,3 +6,14 @@ release_bullets <- function() {
     "Check if `# nolint` comments are still needed with recent lintr releases"
   )
 }
+
+# lintr does not recognise the following variables used in a non-standard way
+# with cli, so they have to be declared as global variables here.
+# This fix is suggested in the following issue:
+# https://github.com/r-lib/lintr/issues/358#issuecomment-535991461
+globalVariables(
+  c(
+    "header",
+    "name"
+  )
+)

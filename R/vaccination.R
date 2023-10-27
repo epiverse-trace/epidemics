@@ -286,7 +286,7 @@ format.vaccination <- function(x, ...) {
   validate_vaccination(x)
 
   # header
-  header <- "<vaccination>"
+  header <- class(x)
 
   # collect information on name
   name <- ifelse(

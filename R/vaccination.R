@@ -294,40 +294,34 @@ format.vaccination <- function(x, ...) {
     "NA",
     glue::double_quote(x$name)
   )
-  name <- glue::glue("Vaccination name: {name}")
 
   # print to screen
-  writeLines(
-    c(
-      header,
-      name,
-      glue::glue(
-        "
-
-        Time begin:
-        "
-      )
+  cli::cli_rule(left = "Created {.cls {header}} object")
+  cat(
+    "\n",
+    cli::col_yellow(
+      "Vaccination name: "
     )
+  )
+  cli::cli_text(
+    "{cli::cli_format({name}, style = list(string_quote = \"\"))}"
+  )
+  cat(
+    "\n",
+    cli::col_yellow("Begins at:"),
+    "\n"
   )
   print(x$time_begin)
-
-  writeLines(
-    glue::glue(
-      "
-
-    Time end:
-    "
-    )
+  cat(
+    "\n",
+    cli::col_yellow("Ends at:"),
+    "\n"
   )
   print(x$time_end)
-
-  writeLines(
-    glue::glue(
-      "
-
-      Vaccination rate:
-      "
-    )
+  cat(
+    "\n",
+    cli::col_yellow("Vaccination rate:"),
+    "\n"
   )
   print(x$nu)
 

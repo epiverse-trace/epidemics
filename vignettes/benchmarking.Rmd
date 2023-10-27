@@ -25,7 +25,7 @@ This basic vignette shows speed benchmarks for the R and Rcpp implementations of
 
 ```{r setup}
 library(epidemics)
-library(microbenchmark)
+library(bench)
 ```
 
 ## Benchmarking the default model
@@ -90,7 +90,7 @@ vax_regime <- vaccination(
 ```
 
 ```{r}
-microbenchmark(
+mark(
   # run epidemic model, expect no conditions
   "epidemic default R" = epidemic_default_r(
     population = uk_population,
@@ -106,7 +106,9 @@ microbenchmark(
     vaccination = vax_regime,
     time_end = 100, increment = 1.0
   ),
-  times = 100
+  iterations = 1000,
+  time_unit = "s",
+  check = FALSE
 )
 ```
 
@@ -196,7 +198,7 @@ double_vaccination <- vaccination(
 ```
 
 ```{r}
-microbenchmark(
+mark(
   # run epidemic model, expect no conditions
   "epidemic Vacamole R" = epidemic_vacamole_r(
     population = uk_population,
@@ -212,6 +214,8 @@ microbenchmark(
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0
   ),
-  times = 100
+  iterations = 1000,
+  time_unit = "s",
+  check = FALSE
 )
 ```

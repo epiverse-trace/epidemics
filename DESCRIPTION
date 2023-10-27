@@ -75,14 +75,17 @@ Suggests:
     colorspace,
     ggplot2,
     knitr,
-    microbenchmark,
+    dplyr,
+    tidyr,
+    tibble,
+    finalsize,
+    bench,
     rmarkdown,
     scales,
     socialmixr,
     spelling,
     testthat (>= 3.0.0),
     withr,
-    dplyr,
     EpiEstim
 Config/testthat/edition: 3
 VignetteBuilder: knitr

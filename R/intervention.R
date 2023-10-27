@@ -482,7 +482,7 @@ print.rate_intervention <- function(x, ...) {
 #' @noRd
 format.intervention <- function(x, ...) {
   # header
-  header <- glue::glue("<{class(x)[1]}>")
+  header <- class(x)[1]
 
   # collect information on name
   name <- ifelse(

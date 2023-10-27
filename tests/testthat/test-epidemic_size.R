@@ -5,7 +5,9 @@ initial_conditions <- matrix(
   nrow = 2, ncol = 5L,
   byrow = TRUE
 )
-colnames(initial_conditions) <- c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
+colnames(initial_conditions) <- c(
+  "susceptible", "exposed", "infectious", "recovered", "vaccinated"
+)
 
 # create a population where there are no contacts between groups
 # this helps test the expectation that the final size proportions

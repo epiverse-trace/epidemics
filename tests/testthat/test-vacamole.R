@@ -85,7 +85,11 @@ test_that("Vacamole model works", {
   # expect output has correct compartments
   expect_identical(
     unique(data$compartment),
-    c("susceptible", "vaccinated_one_dose", "vaccinated_two_dose", "exposed", "exposed_vaccinated", "infectious", "infectious_vaccinated", "hospitalised", "hospitalised_vaccinated", "dead", "recovered")
+    c(
+      "susceptible", "vaccinated_one_dose", "vaccinated_two_dose",
+      "exposed", "exposed_vaccinated", "infectious", "infectious_vaccinated",
+      "hospitalised", "hospitalised_vaccinated", "dead", "recovered"
+    )
   )
 
   # check for all positive values within the range 0 and total population size
@@ -245,8 +249,11 @@ test_that("Output of the Vacamole epidemic model R", {
   )
   expect_identical(
     unique(data$compartment),
-    c("susceptible", "vaccinated_one_dose", "vaccinated_two_dose", "exposed", "exposed_vaccinated", "infectious", "infectious_vaccinated", "hospitalised", "hospitalised_vaccinated", "dead", "recovered")
-
+    c(
+      "susceptible", "vaccinated_one_dose", "vaccinated_two_dose",
+      "exposed", "exposed_vaccinated", "infectious", "infectious_vaccinated",
+      "hospitalised", "hospitalised_vaccinated", "dead", "recovered"
+    )
   )
 
   # check for all positive values within the range 0 and total population size

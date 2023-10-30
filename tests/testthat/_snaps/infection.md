@@ -8,7 +8,7 @@
       
        Name: 
     Message
-      "pandemic_influenza"
+      pandemic_influenza
     Output
       
        R0: 

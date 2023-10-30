@@ -171,7 +171,8 @@ format.population <- function(x, ...) {
   validate_population(x)
 
   # header
-  header <- class(x) #nolint
+  header <- class(x)[1]
+  header <- glue::glue(header)
 
   # collect information on name
   #nolint start
@@ -180,7 +181,7 @@ format.population <- function(x, ...) {
     "NA",
     glue::double_quote(x$name)
   )
-  #nolint end
+  name <- glue::glue(name)
   # copy demography vector
   demography_print <- prettyNum(
     x$demography_vector,

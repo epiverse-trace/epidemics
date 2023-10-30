@@ -298,8 +298,10 @@ format.vaccination <- function(x, ...) {
   header <- glue::glue(name)
 
   # print to screen
-  cli::cli_text(
-    cli::col_red("{.cls {header}} object")
+  cat(
+    cli::cli_text(
+      cli::col_red("{.cls {header}} object")
+      )
   )
   cat(
     "\n",

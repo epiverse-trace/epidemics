@@ -296,7 +296,9 @@ format.vaccination <- function(x, ...) {
   )
 
   # print to screen
-  cli::cli_rule(left = "Created {.cls {header}} object")
+  cli::cli_text(
+    cli::col_red("{.cls {header}} object")
+  )
   cat(
     "\n",
     cli::col_yellow(

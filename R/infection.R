@@ -217,8 +217,10 @@ format.infection <- function(x, ...) {
     }
 
   # print to screen
-  cli::cli_text(
-    cli::col_red("{.cls {header}} object")
+  cat(
+    cli::cli_text(
+      cli::col_red("{.cls {header}} object")
+      )
   )
   cat(
     "\n",

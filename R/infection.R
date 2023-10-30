@@ -249,7 +249,7 @@ format.infection <- function(x, ...) {
   cat(
     "\n",
     cli::col_red(
-      "Preinfectious period: "
+      "Other parameters: "
       )
   )
   cli::cli_text(

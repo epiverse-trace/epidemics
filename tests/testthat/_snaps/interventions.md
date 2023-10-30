@@ -3,7 +3,7 @@
     Code
       close_schools
     Message
-      -- Created <contacts_intervention> object --------------------------------------
+      <contacts_intervention> object
     Output
       
        Intervention name: 
@@ -27,7 +27,7 @@
     Code
       multi_npi
     Message
-      -- Created <contacts_intervention> object --------------------------------------
+      <contacts_intervention> object
     Output
       
        Intervention name: 

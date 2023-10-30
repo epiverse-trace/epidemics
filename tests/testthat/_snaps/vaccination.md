@@ -3,7 +3,7 @@
     Code
       elder_vaccination
     Message
-      -- Created <vaccination> object ------------------------------------------------
+      <vaccination> object
     Output
       
        Vaccination name: 
@@ -34,7 +34,7 @@
     Code
       triple_vaccination
     Message
-      -- Created <vaccination> object ------------------------------------------------
+      <vaccination> object
     Output
       
        Vaccination name: 
@@ -59,7 +59,7 @@
     Code
       c(vax_1, vax_2)
     Message
-      -- Created <vaccination> object ------------------------------------------------
+      <vaccination> object
     Output
       
        Vaccination name: 

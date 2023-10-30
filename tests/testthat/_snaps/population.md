@@ -3,10 +3,10 @@
     Code
       uk_population
     Message
-      -- Created <population> object -------------------------------------------------
+      <population> object
     Output
       
-       Population name 
+       Population name: 
     Message
       "UK population"
     Output
@@ -28,10 +28,10 @@
     Code
       uk_population
     Message
-      -- Created <population> object -------------------------------------------------
+      <population> object
     Output
       
-       Population name 
+       Population name: 
     Message
       "UK population"
     Output

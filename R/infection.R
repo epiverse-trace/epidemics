@@ -252,7 +252,9 @@ format.infection <- function(x, ...) {
       )
   )
   cli::cli_text(
-    "{cli::cli_format({extra_argument_names}, style = list(string_quote = \"\"))}"
+    "{cli::cli_format({extra_argument_names},
+    style = list(string_quote = \"\"))}
+    "
     )
 
   invisible(x)

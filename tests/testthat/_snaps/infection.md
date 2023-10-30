@@ -3,7 +3,7 @@
     Code
       print(pandemic_flu)
     Message
-      -- Created <infection> object --------------------------------------------------
+      <infection> object
     Output
       
        Name: 

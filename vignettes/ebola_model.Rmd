@@ -364,7 +364,9 @@ We can also model the rollout of vaccination against EVD, but because this model
 
 This is done by using the _time dependence_ functionality of _epidemics_.
 
-**NOTE ON TIME DEPENDENCE**
+::: {.alert .alert-warning}
+**New to implementing parameter time dependence in _epidemics_?** It may help to read the [vignette on time dependence functionality](time_dependence.html) first!
+:::
 
 We first define a function suitable for the `time_dependence` argument.
 This function assumes that the baseline transmission rate of ebola decreases over time, with a 5% reduction each day due to vaccination.

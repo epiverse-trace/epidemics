@@ -21,7 +21,7 @@
       5
     Output
       
-       Preinfectious period: 
+       Other parameters: 
     Message
       "preinfectious_period"
 

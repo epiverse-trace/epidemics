@@ -507,8 +507,7 @@ format.intervention <- function(x, ...) {
   cat(
     "\n",
     cli::col_magenta(
-      "Intervention name: ",
-      "\n"
+      "Intervention name: "
       )
   )
   cli::cli_text(

@@ -193,15 +193,16 @@ format.infection <- function(x, ...) {
   validate_infection(x)
 
   # header
-  header <- class(x)
+  header <- class(x) #nolint
 
   # collect information on name
+  #nolint start
   name <- ifelse(
     is.na(x$name),
     "NA",
     glue::double_quote(x$name)
   )
-
+  #nolint end
   # other parameters
   extra_argument_names <- names(x)[!names(x)
   %in% c("name", "r0", "infectious_period")]

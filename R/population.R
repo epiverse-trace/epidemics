@@ -226,9 +226,8 @@ format.population <- function(x, ...) {
   cat(
     "\n",
     cli::col_blue(
-      "Population name"
-    ),
-    "\n"
+      "Population name: "
+    )
   )
   cli::cli_text(
     "{cli::cli_format({name}, style = list(string_quote = \"\"))}"

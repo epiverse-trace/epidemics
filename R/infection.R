@@ -193,16 +193,16 @@ format.infection <- function(x, ...) {
   validate_infection(x)
 
   # header
-  header <- class(x)[1]
-  header <- glue::glue(header)
+  header <- class(x) # nolint: object_usage_linter
 
   # collect information on name
+  # nolint start: object_usage_linter
   name <- ifelse(
     is.na(x$name),
     "NA",
     x$name
   )
-  name <- glue::glue(name)
+  # nolint end
 
   # other parameters
   extra_argument_names <- names(x)[!names(x)

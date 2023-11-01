@@ -3,7 +3,7 @@
     Code
       elder_vaccination
     Message
-      <"elder_vaccination"> object
+      <vaccination> object
     Output
       
        Vaccination name: 
@@ -34,7 +34,7 @@
     Code
       triple_vaccination
     Message
-      <"triple_vaccination"> object
+      <vaccination> object
     Output
       
        Vaccination name: 
@@ -59,7 +59,7 @@
     Code
       c(vax_1, vax_2)
     Message
-      <"vax_regime"> object
+      <vaccination> object
     Output
       
        Vaccination name: 

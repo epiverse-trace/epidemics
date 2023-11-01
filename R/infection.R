@@ -203,31 +203,30 @@ format.infection <- function(x, ...) {
     x$name
   )
   # nolint end
-
   # other parameters
   extra_argument_names <- names(x)[!names(x)
   %in% c("name", "r0", "infectious_period")]
   extra_argument_names <- if (length(extra_argument_names) == 0) {
     "None"
-    } else {
-      glue::glue_collapse(
+  } else {
+    glue::glue_collapse(
       glue::double_quote(extra_argument_names),
       sep = ", "
-      )
-    }
+    )
+  }
 
   # print to screen
   cat(
     cli::cli_text(
       "{.cls {header}} object"
-      )
+    )
   )
   cat(
     "\n",
     cli::col_red(
       "Name: "
-      )
     )
+  )
   cli::cli_text(
     "{cli::cli_format({name}, style = list(string_quote = \"\"))}"
   )
@@ -235,31 +234,31 @@ format.infection <- function(x, ...) {
     "\n",
     cli::col_red(
       "R0: "
-      )
+    )
   )
   cli::cli_text(
     "{.val {x$r0}}"
-    )
+  )
   cat(
     "\n",
     cli::col_red(
       "Infectious period: "
-      )
+    )
   )
   cli::cli_text(
     "{.val {x$infectious_period}}"
-    )
+  )
   cat(
     "\n",
     cli::col_red(
       "Other parameters: "
-      )
+    )
   )
   cli::cli_text(
     "{cli::cli_format({extra_argument_names},
     style = list(string_quote = \"\"))}
     "
-    )
+  )
 
   invisible(x)
 }

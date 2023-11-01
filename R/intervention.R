@@ -513,7 +513,7 @@ format.intervention <- function(x, ...) {
     "\n",
     cli::col_magenta(
       "Intervention name: "
-      )
+    )
   )
   cli::cli_text(
     "{cli::cli_format({name}, style = list(string_quote = \"\"))}"

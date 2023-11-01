@@ -482,16 +482,16 @@ print.rate_intervention <- function(x, ...) {
 #' @noRd
 format.intervention <- function(x, ...) {
   # header
-  header <- class(x)[1]
-  header <- glue::glue(header)
+  header <- class(x)[1] # nolint: object_usage_linter
 
   # collect information on name
+  # nolint start: object_usage_linter
   name <- ifelse(
     is.na(x$name),
     "NA",
     glue::double_quote(x$name)
   )
-  name <- glue::glue(name)
+  # nolint end
 
   # Prepare reduction effect for printing
   effect <- x$reduction

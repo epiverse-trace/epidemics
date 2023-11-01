@@ -286,16 +286,16 @@ format.vaccination <- function(x, ...) {
   validate_vaccination(x)
 
   # header
-  header <- class(x)[1]
-  header <- glue::glue(header)
+  header <- class(x) # nolint: object_usage_linter
 
   # collect information on name
+  # nolint start: object_usage_linter
   name <- ifelse(
     is.na(x$name),
     "NA",
     glue::double_quote(x$name)
   )
-  header <- glue::glue(name)
+  # nolint end
 
   # print to screen
   cat(

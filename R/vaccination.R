@@ -301,7 +301,7 @@ format.vaccination <- function(x, ...) {
   cat(
     cli::cli_text(
       "{.cls {header}} object"
-      )
+    )
   )
   cat(
     "\n",

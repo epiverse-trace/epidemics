@@ -72,7 +72,8 @@ each dose. See \code{\link[=vaccination]{vaccination()}}.}
 is a model parameter (see \code{infection}), and each element is a function with
 the first two arguments being the current simulation \code{time}, and \code{x}, a value
 that is dependent on \code{time} (\code{x} represents a model parameter).
-See \strong{Details} for more information.}
+See \strong{Details} for more information, as well as the vignette on time-
+dependence \code{vignette("time_dependence", package = "epidemics")}.}
 
 \item{time_end}{The maximum number of timesteps over which to run the model.
 Taken as days, with a default value of 200 days.}

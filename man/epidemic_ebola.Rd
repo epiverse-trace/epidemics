@@ -75,7 +75,8 @@ Defaults to \code{NULL}, representing no interventions on model parameters.}
 is a model parameter (see \code{infection}), and each element is a function with
 the first two arguments being the current simulation \code{time}, and \code{x}, a value
 that is dependent on \code{time} (\code{x} represents a model parameter).
-See \strong{Details} for more information.}
+See \strong{Details} for more information, as well as the vignette on time-
+dependence \code{vignette("time_dependence", package = "epidemics")}.}
 
 \item{time_end}{The maximum number of timesteps over which to run the model,
 in days. Defaults to 100 days.}
@@ -149,7 +150,7 @@ individuals exiting the hospitalised compartment move to the 'removed'
 compartment, which holds both recoveries and deaths.
 
 We assume that deaths outside of hospital lead to funerals that are
-potentially not Ebola-safe, and the \code{funeral_risk} passed as part of the
+potentially unsafe burials, and the \code{funeral_risk} passed as part of the
 \code{infection} argument scales the baseline transmission rate \eqn{\beta} for
 funeral transmission of Ebola to susceptibles.
 

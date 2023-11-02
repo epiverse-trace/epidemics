@@ -38,7 +38,8 @@
 #' is a model parameter (see `infection`), and each element is a function with
 #' the first two arguments being the current simulation `time`, and `x`, a value
 #' that is dependent on `time` (`x` represents a model parameter).
-#' See **Details** for more information.
+#' See **Details** for more information, as well as the vignette on time-
+#' dependence \code{vignette("time_dependence", package = "epidemics")}.
 #' @param time_end The maximum number of timesteps over which to run the model.
 #' Taken as days, with a default value of 200 days.
 #' @param increment The size of the time increment. Taken as days, with a

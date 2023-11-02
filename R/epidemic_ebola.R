@@ -114,8 +114,10 @@ prob_discrete_erlang <- function(shape, rate) {
 #'
 #' @param time_dependence A named list where each name
 #' is a model parameter (see `infection`), and each element is a function with
-#' the first two arguments fixed as `time`, and `x`, followed by other arguments to be used by the supplied function. `time` is used internally to refer to the model time at which the named parameter will be changed.
-#' See **Details** for more information.
+#' the first two arguments being the current simulation `time`, and `x`, a value
+#' that is dependent on `time` (`x` represents a model parameter).
+#' See **Details** for more information, as well as the vignette on time-
+#' dependence \code{vignette("time_dependence", package = "epidemics")}.
 #' @param time_end The maximum number of timesteps over which to run the model,
 #' in days. Defaults to 100 days.
 #' @return
@@ -260,6 +262,12 @@ epidemic_ebola_r <- function(population, infection,
     )
   }
 
+  # define compartment names
+  compartments = c(
+    "susceptible", "exposed", "infectious",
+    "hospitalised", "funeral", "removed"
+  )
+
   # set Erlang shape parameters, k^E and k^I; this is a modelling decision
   shape_E <- 2L
   shape_I <- 2L
@@ -278,17 +286,12 @@ epidemic_ebola_r <- function(population, infection,
 
   # round to nearest integer
   initial_state <- round(initial_state)
-  names(initial_state) <- c(
-    "susceptible", "exposed", "infectious",
-    "hospitalised", "funeral", "removed"
-  )
+  names(initial_state) <- compartments
 
   # prepare output data.frame
   population_size <- sum(initial_state)
-  sim_data <- matrix(NA_integer_, nrow = time_end, ncol = 6L)
-  colnames(sim_data) <- c(
-    "susceptible", "exposed", "infectious", "hospitalised", "funeral", "removed"
-  )
+  sim_data <- matrix(NA_integer_, nrow = time_end, ncol = length(compartments))
+  colnames(sim_data) <- compartments
 
   # assign initial conditions
   sim_data[1, ] <- initial_state

@@ -114,8 +114,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #'
 #' @param time_dependence A named list where each name
 #' is a model parameter (see `infection`), and each element is a function with
-#' the first two arguments being the current simulation `time`, and `x`, a value
-#' that is dependent on `time` (`x` represents a model parameter).
+#' the first two arguments fixed as `time`, and `x`, followed by other arguments to be used by the supplied function. `time` is used internally to refer to the model time at which the named parameter will be changed.
 #' See **Details** for more information.
 #' @param time_end The maximum number of timesteps over which to run the model,
 #' in days. Defaults to 100 days.
@@ -181,7 +180,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #' compartment, which holds both recoveries and deaths.
 #'
 #' We assume that deaths outside of hospital lead to funerals that are
-#' potentially not Ebola-safe, and the `funeral_risk` passed as part of the
+#' potentially unsafe burials, and the `funeral_risk` passed as part of the
 #' `infection` argument scales the baseline transmission rate \eqn{\beta} for
 #' funeral transmission of Ebola to susceptibles.
 #'

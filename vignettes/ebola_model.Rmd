@@ -448,7 +448,7 @@ Here, we show the effects of these interventions separately, before showing thei
 
 ### Improving hospitalisation
 
-We first model an intervention that begins 30 days into the outbreak, and reduces the proportion of individuals who are infectious in the community by 30%, thus improving the proportion that are hospitalised.
+We first model an intervention that begins 15 days into the outbreak, and reduces the proportion of individuals who are infectious in the community by 30%, thus improving the proportion that are hospitalised.
 
 ```{r}
 # create an intervention on the transmission rate
@@ -601,7 +601,7 @@ data_scenarios <- rbindlist(list(data_baseline, data_improve_funeral))
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the risk of ebola transmission in a funeral context."}
 ggplot(data_scenarios[compartment == "removed", ]) +
   geom_vline(
-    xintercept = 30,
+    xintercept = 15,
     linetype = "dotted"
   ) +
   geom_line(
@@ -654,7 +654,7 @@ data_scenarios <- rbindlist(
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days."}
 ggplot(data_scenarios[compartment == "removed", ]) +
   geom_vline(
-    xintercept = 30,
+    xintercept = 15,
     linetype = "dotted"
   ) +
   geom_line(

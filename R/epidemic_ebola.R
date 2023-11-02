@@ -264,7 +264,7 @@ epidemic_ebola_r <- function(population, infection,
   }
 
   # define compartment names
-  compartments = c(
+  compartments <- c(
     "susceptible", "exposed", "infectious",
     "hospitalised", "funeral", "removed"
   )

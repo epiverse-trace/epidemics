@@ -418,7 +418,7 @@ ggplot(data_scenarios[compartment == "removed", ]) +
   scale_colour_brewer(
     palette = "Set1",
     name = "Scenario",
-    labels = c("Baseline", "Implementing vaccination")
+    labels = c("Baseline", "Vaccination campaign")
   ) +
   theme_bw() +
   theme(
@@ -430,19 +430,19 @@ ggplot(data_scenarios[compartment == "removed", ]) +
   )
 ```
 
-Similar functionality can be used to affect other model parameters more flexibly than allowed by the `<rate_intervention>` class.
+Similar functionality can be used to model other parameters more flexibly than allowed by the `<rate_intervention>` class.
 
 ## Modelling a multi-pronged ebola response
 
 Since EVD is a severe disease with a high case fatality risk, responses to an outbreak may require the simultaneous implementation of a number of measures to reduce transmission to end the outbreak quickly.
 
-We can use the EVD model and existing functionality in _epidemics_ to model the implementation of a multi-pronged response to ebola that aims to:
+We can use the EVD model and existing functionality in _epidemics_ to model the implementation of a multi-pronged response to ebola that aims to improve:
 
-- Improve detection of cases and hospitalise them,
+- detection and treatment of cases,
 
-- Improve the safety of hospitals and reduce the risk of individuals being treated there passing on ebola to susceptibles in the community, and
+- safety of hospitals and the risk of community transmission, and
 
-- Improve the safety of funeral practices to reduce the risk of transmission from individuals who died while infectious with ebola.
+- safety of funeral practices to reduce the risk of transmission from dead bodies.
 
 Here, we show the effects of these interventions separately, before showing their combined effect.
 
@@ -493,7 +493,7 @@ ggplot(data_scenarios[compartment == "removed", ]) +
   scale_colour_brewer(
     palette = "Set1",
     name = "Scenario",
-    labels = c("Baseline", "Improve hospitalisation")
+    labels = c("Baseline", "Improved hospitalisation")
   ) +
   theme_bw() +
   theme(

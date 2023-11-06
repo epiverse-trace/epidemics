@@ -20,3 +20,34 @@ articles:
   - vacamole
   - ebola_model
   - benchmarking
+
+reference:
+  - title: Package Overview
+    contents:
+    - epidemic_default_r
+    - epidemic_ebola_r
+    - epidemic_vacamole_r
+    - epidemic_default_cpp
+    - epidemic_vacamole_cpp
+    - epidemic_size
+  - title: Classes and related functions
+  - subtitle: Infection
+    contents:
+    - contains("infection")
+    - get_transmission_rate
+  - subtitle: Intervention
+    contents:
+    - contains("intervention")
+  - subtitle: Population
+    contents:
+    - contains("population")
+  - subtitle: Vaccination
+    contents:
+    - contains("vaccination")
+  - title: Helper functions
+    contents:
+    - get_parameter
+    - no_time_dependence
+  - title: Internal functions
+    contents:
+    - prob_discrete_erlang

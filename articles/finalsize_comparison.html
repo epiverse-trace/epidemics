@@ -147,7 +147,7 @@ While <em>finalsize</em> does not allow for the implementation of a <em>dynamic<
 <div class="section level3">
 <h3 id="prepare-population-and-infection">Prepare population and infection<a class="anchor" aria-label="anchor" href="#prepare-population-and-infection"></a>
 </h3>
-<p>We first prepare the population (modelled on the U.K.), initial conditions, and infection parameters, before passing them to <code><a href="../reference/epidemic_default.html">epidemics::epidemic_default_cpp()</a></code>.
+<p>We first prepare the population (modelled on the U.K.), initial conditions, and infection parameters, before passing them to <code><a href="../reference/epidemic_default.html">epidemics::model_default_cpp()</a></code>.
 This example does not include any interventions or vaccination regimes.</p>
 <p>Code to prepare model inputs is folded below for brevity. See the <a href="epidemics.html">“Get started”</a> vignette for an explanation of how to prepare these inputs.</p>
 <details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -239,7 +239,7 @@ We assume that 1 in every 1000 individuals in this age group is vaccinated every
 We obtain the ‘final’ epidemic size using <code><a href="../reference/epidemic_size.html">epidemics::epidemic_size()</a></code>.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># model epidemic with vaccination prior to the main epidemic wave</span></span>
-<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic_influenza</span>,</span>
 <span>  vaccination <span class="op">=</span> <span class="va">vaccinate_elders</span>,</span>
@@ -369,7 +369,7 @@ Since vaccination has not been implemented for other age groups, we assume that 
 <div class="section level2">
 <h2 id="consideration-of-computational-speed">Consideration of computational speed<a class="anchor" aria-label="anchor" href="#consideration-of-computational-speed"></a>
 </h2>
-<p>An important reason to use <em>finalsize</em> for final size calculations may be speed — <code><a href="https://epiverse-trace.github.io/finalsize/reference/final_size.html" class="external-link">finalsize::final_size()</a></code> is much faster than <code><a href="../reference/epidemic_size.html">epidemics::epidemic_size()</a></code> applied to <code><a href="../reference/epidemic_default.html">epidemics::epidemic_default_cpp()</a></code>.
+<p>An important reason to use <em>finalsize</em> for final size calculations may be speed — <code><a href="https://epiverse-trace.github.io/finalsize/reference/final_size.html" class="external-link">finalsize::final_size()</a></code> is much faster than <code><a href="../reference/epidemic_size.html">epidemics::epidemic_size()</a></code> applied to <code><a href="../reference/epidemic_default.html">epidemics::model_default_cpp()</a></code>.
 This makes it much more suitable for high-performance applications such as fitting to data.</p>
 <p>The benchmarking shows that the total time taken for 1,000 runs using both methods is very low, and both methods could be used to scan across multiple values of the input parameters, such as when dealing with parameter uncertainty.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -383,7 +383,7 @@ This makes it much more suitable for high-performance applications such as fitti
 <span>    p_susceptibility <span class="op">=</span> <span class="va">p_susceptibility</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  ode_model <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_size.html">epidemic_size</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>      population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>      infection <span class="op">=</span> <span class="va">pandemic_influenza</span>,</span>
 <span>      vaccination <span class="op">=</span> <span class="va">vaccinate_elders</span>,</span>
@@ -400,8 +400,8 @@ This makes it much more suitable for high-performance applications such as fitti
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">#&gt;   expression        total_time</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.474</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model              7.69</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.785</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model             12.9</span></span></code></pre></div>
 </details><p><strong>Note</strong> that some model runs using <em>epidemics</em> that implement more complex compartmental structure, or multiple interventions and vaccination regimes are likely to be slower than the example shown here.</p>
 <p>However, users should choose <em>finalsize</em> only when the assumptions underlying a final size calculation are met.
 For example, in cases where vaccinations are concurrent with a large number of infections, or when interventions are applied to reduce transmission, the final size assumptions are not met.

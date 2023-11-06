@@ -73,7 +73,7 @@ epidemic. See Details for more information."><meta property="og:image" content="
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Model leaky, two-dose vaccination in an epidemic using Vacamole</h1>
-      <small class="dont-index">Source: <a href="https://github.com/epiverse-trace/epidemics/blob/HEAD/R/epidemic_vacamole.R" class="external-link"><code>R/epidemic_vacamole.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/epiverse-trace/epidemics/blob/HEAD/R/model_vacamole.R" class="external-link"><code>R/model_vacamole.R</code></a></small>
       <div class="d-none name"><code>epidemic_vacamole.Rd</code></div>
     </div>
 
@@ -87,7 +87,7 @@ epidemic. See <strong>Details</strong> for more information.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">epidemic_vacamole_cpp</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_vacamole_cpp</span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
 <span>  <span class="va">infection</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -97,7 +97,7 @@ epidemic. See <strong>Details</strong> for more information.</p>
 <span>  increment <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">epidemic_vacamole_r</span><span class="op">(</span></span>
+<span><span class="fu">model_vacamole_r</span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
 <span>  <span class="va">infection</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -193,13 +193,13 @@ The current default model has the compartments "susceptible",
 not prevent infection completely but allows for a reduction in the infection
 rate, as well as reduced rates of moving into states considered more serious,
 such as 'hospitalised' or 'dead'.</p></li>
-</ol><p><code>epidemic_vacamole_cpp()</code> is a wrapper function for
-<code><a href="dot-epidemic_vacamole_cpp.html">.epidemic_vacamole_cpp()</a></code>, a C++ function that uses Boost <em>odeint</em> solvers
+</ol><p><code>model_vacamole_cpp()</code> is a wrapper function for
+<code><a href="dot-model_vacamole_cpp.html">.model_vacamole_cpp()</a></code>, a C++ function that uses Boost <em>odeint</em> solvers
 to implement the RIVM Vacamole model.</p>
-<p><code>epidemic_vacamole_r()</code> is a wrapper around the internal function
-<code><a href="dot-ode_epidemic_vacamole.html">.ode_epidemic_vacamole()</a></code>, which is passed to <code><a href="https://rdrr.io/pkg/deSolve/man/lsoda.html" class="external-link">deSolve::lsoda()</a></code>.</p>
+<p><code>model_vacamole_r()</code> is a wrapper around the internal function
+<code><a href="dot-ode_model_vacamole.html">.ode_model_vacamole()</a></code>, which is passed to <code><a href="https://rdrr.io/pkg/deSolve/man/lsoda.html" class="external-link">deSolve::lsoda()</a></code>.</p>
 <p>Both models return equivalent results, but the C++ implementation is faster.</p>
-<p><code><a href="dot-epidemic_vacamole_cpp.html">.epidemic_vacamole_cpp()</a></code> and <code><a href="dot-ode_epidemic_vacamole.html">.ode_epidemic_vacamole()</a></code> both accept
+<p><code><a href="dot-model_vacamole_cpp.html">.model_vacamole_cpp()</a></code> and <code><a href="dot-ode_model_vacamole.html">.ode_model_vacamole()</a></code> both accept
 arguments that are created by processing the <code>population</code>, <code>infection</code>,
 <code>intervention</code> and <code>vaccination</code> arguments to the wrapper function into
 simpler forms.</p>

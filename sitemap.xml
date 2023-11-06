@@ -85,19 +85,19 @@
     <loc>https://epiverse.github.io/epidemics/reference/cumulative_rate_intervention.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/reference/dot-epidemic_default_cpp.html</loc>
+    <loc>https://epiverse.github.io/epidemics/reference/dot-model_default_cpp.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/reference/dot-epidemic_ebola_cpp.html</loc>
+    <loc>https://epiverse.github.io/epidemics/reference/dot-model_ebola_cpp.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/reference/dot-epidemic_vacamole_cpp.html</loc>
+    <loc>https://epiverse.github.io/epidemics/reference/dot-model_vacamole_cpp.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/reference/dot-ode_epidemic_default.html</loc>
+    <loc>https://epiverse.github.io/epidemics/reference/dot-ode_model_default.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/reference/dot-ode_epidemic_vacamole.html</loc>
+    <loc>https://epiverse.github.io/epidemics/reference/dot-ode_model_vacamole.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/epidemic_default.html</loc>

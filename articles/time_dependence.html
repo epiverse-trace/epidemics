@@ -176,7 +176,7 @@ Nonetheless, as the figures later will show, this can still generate realistic l
 </h2>
 <p>Next we run an epidemic model while including the time dependence of <span class="math inline">\(\beta\)</span>.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  time_dependence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -266,7 +266,7 @@ Note that plotting code is folded and can be expanded.</p>
 </details><p>Then we run the model while specifying the time-dependence of the transmission rate, as well as the intervention on social contacts.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run the model with interventions and time-dependence</span></span>
-<span><span class="va">data_npi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data_npi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">npis</span><span class="op">)</span>,</span>
@@ -364,7 +364,7 @@ We also assume that a single dose of the vaccine confers immunity (i.e., non-lea
 </details><p>We model the effect of administering vaccine doses between the expected peaks of the epidemic waves, and plot the outcome.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># pass time dependence and vaccination. Note no interventions</span></span>
-<span><span class="va">data_vax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data_vax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  vaccination <span class="op">=</span> <span class="va">vax_regime</span>,</span>

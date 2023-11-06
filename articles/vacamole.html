@@ -272,7 +272,7 @@
 </h2>
 <p>First, we run the model with no vaccination.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_vacamole.html">epidemic_vacamole_cpp</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_vacamole.html">model_vacamole_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">infect</span>,</span>
 <span>  vaccination <span class="op">=</span> <span class="va">no_vaccination</span>, <span class="co"># note custom no_vaccination object</span></span>
@@ -280,7 +280,7 @@
 <span><span class="op">)</span></span></code></pre></div>
 </details><p>Next we run the model with a two dose vaccination regime.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_vaccination</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_vacamole.html">epidemic_vacamole_cpp</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">data_vaccination</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_vacamole.html">model_vacamole_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">infect</span>,</span>
 <span>  vaccination <span class="op">=</span> <span class="va">double_vaccination</span>, <span class="co"># note custom object for two doses</span></span>

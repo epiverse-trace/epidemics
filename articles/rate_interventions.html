@@ -206,18 +206,18 @@ This could represent interventions such as requiring people to wear masks that r
 <span><span class="fu"><a href="../reference/intervention.html">is_rate_intervention</a></span><span class="op">(</span><span class="va">mask_mandate</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </details><p>We first run a baseline scenario — no interventions are implemented to slow the spread of the epidemic — and visualise the outcomes in terms of daily new infections.
-We simulate an epidemic using <code><a href="../reference/epidemic_default.html">epidemic_default_cpp()</a></code>, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
+We simulate an epidemic using <code><a href="../reference/epidemic_default.html">model_default_cpp()</a></code>, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
 <p>To examine the effect of a mask mandate, we simulate the epidemic for 200 days as we expect the intervention to spread disease incidence out over a longer period.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># no intervention baseline scenario</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">200</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># with a mask mandate</span></span>
-<span><span class="va">data_masks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">epidemic_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data_masks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="va">mask_mandate</span><span class="op">)</span>,</span>

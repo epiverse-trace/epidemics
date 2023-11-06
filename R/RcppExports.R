@@ -41,16 +41,8 @@
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.model_default_cpp <- function(
-    initial_state, beta, alpha, gamma, contact_matrix, npi_time_begin,
-    npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu,
-    rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(
-        `_epidemics_model_default_cpp_internal`, initial_state, beta, alpha,
-        gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr,
-        vax_time_begin, vax_time_end, vax_nu, rate_interventions,
-        time_dependence, time_end, increment
-    )
+.model_default_cpp <- function(initial_state, beta, alpha, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_default_cpp_internal`, initial_state, beta, alpha, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 
 #' @title Run an SEIR model with Erlang passage times
@@ -81,13 +73,8 @@
 #' This output is intended to be passed to [output_to_df()] to be converted
 #' into a data.frame for further analysis.
 #' @keywords internal
-.model_ebola_cpp <- function(
-    initial_state, population_size, beta, shape_E, rate_E,
-    shape_I, rate_I, time_end) {
-    .Call(
-        `_epidemics_model_ebola_cpp_internal`, initial_state,
-        population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end
-    )
+.model_ebola_cpp <- function(initial_state, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end) {
+    .Call(`_epidemics_model_ebola_cpp_internal`, initial_state, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end)
 }
 
 #' @title Run the RIVM Vacamole model
@@ -145,17 +132,8 @@
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.model_vacamole_cpp <- function(
-    initial_state, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma,
-    contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin,
-    vax_time_end, vax_nu, rate_interventions, time_dependence,
-    time_end = 100.0, increment = 1.0) {
-    .Call(
-        `_epidemics_model_vacamole_cpp_internal`, initial_state, beta, beta_v,
-        alpha, omega, omega_v, eta, eta_v, gamma, contact_matrix,
-        npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end,
-        vax_nu, rate_interventions, time_dependence, time_end, increment
-    )
+.model_vacamole_cpp <- function(initial_state, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_vacamole_cpp_internal`, initial_state, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 
 #' @title Compute the discrete probability of the truncated Erlang distribution
@@ -165,3 +143,4 @@
 prob_discrete_erlang_cpp <- function(shape, rate) {
     .Call(`_epidemics_prob_discrete_erlang_cpp`, shape, rate)
 }
+

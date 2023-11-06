@@ -110,12 +110,12 @@
 #'
 #' @export
 model_vacamole_cpp <- function(population,
-                                  infection,
-                                  intervention = NULL,
-                                  vaccination,
-                                  time_dependence = NULL,
-                                  time_end = 100,
-                                  increment = 1) {
+                               infection,
+                               intervention = NULL,
+                               vaccination,
+                               time_dependence = NULL,
+                               time_end = 100,
+                               increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
   checkmate::assert_class(infection, "infection")
@@ -157,8 +157,8 @@ model_vacamole_cpp <- function(population,
   # prepare checked arguments for function
   # this necessary as check_args adds intervention and vaccination
   # if missing
-  model_arguments <- .prepare_args_epidemic_vacamole(
-    .check_args_epidemic_vacamole(model_arguments)
+  model_arguments <- .prepare_args_model_vacamole(
+    .check_args_model_vacamole(model_arguments)
   )
 
   # get compartment names
@@ -296,12 +296,12 @@ model_vacamole_cpp <- function(population,
 #'
 #' @export
 model_vacamole_r <- function(population,
-                                infection,
-                                intervention = NULL,
-                                vaccination,
-                                time_dependence = NULL,
-                                time_end = 100,
-                                increment = 1) {
+                             infection,
+                             intervention = NULL,
+                             vaccination,
+                             time_dependence = NULL,
+                             time_end = 100,
+                             increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
   checkmate::assert_class(infection, "infection")
@@ -345,8 +345,8 @@ model_vacamole_r <- function(population,
   # prepare checked arguments for function
   # this necessary as check_args adds intervention and vaccination
   # if missing
-  model_arguments <- .prepare_args_epidemic_vacamole(
-    .check_args_epidemic_vacamole(model_arguments)
+  model_arguments <- .prepare_args_model_vacamole(
+    .check_args_model_vacamole(model_arguments)
   )
 
   # get compartment names

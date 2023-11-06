@@ -64,7 +64,6 @@ Imports:
     checkmate,
     Rcpp,
     RcppEigen,
-    jsonlite,
     data.table,
     glue,
     utils,

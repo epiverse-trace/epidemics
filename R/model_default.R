@@ -124,8 +124,8 @@ model_default_cpp <- function(population,
   # prepare checked arguments for function
   # this necessary as check_args adds intervention and vaccination
   # if missing
-  model_arguments <- .prepare_args_epidemic_default(
-    .check_args_epidemic_default(model_arguments)
+  model_arguments <- .prepare_args_model_default(
+    .check_args_model_default(model_arguments)
   )
 
   # get compartment names
@@ -272,8 +272,8 @@ model_default_r <- function(population,
   # prepare checked arguments for function
   # this necessary as check_args adds intervention and vaccination
   # if missing
-  model_arguments <- .prepare_args_epidemic_default(
-    .check_args_epidemic_default(model_arguments)
+  model_arguments <- .prepare_args_model_default(
+    .check_args_model_default(model_arguments)
   )
 
   # get compartment names

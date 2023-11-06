@@ -130,10 +130,11 @@ beginning in one of the compartments (thus allowing for variation in passage
 times).
 \subsection{Hospitalisation, funerals, and removal}{
 
-Infectious individuals have a probability of 1.0 - \code{prop_community} of being
-transferred to the hospitalised compartment, representing Ebola Treatment
-Units (ETUs), and are considered to be infectious but no longer in the
-community.
+A proportion, \code{1.0 - prop_community}, of infectious individuals are
+transferred to the hospitalised compartment in each timestep,
+This compartment represents Ebola Treatment Units (ETUs), and individuals
+in the hospitalised compartment are considered to be infectious but no longer
+in the community.
 This compartment has the same number of sub-compartments as the infectious
 compartment (i.e., infectious in the community), which means that
 an infectious individual with \eqn{N} timesteps before exiting the

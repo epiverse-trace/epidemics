@@ -2,26 +2,26 @@
 
     Code
       print(pandemic_flu)
-    Message
+    Message <cliMessage>
       <infection> object
     Output
       
        Name: 
-    Message
+    Message <cliMessage>
       pandemic_influenza
     Output
       
        R0: 
-    Message
+    Message <cliMessage>
       1.3
     Output
       
        Infectious period: 
-    Message
+    Message <cliMessage>
       5
     Output
       
        Other parameters: 
-    Message
+    Message <cliMessage>
       "preinfectious_period"
 

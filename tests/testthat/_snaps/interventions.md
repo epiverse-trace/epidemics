@@ -2,12 +2,12 @@
 
     Code
       close_schools
-    Message
+    Message <cliMessage>
       <contacts_intervention> object
     Output
       
        Intervention name: 
-    Message
+    Message <cliMessage>
       "close_schools"
     Output
       
@@ -26,12 +26,12 @@
 
     Code
       multi_npi
-    Message
+    Message <cliMessage>
       <contacts_intervention> object
     Output
       
        Intervention name: 
-    Message
+    Message <cliMessage>
       NA
     Output
       

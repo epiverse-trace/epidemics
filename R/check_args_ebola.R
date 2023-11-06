@@ -6,10 +6,10 @@
 #' [model_ebola_cpp()] for use with [.model_ebola_cpp()].
 #' @return
 #'
-#' `.check_args_epidemic_ebola()` invisibly returns the model arguments passed
+#' `.check_args_model_ebola()` invisibly returns the model arguments passed
 #' in `mod_args`.
 #'
-#' `.prepare_args_epidemic_ebola()` returns a list of model arguments suitable
+#' `.prepare_args_model_ebola()` returns a list of model arguments suitable
 #' for [.model_ebola_cpp()]. This is a named list consisting of:
 #'
 #' - `initial_state`: the initial conditions modified to represent absolute
@@ -29,7 +29,7 @@
 #' - `time_end`: the time at which the simulation ends.
 #'
 #' @keywords internal
-.check_args_epidemic_ebola <- function(mod_args) {
+.check_args_model_ebola <- function(mod_args) {
   # check that arguments list has expected names
   checkmate::assert_names(
     names(mod_args),
@@ -60,7 +60,7 @@
 #' @name check_prepare_ebola_args
 #' @rdname check_prepare_ebola_args
 #' @keywords internal
-.prepare_args_epidemic_ebola <- function(mod_args) {
+.prepare_args_model_ebola <- function(mod_args) {
   # prepare initial conditions by scaling with demography
   # we take the ceiling to ensure that models with only one
   # infectious individual can be accommodated

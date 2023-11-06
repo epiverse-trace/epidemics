@@ -2,19 +2,19 @@
 % Please edit documentation in R/check_args_ebola.R
 \name{check_prepare_ebola_args}
 \alias{check_prepare_ebola_args}
-\alias{.check_args_epidemic_ebola}
-\alias{.prepare_args_epidemic_ebola}
+\alias{.check_args_model_ebola}
+\alias{.prepare_args_model_ebola}
 \title{Check arguments to epidemic ebola model from Getz and Dougherty}
 \usage{
-.check_args_epidemic_ebola(mod_args)
+.check_args_model_ebola(mod_args)
 
-.prepare_args_epidemic_ebola(mod_args)
+.prepare_args_model_ebola(mod_args)
 }
 \value{
-\code{.check_args_epidemic_ebola()} invisibly returns the model arguments passed
+\code{.check_args_model_ebola()} invisibly returns the model arguments passed
 in \code{mod_args}.
 
-\code{.prepare_args_epidemic_ebola()} returns a list of model arguments suitable
+\code{.prepare_args_model_ebola()} returns a list of model arguments suitable
 for \code{\link[=.model_ebola_cpp]{.model_ebola_cpp()}}. This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute

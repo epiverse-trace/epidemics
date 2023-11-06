@@ -2,21 +2,21 @@
 % Please edit documentation in R/check_args_vacamole.R
 \name{check_prepare_vacamole_args}
 \alias{check_prepare_vacamole_args}
-\alias{.check_args_epidemic_vacamole}
-\alias{.prepare_args_epidemic_vacamole}
+\alias{.check_args_model_vacamole}
+\alias{.prepare_args_model_vacamole}
 \title{Check arguments to the Vacamole epidemic function}
 \usage{
-.check_args_epidemic_vacamole(mod_args)
+.check_args_model_vacamole(mod_args)
 
-.prepare_args_epidemic_vacamole(mod_args)
+.prepare_args_model_vacamole(mod_args)
 }
 \value{
-\code{.check_args_epidemic_vacamole()} invisibly returns the model arguments
+\code{.check_args_model_vacamole()} invisibly returns the model arguments
 passed in \code{mod_args}. If the model arguments did not previously contain
 elements named \code{intervention} this is added as dummy objects of the
 corresponding classes.
 
-\code{.prepare_args_epidemic_vacamole()} returns a list of model arguments
+\code{.prepare_args_model_vacamole()} returns a list of model arguments
 suitable for \code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}. This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
@@ -52,7 +52,7 @@ is incremented.
 Check and prepare the four main arguments to
 \code{\link[=model_vacamole_cpp]{model_vacamole_cpp()}} for use with \code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}.
 
-\code{.check_args_epidemic_vacamole()} adds an empty \verb{<intervention>} object if
+\code{.check_args_model_vacamole()} adds an empty \verb{<intervention>} object if
 this is missing from the model arguments.
 
 \code{.prepare_args_epidemics_vacamole()} prepares arguments for

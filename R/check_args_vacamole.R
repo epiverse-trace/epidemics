@@ -5,7 +5,7 @@
 #' @description Check and prepare the four main arguments to
 #' [model_vacamole_cpp()] for use with [.model_vacamole_cpp()].
 #'
-#' `.check_args_epidemic_vacamole()` adds an empty `<intervention>` object if
+#' `.check_args_model_vacamole()` adds an empty `<intervention>` object if
 #' this is missing from the model arguments.
 #'
 #' `.prepare_args_epidemics_vacamole()` prepares arguments for
@@ -18,12 +18,12 @@
 #'
 #' @return
 #'
-#' `.check_args_epidemic_vacamole()` invisibly returns the model arguments
+#' `.check_args_model_vacamole()` invisibly returns the model arguments
 #' passed in `mod_args`. If the model arguments did not previously contain
 #' elements named `intervention` this is added as dummy objects of the
 #' corresponding classes.
 #'
-#' `.prepare_args_epidemic_vacamole()` returns a list of model arguments
+#' `.prepare_args_model_vacamole()` returns a list of model arguments
 #' suitable for [.model_vacamole_cpp()]. This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
@@ -65,7 +65,7 @@
 #' is incremented.
 #'
 #' @keywords internal
-.check_args_epidemic_vacamole <- function(mod_args) {
+.check_args_model_vacamole <- function(mod_args) {
   # check that arguments list has expected names
   checkmate::assert_names(
     names(mod_args),
@@ -172,7 +172,7 @@
 #' @name check_prepare_vacamole_args
 #' @rdname check_prepare_vacamole_args
 #' @keywords internal
-.prepare_args_epidemic_vacamole <- function(mod_args) {
+.prepare_args_model_vacamole <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
   # scale the contact matrix by the maximum real eigenvalue
   contact_matrix <- get_parameter(mod_args[["population"]], "contact_matrix")

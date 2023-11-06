@@ -5,7 +5,7 @@
 #' @description Check and prepare the four main arguments to
 #' [model_default_cpp()] for use with [.model_default_cpp()].
 #'
-#' `.check_args_epidemic_default()` adds an empty `<intervention>` and
+#' `.check_args_model_default()` adds an empty `<intervention>` and
 #' `<vaccination>` object if these are missing from the model arguments.
 #'
 #' `.prepare_args_epidemics_default()` prepares arguments for
@@ -18,12 +18,12 @@
 #'
 #' @return
 #'
-#' `.check_args_epidemic_default()` invisibly returns the model arguments passed
+#' `.check_args_model_default()` invisibly returns the model arguments passed
 #' in `mod_args`. If the model arguments did not previously contain elements
 #' named `intervention` and `vaccination`, these are added as dummy objects of
 #' the corresponding classes.
 #'
-#' `.prepare_args_epidemic_default()` returns a list of model arguments suitable
+#' `.prepare_args_model_default()` returns a list of model arguments suitable
 #' for [.model_default_cpp()]. This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
@@ -51,7 +51,7 @@
 #' is incremented.
 #'
 #' @keywords internal
-.check_args_epidemic_default <- function(mod_args) {
+.check_args_model_default <- function(mod_args) {
   # check that arguments list has expected names
   checkmate::assert_names(
     names(mod_args),
@@ -148,7 +148,7 @@
 #' @name check_prepare_default_args
 #' @rdname check_prepare_default_args
 #' @keywords internal
-.prepare_args_epidemic_default <- function(mod_args) {
+.prepare_args_model_default <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
   # scale the contact matrix by the maximum real eigenvalue
   contact_matrix <- get_parameter(mod_args[["population"]], "contact_matrix")

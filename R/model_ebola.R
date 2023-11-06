@@ -494,8 +494,8 @@ model_ebola_cpp <- function(population, infection,
   # prepare checked arguments for function
   # this necessary as check_args adds intervention and vaccination
   # if missing
-  model_arguments <- .prepare_args_epidemic_ebola(
-    .check_args_epidemic_ebola(model_arguments)
+  model_arguments <- .prepare_args_model_ebola(
+    .check_args_model_ebola(model_arguments)
   )
 
   # get compartment names

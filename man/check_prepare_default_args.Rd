@@ -2,21 +2,21 @@
 % Please edit documentation in R/check_args_default.R
 \name{check_prepare_default_args}
 \alias{check_prepare_default_args}
-\alias{.check_args_epidemic_default}
-\alias{.prepare_args_epidemic_default}
+\alias{.check_args_model_default}
+\alias{.prepare_args_model_default}
 \title{Check arguments to default epidemic function}
 \usage{
-.check_args_epidemic_default(mod_args)
+.check_args_model_default(mod_args)
 
-.prepare_args_epidemic_default(mod_args)
+.prepare_args_model_default(mod_args)
 }
 \value{
-\code{.check_args_epidemic_default()} invisibly returns the model arguments passed
+\code{.check_args_model_default()} invisibly returns the model arguments passed
 in \code{mod_args}. If the model arguments did not previously contain elements
 named \code{intervention} and \code{vaccination}, these are added as dummy objects of
 the corresponding classes.
 
-\code{.prepare_args_epidemic_default()} returns a list of model arguments suitable
+\code{.prepare_args_model_default()} returns a list of model arguments suitable
 for \code{\link[=.model_default_cpp]{.model_default_cpp()}}. This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
@@ -42,7 +42,7 @@ is incremented.
 Check and prepare the four main arguments to
 \code{\link[=model_default_cpp]{model_default_cpp()}} for use with \code{\link[=.model_default_cpp]{.model_default_cpp()}}.
 
-\code{.check_args_epidemic_default()} adds an empty \verb{<intervention>} and
+\code{.check_args_model_default()} adds an empty \verb{<intervention>} and
 \verb{<vaccination>} object if these are missing from the model arguments.
 
 \code{.prepare_args_epidemics_default()} prepares arguments for

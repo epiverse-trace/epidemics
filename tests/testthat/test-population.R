@@ -70,23 +70,14 @@ test_that("Population is correctly initialised", {
   )
 })
 
-# Prepare epi parameters as
-pandemic <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
 # run model with different populations
 data_full_pop <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   time_end = 200, increment = 1.0
 )
 
 data_half_pop <- model_default_cpp(
   population = half_population,
-  infection = pandemic,
   time_end = 200, increment = 1.0
 )
 

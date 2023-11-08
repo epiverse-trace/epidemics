@@ -19,17 +19,9 @@ uk_population <- population(
   initial_conditions = initial_conditions
 )
 
-# prepare an infection
-pandemic <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
 # run epidemic simulation with no vaccination or intervention
 data <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   time_end = 200,
   increment = 1
 )
@@ -72,16 +64,6 @@ test_that("Epidemic size functions", {
 })
 
 #### Test that epidemic size with no deaths is same as deaths = FALSE
-nonlethal_infect <- infection(
-  name = "covid", r0 = 5, infectious_period = 10,
-  preinfectious_period = 5,
-  eta = 1 / 1000,
-  omega = 0, # no deaths due to infection
-  susc_reduction_vax = 0.5,
-  hosp_reduction_vax = 0.7,
-  mort_reduction_vax = 0.9
-)
-
 # make initial conditions - order is important
 initial_conditions <- c(
   S = 1 - 1e-6,
@@ -106,7 +88,7 @@ uk_population <- population(
 test_that("Epidemic size with no deaths is correct", {
   data <- model_vacamole_cpp(
     population = uk_population,
-    infection = nonlethal_infect,
+    mortality_rate = 0,
     vaccination = no_vaccination(uk_population, doses = 2L),
     time_end = 400, increment = 1
   )

@@ -22,19 +22,11 @@ uk_population <- population(
   )
 )
 
-# Prepare epi parameters
-pandemic <- infection(
-  r0 = 3,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
 test_that("Output of default epidemic model Cpp", {
   # run epidemic model, expect no condition
   expect_no_condition(
     model_default_cpp(
       population = uk_population,
-      infection = pandemic,
       intervention = list(
         contacts = no_contacts_intervention(uk_population)
       ),
@@ -44,7 +36,6 @@ test_that("Output of default epidemic model Cpp", {
 
   data <- model_default_cpp(
     population = uk_population,
-    infection = pandemic,
     intervention = list(
       contacts = no_contacts_intervention(uk_population)
     ),
@@ -91,30 +82,21 @@ test_that("Output of default epidemic model Cpp", {
   )
 })
 
-test_that("Larger R0 leads to larger final size in default epidemic model", {
+test_that("Higher transmissibility gives larger final size, default model", {
   # prepare epidemic model runs with different R0 estimates
-  r0 <- 1.5
-  infection_list <- list(
-    infection_r0_low = infection(
-      r0 = r0,
-      preinfectious_period = 3,
-      infectious_period = 7
-    ),
-    infection_r0_high = infection(
-      r0 = r0 + 1.0,
-      preinfectious_period = 3,
-      infectious_period = 7
-    )
-  )
+  r0_low <- 1.1
+  r0_high <- 1.5
+  infectious_period <- 7
 
   # get data
   data <- lapply(
-    infection_list,
-    function(infection_) {
+    # transmissibility = r0 / infectious period
+    c(r0_low, r0_high) / infectious_period,
+    function(beta) {
       # run model on data
       data <- model_default_cpp(
         population = uk_population,
-        infection = infection_,
+        transmissibility = beta,
         time_end = 10, increment = 1.0
       )
     }
@@ -125,7 +107,7 @@ test_that("Larger R0 leads to larger final size in default epidemic model", {
 
   # test for effect of R0
   expect_true(
-    all(final_sizes[["r0_high"]] > final_sizes[["r0_low"]])
+    all(final_sizes[[2]] > final_sizes[[1]])
   )
 })
 
@@ -149,17 +131,9 @@ dummy_population <- population(
   )
 )
 
-# prepare epidemiological parameters
-pandemic <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
 test_that("Identical population sizes lead to identical final size", {
   data <- model_default_cpp(
     population = dummy_population,
-    infection = pandemic,
     time_end = 200, increment = 0.1
   )
 
@@ -172,28 +146,16 @@ test_that("Identical population sizes lead to identical final size", {
   )
 })
 
-test_that("Lower preinfectious period leads to larger final size", {
+test_that("Higher infectiousness rate leads to larger final size", {
   # make a temporary pre-infectious period vector
   # lower values mean quicker transition from E => I
-  infection_list <- list(
-    infection(
-      r0 = 1.5,
-      preinfectious_period = 1.2,
-      infectious_period = 7
-    ),
-    infection(
-      r0 = 1.5,
-      preinfectious_period = 5,
-      infectious_period = 7
-    )
-  )
-
+  infectiousness_rates <- 1 / c(2, 3) # 1 / pre-infectious period in days
   data <- lapply(
-    infection_list,
-    function(infection_) {
+    infectiousness_rates,
+    function(sigma) {
       model_default_cpp(
         population = dummy_population,
-        infection = infection_,
+        infectiousness_rate = sigma,
         time_end = 200, increment = 0.1
       )
     }
@@ -202,41 +164,6 @@ test_that("Lower preinfectious period leads to larger final size", {
   final_sizes <- lapply(data, epidemic_size)
 
   # both groups have same final size
-  expect_true(
-    all(final_sizes[[1]] > final_sizes[[2]])
-  )
-})
-
-test_that("Lower infectious period leads to larger final size", {
-  # make a temporary infectious period vector
-  # lower values mean quicker transition from I => R
-  infection_list <- list(
-    infection(
-      r0 = 1.5,
-      preinfectious_period = 3,
-      infectious_period = 5
-    ),
-    infection(
-      r0 = 1.5,
-      preinfectious_period = 3,
-      infectious_period = 7
-    )
-  )
-
-  data <- lapply(
-    infection_list,
-    function(infection_) {
-      model_default_cpp(
-        population = dummy_population,
-        infection = infection_,
-        time_end = 200, increment = 0.1
-      )
-    }
-  )
-
-  final_sizes <- lapply(data, epidemic_size)
-
-  # group 2 must have a larger final size
   expect_true(
     all(final_sizes[[1]] > final_sizes[[2]])
   )
@@ -256,7 +183,6 @@ test_that("Group with more contacts has larger final size and infections", {
 
   data <- model_default_cpp(
     population = dummy_population,
-    infection = pandemic,
     time_end = 200, increment = 0.1
   )
 
@@ -283,14 +209,12 @@ test_that("Output of default epidemic model R", {
   expect_no_condition(
     model_default_r(
       population = uk_population,
-      infection = pandemic,
       time_end = 100, increment = 1.0
     )
   )
 
   data <- model_default_r(
     population = uk_population,
-    infection = pandemic,
     intervention = list(
       contacts = no_contacts_intervention(uk_population)
     ),
@@ -368,7 +292,6 @@ test_that("Equivalence of default model R and Cpp", {
   # run epidemic model, expect no conditions
   data_r <- model_default_r(
     population = uk_population,
-    infection = pandemic,
     intervention = list(
       contacts = multi_intervention
     ),
@@ -378,7 +301,6 @@ test_that("Equivalence of default model R and Cpp", {
 
   data_cpp <- model_default_cpp(
     population = uk_population,
-    infection = pandemic,
     intervention = list(
       contacts = multi_intervention
     ),

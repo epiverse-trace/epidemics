@@ -22,13 +22,6 @@ uk_population <- population(
   )
 )
 
-# Prepare epi parameters as an infection object
-pandemic <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
 # prepare a basic intervention
 close_schools <- intervention(
   name = "close_schools",
@@ -79,7 +72,6 @@ test_that("Contacts intervention reduces final size", {
   # run model with intervention
   data_intervention <- model_default_cpp(
     population = uk_population,
-    infection = pandemic,
     intervention = list(
       contacts = close_schools
     ),
@@ -89,7 +81,6 @@ test_that("Contacts intervention reduces final size", {
   # run model without intervention
   data <- model_default_cpp(
     population = uk_population,
-    infection = pandemic,
     time_end = 200, increment = 1.0
   )
 
@@ -118,7 +109,6 @@ test_that("Error on poorly specified contacts intervention", {
   expect_error(
     model_default_cpp(
       population = uk_population,
-      infection = pandemic,
       intervention = badly_formed_intervention,
       time_end = 200, increment = 1.0
     )
@@ -160,10 +150,12 @@ npi_2 <- intervention(
   reduction = rep(0.1, 3)
 )
 
-multi_npi <- c(npi_1, npi_2)
-
 # Tests for basic expectations of c.intervention
 test_that("Concatenating `intervention`s works", {
+  expect_no_condition(
+    c(npi_1, npi_2)
+  )
+  multi_npi <- c(npi_1, npi_2)
   # expect that rows sum to expected values
   expect_identical(
     rowSums(multi_npi$reduction),

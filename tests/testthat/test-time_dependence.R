@@ -4,7 +4,7 @@
 test_that("Basic test for no_time_dependence", {
   expect_identical(
     no_time_dependence(),
-    list(beta = function(time, x) x),
+    list(transmissibility = function(time, x) x),
     ignore_function_env = TRUE
   )
 })
@@ -32,24 +32,18 @@ uk_population <- population(
   )
 )
 
-# Prepare epi parameters
-pandemic <- infection(
-  r0 = 1.1,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
 # prepare function
-mod_beta <- function(time, x, tmax = 365 / 4) x + (x * sinpi(time / tmax))
+mod_transmissibility <- function(time, x, tmax = 365 / 4) {
+  x + (x * sinpi(time / tmax))
+}
 
 #### Tests for functioning and equivalence ####
 test_that("Basic expectations for time dependence functions", {
   expect_no_condition(
     model_default_cpp(
       population = uk_population,
-      infection = pandemic,
       time_dependence = list(
-        beta = mod_beta
+        transmissibility = mod_transmissibility
       ),
       time_end = 365, increment = 1
     )
@@ -58,9 +52,8 @@ test_that("Basic expectations for time dependence functions", {
   expect_no_condition(
     model_default_cpp(
       population = uk_population,
-      infection = pandemic,
       time_dependence = list(
-        beta = mod_beta
+        transmissibility = mod_transmissibility
       ),
       time_end = 365, increment = 1
     )
@@ -68,17 +61,15 @@ test_that("Basic expectations for time dependence functions", {
 
   data_cpp <- model_default_cpp(
     population = uk_population,
-    infection = pandemic,
     time_dependence = list(
-      beta = mod_beta
+      transmissibility = mod_transmissibility
     ),
     time_end = 365, increment = 1
   )
   data_r <- model_default_cpp(
     population = uk_population,
-    infection = pandemic,
     time_dependence = list(
-      beta = mod_beta
+      transmissibility = mod_transmissibility
     ),
     time_end = 365, increment = 1
   )

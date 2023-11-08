@@ -51,23 +51,11 @@ double_vaccination <- vaccination(
   )
 )
 
-# make infection class for Vacamole model
-# note extra arguments passed as ...
-infect <- infection(
-  name = "covid", r0 = 5, infectious_period = 10,
-  preinfectious_period = 5,
-  eta = 1 / 1000, omega = 1 / 1000,
-  susc_reduction_vax = 0.5,
-  hosp_reduction_vax = 0.7,
-  mort_reduction_vax = 0.9
-)
-
 test_that("Vacamole model works", {
   # check model runs silently
   expect_no_condition(
     model_vacamole_cpp(
       population = uk_population,
-      infection = infect,
       vaccination = double_vaccination,
       time_end = 400, increment = 1
     )
@@ -75,7 +63,6 @@ test_that("Vacamole model works", {
 
   data <- model_vacamole_cpp(
     population = uk_population,
-    infection = infect,
     vaccination = double_vaccination,
     time_end = 400, increment = 1
   )
@@ -124,22 +111,10 @@ test_that("Vacamole model works", {
 # prepare a null vaccination schedule
 no_vaccination <- no_vaccination(uk_population, doses = 2)
 
-# make infection class for Vacamole model
-# note extra arguments passed as ...
-infect <- infection(
-  name = "covid", r0 = 5, infectious_period = 10,
-  preinfectious_period = 5,
-  eta = 1 / 1000, omega = 1 / 1000,
-  susc_reduction_vax = 0.5,
-  hosp_reduction_vax = 0.7,
-  mort_reduction_vax = 0.9
-)
-
 test_that("Vacamole model with no vaccination", {
   # check model runs silently
   data <- model_vacamole_cpp(
     population = uk_population,
-    infection = infect,
     vaccination = no_vaccination,
     time_end = 400, increment = 1
   )
@@ -153,20 +128,10 @@ test_that("Vacamole model with no vaccination", {
   )
 })
 
-nonlethal_infect <- infection(
-  name = "covid", r0 = 5, infectious_period = 10,
-  preinfectious_period = 5,
-  eta = 1 / 1000,
-  omega = 0, # no deaths due to infection
-  susc_reduction_vax = 0.5,
-  hosp_reduction_vax = 0.7,
-  mort_reduction_vax = 0.9
-)
-
 test_that("Vacamole with non-fatal infection", {
   data <- model_vacamole_cpp(
     population = uk_population,
-    infection = nonlethal_infect,
+    mortality_rate = 0,
     vaccination = no_vaccination,
     time_end = 400, increment = 1
   )
@@ -179,20 +144,10 @@ test_that("Vacamole with non-fatal infection", {
   )
 })
 
-no_hospitalisation <- infection(
-  name = "covid", r0 = 5, infectious_period = 10,
-  preinfectious_period = 5,
-  eta = 0, # no hospitalisation
-  omega = 1 / 1000,
-  susc_reduction_vax = 0.5,
-  hosp_reduction_vax = 0.7,
-  mort_reduction_vax = 0.9
-)
-
 test_that("Vacamole with no hospitalisation", {
   data <- model_vacamole_cpp(
     population = uk_population,
-    infection = no_hospitalisation,
+    hospitalisation_rate = 0,
     vaccination = no_vaccination,
     time_end = 400, increment = 1
   )
@@ -211,7 +166,6 @@ test_that("Vacamole model errors correctly", {
     model_vacamole_cpp(
       model_name = "vacamole",
       population = uk_population,
-      infection = infect,
       vaccination = no_vaccination(uk_population, doses = 3L),
       time_end = 400, increment = 1
     )
@@ -225,7 +179,6 @@ test_that("Output of the Vacamole epidemic model R", {
   expect_no_condition(
     model_vacamole_r(
       population = uk_population,
-      infection = infect,
       intervention = list(contacts = no_contacts_intervention(uk_population)),
       vaccination = double_vaccination,
       time_end = 100, increment = 1.0
@@ -234,7 +187,6 @@ test_that("Output of the Vacamole epidemic model R", {
 
   data <- model_vacamole_r(
     population = uk_population,
-    infection = infect,
     intervention = list(contacts = no_contacts_intervention(uk_population)),
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0
@@ -307,7 +259,6 @@ test_that("Equivalence of vacamole model R and Cpp", {
   # run epidemic model, expect no conditions
   data_r <- model_vacamole_r(
     population = uk_population,
-    infection = infect,
     intervention = list(contacts = multi_intervention),
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0
@@ -315,7 +266,6 @@ test_that("Equivalence of vacamole model R and Cpp", {
 
   data_cpp <- model_vacamole_cpp(
     population = uk_population,
-    infection = infect,
     intervention = list(contacts = multi_intervention),
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0

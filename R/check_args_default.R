@@ -58,12 +58,6 @@
     type = "unique"
   )
 
-  # input checking on the infection object
-  assert_infection(
-    mod_args[["infection"]],
-    extra_parameters = "preinfectious_period"
-  )
-
   # load number of compartments to check initial conditions matrix
   compartments_default <- c(
     "susceptible", "exposed", "infectious", "recovered", "vaccinated"
@@ -89,7 +83,9 @@
     # check for any other intervention list element names
     checkmate::assert_names(
       names(mod_args[["intervention"]]),
-      subset.of = c("beta", "gamma", "alpha", "contacts")
+      subset.of = c(
+        "transmissibility", "infectiousness_rate", "recovery_rate", "contacts"
+      )
     )
 
     # if a contacts intervention is passed, check it
@@ -107,18 +103,18 @@
     }
 
     # if there is only an intervention on contacts, add a dummy intervention
-    # on the transmission rate beta
+    # on the transmissibility
     if (identical(names(mod_args[["intervention"]]), "contacts")) {
-      mod_args[["intervention"]]$beta <- no_rate_intervention()
+      mod_args[["intervention"]]$transmissibility <- no_rate_intervention()
     }
   } else {
-    # add as a list element named "contacts", and one named "beta"
+    # add as a list element named "contacts", and one named "transmissibility"
     mod_args[["intervention"]] <- list(
       contacts = no_contacts_intervention(
         mod_args[["population"]]
       ),
-      # a dummy intervention on the rate parameter beta
-      beta = no_rate_intervention()
+      # a dummy intervention on the rate parameter transmissibility
+      transmissibility = no_rate_intervention()
     )
   }
 
@@ -163,12 +159,6 @@
     get_parameter(mod_args[["population"]], "initial_conditions") *
       get_parameter(mod_args[["population"]], "demography_vector")
 
-  # calculate infection parameters
-  gamma <- 1.0 / get_parameter(mod_args[["infection"]], "infectious_period")
-  alpha <- 1.0 / get_parameter(mod_args[["infection"]], "preinfectious_period")
-  beta <- get_parameter(mod_args[["infection"]], "r0") /
-    get_parameter(mod_args[["infection"]], "infectious_period")
-
   # get NPI related times and contact reductions
   contact_interventions <- mod_args[["intervention"]][["contacts"]]
   npi_time_begin <- get_parameter(contact_interventions, "time_begin")
@@ -188,7 +178,9 @@
   # return selected arguments for internal C++ function
   list(
     initial_state = initial_state,
-    beta = beta, alpha = alpha, gamma = gamma,
+    transmissibility = mod_args$transmissibility,
+    infectiousness_rate = mod_args$infectiousness_rate,
+    recovery_rate = mod_args$recovery_rate,
     contact_matrix = contact_matrix,
     npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
     npi_cr = npi_cr,

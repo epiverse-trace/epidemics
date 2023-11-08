@@ -116,16 +116,20 @@ struct epidemic_default {
     // for vectorised operations
 
     // compartmental transitions without accounting for contacts
-    Eigen::ArrayXd sToE = infection_params_temp["beta"] * x.col(0).array() *
-                          (cm_temp * x.col(2)).array();
-    Eigen::ArrayXd eToI = infection_params_temp["alpha"] * x.col(1).array();
-    Eigen::ArrayXd iToR = infection_params_temp["gamma"] * x.col(2).array();
+    Eigen::ArrayXd sToE = infection_params_temp["transmissibility"] *
+                          x.col(0).array() * (cm_temp * x.col(2)).array();
+    Eigen::ArrayXd eToI =
+        infection_params_temp["infectiousness_rate"] * x.col(1).array();
+    Eigen::ArrayXd iToR =
+        infection_params_temp["recovery_rate"] * x.col(2).array();
     Eigen::ArrayXd sToV = vax_nu_current.col(0).array() * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)
+    // β: transmissibility; ν: vaccination rate; σ: infectiousness rate
+    // γ: recovery rate
     dxdt.col(0) = -sToE - sToV;  // -β*S*contacts*I - ν*S
-    dxdt.col(1) = sToE - eToI;   // β*S*contacts*I - α*E
-    dxdt.col(2) = eToI - iToR;   // α*E - γ*I
+    dxdt.col(1) = sToE - eToI;   // β*S*contacts*I - σ*E
+    dxdt.col(2) = eToI - iToR;   // σ*E - γ*I
     dxdt.col(3) = iToR;          // γ*I
     dxdt.col(4) = sToV;          // ν*S
   }

@@ -216,7 +216,14 @@ prob_discrete_erlang <- function(shape, rate) {
 #' \doi{10.1080/17513758.2017.1401677}
 #'
 #' @export
-model_ebola_r <- function(population, infection,
+model_ebola_r <- function(population,
+                          erlang_subcompartments = 2,
+                          transmissibility = 1.3 / 12,
+                          infectiousness_rate = erlang_subcompartments / 5,
+                          removal_rate = erlang_subcompartments / 12,
+                          prop_community = 0.5,
+                          etu_risk = 0.2,
+                          funeral_risk = 0.5,
                           intervention = NULL,
                           time_dependence = NULL, time_end = 100) {
   # input checking for the ebola R model
@@ -227,20 +234,9 @@ model_ebola_r <- function(population, infection,
       "hospitalised", "funeral", "removed"
     )
   )
-  assert_infection(
-    infection,
-    default_params = c(
-      "name", "r0", "infectious_period", "preinfectious_period"
-    ),
-    extra_parameters = c(
-      "prop_community", "etu_risk", "funeral_risk"
-    ),
-    extra_parameters_limits = list(
-      prop_community = c(lower = 0, upper = 1),
-      etu_risk = c(lower = 0, upper = 1),
-      funeral_risk = c(lower = 0, upper = 1)
-    )
-  )
+
+  # TODO: check model parameters
+
   if (!is.null(intervention)) {
     checkmate::assert_list(
       intervention,
@@ -268,17 +264,6 @@ model_ebola_r <- function(population, infection,
     "hospitalised", "funeral", "removed"
   )
 
-  # set Erlang shape parameters, k^E and k^I; this is a modelling decision
-  shape_E <- 2L
-  shape_I <- 2L
-
-  # get Erlang rate parameters
-  rate_E <- shape_E / get_parameter(infection, "preinfectious_period")
-  rate_I <- shape_I / get_parameter(infection, "infectious_period")
-
-  # prepare base transmission rate beta
-  beta <- get_transmission_rate(infection = infection)
-
   # get initial conditions
   initial_state <- as.numeric(
     get_parameter(population, "initial_conditions")
@@ -299,12 +284,12 @@ model_ebola_r <- function(population, infection,
   # prepare probability vectors for which Erlang sub-compartment (boxcar)
   # will receive any newly exposed or infectious individuals
   exposed_boxcar_rates <- prob_discrete_erlang(
-    shape = shape_E,
-    rate = rate_E
+    shape = erlang_subcompartments,
+    rate = infectiousness_rate
   )
   infectious_boxcar_rates <- prob_discrete_erlang(
-    shape = shape_I,
-    rate = rate_I
+    shape = erlang_subcompartments,
+    rate = removal_rate
   )
 
   # count number of infectious blocks or boxcars
@@ -344,10 +329,10 @@ model_ebola_r <- function(population, infection,
 
   # place parameter beta in list for rate interventions function
   parameters <- list(
-    beta = beta,
-    prop_community = get_parameter(infection, "prop_community"),
-    etu_risk = get_parameter(infection, "etu_risk"),
-    funeral_risk = get_parameter(infection, "funeral_risk")
+    transmissibility = transmissibility,
+    prop_community = prop_community,
+    etu_risk = etu_risk,
+    funeral_risk = funeral_risk
   )
 
   ## Run the simulation from time t = 2 to t = time_end
@@ -377,14 +362,17 @@ model_ebola_r <- function(population, infection,
 
     # transmission modifiers - 1.0 for baseline, user-provided for ETU risk and
     # funeral risk
-    beta_modifiers <- c(1.0, params[["etu_risk"]], params[["funeral_risk"]])
+    transmissibility_modifiers <- c(
+      1.0, params[["etu_risk"]], params[["funeral_risk"]]
+    )
 
-    # get current transmission rate as base rate * intervention * p(infectious)
-    # TODO: check if transmission rates should be summed or averaged
-    transmission_rate <- sum(params[["beta"]] * beta_modifiers *
+    # get current transmissibility as base rate * intervention * p(infectious)
+    # TODO: check if transmissibilities should be summed or averaged
+    current_transmissibility <- sum(params[["transmissibility"]] *
+      transmissibility_modifiers *
       sim_data[time - 1, c("infectious", "hospitalised", "funeral")]) /
       population_size
-    exposure_prob <- 1.0 - exp(-transmission_rate)
+    exposure_prob <- 1.0 - exp(-current_transmissibility)
 
     # calculate new exposures
     new_exposed <- stats::rbinom(
@@ -470,42 +458,4 @@ model_ebola_r <- function(population, infection,
       "hospitalised", "funeral", "removed"
     )
   )
-}
-
-#' @title Model a stochastic epidemic with Erlang passage times using Rcpp
-#'
-#' @name epidemic_ebola
-#' @rdname epidemic_ebola
-model_ebola_cpp <- function(population, infection,
-                            time_end = 100) {
-  # check class on required inputs
-  checkmate::assert_class(population, "population")
-  checkmate::assert_class(infection, "infection")
-
-  # check the time end
-  checkmate::assert_number(time_end, lower = 0, finite = TRUE)
-
-  # collect population, infection, and model arguments passed as `...`
-  model_arguments <- list(
-    population = population, infection = infection,
-    time_end = time_end
-  )
-
-  # prepare checked arguments for function
-  # this necessary as check_args adds intervention and vaccination
-  # if missing
-  model_arguments <- .prepare_args_model_ebola(
-    .check_args_model_ebola(model_arguments)
-  )
-
-  # get compartment names
-  compartments <- c(
-    "susceptible", "exposed", "infectious", "removed"
-  )
-
-  # run model over arguments
-  output <- do.call(.model_ebola_cpp, model_arguments)
-
-  # prepare output and return
-  output_to_df(output, population, compartments)
 }

@@ -110,7 +110,14 @@
 #'
 #' @export
 model_vacamole_cpp <- function(population,
-                               infection,
+                               transmissibility = 1.3 / 7.0,
+                               infectiousness_rate = 1.0 / 2.0,
+                               hospitalisation_rate = 1.0 / 1000,
+                               mortality_rate = 1.0 / 1000,
+                               recovery_rate = 1.0 / 7.0,
+                               susc_reduction_vax = 0.2,
+                               hosp_reduction_vax = 0.2,
+                               mort_reduction_vax = 0.2,
                                intervention = NULL,
                                vaccination,
                                time_dependence = NULL,
@@ -118,7 +125,18 @@ model_vacamole_cpp <- function(population,
                                increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
-  checkmate::assert_class(infection, "infection")
+
+  # check model parameters
+  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
+  checkmate::assert_number(hospitalisation_rate, lower = 0, finite = TRUE)
+  checkmate::assert_number(mortality_rate, lower = 0, finite = TRUE)
+  checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
+
+  checkmate::assert_number(susc_reduction_vax, lower = 0, upper = 1)
+  checkmate::assert_number(hosp_reduction_vax, lower = 0, upper = 1)
+  checkmate::assert_number(mort_reduction_vax, lower = 0, upper = 1)
+
   checkmate::assert_class(vaccination, "vaccination")
 
   # check the time end and increment
@@ -128,7 +146,16 @@ model_vacamole_cpp <- function(population,
 
   # collect population, infection, and model arguments passed as `...`
   model_arguments <- list(
-    population = population, infection = infection, vaccination = vaccination,
+    population = population,
+    transmissibility = transmissibility,
+    infectiousness_rate = infectiousness_rate,
+    hospitalisation_rate = hospitalisation_rate,
+    mortality_rate = mortality_rate,
+    recovery_rate = recovery_rate,
+    susc_reduction_vax = susc_reduction_vax,
+    hosp_reduction_vax = hosp_reduction_vax,
+    mort_reduction_vax = mort_reduction_vax,
+    vaccination = vaccination,
     time_end = time_end, increment = increment
   )
 
@@ -214,8 +241,9 @@ model_vacamole_cpp <- function(population,
   # modify parameters
   infection_params <- params[
     c(
-      "beta", "beta_v", "alpha", "eta", "eta_v",
-      "omega", "omega_v", "gamma"
+      "transmissibility", "transmissibility_vax", "infectiousness_rate",
+      "hospitalisation_rate", "hospitalisation_rate_vax",
+      "mortality_rate", "mortality_rate_vax", "recovery_rate"
     )
   ]
 
@@ -233,39 +261,41 @@ model_vacamole_cpp <- function(population,
       (params[["vax_time_end"]] > t))
 
   # calculate transitions
-  s_to_e <- (params[["beta"]] * y[, 1] * contact_matrix_ %*% (y[, 6] + y[, 7]))
+  s_to_e <- (params[["transmissibility"]] * y[, 1] *
+    contact_matrix_ %*% (y[, 6] + y[, 7]))
   # transitions into the vaccinated compartments
   s_to_v1 <- current_nu[, 1] * y[, 1]
   v1_to_v2 <- current_nu[, 2] * y[, 2]
 
   # transitions into the exposed compartment
-  v1_to_e <- params[["beta"]] * y[, 2] * (contact_matrix_ %*% (y[, 6] + y[, 7]))
-  v2_to_ev <- params[["beta_v"]] * y[, 3] *
+  v1_to_e <- params[["transmissibility"]] * y[, 2] *
+    (contact_matrix_ %*% (y[, 6] + y[, 7]))
+  v2_to_ev <- params[["transmissibility_vax"]] * y[, 3] *
     (contact_matrix_ %*% (y[, 6] + y[, 7]))
 
   # transitions into the infectious compartment
-  e_to_i <- params[["alpha"]] * y[, 4]
-  ev_to_iv <- params[["alpha"]] * y[, 5]
+  e_to_i <- params[["infectiousness_rate"]] * y[, 4]
+  ev_to_iv <- params[["infectiousness_rate"]] * y[, 5]
 
   # transitions from infectious to hospitalised
-  i_to_h <- params[["eta"]] * y[, 6]
-  iv_to_hv <- params[["eta_v"]] * y[, 7]
+  i_to_h <- params[["hospitalisation_rate"]] * y[, 6]
+  iv_to_hv <- params[["hospitalisation_rate_vax"]] * y[, 7]
 
   # transitions from infectious to dead
-  i_to_d <- params[["omega"]] * y[, 6]
-  iv_to_d <- params[["omega_v"]] * y[, 7]
+  i_to_d <- params[["mortality_rate"]] * y[, 6]
+  iv_to_d <- params[["mortality_rate_vax"]] * y[, 7]
 
   # transitions from hospitalied to dead
-  h_to_d <- params[["omega"]] * y[, 8]
-  hv_to_d <- params[["omega_v"]] * y[, 9]
+  h_to_d <- params[["mortality_rate"]] * y[, 8]
+  hv_to_d <- params[["mortality_rate_vax"]] * y[, 9]
 
   # transitions from infectious to recovered
-  i_to_r <- params[["gamma"]] * y[, 6]
-  iv_to_r <- params[["gamma"]] * y[, 7]
+  i_to_r <- params[["recovery_rate"]] * y[, 6]
+  iv_to_r <- params[["recovery_rate"]] * y[, 7]
 
   # transitions from hospitalised to recovered
-  h_to_r <- params[["gamma"]] * y[, 8]
-  hv_to_r <- params[["gamma"]] * y[, 9]
+  h_to_r <- params[["recovery_rate"]] * y[, 8]
+  hv_to_r <- params[["recovery_rate"]] * y[, 9]
 
   # define compartmental changes
   dS <- -s_to_e - s_to_v1
@@ -291,12 +321,19 @@ model_vacamole_cpp <- function(population,
 
 #' @title Model leaky, two-dose vaccination in an epidemic using Vacamole
 #'
-#' @name epidemic_vacamole
-#' @rdname epidemic_vacamole
+#' @name model_vacamole
+#' @rdname model_vacamole
 #'
 #' @export
 model_vacamole_r <- function(population,
-                             infection,
+                             transmissibility = 1.3 / 7.0,
+                             infectiousness_rate = 1.0 / 2.0,
+                             hospitalisation_rate = 1.0 / 1000,
+                             mortality_rate = 1.0 / 1000,
+                             recovery_rate = 1.0 / 7.0,
+                             susc_reduction_vax = 0.2,
+                             hosp_reduction_vax = 0.2,
+                             mort_reduction_vax = 0.2,
                              intervention = NULL,
                              vaccination,
                              time_dependence = NULL,
@@ -304,7 +341,18 @@ model_vacamole_r <- function(population,
                              increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
-  checkmate::assert_class(infection, "infection")
+
+  # check model parameters
+  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
+  checkmate::assert_number(hospitalisation_rate, lower = 0, finite = TRUE)
+  checkmate::assert_number(mortality_rate, lower = 0, finite = TRUE)
+  checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
+
+  checkmate::assert_number(susc_reduction_vax, lower = 0, upper = 1)
+  checkmate::assert_number(hosp_reduction_vax, lower = 0, upper = 1)
+  checkmate::assert_number(mort_reduction_vax, lower = 0, upper = 1)
+
   checkmate::assert_class(vaccination, "vaccination")
 
   # check the time end and increment
@@ -314,7 +362,15 @@ model_vacamole_r <- function(population,
 
   # collect population, infection, and model arguments passed as `...`
   model_arguments <- list(
-    population = population, infection = infection,
+    population = population,
+    transmissibility = transmissibility,
+    infectiousness_rate = infectiousness_rate,
+    hospitalisation_rate = hospitalisation_rate,
+    mortality_rate = mortality_rate,
+    recovery_rate = recovery_rate,
+    susc_reduction_vax = susc_reduction_vax,
+    hosp_reduction_vax = hosp_reduction_vax,
+    mort_reduction_vax = mort_reduction_vax,
     vaccination = vaccination,
     time_end = time_end, increment = increment
   )

@@ -133,8 +133,9 @@ struct epidemic_vacamole {
     // S|V1|V2|E|EV|I|IV|H|HV|D|R
 
     // compartmental transitions without accounting for contacts
-    // Susceptible to exposed
-    Eigen::ArrayXd sToE = infection_params_temp["beta"] * x.col(0).array() *
+    // Susceptible (unvaccinated) to exposed
+    Eigen::ArrayXd sToE = infection_params_temp["transmissibility"] *
+                          x.col(0).array() *
                           (cm_temp * (x.col(5) + x.col(6))).array();
 
     // Susceptible to vaccinated with one dose
@@ -143,50 +144,69 @@ struct epidemic_vacamole {
     Eigen::ArrayXd v1ToV2 = vax_nu_current.col(1).array() * x.col(1).array();
 
     // Vaccinated one dose to exposed - same as susceptible to exposed
-    Eigen::ArrayXd v1ToE = infection_params_temp["beta"] * x.col(1).array() *
+    Eigen::ArrayXd v1ToE = infection_params_temp["transmissibility"] *
+                           x.col(1).array() *
                            (cm_temp * (x.col(5) + x.col(6))).array();
-    // Vaccinated two doses to exposed - uses different beta
-    Eigen::ArrayXd v2ToEv = infection_params_temp["beta_v"] * x.col(2).array() *
+    // Vaccinated two doses to exposed - uses different transmissibility
+    Eigen::ArrayXd v2ToEv = infection_params_temp["transmissibility_v"] *
+                            x.col(2).array() *
                             (cm_temp * (x.col(5) + x.col(6))).array();
 
     // Exposed unvaccinated or not protected to infectious
-    Eigen::ArrayXd eToI = infection_params_temp["alpha"] * x.col(3).array();
+    Eigen::ArrayXd eToI =
+        infection_params_temp["infectiousness_rate"] * x.col(3).array();
     // Exposed vaccinated to infectious
-    Eigen::ArrayXd evToIv = infection_params_temp["alpha"] * x.col(4).array();
+    Eigen::ArrayXd evToIv =
+        infection_params_temp["infectiousness_rate"] * x.col(4).array();
 
     // Infectious to hospitalised
-    Eigen::ArrayXd iToH = infection_params_temp["eta"] * x.col(5).array();
+    Eigen::ArrayXd iToH =
+        infection_params_temp["hospitalisation"] * x.col(5).array();
     // Vaccinated infectious to hospitalised
-    Eigen::ArrayXd ivToHv = infection_params_temp["eta_v"] * x.col(6).array();
+    Eigen::ArrayXd ivToHv =
+        infection_params_temp["hospitalisation_v"] * x.col(6).array();
 
     // Infectious to dead
-    Eigen::ArrayXd iToD = infection_params_temp["omega"] * x.col(5).array();
+    Eigen::ArrayXd iToD =
+        infection_params_temp["mortality_rate"] * x.col(5).array();
     // Infectious vaccinated to dead
-    Eigen::ArrayXd ivToD = infection_params_temp["omega_v"] * x.col(6).array();
+    Eigen::ArrayXd ivToD =
+        infection_params_temp["mortality_rate_v"] * x.col(6).array();
 
     // Hospitalised to dead
-    Eigen::ArrayXd hToD = infection_params_temp["omega"] * x.col(7).array();
+    Eigen::ArrayXd hToD =
+        infection_params_temp["mortality_rate"] * x.col(7).array();
     // Hospitalised vaccinated to dead
-    Eigen::ArrayXd hvToD = infection_params_temp["omega_v"] * x.col(8).array();
+    Eigen::ArrayXd hvToD =
+        infection_params_temp["mortality_rate_v"] * x.col(8).array();
 
     // Infectious to recovered
-    Eigen::ArrayXd iToR = infection_params_temp["gamma"] * x.col(5).array();
+    Eigen::ArrayXd iToR =
+        infection_params_temp["recovery_rate"] * x.col(5).array();
     // Infectious vaccinated to recovered
-    Eigen::ArrayXd ivToR = infection_params_temp["gamma"] * x.col(6).array();
+    Eigen::ArrayXd ivToR =
+        infection_params_temp["recovery_rate"] * x.col(6).array();
 
     // Hospitalised to recovered
-    Eigen::ArrayXd hToR = infection_params_temp["gamma"] * x.col(7).array();
+    Eigen::ArrayXd hToR =
+        infection_params_temp["recovery_rate"] * x.col(7).array();
     // Hospitalised vaccinated to recovered
-    Eigen::ArrayXd hvToR = infection_params_temp["gamma"] * x.col(8).array();
+    Eigen::ArrayXd hvToR =
+        infection_params_temp["recovery_rate"] * x.col(8).array();
 
     // compartmental changes accounting for contacts
+    // β: transmissibility; βv: transmissibility for doubly vaccinated;
+    // ν1, ν2: vaccination rate first, second dose;
+    // σ: infectiousness rate; γ: recovery rate;
+    // η: hospitalisation rate; η_v: hosp. rate doubly vaccinated
+    // ω: mortality rate; ω_v: mort. rate doubly vaccinated
     dxdt.col(0) = -sToE - sToV1;           // -β*S*contacts*(I+Iv) - ν1*S
     dxdt.col(1) = sToV1 - v1ToE - v1ToV2;  // ν1*S -β*V1*contacts*(I+Iv) - ν2*V
     dxdt.col(2) = v1ToV2 - v2ToEv;         // ν2*V - βv*V2*contacts*(I+Iv)
-    dxdt.col(3) = sToE + v1ToE - eToI;     // β*(S+V1)*contacts*(I+Iv) - αE
+    dxdt.col(3) = sToE + v1ToE - eToI;     // β*(S+V1)*contacts*(I+Iv) - σE
     dxdt.col(4) = v2ToEv - evToIv;         // βv*V2*contacts*(I+Iv) - αE
-    dxdt.col(5) = eToI - iToH - iToR - iToD;        // αE - I(γ + η + ω)
-    dxdt.col(6) = evToIv - ivToHv - ivToR - ivToD;  // αEv - Iv(γ + η_v + ω_v)
+    dxdt.col(5) = eToI - iToH - iToR - iToD;        // σE - I(γ + η + ω)
+    dxdt.col(6) = evToIv - ivToHv - ivToR - ivToD;  // σEv - Iv(γ + η_v + ω_v)
     dxdt.col(7) = iToH - hToR - hToD;               // ηI - γH - ωH
     dxdt.col(8) = ivToHv - hvToR - hvToD;           // ηIv - γHv - ωHv
     dxdt.col(9) = iToD + ivToD + hToD + hvToD;      // all deaths

@@ -22,13 +22,6 @@ uk_population <- population(
   )
 )
 
-# Prepare epi parameters
-pandemic <- infection(
-  r0 = 3,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
 # Prepare a stacked intervention
 npi_1 <- intervention(
   type = "contacts",
@@ -83,7 +76,6 @@ test_that("Default model with multiple interventions", {
   expect_no_condition(
     model_default_cpp(
       population = uk_population,
-      infection = pandemic,
       intervention = list(contacts = multi_npi),
       time_end = 100
     )
@@ -92,13 +84,11 @@ test_that("Default model with multiple interventions", {
   # expect final size is smaller with stacked interventions
   data_1_npi <- model_default_cpp(
     population = uk_population,
-    infection = pandemic,
     intervention = list(contacts = npi_2),
     time_end = 100
   )
   data_2_npi <- model_default_cpp(
     population = uk_population,
-    infection = pandemic,
     intervention = list(contacts = multi_npi),
     time_end = 100
   )

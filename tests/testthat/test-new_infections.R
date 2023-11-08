@@ -25,19 +25,11 @@ vaccination <- vaccination(
   time_end = matrix(200), nu = matrix(0.0005)
 )
 
-# prepare infection parameters as infection object
-pandemic <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
 # run epidemic simulation with vaccination
 time_end <- 200
 increment <- 1
 data <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   vaccination = vaccination,
   time_end = time_end,
   increment = increment

@@ -22,13 +22,6 @@ uk_population <- population(
   )
 )
 
-# Prepare epi parameters as an infection object
-pandemic <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
 # prepare a basic vaccination regime
 elder_vaccination <- vaccination(
   name = "elder_vaccination",
@@ -128,7 +121,6 @@ test_that("Multi-dose vaccination using `c()`", {
 # run model with vaccination
 data_vaccination <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   vaccination = elder_vaccination,
   time_end = 200, increment = 1.0
 )
@@ -136,7 +128,6 @@ data_vaccination <- model_default_cpp(
 # run model without vaccination
 data <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   time_end = 200, increment = 1.0
 )
 

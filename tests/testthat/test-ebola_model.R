@@ -12,23 +12,12 @@ pop <- population(
   )
 )
 
-ebola <- infection(
-  name = "ebolavirus disease",
-  r0 = 1.7,
-  infectious_period = 7,
-  preinfectious_period = 5,
-  prop_community = 0.5,
-  etu_risk = 0.2,
-  funeral_risk = 0.5
-)
-
 # basic expectations
 test_that("Ebola model: basic expectations", {
   # runs without issues
   expect_no_condition(
     model_ebola_r(
       population = pop,
-      infection = ebola,
       time_end = 100
     )
   )
@@ -37,7 +26,6 @@ test_that("Ebola model: basic expectations", {
   # returns a data.table
   data <- model_ebola_r(
     population = pop,
-    infection = ebola,
     time_end = 200
   )
   expect_s3_class(
@@ -89,35 +77,22 @@ test_that("Ebola model: basic expectations", {
   )
 })
 
-test_that("Larger R0 leads to larger final size in ebola model", {
+test_that("Higher transmissibility leads to larger final size, ebola model", {
   # prepare epidemic model runs with different R0 estimates
   r0_low <- 1.3
   r0_high <- 1.7
-  infection_list <- list(
-    ebola_r0_low = infection(
-      r0 = r0_low, infectious_period = 5,
-      preinfectious_period = 5,
-      prop_community = 0.5,
-      etu_risk = 0.2,
-      funeral_risk = 0.5
-    ),
-    ebola_r0_high = infection(
-      r0 = r0_high + 1.0, infectious_period = 5,
-      preinfectious_period = 5,
-      prop_community = 0.5,
-      etu_risk = 0.2,
-      funeral_risk = 0.5
-    )
-  )
+  infectious_period <- 12
+  transmissibility_vec <- c(r0_low, r0_high) / infectious_period
 
   # get data
+  set.seed(0)
   data <- lapply(
-    infection_list,
-    function(infection_) {
+    transmissibility_vec,
+    function(beta) {
       # run model on data
       data <- model_ebola_r(
         population = pop,
-        infection = infection_,
+        transmissibility = beta,
         time_end = 100
       )
     }
@@ -153,7 +128,7 @@ population <- population(
 # Ebola model with interventions that prevent any transmission
 test_that("Ebola model works with rate interventions", {
   intervention <- list(
-    beta = intervention(
+    transmissibility = intervention(
       type = "rate",
       time_begin = 1, time_end = 100, reduction = 1
     )
@@ -162,7 +137,6 @@ test_that("Ebola model works with rate interventions", {
   # ideally no conditions are triggered
   data <- model_ebola_r(
     population = population,
-    infection = ebola,
     intervention = intervention,
     time_end = 100
   )
@@ -194,19 +168,9 @@ test_that("Ebola model works with rate interventions", {
 
 # test that hospitalisations work
 test_that("Ebola model with hospitalisation", {
-  # ebola model with NO hospitalisation
-  ebola <- infection(
-    name = "ebolavirus disease",
-    r0 = 1.7,
-    infectious_period = 7,
-    preinfectious_period = 5,
-    prop_community = 1.0,
-    etu_risk = 0.2,
-    funeral_risk = 0.5
-  )
   data <- model_ebola_r(
     population = population,
-    infection = ebola,
+    prop_community = 1.0,
     time_end = 100
   )
   # expect that there are no hospitalisations
@@ -228,19 +192,10 @@ test_that("Ebola model with hospitalisation", {
     )
   )
 
-  ebola <- infection(
-    name = "ebolavirus disease",
-    r0 = 1.7,
-    infectious_period = 7,
-    preinfectious_period = 5,
-    prop_community = 0.0,
-    etu_risk = 0.0,
-    funeral_risk = 0.5
-  )
   # expect that the final size is the same as `total_cases` (20)
   data <- model_ebola_r(
     population = population,
-    infection = ebola,
+    prop_community = 0, etu_risk = 0,
     time_end = 100
   )
   expect_equal(
@@ -265,20 +220,10 @@ test_that("Ebola model with funeral safety", {
     )
   )
 
-  ebola <- infection(
-    name = "ebolavirus disease",
-    r0 = 1.7,
-    infectious_period = 7,
-    preinfectious_period = 5,
-    prop_community = 1.0,
-    etu_risk = 1.0,
-    funeral_risk = 0.0
-  )
-
   # expect that the final size is the same as `total_cases` (20)
   data <- model_ebola_r(
     population = population,
-    infection = ebola,
+    prop_community = 1, funeral_risk = 0,
     time_end = 100
   )
   expect_equal(

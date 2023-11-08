@@ -73,20 +73,6 @@
     must.include = "vaccination" # vaccination necessary for Vacamole
   )
 
-  # input checking on infection object
-  assert_infection(
-    mod_args[["infection"]],
-    extra_parameters = c(
-      "preinfectious_period", "eta", "omega",
-      "susc_reduction_vax", "hosp_reduction_vax", "mort_reduction_vax"
-    ),
-    extra_parameters_limits = list(
-      susc_reduction_vax = c(lower = 0.0, upper = 1.0),
-      hosp_reduction_vax = c(lower = 0.0, upper = 1.0),
-      mort_reduction_vax = c(lower = 0.0, upper = 1.0)
-    )
-  )
-
   # load number of compartments to check initial conditions matrix
   compartments_vacamole <- c(
     "susceptible", "vaccinated_one_dose", "vaccinated_two_dose",
@@ -124,8 +110,9 @@
     checkmate::assert_names(
       names(mod_args[["intervention"]]),
       subset.of = c(
-        "beta", "beta_v", "gamma", "alpha", "eta", "eta_v",
-        "omega", "omega_v", "contacts"
+        "transmissibility", "transmissibility_vax", "infectiousness_rate",
+        "hospitalisation_rate", "hospitalisation_rate_vax",
+        "mortality_rate", "mortality_rate_vax", "recovery_rate", "contacts"
       )
     )
 
@@ -144,18 +131,18 @@
     }
 
     # if there is only an intervention on contacts, add a dummy intervention
-    # on the transmission rate beta
+    # on the transmission rate transmissibility
     if (identical(names(mod_args[["intervention"]]), "contacts")) {
-      mod_args[["intervention"]]$beta <- no_rate_intervention()
+      mod_args[["intervention"]]$transmissibility <- no_rate_intervention()
     }
   } else {
-    # add as a list element named "contacts", and one named "beta"
+    # add as a list element named "contacts", and one named "transmissibility"
     mod_args[["intervention"]] <- list(
       contacts = no_contacts_intervention(
         mod_args[["population"]]
       ),
-      # a dummy intervention on the rate parameter beta
-      beta = no_rate_intervention()
+      # a dummy intervention on the rate parameter transmissibility
+      transmissibility = no_rate_intervention()
     )
   }
 
@@ -187,24 +174,17 @@
     get_parameter(mod_args[["population"]], "initial_conditions") *
       get_parameter(mod_args[["population"]], "demography_vector")
 
-  # calculate infection parametersß
-  gamma <- 1.0 / get_parameter(mod_args[["infection"]], "infectious_period")
-  alpha <- 1.0 / get_parameter(mod_args[["infection"]], "preinfectious_period")
-  beta <- get_parameter(mod_args[["infection"]], "r0") /
-    get_parameter(mod_args[["infection"]], "infectious_period")
-
-  eta <- get_parameter(mod_args[["infection"]], "eta")
-  omega <- get_parameter(mod_args[["infection"]], "omega")
+  # calculate derived infection parameters
 
   # modified parameters for the two-dose vaccinated compartment
-  beta_v <- beta *
-    (1.0 - get_parameter(mod_args[["infection"]], "susc_reduction_vax"))
+  transmissibility_vax <- mod_args$transmissibility *
+    (1.0 - mod_args[["susc_reduction_vax"]])
 
-  eta_v <- eta *
-    (1.0 - get_parameter(mod_args[["infection"]], "hosp_reduction_vax"))
+  hospitalisation_rate_vax <- mod_args$hospitalisation_rate *
+    (1.0 - mod_args[["hosp_reduction_vax"]])
 
-  omega_v <- omega *
-    (1.0 - get_parameter(mod_args[["infection"]], "hosp_reduction_vax"))
+  mortality_rate_vax <- mod_args$mortality_rate *
+    (1.0 - mod_args[["mort_reduction_vax"]])
 
   # get NPI related times and contact reductions
   contact_interventions <- mod_args[["intervention"]][["contacts"]]
@@ -225,10 +205,14 @@
   # return selected arguments for internal C++ function
   list(
     initial_state = initial_state,
-    beta = beta, beta_v = beta_v, alpha = alpha,
-    omega = omega, omega_v = omega_v,
-    eta = eta, eta_v = eta_v,
-    gamma = gamma,
+    transmissibility = mod_args$transmissibility,
+    infectiousness_rate = mod_args$infectiousness_rate,
+    hospitalisation_rate = mod_args$hospitalisation_rate,
+    mortality_rate = mod_args$mortality_rate,
+    recovery_rate = mod_args$recovery_rate,
+    transmissibility_vax = transmissibility_vax,
+    hospitalisation_rate_vax = hospitalisation_rate_vax,
+    mortality_rate_vax = mortality_rate_vax,
     contact_matrix = contact_matrix,
     npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
     npi_cr = npi_cr,

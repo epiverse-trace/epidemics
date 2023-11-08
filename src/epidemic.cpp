@@ -51,8 +51,8 @@
 //' @keywords internal
 // [[Rcpp::export(name=".model_default_cpp")]]
 Rcpp::List model_default_cpp_internal(
-    const Eigen::MatrixXd &initial_state, const double &beta,
-    const double &alpha, const double &gamma,
+    const Eigen::MatrixXd &initial_state, const double &transmissibility,
+    const double &infectiousness_rate, const double &recovery_rate,
     const Eigen::MatrixXd &contact_matrix,
     const Rcpp::NumericVector &npi_time_begin,
     const Rcpp::NumericVector &npi_time_end, const Rcpp::NumericMatrix &npi_cr,
@@ -66,7 +66,9 @@ Rcpp::List model_default_cpp_internal(
 
   // create a map of the infection parameters
   std::unordered_map<std::string, double> infection_params{
-      {"beta", beta}, {"alpha", alpha}, {"gamma", gamma}};
+      {"transmissibility", transmissibility},
+      {"infectiousness_rate", infectiousness_rate},
+      {"recovery_rate", recovery_rate}};
 
   // create a map of the rate interventions
   const std::unordered_map<std::string, intervention::rate_intervention>

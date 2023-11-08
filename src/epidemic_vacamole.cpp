@@ -66,10 +66,11 @@
 //' @keywords internal
 // [[Rcpp::export(name=".model_vacamole_cpp")]]
 Rcpp::List model_vacamole_cpp_internal(
-    const Eigen::MatrixXd &initial_state, const double &beta,
-    const double &beta_v, const double &alpha, const double &omega,
-    const double &omega_v, const double &eta, const double &eta_v,
-    const double &gamma, const Eigen::MatrixXd &contact_matrix,
+    const Eigen::MatrixXd &initial_state, const double &transmissibility,
+    const double &transmissibility_vax, const double &infectiousness_rate,
+    const double &mortality_rate, const double &mortality_rate_vax,
+    const double &hospitalisation_rate, const double &hospitalisation_rate_vax,
+    const double &recovery_rate, const Eigen::MatrixXd &contact_matrix,
     const Rcpp::NumericVector &npi_time_begin,
     const Rcpp::NumericVector &npi_time_end, const Rcpp::NumericMatrix &npi_cr,
     const Eigen::MatrixXd &vax_time_begin, const Eigen::MatrixXd &vax_time_end,
@@ -82,9 +83,14 @@ Rcpp::List model_vacamole_cpp_internal(
 
   // create a map of the infection parameters
   std::unordered_map<std::string, double> infection_params{
-      {"beta", beta},   {"beta_v", beta_v}, {"alpha", alpha},
-      {"omega", omega}, {"omega_v", omega}, {"eta", eta},
-      {"eta_v", eta_v}, {"gamma", gamma}};
+      {"transmissibility", transmissibility},
+      {"transmissibility_vax", transmissibility_vax},
+      {"infectiousness_rate", infectiousness_rate},
+      {"mortality_rate", mortality_rate},
+      {"mortality_rate_vax", mortality_rate_vax},
+      {"hospitalisation_rate", hospitalisation_rate},
+      {"hospitalisation_rate_vax", hospitalisation_rate_vax},
+      {"recovery_rate", recovery_rate}};
 
   // create a map of the rate interventions
   const std::unordered_map<std::string, intervention::rate_intervention>

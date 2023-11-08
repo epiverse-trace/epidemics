@@ -77,7 +77,9 @@
 #' "infectious", "recovered", and "vaccinated".
 #' @export
 model_default_cpp <- function(population,
-                              infection,
+                              transmissibility = 1.3 / 7.0,
+                              infectiousness_rate = 1.0 / 2.0,
+                              recovery_rate = 1.0 / 7.0,
                               intervention = NULL,
                               vaccination = NULL,
                               time_dependence = NULL,
@@ -85,7 +87,9 @@ model_default_cpp <- function(population,
                               increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
-  checkmate::assert_class(infection, "infection")
+  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
+  checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
@@ -94,7 +98,10 @@ model_default_cpp <- function(population,
 
   # collect population, infection, and model arguments passed as `...`
   model_arguments <- list(
-    population = population, infection = infection,
+    population = population,
+    transmissibility = transmissibility,
+    infectiousness_rate = infectiousness_rate,
+    recovery_rate = recovery_rate,
     time_end = time_end, increment = increment
   )
 
@@ -171,7 +178,9 @@ model_default_cpp <- function(population,
   )
 
   # get paramters to modify them
-  infection_params <- params[c("beta", "alpha", "gamma")]
+  infection_params <- params[c(
+    "transmissibility", "infectiousness_rate", "recovery_rate"
+  )]
 
   # apply time dependence before interventions
   time_dependent_params <- Map(
@@ -198,9 +207,10 @@ model_default_cpp <- function(population,
       (params[["vax_time_end"]] > t))
 
   # calculate transitions
-  sToE <- (infection_params[["beta"]] * y[, 1] * contact_matrix_ %*% y[, 3])
-  eToI <- infection_params[["alpha"]] * y[, 2]
-  iToR <- infection_params[["gamma"]] * y[, 3]
+  sToE <- (infection_params[["transmissibility"]] * y[, 1] *
+    contact_matrix_ %*% y[, 3])
+  eToI <- infection_params[["infectiousness_rate"]] * y[, 2]
+  iToR <- infection_params[["recovery_rate"]] * y[, 3]
   sToV <- current_nu * y[, 1]
 
   # define compartmental changes
@@ -221,7 +231,9 @@ model_default_cpp <- function(population,
 #'
 #' @export
 model_default_r <- function(population,
-                            infection,
+                            transmissibility = 1.3 / 7.0,
+                            infectiousness_rate = 1.0 / 2.0,
+                            recovery_rate = 1.0 / 7.0,
                             intervention = NULL,
                             vaccination = NULL,
                             time_dependence = NULL,
@@ -229,7 +241,6 @@ model_default_r <- function(population,
                             increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
-  checkmate::assert_class(infection, "infection")
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
@@ -238,7 +249,10 @@ model_default_r <- function(population,
 
   # collect population, infection, and model arguments passed as `...`
   model_arguments <- list(
-    population = population, infection = infection,
+    population = population,
+    transmissibility = transmissibility,
+    infectiousness_rate = infectiousness_rate,
+    recovery_rate = recovery_rate,
     time_end = time_end, increment = increment,
     time_dependence = time_dependence
   )

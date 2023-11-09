@@ -50,7 +50,7 @@ Specifically,
 
 3. We assume, in a first pass implementation that vaccination primarily reduces adverse outcomes, by modification to the transition rates ($\beta_V,\eta_{V},\omega_V$):
 
-	1. $\beta_V$: The infection rate $\beta$ for individuals in the fully vaccinated compartment $V_2$;
+	1. $\beta_V$: The transmission rate $\beta$ for individuals in the fully vaccinated compartment $V_2$;
 	
 	2. $\eta_{V}$: The hospitalisation rate $\eta$ for fully vaccinated, infected individuals ($I_V$ → $H_V$);
 	
@@ -134,21 +134,6 @@ uk_population <- population(
 )
 ```
 
-## Prepare pathogen parameters
-
-```{r}
-# make infection class for Vacamole model
-# note extra arguments passed as ...
-infect <- infection(
-  name = "covid", r0 = 3, infectious_period = 10,
-  preinfectious_period = 5,
-  eta = 1 / 1000, omega = 1 / 1000,
-  susc_reduction_vax = 0.5,
-  hosp_reduction_vax = 0.5,
-  mort_reduction_vax = 0.5
-)
-```
-
 ## Prepare a two dose vaccination campaign
 
 We prepare a two-dose vaccination campaign by concatenating two single dose vaccination regimes, i.e., applying the function `c()` to two `vaccination` objects.
@@ -192,12 +177,27 @@ no_vaccination <- no_vaccination(population = uk_population, doses = 2)
 
 ## Model epidemic using Vacamole
 
-First, we run the model with no vaccination.
+First, we run the model with no vaccination. The model's default parameters are:
+
+ - Transmissibility ($\beta$, `transmissibility`): 0.186, resulting from an $R_0$ = 1.3 and an infectious period of 7 days, given that $\beta = R_0 / \text{infectious period}$.
+
+ - Infectiousness rate ($\sigma$, `infectiousness_rate`): 0.5, assuming a pre-infectious period of 2 days, given that $\sigma = 1 / \text{pre-infectious period}$.
+
+ - Hospitalisation rate ($\eta$, `hospitalistion_rate`): 1.0 / 1000, assuming that one in every thousand infectious individuals is hospitalised.
+ 
+ - Mortality rate ($\omega$, `mortality_rate`): 1.0 / 1000, assuming that one in every thousand infectious and hospitalised individuals dies.
+
+ - Recovery rate ($\gamma$, `recovery_rate`): 0.143, assuming an infectious period of 7 days, given $\gamma = 1 / \text{infectious period}$.
+ 
+ - Susceptibility reduction from vaccination (`susc_reduction_vax`): 0.2, assuming a 20% reduction in susceptibility for individuals who are doubly vaccinated.
+
+ - Hospitalisation reduction from vaccination (`hosp_reduction_vax`): 0.2, assuming a 20% reduction in hospitalisation for individuals who are doubly vaccinated.
+
+ - Mortality reduction from vaccination (`mort_reduction_vax`): 0.2, assuming a 20% reduction in mortality for individuals who are doubly vaccinated.
 
 ```{r}
 data <- model_vacamole_cpp(
   population = uk_population,
-  infection = infect,
   vaccination = no_vaccination, # note custom no_vaccination object
   time_end = epidemic_days
 )
@@ -208,7 +208,6 @@ Next we run the model with a two dose vaccination regime.
 ```{r}
 data_vaccination <- model_vacamole_cpp(
   population = uk_population,
-  infection = infect,
   vaccination = double_vaccination, # note custom object for two doses
   time_end = epidemic_days
 )
@@ -350,15 +349,15 @@ $$dV_2 = \nu_2V_1 - \beta_VV_2(I+I_V)$$
 
 Two parallel exposed compartments, with similar conversion to infectious:
 
-$$dE = \beta (S+V_1)(I+I_V) - \alpha E$$
+$$dE = \beta (S+V_1)(I+I_V) - \sigma E$$
 
-$$dE_V = \beta_VV_2(I+I_V) - \alpha E_V$$
+$$dE_V = \beta_VV_2(I+I_V) - \sigma E_V$$
 
 Two parallel infectious compartments, with lower hospitalisation and mortality rate for vaccinated:
 
-$$dI = \alpha E - \gamma I - \eta I - \omega I$$
+$$dI = \sigma E - \gamma I - \eta I - \omega I$$
 
-$$dI_V = \alpha E_V - \gamma I_V - \eta_{V} I_V - \omega_V I_V$$
+$$dI_V = \sigma E_V - \gamma I_V - \eta_{V} I_V - \omega_V I_V$$
 
 Two parallel hospitalisation compartments, with a lower mortality rate for vaccinated:
 

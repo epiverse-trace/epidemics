@@ -83,7 +83,7 @@ While _finalsize_ does not allow for the implementation of a _dynamic_ vaccinati
 
 The two methods are comparable if we model vaccination in _epidemics_ as occurring before the main wave of the epidemic, as this sets up underlying susceptibility.
 
-### Prepare population and infection
+### Prepare population and infection parameters
 
 We first prepare the population (modelled on the U.K.), initial conditions, and infection parameters, before passing them to `epidemics::model_default_cpp()`.
 This example does not include any interventions or vaccination regimes.
@@ -137,16 +137,16 @@ uk_population <- population(
 uk_population
 ```
 
-Create an `<infection>` to model the spread of influenza with pandemic potential, assuming $R_0 = $ 1.5, a pre-infectious period of 3 days, and an infectious period of 7 days.
+
+We model the spread of influenza with pandemic potential, assuming $R_0 = $ 1.5, a pre-infectious period of 3 days, and an infectious period of 7 days.
+
+This leads to the following model parameters for transmissibility $\beta$, the rate of transition from exposed to infectious $\sigma$, and the recovery rate $\gamma$.
 
 ```{r}
-# simulate a pandemic, with an R0,
-# an infectious period, and an pre-infectious period
-pandemic_influenza <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
+# simulate pandemic parameters
+transmissibility <- 1.5 / 7
+infectiousness_rate <- 1 / 3
+recovery_rate <- 1 / 7
 ```
 
 ### Implementing vaccination in _epidemics_
@@ -179,7 +179,9 @@ We obtain the 'final' epidemic size using `epidemics::epidemic_size()`.
 # model epidemic with vaccination prior to the main epidemic wave
 output <- model_default_cpp(
   population = uk_population,
-  infection = pandemic_influenza,
+  transmissibility = transmissibility,
+  infectiousness_rate = infectiousness_rate,
+  recovery_rate = recovery_rate,
   vaccination = vaccinate_elders,
   time_end = 600, increment = 1.0
 )
@@ -264,7 +266,7 @@ contact_matrix <- (contact_data$matrix / demography_vector) / scalar
 ```{r}
 # Calculate the proportion of individuals infected in each age group
 dat1 <- final_size(
-  r0 = pandemic_influenza$r0,
+  r0 = 1.5,
   contact_matrix = contact_matrix,
   demography_vector = demography_vector,
   susceptibility = susceptibility,
@@ -317,7 +319,7 @@ The benchmarking shows that the total time taken for 1,000 runs using both metho
 # run benchmarks using {bench}
 benchmark <- mark(
   analytical_method = final_size(
-    r0 = pandemic_influenza$r0,
+    r0 = 1.5,
     contact_matrix = contact_matrix,
     demography_vector = demography_vector,
     susceptibility = susceptibility,
@@ -326,7 +328,9 @@ benchmark <- mark(
   ode_model = epidemic_size(
     model_default_cpp(
       population = uk_population,
-      infection = pandemic_influenza,
+      transmissibility = transmissibility,
+      infectiousness_rate = infectiousness_rate,
+      recovery_rate = recovery_rate,
       vaccination = vaccinate_elders,
       time_end = 600, increment = 1.0
     )

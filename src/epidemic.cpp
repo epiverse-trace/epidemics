@@ -17,33 +17,27 @@
 //' This function is intended to only be called internally from
 //' [model_default_cpp()].
 //'
-//' Allows heterogeneity in social contact patterns, and variable sizes of
-//' demographic groups.
-//' Also allows for group-specific initial proportions in each model
-//' compartment, as well as group-specific vaccination start dates and
-//' vaccination rates, and also group-specific effects of implementing a
-//' non-pharmaceutical intervention.
-//' The model only allows for single, population-wide rates of
-//' transition between the 'susceptible' and 'exposed' compartments, between the
-//' 'exposed' and 'infectious' compartments, and in the recovery rate.
-//'
-//' @param initial_state An `Eigen::MatrixXd` holding the initial state of
-//' each demographic-compartmental combination. Rows must represent demographic
-//' groups, while columns represent compartments in the order S, E, I, R, V.
-//' @param contact_matrix An `Eigen::MatrixXd` holding the population
-//' contact matrix.
-//' @param beta The transmission rate \eqn{\beta}.
-//' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
-//' @param gamma The recovery rate \eqn{\gamma}.
-//' @param time_end The maximum time, defaults to 200.0.
-//' @param intervention A non-pharmaceutical intervention applied during the
-//' course of the epidemic, with a start and end time, and age-specific effect
-//' on contacts. See [intervention()].
-//' @param vaccination A vaccination regime followed during the
-//' course of the epidemic, with a start and end time, and age-specific effect
-//' on the transition of individuals from susceptible to vaccinated.
-//' See [vaccination()].
-//' @param increment The increment time, defaults to 0.1.
+//' @param initial_state A matrix for the initial state of the compartments.
+//' @param transmissibility The transmission rate \eqn{\beta} at which
+//' unvaccinated and partially vaccinated individuals are infected by the
+//' disease.
+//' @param infectiousness_rate The rate of transition from exposed to infectious
+//' \eqn{\alpha}.
+//' @param recovery_rate The recovery rate \eqn{\gamma}.
+//' @param contact_matrix The population contact matrix.
+//' @param npi_time_begin The start time of any non-pharmaceutical interventions
+//' .
+//' @param npi_time_end The end time of any non-pharmaceutical interventions.
+//' @param npi_cr The reduction in contacts from any non-pharmaceutical
+//' interventions.
+//' @param vax_time_begin The start time of any vaccination campaigns.
+//' @param vax_time_end The end time of any vaccination campaigns.
+//' @param vax_nu The vaccination rate of any vaccination campaigns.
+//' @param rate_interventions A named list of `<rate_intervention>` objects.
+//' @param time_dependence A named list of functions for parameter time
+//' dependence.
+//' @param time_end The end time of the simulation.
+//' @param increment The time increment of the simulation.
 //' @return A two element list, where the first element is a list of matrices
 //' whose elements correspond to the numbers of individuals in each compartment
 //' as specified in the initial conditions matrix (see [population()]).

@@ -8,14 +8,6 @@
 #' `.check_args_model_default()` adds an empty `<intervention>` and
 #' `<vaccination>` object if these are missing from the model arguments.
 #'
-#' `.prepare_args_epidemics_default()` prepares arguments for
-#' [.model_default_cpp()], which is the C++ function that solves the default
-#' ODE system using a Boost _odeint_ solver.
-#' `.prepare_args_epidemics_default()` converts the arguments collected in
-#' `mod_args` into simpler structures such as lists and numeric or integer
-#' vectors that can be interpreted as C++ types such as `Rcpp::List`,
-#' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
-#'
 #' @return
 #'
 #' `.check_args_model_default()` invisibly returns the model arguments passed
@@ -29,9 +21,9 @@
 #'  - `initial_state`: the initial conditions modified to represent absolute
 #' rather than proportional values;
 #'
-#'  - `beta`, `alpha`, `gamma`: three numbers representing the transmission rate
-#' of the infection, the rate of transition from exposed to infectious, and the
-#' recovery rate, respectively;
+#'  - `transmissibility`, `infectiousness_rate`, `recovery_rate`: three numbers
+#' representing the transmission rate of the infection, the rate of transition
+#' from exposed to infectious, and the recovery rate, respectively;
 #'
 #'  - `contact_matrix`, a numeric matrix for the population contact matrix
 #' scaled by the largest real eigenvalue and by the size of each groups;
@@ -51,6 +43,16 @@
 #' is incremented.
 #'
 #' @keywords internal
+#' @details
+#' `.prepare_args_model_default()` prepares arguments for
+#' [.model_default_cpp()], which is the C++ function that solves the default
+#' ODE system using a Boost _odeint_ solver, and for [.ode_model_default()],
+#' which is passed to [deSolve::lsoda()] in [model_default_r()].
+#'
+#' `.prepare_args_model_default()` converts the arguments collected in
+#' `mod_args` into simpler structures such as lists and numeric or integer
+#' vectors that can be interpreted as C++ types such as `Rcpp::List`,
+#' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
 .check_args_model_default <- function(mod_args) {
   # check that arguments list has expected names
   checkmate::assert_names(

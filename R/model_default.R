@@ -1,7 +1,7 @@
 #' @title Model an SEIR-V epidemic with interventions
 #'
-#' @name epidemic_default
-#' @rdname epidemic_default
+#' @name model_default
+#' @rdname model_default
 #'
 #' @description Simulate an epidemic using a deterministic, compartmental
 #' epidemic model with the compartments
@@ -9,21 +9,28 @@
 #' This model can accommodate heterogeneity in social contacts among demographic
 #' groups, as well as differences in the sizes of demographic groups.
 #'
-#' The `population` and an `infection` arguments are mandatory, while passing an
-#' `intervention` and `vaccination` are optional and can be used to simulate
-#' scenarios with different epidemic responses or different levels of the same
-#' type of response.
+#' The `population`, `transmissibility`, `infectiousness_rate`, and
+#' `recovery_rate`
+#' arguments are mandatory, while passing an `intervention` and `vaccination`
+#' are optional and can be used to simulate scenarios with different epidemic
+#' responses or different levels of the same type of response.
 #' See **Details** for more information.
 #'
 #' @param population An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
 #' of each demographic group. See [population()].
-#' @param infection An `infection` object created using [infection()]. Must
-#' have the basic reproductive number \eqn{R_0} of the infection, the
-#' infectious period, and the pre-infectious period.
-#' These are used to calculate the transmission rate \eqn{\beta}, the rate
-#' at which individuals move from the 'exposed' to the 'infectious' compartment,
-#' \eqn{\alpha}, and the recovery rate \eqn{\gamma}.
+#' @param transmissibility A single number for the rate at which individuals
+#' move from the susceptible to the exposed compartment upon contact with an
+#' infectious individual. Often denoted as \eqn{\beta}, with
+#' \eqn{\beta = R_0 / \text{infectious period}}.
+#' @param infectiousness_rate A single number for the rate at which individuals
+#' move from the exposed to the infectious compartment. Often denoted as
+#' \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
+#' This value does not depend upon the number of infectious individuals in the
+#' population.
+#' @param recovery_rate A single number for the rate at which individuals move
+#' from the infectious to the recovered compartment. Often denoted as
+#' \eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.
 #' @param intervention An `<intervention>` object representing an optional
 #' non-pharmaceutical intervention applied to the population during the
 #' epidemic. See [intervention()] for details on constructing interventions with
@@ -35,7 +42,7 @@
 #' epidemic, with a start and end time, and age-specific vaccination rates.
 #' See [vaccination()].
 #' @param time_dependence A named list where each name
-#' is a model parameter (see `infection`), and each element is a function with
+#' is a model parameter, and each element is a function with
 #' the first two arguments being the current simulation `time`, and `x`, a value
 #' that is dependent on `time` (`x` represents a model parameter).
 #' See **Details** for more information, as well as the vignette on time-
@@ -45,6 +52,8 @@
 #' @param increment The size of the time increment. Taken as days, with a
 #' default value of 1 day.
 #' @details
+#'
+#' ## R and Rcpp implementations
 #'
 #' `model_default_cpp()` is a wrapper function for [.model_default_cpp()],
 #' an internal C++ function that uses Boost _odeint_ solvers for an SEIR-V model
@@ -58,14 +67,30 @@
 #'
 #' Both models return equivalent results, but the C++ implementation is faster.
 #'
+#' ## Model parameters
+#'
 #' This model only allows for single, population-wide rates of
 #' transition between the 'susceptible' and 'exposed' compartments, between the
 #' 'exposed' and 'infectious' compartments, and in the recovery rate.
 #'
+#' The default values are:
+#'
+#' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.186, resulting from
+#' an \eqn{R_0} = 1.3 and an infectious period of 7 days.
+#'
+#' - Infectiousness rate (\eqn{\sigma}, `infectiousness_rate`): 0.5, assuming
+#' a pre-infectious period of 2 days.
+#'
+#' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.143, assuming an
+#' infectious period of 7 days.
+#'
+#' ## Implementing time-dependent parameters
+#'
 #' Model rates or parameters can be made time-dependent by passing a function
 #' which modifies the parameter based on the current ODE simulation time.
-#' For example, a function that modifies the transmission rate `beta` could be
-#' passed as `time_dependence = list(beta = function(time, x) x + sinpi(time))`.
+#' For example, a function that modifies the transmission rate
+#' `transmissibility` could be passed as
+#' `time_dependence = list(transmissibility = function(time, x) x * time)`.
 #' This functionality may be used to model events that are expected to have some
 #' effect on model parameters, such as seasonality or annual schedules such as
 #' holidays.
@@ -226,8 +251,8 @@ model_default_cpp <- function(population,
 
 #' @title Model an SEIR-V epidemic with interventions
 #'
-#' @name epidemic_default
-#' @rdname epidemic_default
+#' @name model_default
+#' @rdname model_default
 #'
 #' @export
 model_default_r <- function(population,

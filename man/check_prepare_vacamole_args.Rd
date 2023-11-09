@@ -21,19 +21,20 @@ suitable for \code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}. This is 
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
 rather than proportional values;
-\item \code{beta}, \code{beta_v}: two numbers representing the transmission rate
+\item \code{transmissibility}, \code{transmissibility_vax}: two numbers representing the
+transmission rate
 of the infection for unvaccinated or single-dose vaccinated, and two-dose
 vaccinated individuals, respectively;
-\item \code{alpha}: a single number for the transition rate from the 'exposed' and
-'exposed_vaccinated' to the 'infectious' and 'infectious_vaccinated'
-compartments;
-\item \code{omega}, \code{omega_v}: two numbers representing the mortality rate
-of the infection for unvaccinated or single-dose vaccinated, and two-dose
-vaccinated individuals, respectively;
-\item \code{eta}, \code{eta_v}: two numbers representing the hospitalisation rate
-of the infection for unvaccinated or single-dose vaccinated, and two-dose
-vaccinated individuals, respectively;
-\item \code{gamma}: a single number for the recovery rate from the infection;
+\item \code{infectiousness_rate}: a single number for the transition rate from the
+'exposed' and 'exposed_vaccinated' to the 'infectious' and
+'infectious_vaccinated' compartments;
+\item \code{mortality_rate}, \code{mortality_rate_vax}: two numbers representing the
+mortality rate of the infection for unvaccinated or single-dose vaccinated,
+and two-dose vaccinated individuals, respectively;
+\item \code{hospitalisation_rate}, \code{hospitalisation_rate_vax}: two numbers
+representing the hospitalisation rate of the infection for unvaccinated or
+single-dose vaccinated, and two-dose vaccinated individuals, respectively;
+\item \code{recovery_rate}: a single number for the recovery rate from the infection;
 \item \code{contact_matrix}, a numeric matrix for the population contact matrix
 scaled by the largest real eigenvalue and by the size of each groups;
 \item \code{npi_time_begin}, \code{npi_time_end}: two vectors for the start and end times
@@ -54,11 +55,14 @@ Check and prepare the four main arguments to
 
 \code{.check_args_model_vacamole()} adds an empty \verb{<intervention>} object if
 this is missing from the model arguments.
-
-\code{.prepare_args_epidemics_vacamole()} prepares arguments for
+}
+\details{
+\code{.prepare_args_model_vacamole()} prepares arguments for
 \code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}, which is the C++ function that solves the default
-ODE system using a Boost \emph{odeint} solver.
-\code{.prepare_args_epidemics_vacamole()} converts the arguments collected in
+ODE system using a Boost \emph{odeint} solver, and for \code{\link[=.ode_model_vacamole]{.ode_model_vacamole()}},
+which is passed to \code{\link[deSolve:lsoda]{deSolve::lsoda()}} in \code{\link[=model_vacamole_r]{model_vacamole_r()}}.
+
+\code{.prepare_args_model_vacamole()} converts the arguments collected in
 \code{mod_args} into simpler structures such as lists and numeric or integer
 vectors that can be interpreted as C++ types such as \code{Rcpp::List},
 \code{Rcpp::NumericVector}, or \code{Eigen::MatrixXd}.

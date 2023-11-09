@@ -52,14 +52,18 @@ struct epidemic_vacamole {
   /// @param infection_params An unordered map of string-double pairs, with the
   /// infection parameters as keys, and parameter values as values. The
   /// model parameters are:
-  /// - beta The transmission rate for un-or-single vaccinated individuals
-  /// - beta_v The transmission rate for double-vaccinated individuals
-  /// - alpha The rate at which individuals become infectious
-  /// - omega The mortality rate of un-or-single-vaccinated individuals
-  /// - omega_v The mortality rate of double-vaccinated individuals
-  /// - eta The hospitalisation rate of un-or-single-vaccinated individuals
-  /// - eta_v The hospitalisation rate of double-vaccinated individuals
-  /// - gamma The recovery rate
+  /// - transmissibility The transmission rate for un-or-single vaccinated
+  /// individuals
+  /// - transmissibility_vax The transmission rate for double-vaccinated
+  /// individuals
+  /// - infectiousness_rate The rate at which individuals become infectious
+  /// - mortality_rate The mortality rate of un-or-single-vaccinated individuals
+  /// - mortality_rate_vax The mortality rate of double-vaccinated individuals
+  /// - hospitalisation_rate The hospitalisation rate of un-or-single-vaccinated
+  /// individuals
+  /// - hospitalisation_rate_vax The hospitalisation rate of double-vaccinated
+  /// individuals
+  /// - recovery_rate The recovery rate
   /// @param contact_matrix The population contact matrix
   /// @param npi_time_begin The intervention start times
   /// @param npi_time_end The intervention end times

@@ -43,9 +43,9 @@ struct epidemic_default {
   /// @param infection_params An unordered map of string-double pairs, with the
   /// infection parameters as keys, and parameter values as values. The
   /// model parameters are:
-  /// - beta The transmission rate
-  /// - alpha The rate at which individuals become infectious
-  /// - gamma The recovery rate
+  /// - transmissibility The transmission rate
+  /// - infectiousness_rate The rate at which individuals become infectious
+  /// - recovery_rate The recovery rate
   /// @param contact_matrix The population contact matrix
   /// @param npi_time_begin The intervention start times
   /// @param npi_time_end The intervention end times

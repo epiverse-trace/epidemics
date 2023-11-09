@@ -42,13 +42,14 @@ prob_discrete_erlang <- function(shape, rate) {
 }
 
 #' @title Model an Ebola virus disease epidemic
-#' @name epidemic_ebola
-#' @rdname epidemic_ebola
+#' @name model_ebola
+#' @rdname model_ebola
 #'
 #' @description Simulate an epidemic using a discrete-time, stochastic SEIR
 #' compartmental model with compartments based on Li et al. (2019), and with
 #' Erlang passage times based on a model developed by Getz and Dougherty (2017),
-#' developed to model the West African Ebola virus disease outbreak of 2014.
+#' developed to model the West African Ebola virus disease (EVD) outbreak of
+#' 2013 -- 2016.
 #' See **Details** for more information.
 #'
 #' `model_ebola_cpp()` is an Rcpp implementation of this model that currently
@@ -64,48 +65,28 @@ prob_discrete_erlang <- function(shape, rate) {
 #' contacts, which means that the `contact_matrix` is ignored. For consistency,
 #' the matrix must be square and have as many rows as demography groups, which
 #' is one.
-#'
-#' @param infection An `<infection>` object created using [infection()]. Must
-#' have:
-#'
-#' - `r0`, a single number for the basic reproductive number \eqn{R_0} of the
-#' infection,
-#'
-#' - `infectious_period`, a single number for the infectious period, taken to be
-#' in days,
-#'
-#' - `preinfectious_period`, a single number for the pre-infectious period
-#' before the onset of symptoms, taken to be in days,
-#'
-#' - `prop_community`, a single number in the range 0.0 -- 1.0 for the
-#' proportion of infectious (assumed symptomatic) individuals who are not
-#' hospitalised, and are instead infectious in the community,
-#'
-#' - `etu_risk`, a single number in the range 0.0 -- 1.0 for the relative
-#' risk of EVD transmission in hospital settings (in Ebola Treatment Units; ETU)
-#' between hospitalised individuals and susceptible ones.
-#' This is understood to be a proportion of the baseline transmission rate
-#' \eqn{\beta}, which is calculated from the `<infection>`.
-#' 0.0 would indicate that hospitalisation completely eliminates transmission,
-#' while 1.0 would indicate that transmission between hospitalised individuals
-#' and susceptibles is the same as the baseline, which is transmission in the
-#' community.
-#'
-#' - `funeral_risk`, a single number in the range 0.0 -- 1.0 for the relative
-#' risk of funeral practices that may lead to transmission of EVD in a funeral
-#' setting.
-#' This is understood to be a proportion of the baseline transmission rate
-#' \eqn{\beta}, which is calculated from the `<infection>`. It can alternatively
-#' be interpreted as the proportion of funerals at which the risk of
-#' transmission is the same as of infectious individuals in the community.
-#'
-#' `r0`, `infectious_period`, and `preinfectious_period` are used to calculate
-#' the baseline transmission rate \eqn{\beta},
-#' as well as the rates \eqn{\gamma^E} and \eqn{\gamma^I} at which individuals
-#' move from the 'exposed' to the 'infectious' compartment, and from the
-#' 'infectious' to the 'recovered' compartment, respectively.
-#' See **Details** for more information.
-#'
+#' @param erlang_subcompartments The number of Erlang subcompartments assumed
+#' for the exposed, infectious, and hospitalised compartments. Defaults to 2.
+#' @inheritParams model_default
+#' @param removal_rate The rate at which infectious individuals transition from
+#' the infectious or hospitalised compartments to the funeral or removed
+#' compartments. This model does not distinguish between recoveries and
+#' deaths. Denoted in Getz and Dougherty as \eqn{\gamma^I} (see **Details**).
+#' @param prop_community The proportion of infectious individuals who remain in
+#' the community and are not hospitalised for treatment. Defaults to 0.5
+#' @param etu_risk The relative risk of onward transmission of EVD from
+#' hospitalised individuals. Must be a single value between 0.0 and 1.0, where
+#' 0.0 indicates that hospitalisation completely prevents onward transmission,
+#' and 1.0 indicates that hospitalisation does not prevent onward transmission
+#' at all. `etu_risk` is used to scale the value of transmissibility for the
+#' transsmissibility \eqn{\beta}. Defaults to 0.2.
+#' @param funeral_risk The relative risk of onward transmission of EVD from
+#' funerals of individuals who died with EVD.
+#' Must be a single value between 0.0 and 1.0, where
+#' 0.0 indicates that there is no onward transmission, and 1.0 indicates that
+#' funeral transmisison is equivalent to transmission in the community.
+#' `funeral_risk` is used to scale the value of transmissibility for the
+#' transmissibility \eqn{\beta}. Defaults to 0.5.
 #' @param intervention An optional `<rate_intervention>` object representing
 #' pharmaceutical or non-pharmaceutical interventions applied to the infection's
 #' parameters, such as the transmission rate, over the epidemic.
@@ -138,26 +119,27 @@ prob_discrete_erlang <- function(shape, rate) {
 #' made available on _Epirecipes_ (https://github.com/epirecipes/epicookbook)
 #' under the MIT licence.
 #'
-#' The model implementation differs from Getz and Dougherty's (2018) in
-#' allowing users to set the basic reproductive number \eqn{R_0}, and the mean
-#' infectious (\eqn{\rho^I} in Getz and Dougherty) and pre-infectious periods in
-#' days (\eqn{\rho^E} in Getz and Dougherty).
-#' Getz and Dougherty instead calculate these from other model parameters.
-#'
 #' The shape of the Erlang distributions of passage times through the exposed
-#' and infectious compartments (\eqn{k^E} and \eqn{k^I}) are fixed to 2 (this
-#' was allowed to vary in Getz and Dougherty).
+#' and infectious compartments (\eqn{k^E} and \eqn{k^I}) are recommended to be
+#' set to 2 as a sensible choice, which is the default value for the
+#' `erlang_sbubcompartments` argument, but can be allowed to vary
+#' (but not independently).
 #'
 #' The transition rates between the exposed and infectious, and infectious and
-#' funeral compartments, \eqn{\gamma^E} and \eqn{\gamma^I} in Getz and
-#' Dougherty's notation, are calculated following their equation (6).
+#' funeral compartments (and also hospitalised to removed),
+#' \eqn{\gamma^E} and \eqn{\gamma^I} in Getz and Dougherty's notation, are
+#' passed by the user as the `infectiousness_rate` and `removal_rate`
+#' respectively.
+#'
+#' Getz and Dougherty's equation (6) gives the relationship between these
+#' parameters and the mean pre-infectious \eqn{\rho^E} and infectious
+#' \eqn{\rho^I} periods.
 #' \deqn{\gamma^E = \dfrac{k^E}{\rho^E} = \dfrac{2}{\rho^E} ~\text{and}~
 #' \gamma^I = \dfrac{k^I}{\rho^I} = \dfrac{2}{\rho^I}}
 #'
 #' In this discrete time model, \eqn{\gamma^E} and \eqn{\gamma^I} are used to
-#' determine the number of Erlang sub-compartments in each epidemiological
-#' compartment, and the probability of newly exposed or infectious individuals
-#' beginning in one of the compartments (thus allowing for variation in passage
+#' determine the passage times of newly exposed or infectious individuals
+#' through their respective compartments (thus allowing for variation in passage
 #' times).
 #'
 #' ## Hospitalisation, funerals, and removal
@@ -167,11 +149,12 @@ prob_discrete_erlang <- function(shape, rate) {
 #' This compartment represents Ebola Treatment Units (ETUs), and individuals
 #' in the hospitalised compartment are considered to be infectious but no longer
 #' in the community.
-#' This compartment has the same number of sub-compartments as the infectious
-#' compartment (i.e., infectious in the community), which means that
-#' an infectious individual with \eqn{N} timesteps before exiting the
-#' infectious compartment will exit the hospitalised compartment in the same
-#' time.
+#'
+#' The passage time of individuals in the hospitalised compartment is similar to
+#' that of individuals in the infectious compartment (i.e., infectious in the
+#' community), which means that an infectious individual with \eqn{N} timesteps
+#' before exiting the infectious compartment will exit the hospitalised
+#' compartment in the same time.
 #'
 #' Hospitalised individuals can contribute to transmission of Ebola to
 #' susceptibles depending on the value of `etu_risk` passed as part of the
@@ -183,14 +166,27 @@ prob_discrete_erlang <- function(shape, rate) {
 #' compartment, which holds both recoveries and deaths.
 #'
 #' We assume that deaths outside of hospital lead to funerals that are
-#' potentially unsafe burials, and the `funeral_risk` passed as part of the
-#' `infection` argument scales the baseline transmission rate \eqn{\beta} for
-#' funeral transmission of Ebola to susceptibles.
+#' potentially unsafe burials, and the `funeral_risk` argument scales the
+#' baseline transmission rate \eqn{\beta} for funeral transmission of Ebola to
+#' susceptibles.
 #'
 #' Individuals are assumed to spend only a single timestep in the funeral
 #' transmission compartment, before they move into the 'removed' compartment.
 #'
 #' Individuals in the 'removed' compartment do no affect model dynamics.
+#'
+#' ## Model parameters
+#'
+#' The default values are:
+#'
+#' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.1083, resulting from
+#' an \eqn{R_0} = 1.3 and an infectious period of 12 days.
+#'
+#' - Infectiousness rate (\eqn{\gamma^E}, `infectiousness_rate`): 0.4, assuming
+#' a pre-infectious period of 5 days and two Erlang subcompartments.
+#'
+#' - Removal rate (\eqn{\gamma^I}, `recovery_rate`): 0.1667, assuming an
+#' infectious period of 12 days and two Erlang subcompartments.
 #'
 #' ## Implementing vaccination
 #'
@@ -327,7 +323,7 @@ model_ebola_r <- function(population,
   # define a fixed rounding factor for all timesteps to save function calls
   rounding_factor <- stats::rnorm(n_infectious_boxcars - 1, 0, 1e-2)
 
-  # place parameter beta in list for rate interventions function
+  # place parameter transmissibility in list for rate interventions function
   parameters <- list(
     transmissibility = transmissibility,
     prop_community = prop_community,

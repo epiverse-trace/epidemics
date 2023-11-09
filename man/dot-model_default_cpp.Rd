@@ -6,9 +6,9 @@
 \usage{
 .model_default_cpp(
   initial_state,
-  beta,
-  alpha,
-  gamma,
+  transmissibility,
+  infectiousness_rate,
+  recovery_rate,
   contact_matrix,
   npi_time_begin,
   npi_time_end,
@@ -23,31 +23,41 @@
 )
 }
 \arguments{
-\item{initial_state}{An \code{Eigen::MatrixXd} holding the initial state of
-each demographic-compartmental combination. Rows must represent demographic
-groups, while columns represent compartments in the order S, E, I, R, V.}
+\item{initial_state}{A matrix for the initial state of the compartments.}
 
-\item{beta}{The transmission rate \eqn{\beta}.}
+\item{transmissibility}{The transmission rate \eqn{\beta} at which
+unvaccinated and partially vaccinated individuals are infected by the
+disease.}
 
-\item{alpha}{The rate of transition from exposed to infectious \eqn{\alpha}.}
+\item{infectiousness_rate}{The rate of transition from exposed to infectious
+\eqn{\alpha}.}
 
-\item{gamma}{The recovery rate \eqn{\gamma}.}
+\item{recovery_rate}{The recovery rate \eqn{\gamma}.}
 
-\item{contact_matrix}{An \code{Eigen::MatrixXd} holding the population
-contact matrix.}
+\item{contact_matrix}{The population contact matrix.}
 
-\item{time_end}{The maximum time, defaults to 200.0.}
+\item{npi_time_begin}{The start time of any non-pharmaceutical interventions
+.}
 
-\item{increment}{The increment time, defaults to 0.1.}
+\item{npi_time_end}{The end time of any non-pharmaceutical interventions.}
 
-\item{intervention}{A non-pharmaceutical intervention applied during the
-course of the epidemic, with a start and end time, and age-specific effect
-on contacts. See \code{\link[=intervention]{intervention()}}.}
+\item{npi_cr}{The reduction in contacts from any non-pharmaceutical
+interventions.}
 
-\item{vaccination}{A vaccination regime followed during the
-course of the epidemic, with a start and end time, and age-specific effect
-on the transition of individuals from susceptible to vaccinated.
-See \code{\link[=vaccination]{vaccination()}}.}
+\item{vax_time_begin}{The start time of any vaccination campaigns.}
+
+\item{vax_time_end}{The end time of any vaccination campaigns.}
+
+\item{vax_nu}{The vaccination rate of any vaccination campaigns.}
+
+\item{rate_interventions}{A named list of \verb{<rate_intervention>} objects.}
+
+\item{time_dependence}{A named list of functions for parameter time
+dependence.}
+
+\item{time_end}{The end time of the simulation.}
+
+\item{increment}{The time increment of the simulation.}
 }
 \value{
 A two element list, where the first element is a list of matrices
@@ -61,15 +71,5 @@ intervention and an optional vaccination regime.
 
 This function is intended to only be called internally from
 \code{\link[=model_default_cpp]{model_default_cpp()}}.
-
-Allows heterogeneity in social contact patterns, and variable sizes of
-demographic groups.
-Also allows for group-specific initial proportions in each model
-compartment, as well as group-specific vaccination start dates and
-vaccination rates, and also group-specific effects of implementing a
-non-pharmaceutical intervention.
-The model only allows for single, population-wide rates of
-transition between the 'susceptible' and 'exposed' compartments, between the
-'exposed' and 'infectious' compartments, and in the recovery rate.
 }
 \keyword{internal}

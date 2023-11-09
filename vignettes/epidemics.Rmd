@@ -97,24 +97,12 @@ uk_population <- population(
 uk_population
 ```
 
-## Prepare pathogen parameters
-
-```{r}
-# Prepare epidemiological parameters as an infection class object
-pandemic <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-```
-
 ## Run epidemic model
 
 ```{r}
 # run an epidemic model using `epidemic`
 output <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   time_end = 600, increment = 1.0
 )
 ```

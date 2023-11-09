@@ -79,17 +79,6 @@ uk_population <- population(
 )
 ```
 
-## Prepare pathogen parameters
-
-```{r}
-# Prepare epidemiological parameters as an infection object
-pandemic <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-```
-
 ## Prepare an intervention
 
 Prepare an intervention to simulate school closures.
@@ -114,7 +103,6 @@ close_schools
 # run an epidemic model using `epidemic`
 output <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   intervention = list(contacts = close_schools),
   time_end = 600, increment = 1.0
 )

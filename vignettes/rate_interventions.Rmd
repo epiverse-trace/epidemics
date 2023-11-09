@@ -36,11 +36,9 @@ library(data.table)
 library(ggplot2)
 ```
 
-## Prepare population, initial conditions, and pathogen
+## Prepare population and initial conditions
 
 We prepare population and contact data from the U.K., with epidemiological compartments matching the default epidemic model (SEIR-V).
-
-We prepare an `infection` object to simulate a pathogen with an $R_0$ of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.
 
 We assume that one in every million people has been infected and is infectious, translating to about 67 total infections for a U.K. population of 67 million.
 
@@ -91,18 +89,9 @@ uk_population <- population(
 )
 ```
 
-```{r class.source = 'fold-hide'}
-# Prepare epidemiological parameters as an infection object
-pandemic <- infection(
-  r0 = 1.3,
-  preinfectious_period = 1.5,
-  infectious_period = 5
-)
-```
+## Modelling an intervention on transmissibility
 
-## Modelling an intervention on transmission rates
-
-We model an intervention on the transmission rate $\beta$ that reduces it by 10%.
+We model an intervention on the transmissibility $\beta$ that reduces it by 10%.
 This could represent interventions such as requiring people to wear masks that reduce transmission.
 
 ```{r}
@@ -135,15 +124,13 @@ To examine the effect of a mask mandate, we simulate the epidemic for 200 days a
 # no intervention baseline scenario
 data <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   time_end = 200, increment = 1.0
 )
 
 # with a mask mandate
 data_masks <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
-  intervention = list(beta = mask_mandate),
+  intervention = list(transmissibility = mask_mandate),
   time_end = 200, increment = 1.0
 )
 ```
@@ -209,4 +196,3 @@ ggplot(data_combined) +
     y = "New infections"
   )
 ```
-

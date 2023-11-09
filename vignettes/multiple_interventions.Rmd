@@ -36,11 +36,9 @@ library(data.table)
 library(ggplot2)
 ```
 
-## Prepare population, initial conditions, and pathogen
+## Prepare population and initial conditions
 
 We prepare population and contact data from the U.K., with epidemiological compartments matching the default epidemic model (SEIR-V).
-
-We prepare an `infection` object to simulate a pathogen with an $R_0$ of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.
 
 We assume that one in every million people has been infected and is infectious, translating to about 67 total infections for a U.K. population of 67 million.
 
@@ -91,15 +89,6 @@ uk_population <- population(
 )
 ```
 
-```{r class.source = 'fold-hide'}
-# Prepare epidemiological parameters as an infection object
-pandemic <- infection(
-  r0 = 1.3,
-  preinfectious_period = 1.5,
-  infectious_period = 5
-)
-```
-
 ## Examine the baseline
 
 We first examine the baseline scenario --- no interventions are implemented to slow the spread of the epidemic --- and visualise the outcomes in terms of daily new infections.
@@ -110,7 +99,6 @@ We simulate an epidemic using `model_default_cpp()`, calling the default model o
 # no intervention baseline scenario
 data_baseline <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   time_end = 400, increment = 1.0
 )
 
@@ -192,7 +180,6 @@ We simulate the epidemic for 600 days as we expect the intervention to spread di
 # no intervention baseline scenario
 data_schools_closed <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   intervention = list(contacts = close_schools),
   time_end = 600, increment = 1.0
 )
@@ -321,7 +308,6 @@ We simulate the epidemic for 600 days.
 # get data from an epidemic model with both interventions
 data_combined <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   intervention = list(contacts = combined_interventions),
   time_end = 600, increment = 1.0
 )
@@ -439,7 +425,6 @@ We simulate an epidemic using the `model_default_cpp()` function for 600 days as
 # get data from an epidemic model with both interventions
 data_combined <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   intervention = list(contacts = combined_interventions),
   time_end = 600, increment = 1.0
 )

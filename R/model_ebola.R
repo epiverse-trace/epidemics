@@ -179,8 +179,8 @@ prob_discrete_erlang <- function(shape, rate) {
 #'
 #' The default values are:
 #'
-#' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.1083, resulting from
-#' an \eqn{R_0} = 1.3 and an infectious period of 12 days.
+#' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.125, resulting from
+#' an \eqn{R_0} = 1.5 and an infectious period of 12 days.
 #'
 #' - Infectiousness rate (\eqn{\gamma^E}, `infectiousness_rate`): 0.4, assuming
 #' a pre-infectious period of 5 days and two Erlang subcompartments.
@@ -214,11 +214,11 @@ prob_discrete_erlang <- function(shape, rate) {
 #' @export
 model_ebola_r <- function(population,
                           erlang_subcompartments = 2,
-                          transmissibility = 1.3 / 12,
+                          transmissibility = 1.5 / 12,
                           infectiousness_rate = erlang_subcompartments / 5,
                           removal_rate = erlang_subcompartments / 12,
-                          prop_community = 0.5,
-                          etu_risk = 0.2,
+                          prop_community = 0.9,
+                          etu_risk = 0.7,
                           funeral_risk = 0.5,
                           intervention = NULL,
                           time_dependence = NULL, time_end = 100) {

@@ -18,13 +18,3 @@ An object of the class of \code{parameter} from \code{x}.
 \description{
 Get parameters from \{epidemics\} classes
 }
-\examples{
-# prepare an infection and access the r0 member
-pandemic <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
-get_parameter(pandemic, "r0")
-}

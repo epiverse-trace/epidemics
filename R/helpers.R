@@ -1,26 +1,13 @@
 #' Get parameters from \{epidemics\} classes
-#'
 #' @param x An object of one of the classes provided by _epidemics_:
 #' `<population>`, `<infection>`, `<intervention>`, or `<vaccination>`.
 #' @param parameter A string for the parameter to access from `x`.
 #'
 #' @return An object of the class of `parameter` from `x`.
 #' @export
-#'
-#' @examples
-#' # prepare an infection and access the r0 member
-#' pandemic <- infection(
-#'   r0 = 1.5,
-#'   preinfectious_period = 3,
-#'   infectious_period = 7
-#' )
-#'
-#' get_parameter(pandemic, "r0")
 get_parameter <- function(x, parameter) {
-  stopifnot(
-    "`x` must be <population>, <infection>, <intervention>, or <vaccination>" =
-      is_population(x) || is_infection(x) || is_intervention(x) ||
-        is_vaccination(x)
+  checkmate::assert_multi_class(
+    x, c("population", "intervention", "vaccination")
   )
   checkmate::assert_string(parameter)
 

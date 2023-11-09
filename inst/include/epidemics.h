@@ -16,7 +16,6 @@
 #include "population.h"
 #include "intervention.h"
 #include "vaccination.h"
-#include "helpers.h"
 #include "time_dependence.h"
 #include "epidemic_default.h"
 #include "epidemic_vacamole.h"

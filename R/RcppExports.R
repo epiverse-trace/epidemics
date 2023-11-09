@@ -9,72 +9,34 @@
 #' This function is intended to only be called internally from
 #' [model_default_cpp()].
 #'
-#' Allows heterogeneity in social contact patterns, and variable sizes of
-#' demographic groups.
-#' Also allows for group-specific initial proportions in each model
-#' compartment, as well as group-specific vaccination start dates and
-#' vaccination rates, and also group-specific effects of implementing a
-#' non-pharmaceutical intervention.
-#' The model only allows for single, population-wide rates of
-#' transition between the 'susceptible' and 'exposed' compartments, between the
-#' 'exposed' and 'infectious' compartments, and in the recovery rate.
-#'
-#' @param initial_state An `Eigen::MatrixXd` holding the initial state of
-#' each demographic-compartmental combination. Rows must represent demographic
-#' groups, while columns represent compartments in the order S, E, I, R, V.
-#' @param contact_matrix An `Eigen::MatrixXd` holding the population
-#' contact matrix.
-#' @param beta The transmission rate \eqn{\beta}.
-#' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
-#' @param gamma The recovery rate \eqn{\gamma}.
-#' @param time_end The maximum time, defaults to 200.0.
-#' @param intervention A non-pharmaceutical intervention applied during the
-#' course of the epidemic, with a start and end time, and age-specific effect
-#' on contacts. See [intervention()].
-#' @param vaccination A vaccination regime followed during the
-#' course of the epidemic, with a start and end time, and age-specific effect
-#' on the transition of individuals from susceptible to vaccinated.
-#' See [vaccination()].
-#' @param increment The increment time, defaults to 0.1.
+#' @param initial_state A matrix for the initial state of the compartments.
+#' @param transmissibility The transmission rate \eqn{\beta} at which
+#' unvaccinated and partially vaccinated individuals are infected by the
+#' disease.
+#' @param infectiousness_rate The rate of transition from exposed to infectious
+#' \eqn{\alpha}.
+#' @param recovery_rate The recovery rate \eqn{\gamma}.
+#' @param contact_matrix The population contact matrix.
+#' @param npi_time_begin The start time of any non-pharmaceutical interventions
+#' .
+#' @param npi_time_end The end time of any non-pharmaceutical interventions.
+#' @param npi_cr The reduction in contacts from any non-pharmaceutical
+#' interventions.
+#' @param vax_time_begin The start time of any vaccination campaigns.
+#' @param vax_time_end The end time of any vaccination campaigns.
+#' @param vax_nu The vaccination rate of any vaccination campaigns.
+#' @param rate_interventions A named list of `<rate_intervention>` objects.
+#' @param time_dependence A named list of functions for parameter time
+#' dependence.
+#' @param time_end The end time of the simulation.
+#' @param increment The time increment of the simulation.
 #' @return A two element list, where the first element is a list of matrices
 #' whose elements correspond to the numbers of individuals in each compartment
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.model_default_cpp <- function(initial_state, beta, alpha, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_default_cpp_internal`, initial_state, beta, alpha, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
-}
-
-#' @title Run an SEIR model with Erlang passage times
-#'
-#' @description Wrapper function for an SEIR compartmental model with Erlang
-#' passage times based on Getz and Dougherty (2017) J. Biological Dynamics,
-#' and developed to model the West African ebola virus disease outbreak of 2014
-#' .
-#'
-#' @param initial_conditions An integer vector of the initial conditions
-#' corresponding to an SEIR model.
-#' @param population_size A single integer for the population size.
-#' @param beta The transmission rate \eqn{\beta}.
-#' @param shape_E A single integer for the shape parameter of the Erlang
-#' distribution of passage times through the exposed compartment.
-#' @param rate_E A single double for the rate parameter of the Erlang
-#' distribution of passage times through the exposed compartment.
-#' @param shape_I A single integer for the shape parameter of the Erlang
-#' distribution of passage times through the infectious compartment.
-#' @param rate_I A single double for the rate parameter of the Erlang
-#' distribution of passage times through the infectious compartment.
-#' @param time_end A single integer for the maximum simulation time; this is
-#' assumed to be in days.
-#' @return A list with two elements, `x`, and integer matrix with as many rows
-#' as the number of timesteps (given by `time_end`), and four columns, one for
-#' each compartment, susceptible, exposed, infectious, recovered, in that order
-#' ; and `times`, a vector of the simulation times, taken to be days.
-#' This output is intended to be passed to [output_to_df()] to be converted
-#' into a data.frame for further analysis.
-#' @keywords internal
-.model_ebola_cpp <- function(initial_state, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end) {
-    .Call(`_epidemics_model_ebola_cpp_internal`, initial_state, population_size, beta, shape_E, rate_E, shape_I, rate_I, time_end)
+.model_default_cpp <- function(initial_state, transmissibility, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_default_cpp_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 
 #' @title Run the RIVM Vacamole model
@@ -86,54 +48,49 @@
 #' Model code: https://github.com/kylieainslie/vacamole
 #' Manuscript describing the model and its application:
 #' https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090
+#' This function is intended to only be called internally from
+#' [model_vacamole_cpp()].
 #'
-#' @details The original model has 8 conceptual compartments - four
-#' epidemiological compartments (SEIR), three hospitalisation compartments
-#' (H, ICU, ICU2H), and death - see the manuscript in Eurosurveillance.
-#' Only infected individuals can enter the hospitalisation or death
-#' compartments.
-#' Vacamole was implemented as a stand-alone R package, and some versions have
-#' been used to generate scenarios for the ECDC Covid-19 Scenario Hub.
-#'
-#' Individuals from the susceptible compartment may be vaccinated partially
-#' or fully (assuming a two dose regimen), with only the second dose reducing
-#' their probability of being infected, and of being hospitalised or dying.
-#'
-#' @param population An object of the `population` class, which holds a
-#' population contact matrix, a demography vector, and the initial conditions
-#' of each demographic group. See [population()].
-#' @param beta The transmission rate \eqn{\beta} at which unvaccinated and
-#' partially vaccinated individuals are infected by the disease.
-#' @param beta_v The transmission rate \eqn{\beta_V} at which individuals who
-#' have received two vaccine doses are infected by the disease.
-#' @param alpha The rate of transition from exposed to infectious \eqn{\alpha}.
+#' @param initial_state A matrix for the initial state of the compartments.
+#' @param transmissibility The transmission rate \eqn{\beta} at which
+#' unvaccinated and partially vaccinated individuals are infected by the
+#' disease.
+#' @param transmissibility_vax The transmission rate \eqn{\beta_V} at which
+#' individuals who have received two vaccine doses are infected by the disease.
+#' @param infectiousness_rate The rate of transition from exposed to infectious
+#' \eqn{\alpha}.
 #' This is common to fully susceptible, partially vaccinated, and fully
 #' vaccinated individuals (where fully vaccinated represents two doses).
-#' @param omega The mortality rate of fully susceptible and partially
+#' @param mortality_rate The mortality rate of fully susceptible and partially
 #' vaccinated and unprotected individuals.
-#' @param omega_v The mortality rate of individuals who are protected by
-#' vaccination.
-#' @param eta The hospitalisation rate of fully susceptible and partially
-#' vaccinated and unprotected individuals.
-#' @param eta_v The hospitalisation rate of individuals who are protected by
-#' vaccination.
-#' @param gamma The recovery rate \eqn{\gamma}.
-#' @param time_end The maximum time. Defaults to 100.0.
-#' @param intervention A non-pharmaceutical intervention applied during the
-#' course of the epidemic, with a start and end time, and age-specific effect
-#' on contacts. See [intervention()].
-#' @param vaccination A vaccination regime followed during the
-#' course of the epidemic, with a group- and dose-specific start and end time,
-#' and age-specific rates of delivery of first and second doses.
-#' See [vaccination()].
-#' @param increment The increment time, defaults to 0.1.
+#' @param mortality_rate_vax The mortality rate of individuals who are
+#' protected by vaccination.
+#' @param hospitalisation_rate The hospitalisation rate of fully susceptible
+#' and partially vaccinated and unprotected individuals.
+#' @param hospitalisation_rate_vax The hospitalisation rate of individuals who
+#' are protected by vaccination.
+#' @param recovery_rate The recovery rate \eqn{\gamma}.
+#' @param contact_matrix The population contact matrix.
+#' @param npi_time_begin The start time of any non-pharmaceutical interventions
+#' .
+#' @param npi_time_end The end time of any non-pharmaceutical interventions.
+#' @param npi_cr The reduction in contacts from any non-pharmaceutical
+#' interventions.
+#' @param vax_time_begin The start time of any vaccination campaigns.
+#' @param vax_time_end The end time of any vaccination campaigns.
+#' @param vax_nu The vaccination rate of any vaccination campaigns.
+#' @param rate_interventions A named list of `<rate_intervention>` objects.
+#' @param time_dependence A named list of functions for parameter time
+#' dependence.
+#' @param time_end The end time of the simulation.
+#' @param increment The time increment of the simulation.
 #' @return A two element list, where the first element is a list of matrices
 #' whose elements correspond to the numbers of individuals in each compartment
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.model_vacamole_cpp <- function(initial_state, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_vacamole_cpp_internal`, initial_state, beta, beta_v, alpha, omega, omega_v, eta, eta_v, gamma, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
+.model_vacamole_cpp <- function(initial_state, transmissibility, transmissibility_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_vacamole_cpp_internal`, initial_state, transmissibility, transmissibility_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 
 #' @title Compute the discrete probability of the truncated Erlang distribution

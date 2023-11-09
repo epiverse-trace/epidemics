@@ -85,37 +85,29 @@ guinea_population <- population(
 guinea_population
 ```
 
-## Prepare pathogen parameters
+## Prepare model parameters
 
-We prepare an `<infection>` class object for ebola, with an $R_0$ taken from the value estimated for ebola in Guinea [@althaus2014].
-
+We use the default model parameters, beginning with an $R_0$ taken from the value estimated for ebola in Guinea [@althaus2014].
 We assume that ebola has a mean infectious period of 12 days, and that the time between exposure and symptom onset --- the pre-infectious period --- is 5 days.
 
-This model does not yet have an explicit "deaths" compartment, but rather, the "removed" compartment holds all individuals who have recovered and who have died and been buried safely (see **Details**).
+Together, these give the following values:
+
+ - Transmissibility ($\beta$): 0.125,
+ 
+ - Infectiousness rate ($\gamma^E$ in @getz2018): 0.4,
+ 
+ - Removal rate ($\gamma^I$ in @getz2018): 0.1667
+
+This model does not yet have an explicit "deaths" compartment, but rather, the "removed" compartment holds all individuals who have recovered and who have died and been buried safely.
 Functionally, they are similar as they are not part of the model dynamics.
 
 We assume that only 10% of infectious individuals are hospitalised, and that hospitalisation achieves a modest 30% reduction in transmission between hospitalised individuals and those still susceptible.
+
 We assume also that any deaths in hospital lead to ebola-safe funerals, such that no further infections result from them.
 
 We assume that infectious individuals who are not hospitalised die in the community, and that their funerals are potentially not ebola-safe.
 We assume that the transmission rate of ebola at funerals is 50% of the baseline transmission rate.
 This can also be interpreted as the proportion of funerals that are ebola-safe.
-
-```{r}
-# Prepare ebola parameters as an infection class object
-ebola <- infection(
-  name = "ebolavirus disease",
-  r0 = 1.5,
-  infectious_period = 12,
-  preinfectious_period = 5,
-  prop_community = 0.9,
-  etu_risk = 0.7,
-  funeral_risk = 0.5
-)
-
-# print to visualise
-ebola
-```
 
 ## Run epidemic model
 
@@ -133,7 +125,6 @@ set.seed(0)
 # we call the model "ebola" from the library
 data <- model_ebola_r(
   population = guinea_population,
-  infection = ebola,
   time_end = 100
 )
 
@@ -193,7 +184,6 @@ data <- Map(
   f = function(x) {
     data <- model_ebola_r(
       population = guinea_population,
-      infection = ebola,
       time_end = 100
     )
 
@@ -306,7 +296,6 @@ set.seed(0)
 # run the epidemic model and save data as the baseline
 data_baseline <- model_ebola_r(
   population = guinea_population,
-  infection = ebola,
   time_end = 100
 )
 
@@ -315,9 +304,8 @@ set.seed(0)
 # where it is named for the rate it is targeting
 data_intervention <- model_ebola_r(
   population = guinea_population,
-  infection = ebola,
   intervention = list(
-    beta = reduce_transmission
+    transmissibility = reduce_transmission
   ),
   time_end = 100
 )
@@ -392,9 +380,8 @@ set.seed(0)
 # where it is named for the rate it is targeting
 data_apply_vax <- model_ebola_r(
   population = guinea_population,
-  infection = ebola,
   time_dependence = list(
-    beta = time_dep_vax
+    transmissibility = time_dep_vax
   ),
   time_end = 100
 )
@@ -467,7 +454,6 @@ set.seed(0)
 # where it is named for the rate it is targeting
 data_improve_hosp <- model_ebola_r(
   population = guinea_population,
-  infection = ebola,
   intervention = list(
     prop_community = improve_hospitalisation
   ),
@@ -524,7 +510,6 @@ set.seed(0)
 # where it is named for the rate it is targeting
 data_improve_etu <- model_ebola_r(
   population = guinea_population,
-  infection = ebola,
   intervention = list(
     etu_risk = improve_etu_safety
   ),
@@ -584,7 +569,6 @@ set.seed(0)
 # where it is named for the rate it is targeting
 data_improve_funeral <- model_ebola_r(
   population = guinea_population,
-  infection = ebola,
   intervention = list(
     funeral_risk = reduce_funeral_risk
   ),
@@ -632,9 +616,8 @@ set.seed(0)
 # where it is named for the rate it is targeting
 data_combined_interventions <- model_ebola_r(
   population = guinea_population,
-  infection = ebola,
   intervention = list(
-    beta = reduce_transmission,
+    transmissibility = reduce_transmission,
     prop_community = improve_hospitalisation,
     etu_risk = improve_etu_safety,
     funeral_risk = reduce_funeral_risk
@@ -677,19 +660,19 @@ ggplot(data_scenarios[compartment == "removed", ]) +
 
 ## Details: Discrete-time ebola virus disease model
 
-This model has compartments adopted from a consensus model for Ebola virus disease presented in [@li2019], but some of the compartmental transitions allowed have been simplified (see sub-section on hospitalisation).
+This model has compartments adopted from the consensus model for Ebola virus disease presented in Li et al. (2019), and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from Getz and Dougherty (2018); see **References**.
 
-The model implementation differs from @getz2018 in allowing users to set the basic reproductive number $R_0$, and the mean infectious ($\rho^I$ in Getz and Dougherty) and pre-infectious periods in days ($\rho^E$ in Getz and Dougherty).
-Getz and Dougherty instead calculate these from other model parameters.
+The transition rates between the exposed and infectious, and infectious and funeral compartments (and also hospitalised to removed), $\gamma^E$ and $\gamma^I$ in Getz and Dougherty's notation, are passed by the user as the `infectiousness_rate` and `removal_rate` respectively.
 
-The shape of the Erlang distributions of passage times through the exposed and infectious compartments ($k^E$ and $k^I$) are fixed to 2 (this was allowed to vary in Getz and Dougherty).
+The shape of the Erlang distributions of passage times through the exposed and infectious compartments ($k^E$ and $k^I$) are recommended to be set to 2 as a sensible choice, which is the default value for the `erlang_sbubcompartments` argument, but can be allowed to vary (but not independently).
 
-The transition rates between the exposed and infectious, and infectious and funeral compartments, $\gamma^E$ and $\gamma^I$ in Getz and Dougherty's notation, are calculated following their equation (6).
+
+Getz and Dougherty's equation (6) gives the relationship between these parameters and the mean pre-infectious $\rho^E$ and infectious $\rho^I$ periods.
 
 $$\gamma^E = \dfrac{k^E}{\rho^E} = \dfrac{2}{\rho^E} ~\text{and}~
 \gamma^I = \dfrac{k^I}{\rho^I} = \dfrac{2}{\rho^I}$$
 
-In this discrete time model, $\gamma^E$ and $\gamma^I$ are used to determine the number of Erlang sub-compartments in each epidemiological compartment, and the probability of newly exposed or infectious individuals beginning in one of the compartments (thus allowing for variation in passage times).
+In this discrete time model, $\gamma^E$ and $\gamma^I$ are used to determine the passage times of newly exposed or infectious individuals through their respective compartments (thus allowing for variation in passage times).
 
 ### Hospitalisation, funerals, and removal
 
@@ -700,8 +683,9 @@ This model simplifies these transitions to only two pathways:
 
 2. Infectious → hospitalised → removed (recovery or safe burial)
 
-Infectious individuals have a probability $p_\text{hosp}$ of being transferred to the hospitalised compartment.
-Infectious individual with $N$ timesteps before exiting the infectious compartment will exit the hospitalised compartment in the same time.
+A proportion, `1.0 - prop_community`, of infectious individuals are transferred to the hospitalised compartment in each timestep, This compartment represents Ebola Treatment Units (ETUs), and individuals in the hospitalised compartment are considered to be infectious but no longer in the community.
+
+The passage time of individuals in the hospitalised compartment is similar to that of individuals in the infectious compartment (i.e., infectious in the community), which means that an infectious individual with $N$ timesteps before exiting the infectious compartment will exit the hospitalised compartment in the same time.
 
 Hospitalised individuals can contribute to transmission of Ebola to susceptibles depending on the value of $p_\text{ETU}$, which is the probability (or proportion) of hospitalised cases contributing to the infection of susceptibles.
 This is interpreted as the relative safety of Ebolavirus treatment units (ETUs), with a range of 0.0 -- 1.0, where 0.0 indicates that hospitalisation does not reduce transmission at all, while 1.0 indicates that hospitalisation prevents onward transmission entirely.

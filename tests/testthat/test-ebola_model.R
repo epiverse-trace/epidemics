@@ -232,26 +232,3 @@ test_that("Ebola model with funeral safety", {
     ignore_attr = TRUE
   )
 })
-
-#### Basic test of ebola model C++ version ####
-# this model is not exported and is likely to be removed
-test_that("Basic expectations for ebola model C++ version", {
-  ebola_for_cpp <- infection(
-    name = "ebolavirus disease",
-    r0 = 1.7, infectious_period = 5,
-    shape_E = 5, rate_E = 1, shape_I = 5, rate_I = 1
-  )
-
-  data_cpp <- model_ebola_cpp(
-    population = pop,
-    infection = ebola_for_cpp
-  )
-
-  expect_s3_class(data_cpp, "data.table")
-  expect_length(data_cpp, 4L)
-  expect_named(
-    data_cpp, c("compartment", "demography_group", "value", "time"),
-    ignore.order = TRUE
-  )
-  # remove checks for Cpp version having same compartments as the library
-})

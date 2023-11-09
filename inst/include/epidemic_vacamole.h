@@ -152,7 +152,7 @@ struct epidemic_vacamole {
                            x.col(1).array() *
                            (cm_temp * (x.col(5) + x.col(6))).array();
     // Vaccinated two doses to exposed - uses different transmissibility
-    Eigen::ArrayXd v2ToEv = infection_params_temp["transmissibility_v"] *
+    Eigen::ArrayXd v2ToEv = infection_params_temp["transmissibility_vax"] *
                             x.col(2).array() *
                             (cm_temp * (x.col(5) + x.col(6))).array();
 
@@ -165,24 +165,24 @@ struct epidemic_vacamole {
 
     // Infectious to hospitalised
     Eigen::ArrayXd iToH =
-        infection_params_temp["hospitalisation"] * x.col(5).array();
+        infection_params_temp["hospitalisation_rate"] * x.col(5).array();
     // Vaccinated infectious to hospitalised
     Eigen::ArrayXd ivToHv =
-        infection_params_temp["hospitalisation_v"] * x.col(6).array();
+        infection_params_temp["hospitalisation_rate_vax"] * x.col(6).array();
 
     // Infectious to dead
     Eigen::ArrayXd iToD =
         infection_params_temp["mortality_rate"] * x.col(5).array();
     // Infectious vaccinated to dead
     Eigen::ArrayXd ivToD =
-        infection_params_temp["mortality_rate_v"] * x.col(6).array();
+        infection_params_temp["mortality_rate_vax"] * x.col(6).array();
 
     // Hospitalised to dead
     Eigen::ArrayXd hToD =
         infection_params_temp["mortality_rate"] * x.col(7).array();
     // Hospitalised vaccinated to dead
     Eigen::ArrayXd hvToD =
-        infection_params_temp["mortality_rate_v"] * x.col(8).array();
+        infection_params_temp["mortality_rate_vax"] * x.col(8).array();
 
     // Infectious to recovered
     Eigen::ArrayXd iToR =

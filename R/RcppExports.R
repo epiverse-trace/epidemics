@@ -93,11 +93,3 @@
     .Call(`_epidemics_model_vacamole_cpp_internal`, initial_state, transmissibility, transmissibility_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 
-#' @title Compute the discrete probability of the truncated Erlang distribution
-#' @name prob_discrete_erlang
-#' @rdname prob_discrete_erlang
-#'
-prob_discrete_erlang_cpp <- function(shape, rate) {
-    .Call(`_epidemics_prob_discrete_erlang_cpp`, shape, rate)
-}
-

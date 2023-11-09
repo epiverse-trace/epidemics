@@ -8,11 +8,11 @@
 model_ebola_r(
   population,
   erlang_subcompartments = 2,
-  transmissibility = 1.3/12,
+  transmissibility = 1.5/12,
   infectiousness_rate = erlang_subcompartments/5,
   removal_rate = erlang_subcompartments/12,
-  prop_community = 0.5,
-  etu_risk = 0.2,
+  prop_community = 0.9,
+  etu_risk = 0.7,
   funeral_risk = 0.5,
   intervention = NULL,
   time_dependence = NULL,
@@ -171,8 +171,8 @@ Individuals in the 'removed' compartment do no affect model dynamics.
 
 The default values are:
 \itemize{
-\item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.1083, resulting from
-an \eqn{R_0} = 1.3 and an infectious period of 12 days.
+\item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.125, resulting from
+an \eqn{R_0} = 1.5 and an infectious period of 12 days.
 \item Infectiousness rate (\eqn{\gamma^E}, \code{infectiousness_rate}): 0.4, assuming
 a pre-infectious period of 5 days and two Erlang subcompartments.
 \item Removal rate (\eqn{\gamma^I}, \code{recovery_rate}): 0.1667, assuming an

@@ -1,7 +1,7 @@
 #' @title Model leaky, two-dose vaccination in an epidemic using Vacamole
 #'
-#' @name epidemic_vacamole
-#' @rdname epidemic_vacamole
+#' @name model_vacamole
+#' @rdname model_vacamole
 #'
 #' @description Simulate an epidemic using the _Vacamole_ model for Covid-19
 #' developed at RIVM, the National Institute for Public Health and the
@@ -12,34 +12,20 @@
 #' @param population An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
 #' of each demographic group. See [population()].
-#' @param infection An `infection` object created using [infection()]. Must
-#' have the basic reproductive number \eqn{R_0} of the infection, the
-#' infectious period, and the pre-infectious period.
-#'
-#' These are used to calculate the transmission rate \eqn{\beta}, the rate
-#' at which individuals move from the 'exposed' to the 'infectious' compartment,
-#' \eqn{\alpha}, and the recovery rate \eqn{\gamma}.
-#'
-#' This model also requires the `<infection>` object to have:
-#'
-#'  1. A single parameter `eta` for the hospitalisation rate of infectious
-#' individuals,
-#'
-#'  2. A single parameter `omega` for the mortality rate of infectious or
-#' hospitalised individuals,
-#'
-#'  3. A single parameter `susc_reduction_vax`, with a value between 0.0 and 1.0
-#' giving the reduction in susceptibility to infection of individuals who have
-#' received two doses of the vaccine,
-#'
-#'  4. A single parameter `hosp_reduction_vax`, with a value between 0.0 and 1.0
-#' giving the reduction in hospitalisation rates of infectious individuals who
-#' have received two doses of the vaccine,
-#'
-#'  5. A single parameter `mort_reduction_vax`, with a value between 0.0 and 1.0
+#' @inheritParams model_default
+#' @param hospitalisation_rate A single number for the hospitalisation rate of
+#' infectious individuals.
+#' @param mortality_rate A single parameter for the mortality rate of
+#' infectious or hospitalised individuals.
+#' @param susc_reduction_vax A single value between 0.0 and 1.0
+#' giving the reduction in susceptibility of infectious individuals who
+#' have received two doses of the vaccine.
+#' @param hosp_reduction_vax A single value between 0.0 and 1.0
+#' giving the reduction in hospitalisation rate of infectious individuals who
+#' have received two doses of the vaccine.
+#' @param mort_reduction_vax A single value between 0.0 and 1.0
 #' giving the reduction in mortality of infectious and hospitalised individuals
 #' who have received two doses of the vaccine.
-#'
 #' @param intervention An `<intervention>` object representing an optional
 #' non-pharmaceutical intervention applied to the population during the
 #' epidemic. See [intervention()] for details on constructing interventions with
@@ -63,12 +49,14 @@
 #' @details
 #' This model allows for:
 #'
-#'  1. A 'hospitalised' compartment along with hospitalisation rates;
+#'  1. A 'hospitalised' compartment along with a hospitalisatio rates;
 #'
 #'  2. Two doses of vaccination, with 'leaky' protection, i.e., vaccination does
 #' not prevent infection completely but allows for a reduction in the infection
 #' rate, as well as reduced rates of moving into states considered more serious,
 #' such as 'hospitalised' or 'dead'.
+#'
+#' ## R and Rcpp implementations
 #'
 #' `model_vacamole_cpp()` is a wrapper function for
 #' [.model_vacamole_cpp()], a C++ function that uses Boost _odeint_ solvers
@@ -84,10 +72,49 @@
 #' `intervention` and `vaccination` arguments to the wrapper function into
 #' simpler forms.
 #'
+#' ## Model parameters
+#'
+#' This model only allows for single, population-wide rates of
+#' transition between the 'susceptible' and 'exposed' compartments, between the
+#' 'exposed' and 'infectious' compartments, and in the recovery rate.
+#'
+#' The default values are:
+#'
+#' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.186, resulting from
+#' an \eqn{R_0} = 1.3 and an infectious period of 7 days.
+#'
+#' - Infectiousness rate (\eqn{\sigma}, `infectiousness_rate`): 0.5, assuming
+#' a pre-infectious period of 2 days.
+#'
+#' - Hospitalisation rate (\eqn{\eta}, `hospitalistion_rate`): 1.0 / 1000,
+#' assuming that one in every thousand infectious individuals is hospitalised.
+#'
+#' - Mortality rate (\eqn{\omega}, `mortality_rate`): 1.0 / 1000,
+#' assuming that one in every thousand infectious and hospitalised
+#' individuals dies.
+#'
+#' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.143, assuming an
+#' infectious period of 7 days.
+#'
+#' - Susceptibility reduction from vaccination (`susc_reduction_vax`): 0.2,
+#' assuming a 20% reduction in susceptibility for individuals who are doubly
+#' vaccinated.
+#'
+#' - Hospitalisation reduction from vaccination (`hosp_reduction_vax`): 0.2,
+#' assuming a 20% reduction in hospitalisation for individuals who are doubly
+#' vaccinated.
+#'
+#' - Mortality reduction from vaccination (`mort_reduction_vax`): 0.2,
+#' assuming a 20% reduction in mortality for individuals who are doubly
+#' vaccinated.
+#'
+#' ## Implementing time-dependent parameters
+#'
 #' Model rates or parameters can be made time-dependent by passing a function
 #' which modifies the parameter based on the current ODE simulation time.
-#' For example, a function that modifies the transmission rate `beta` could be
-#' passed as `time_dependence = list(beta = function(time, x) x + sinpi(time))`.
+#' For example, a function that increases the transmission rate
+#' `transmissibility` could be passed as
+#' `time_dependence = list(transmissibility = function(time, x) x * time)`.
 #' This functionality may be used to model events that are expected to have some
 #' effect on model parameters, such as seasonality or annual schedules such as
 #' holidays.

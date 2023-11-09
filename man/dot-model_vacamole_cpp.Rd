@@ -6,14 +6,14 @@
 \usage{
 .model_vacamole_cpp(
   initial_state,
-  beta,
-  beta_v,
-  alpha,
-  omega,
-  omega_v,
-  eta,
-  eta_v,
-  gamma,
+  transmissibility,
+  transmissibility_vax,
+  infectiousness_rate,
+  mortality_rate,
+  mortality_rate_vax,
+  hospitalisation_rate,
+  hospitalisation_rate_vax,
+  recovery_rate,
   contact_matrix,
   npi_time_begin,
   npi_time_end,
@@ -28,46 +28,58 @@
 )
 }
 \arguments{
-\item{beta}{The transmission rate \eqn{\beta} at which unvaccinated and
-partially vaccinated individuals are infected by the disease.}
+\item{initial_state}{A matrix for the initial state of the compartments.}
 
-\item{beta_v}{The transmission rate \eqn{\beta_V} at which individuals who
-have received two vaccine doses are infected by the disease.}
+\item{transmissibility}{The transmission rate \eqn{\beta} at which
+unvaccinated and partially vaccinated individuals are infected by the
+disease.}
 
-\item{alpha}{The rate of transition from exposed to infectious \eqn{\alpha}.
+\item{transmissibility_vax}{The transmission rate \eqn{\beta_V} at which
+individuals who have received two vaccine doses are infected by the disease.}
+
+\item{infectiousness_rate}{The rate of transition from exposed to infectious
+\eqn{\alpha}.
 This is common to fully susceptible, partially vaccinated, and fully
 vaccinated individuals (where fully vaccinated represents two doses).}
 
-\item{omega}{The mortality rate of fully susceptible and partially
+\item{mortality_rate}{The mortality rate of fully susceptible and partially
 vaccinated and unprotected individuals.}
 
-\item{omega_v}{The mortality rate of individuals who are protected by
-vaccination.}
+\item{mortality_rate_vax}{The mortality rate of individuals who are
+protected by vaccination.}
 
-\item{eta}{The hospitalisation rate of fully susceptible and partially
-vaccinated and unprotected individuals.}
+\item{hospitalisation_rate}{The hospitalisation rate of fully susceptible
+and partially vaccinated and unprotected individuals.}
 
-\item{eta_v}{The hospitalisation rate of individuals who are protected by
-vaccination.}
+\item{hospitalisation_rate_vax}{The hospitalisation rate of individuals who
+are protected by vaccination.}
 
-\item{gamma}{The recovery rate \eqn{\gamma}.}
+\item{recovery_rate}{The recovery rate \eqn{\gamma}.}
 
-\item{time_end}{The maximum time. Defaults to 100.0.}
+\item{contact_matrix}{The population contact matrix.}
 
-\item{increment}{The increment time, defaults to 0.1.}
+\item{npi_time_begin}{The start time of any non-pharmaceutical interventions
+.}
 
-\item{population}{An object of the \code{population} class, which holds a
-population contact matrix, a demography vector, and the initial conditions
-of each demographic group. See \code{\link[=population]{population()}}.}
+\item{npi_time_end}{The end time of any non-pharmaceutical interventions.}
 
-\item{intervention}{A non-pharmaceutical intervention applied during the
-course of the epidemic, with a start and end time, and age-specific effect
-on contacts. See \code{\link[=intervention]{intervention()}}.}
+\item{npi_cr}{The reduction in contacts from any non-pharmaceutical
+interventions.}
 
-\item{vaccination}{A vaccination regime followed during the
-course of the epidemic, with a group- and dose-specific start and end time,
-and age-specific rates of delivery of first and second doses.
-See \code{\link[=vaccination]{vaccination()}}.}
+\item{vax_time_begin}{The start time of any vaccination campaigns.}
+
+\item{vax_time_end}{The end time of any vaccination campaigns.}
+
+\item{vax_nu}{The vaccination rate of any vaccination campaigns.}
+
+\item{rate_interventions}{A named list of \verb{<rate_intervention>} objects.}
+
+\item{time_dependence}{A named list of functions for parameter time
+dependence.}
+
+\item{time_end}{The end time of the simulation.}
+
+\item{increment}{The time increment of the simulation.}
 }
 \value{
 A two element list, where the first element is a list of matrices
@@ -83,18 +95,7 @@ hospitalisation and vaccination.
 Model code: https://github.com/kylieainslie/vacamole
 Manuscript describing the model and its application:
 https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090
-}
-\details{
-The original model has 8 conceptual compartments - four
-epidemiological compartments (SEIR), three hospitalisation compartments
-(H, ICU, ICU2H), and death - see the manuscript in Eurosurveillance.
-Only infected individuals can enter the hospitalisation or death
-compartments.
-Vacamole was implemented as a stand-alone R package, and some versions have
-been used to generate scenarios for the ECDC Covid-19 Scenario Hub.
-
-Individuals from the susceptible compartment may be vaccinated partially
-or fully (assuming a two dose regimen), with only the second dose reducing
-their probability of being infected, and of being hospitalised or dying.
+This function is intended to only be called internally from
+\code{\link[=model_vacamole_cpp]{model_vacamole_cpp()}}.
 }
 \keyword{internal}

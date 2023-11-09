@@ -7,11 +7,12 @@
 no_time_dependence()
 }
 \value{
-A list with a single named element, \code{beta}, which is a function
-that returns its second argument. This matches the specification for
+A list with a single named element, \code{transmissibility}, which is a
+function that returns its second argument. This matches the specification for
 functions to be passed as the \code{time_dependence} argument of epidemic
 functions.
 }
 \description{
 Specify no time dependence of model rates
 }
+\keyword{internal}

@@ -21,9 +21,9 @@ for \code{\link[=.model_default_cpp]{.model_default_cpp()}}. This is a named lis
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
 rather than proportional values;
-\item \code{beta}, \code{alpha}, \code{gamma}: three numbers representing the transmission rate
-of the infection, the rate of transition from exposed to infectious, and the
-recovery rate, respectively;
+\item \code{transmissibility}, \code{infectiousness_rate}, \code{recovery_rate}: three numbers
+representing the transmission rate of the infection, the rate of transition
+from exposed to infectious, and the recovery rate, respectively;
 \item \code{contact_matrix}, a numeric matrix for the population contact matrix
 scaled by the largest real eigenvalue and by the size of each groups;
 \item \code{npi_time_begin}, \code{npi_time_end}: two vectors for the start and end times
@@ -44,11 +44,14 @@ Check and prepare the four main arguments to
 
 \code{.check_args_model_default()} adds an empty \verb{<intervention>} and
 \verb{<vaccination>} object if these are missing from the model arguments.
-
-\code{.prepare_args_epidemics_default()} prepares arguments for
+}
+\details{
+\code{.prepare_args_model_default()} prepares arguments for
 \code{\link[=.model_default_cpp]{.model_default_cpp()}}, which is the C++ function that solves the default
-ODE system using a Boost \emph{odeint} solver.
-\code{.prepare_args_epidemics_default()} converts the arguments collected in
+ODE system using a Boost \emph{odeint} solver, and for \code{\link[=.ode_model_default]{.ode_model_default()}},
+which is passed to \code{\link[deSolve:lsoda]{deSolve::lsoda()}} in \code{\link[=model_default_r]{model_default_r()}}.
+
+\code{.prepare_args_model_default()} converts the arguments collected in
 \code{mod_args} into simpler structures such as lists and numeric or integer
 vectors that can be interpreted as C++ types such as \code{Rcpp::List},
 \code{Rcpp::NumericVector}, or \code{Eigen::MatrixXd}.

@@ -89,7 +89,7 @@ r_samples <- rnorm(
 
 ## Prepare epidemic model inputs
 
-We define inputs for the default, SEIR-V model in _epidemics_ in the form of `<population>` and `<infection>` objects.
+We define inputs for the default, SEIR-V model in _epidemics_ in the form of a `<population>` object.
 We omit non-pharmaceutical interventions and vaccinations for this example.
 
 Since this step is identical to that in previous vignettes, the code is folded, but can be expanded for clarity.
@@ -147,26 +147,19 @@ close_schools <- intervention(
 Loop over sampled $R$ values to generate epidemic model outputs with uncertainty.
 
 ```{r}
+# define the infectious period
+infectious_period <- 7
+
 # iterate over the R samples, running the epidemic model for each value of R
 output_samples <- Map(
   r_samples,
   seq_along(r_samples),
   f = function(x, i) {
-    # Prepare an <infection> class object to store the parameters of
-    # the infection which is causing the epidemic which is being modelled.
-
-    # simulate a pandemic, with an R0,
-    # an infectious period, and an pre-infectious period
-    pandemic_influenza <- infection(
-      r0 = x,
-      preinfectious_period = 3,
-      infectious_period = 7
-    )
-
     # run an epidemic model using `epidemic()`
     output <- model_default_cpp(
       population = uk_population,
-      infection = pandemic_influenza,
+      transmissibility = x / infectious_period,
+      recovery_rate = 1 / infectious_period,
       intervention = list(contacts = close_schools),
       time_end = 600, increment = 1.0
     )

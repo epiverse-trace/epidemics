@@ -662,10 +662,11 @@ ggplot(data_scenarios[compartment == "removed", ]) +
 
 This model has compartments adopted from the consensus model for Ebola virus disease presented in Li et al. (2019), and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from Getz and Dougherty (2018); see **References**.
 
+The R code for this model is adapted from code by Ha Minh Lam and initially made available on _Epirecipes_ (https://github.com/epirecipes/epicookbook) under the MIT license.
+
 The transition rates between the exposed and infectious, and infectious and funeral compartments (and also hospitalised to removed), $\gamma^E$ and $\gamma^I$ in Getz and Dougherty's notation, are passed by the user as the `infectiousness_rate` and `removal_rate` respectively.
 
 The shape of the Erlang distributions of passage times through the exposed and infectious compartments ($k^E$ and $k^I$) are recommended to be set to 2 as a sensible choice, which is the default value for the `erlang_sbubcompartments` argument, but can be allowed to vary (but not independently).
-
 
 Getz and Dougherty's equation (6) gives the relationship between these parameters and the mean pre-infectious $\rho^E$ and infectious $\rho^I$ periods.
 

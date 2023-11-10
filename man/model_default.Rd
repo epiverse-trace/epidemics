@@ -141,3 +141,23 @@ effect on model parameters, such as seasonality or annual schedules such as
 holidays.
 }
 }
+\examples{
+# create a population
+uk_population <- population(
+  name = "UK population",
+  contact_matrix = matrix(1),
+  demography_vector = 67e6,
+  initial_conditions = matrix(
+    c(0.9999, 0.0001, 0, 0, 0),
+    nrow = 1, ncol = 5L
+  )
+)
+
+# run epidemic simulation with no vaccination or intervention
+data <- model_default_cpp(
+  population = uk_population
+)
+
+# view some data
+head(data)
+}

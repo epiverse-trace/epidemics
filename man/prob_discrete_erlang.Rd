@@ -22,3 +22,4 @@ from an Erlang distribution with a given shape and rate. The number of
 values returned correspond to the number of discrete values over which the
 cumulative probability reaches 0.99.
 }
+\keyword{internal}

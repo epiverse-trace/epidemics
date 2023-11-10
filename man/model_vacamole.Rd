@@ -122,7 +122,7 @@ epidemic. See \strong{Details} for more information.
 \details{
 This model allows for:
 \enumerate{
-\item A 'hospitalised' compartment along with a hospitalisatio rates;
+\item A 'hospitalised' compartment along with a hospitalisation rates;
 \item Two doses of vaccination, with 'leaky' protection, i.e., vaccination does
 not prevent infection completely but allows for a reduction in the infection
 rate, as well as reduced rates of moving into states considered more serious,
@@ -187,6 +187,33 @@ This functionality may be used to model events that are expected to have some
 effect on model parameters, such as seasonality or annual schedules such as
 holidays.
 }
+}
+\examples{
+# create a population, note eleven columns for compartments
+population <- population(
+  contact_matrix = matrix(1),
+  demography_vector = 67e6,
+  initial_conditions = matrix(
+    c(0.9999, 0, 0, 0, 0, 0.0001, 0, 0, 0, 0, 0),
+    nrow = 1, ncol = 11L
+  )
+)
+
+# create a vaccination regime
+double_vax <- vaccination(
+  nu = matrix(1e-3, ncol = 2, nrow = 1),
+  time_begin = matrix(c(10, 30), nrow = 1),
+  time_end = matrix(c(50, 80), nrow = 1)
+)
+
+# run epidemic simulation with no vaccination or intervention
+data <- model_vacamole_cpp(
+  population = population,
+  vaccination = double_vax
+)
+
+# view some data
+head(data)
 }
 \references{
 Ainslie, K. E. C., Backer, J. A., Boer, P. T. de, Hoek, A. J. van,

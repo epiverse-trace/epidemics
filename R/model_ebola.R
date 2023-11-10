@@ -116,9 +116,9 @@ prob_discrete_erlang <- function(shape, rate) {
 #' epidemiological compartments modelled using Erlang sub-compartments adapted
 #' from Getz and Dougherty (2018); see **References**.
 #'
-#' The R code for this model is adapted from code by Hạ Minh Lâm and initially
-#' made available on _Epirecipes_ (https://github.com/epirecipes/epicookbook)
-#' under the MIT licence.
+#' The R code for this model is adapted from code by Ha Minh Lam and
+#' initially made available on _Epirecipes_
+#' (https://github.com/epirecipes/epicookbook) under the MIT license.
 #'
 #' The shape of the Erlang distributions of passage times through the exposed
 #' and infectious compartments (\eqn{k^E} and \eqn{k^I}) are recommended to be

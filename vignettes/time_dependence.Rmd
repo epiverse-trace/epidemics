@@ -62,24 +62,17 @@ uk_population <- population(
     byrow = TRUE
   )
 )
-
-# Prepare epi parameters
-pandemic <- infection(
-  r0 = 1.18,
-  preinfectious_period = 2,
-  infectious_period = 7
-)
 ```
 
 ## Defining a time-dependent function
 
-Next we prepare a function that affects the transmission rate $\beta$ in such a way that there are two peaks and two troughs in the transmission rate over the course of a year.
+Next we prepare a function that affects the transmissibility (often denoted $\beta$) in such a way that there are two peaks and two troughs in the transmissibility rate over the course of a year.
 
 Note that this example uses an arbitrary function, and that we might want to choose a more realistic function in a model.
 Nonetheless, as the figures later will show, this can still generate realistic looking epidemic curves and is a good starting point for understanding how this feature works.
 
 ```{r}
-# prepare function
+# prepare function, refer to transmissiblity as beta in function name
 mod_beta <- function(time, x, tmax = 365 / 4) {
   x + (x * sinpi(time / tmax))
 }
@@ -103,14 +96,15 @@ ggplot() +
 
 ## Model with time-dependent transmission
 
-Next we run an epidemic model while including the time dependence of $\beta$.
+Next we run an epidemic model while including the time dependence of transmissibility.
 
 ```{r}
+# note transmissibility is the function/model parameter
+# the function that affects it may have any name
 data <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   time_dependence = list(
-    beta = mod_beta
+    transmissibility = mod_beta
   ),
   time_end = 365, increment = 1
 )
@@ -192,10 +186,9 @@ Then we run the model while specifying the time-dependence of the transmission r
 # run the model with interventions and time-dependence
 data_npi <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   intervention = list(contacts = npis),
   time_dependence = list(
-    beta = mod_beta
+    transmissibility = mod_beta
   ),
   time_end = 365, increment = 1
 )
@@ -281,10 +274,9 @@ We model the effect of administering vaccine doses between the expected peaks of
 # pass time dependence and vaccination. Note no interventions
 data_vax <- model_default_cpp(
   population = uk_population,
-  infection = pandemic,
   vaccination = vax_regime,
   time_dependence = list(
-    beta = mod_beta
+    transmissibility = mod_beta
   ),
   time_end = 365, increment = 1
 )

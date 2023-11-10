@@ -49,7 +49,7 @@
 #' @details
 #' This model allows for:
 #'
-#'  1. A 'hospitalised' compartment along with a hospitalisatio rates;
+#'  1. A 'hospitalised' compartment along with a hospitalisation rates;
 #'
 #'  2. Two doses of vaccination, with 'leaky' protection, i.e., vaccination does
 #' not prevent infection completely but allows for a reduction in the infection
@@ -135,6 +135,32 @@
 #' the Netherlands, summer 2021. Eurosurveillance, 27(44), 2101090.
 #' \doi{10.2807/1560-7917.ES.2022.27.44.2101090}
 #'
+#' @examples
+#' # create a population, note eleven columns for compartments
+#' population <- population(
+#'   contact_matrix = matrix(1),
+#'   demography_vector = 67e6,
+#'   initial_conditions = matrix(
+#'     c(0.9999, 0, 0, 0, 0, 0.0001, 0, 0, 0, 0, 0),
+#'     nrow = 1, ncol = 11L
+#'   )
+#' )
+#'
+#' # create a vaccination regime
+#' double_vax <- vaccination(
+#'   nu = matrix(1e-3, ncol = 2, nrow = 1),
+#'   time_begin = matrix(c(10, 30), nrow = 1),
+#'   time_end = matrix(c(50, 80), nrow = 1)
+#' )
+#'
+#' # run epidemic simulation with no vaccination or intervention
+#' data <- model_vacamole_cpp(
+#'   population = population,
+#'   vaccination = double_vax
+#' )
+#'
+#' # view some data
+#' head(data)
 #' @export
 model_vacamole_cpp <- function(population,
                                transmissibility = 1.3 / 7.0,

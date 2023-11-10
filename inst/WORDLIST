@@ -60,7 +60,6 @@ Vacamole
 WIP
 Wallinga
 analogs
-args
 cmdstanr
 codecov
 com
@@ -85,16 +84,14 @@ gh
 github
 io
 kylieainslie
-linter
-lintr
 md
 odeint
 org
 packagename
 pkg
-prepper
 rollout
 stochasticity
+subcompartments
 susceptibles
 svg
 th

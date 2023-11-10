@@ -58,13 +58,13 @@ hospitalised individuals. Must be a single value between 0.0 and 1.0, where
 0.0 indicates that hospitalisation completely prevents onward transmission,
 and 1.0 indicates that hospitalisation does not prevent onward transmission
 at all. \code{etu_risk} is used to scale the value of transmissibility for the
-transsmissibility \eqn{\beta}. Defaults to 0.2.}
+transmissibility \eqn{\beta}. Defaults to 0.2.}
 
 \item{funeral_risk}{The relative risk of onward transmission of EVD from
 funerals of individuals who died with EVD.
 Must be a single value between 0.0 and 1.0, where
 0.0 indicates that there is no onward transmission, and 1.0 indicates that
-funeral transmisison is equivalent to transmission in the community.
+funeral transmission is equivalent to transmission in the community.
 \code{funeral_risk} is used to scale the value of transmissibility for the
 transmissibility \eqn{\beta}. Defaults to 0.5.}
 
@@ -194,6 +194,25 @@ the vignette: \code{vignette("ebola_model", package = "epidemics")}
 }
 }
 
+\examples{
+# create a population with 6 compartments
+population <- population(
+  contact_matrix = matrix(1),
+  demography_vector = 14e6,
+  initial_conditions = matrix(
+    c(0.999998, 0.000001, 0.000001, 0, 0, 0),
+    nrow = 1, ncol = 6L
+  )
+)
+
+# run epidemic simulation with no vaccination or intervention
+data <- model_ebola_r(
+  population = population
+)
+
+# view some data
+head(data)
+}
 \references{
 Li, S.-L., Ferrari, M. J., Bjørnstad, O. N., Runge, M. C., Fonnesbeck, C. J.,
 Tildesley, M. J., Pannell, D., & Shea, K. (2019). Concurrent assessment of

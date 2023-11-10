@@ -128,17 +128,9 @@ output_to_df <- function(output, population, compartments) {
 #'   )
 #' )
 #'
-#' # create an infection object
-#' pandemic_influenza <- infection(
-#'   r0 = 1.5, infectious_period = 7, preinfectious_period = 3
-#' )
-#'
 #' # run epidemic simulation with no vaccination or intervention
 #' data <- model_default_cpp(
-#'   population = uk_population,
-#'   infection = pandemic_influenza,
-#'   time_end = 200,
-#'   increment = 1
+#'   population = uk_population
 #' )
 #'
 #' # get the final epidemic size
@@ -211,7 +203,6 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
 #' @examples
 #' # create a population
 #' uk_population <- population(
-#'   name = "UK population",
 #'   contact_matrix = matrix(1),
 #'   demography_vector = 67e6,
 #'   initial_conditions = matrix(
@@ -220,15 +211,10 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
 #'   )
 #' )
 #'
-#' # create an infection
-#' pandemic_influenza <- infection(
-#'   r0 = 1.5, infectious_period = 7, preinfectious_period = 3
-#' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
 #' data <- model_default_cpp(
 #'   population = uk_population,
-#'   infection = pandemic_influenza,
 #'   time_end = 200,
 #'   increment = 1
 #' )

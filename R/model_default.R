@@ -100,6 +100,25 @@
 #' chosen with `model`.
 #' The current default model has the compartments "susceptible", "exposed",
 #' "infectious", "recovered", and "vaccinated".
+#' @examples
+#' # create a population
+#' uk_population <- population(
+#'   name = "UK population",
+#'   contact_matrix = matrix(1),
+#'   demography_vector = 67e6,
+#'   initial_conditions = matrix(
+#'     c(0.9999, 0.0001, 0, 0, 0),
+#'     nrow = 1, ncol = 5L
+#'   )
+#' )
+#'
+#' # run epidemic simulation with no vaccination or intervention
+#' data <- model_default_cpp(
+#'   population = uk_population
+#' )
+#'
+#' # view some data
+#' head(data)
 #' @export
 model_default_cpp <- function(population,
                               transmissibility = 1.3 / 7.0,

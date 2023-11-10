@@ -11,6 +11,7 @@
 #' distribution.
 #' @param rate A single number for the rate of the Erlang distribution.
 #' @keywords internal
+#' @noRd
 #' @return A vector of variable length giving the probability of each integer
 #' value for a cumulative probability of 0.99.
 prob_discrete_erlang <- function(shape, rate) {

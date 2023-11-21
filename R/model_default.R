@@ -222,13 +222,16 @@ model_default_cpp <- function(population,
   )
 
   # get paramters to modify them
-  infection_params <- params[c(
+  # NOTE: `model_params` refers to epdemiological parameters, while
+  # `params` refers to the list passed as a function argument.
+  # e.g. contact matrix, or interventions, are not included in `model_params`
+  model_params <- params[c(
     "transmissibility", "infectiousness_rate", "recovery_rate"
   )]
 
   # apply time dependence before interventions
   time_dependent_params <- Map(
-    infection_params[names(params$time_dependence)],
+    model_params[names(params$time_dependence)],
     params$time_dependence,
     f = function(x, func) {
       func(time = t, x = x)
@@ -236,12 +239,12 @@ model_default_cpp <- function(population,
   )
 
   # assign time-modified param values
-  infection_params[names(time_dependent_params)] <- time_dependent_params
+  model_params[names(time_dependent_params)] <- time_dependent_params
 
-  infection_params <- intervention_on_rates(
+  model_params <- intervention_on_rates(
     t = t,
     interventions = params[["rate_interventions"]],
-    parameters = infection_params
+    parameters = model_params
   )
 
   # modify the vaccination rate depending on the regime
@@ -251,10 +254,10 @@ model_default_cpp <- function(population,
       (params[["vax_time_end"]] > t))
 
   # calculate transitions
-  sToE <- (infection_params[["transmissibility"]] * y[, 1] *
+  sToE <- (model_params[["transmissibility"]] * y[, 1] *
     contact_matrix_ %*% y[, 3])
-  eToI <- infection_params[["infectiousness_rate"]] * y[, 2]
-  iToR <- infection_params[["recovery_rate"]] * y[, 3]
+  eToI <- model_params[["infectiousness_rate"]] * y[, 2]
+  iToR <- model_params[["recovery_rate"]] * y[, 3]
   sToV <- current_nu * y[, 1]
 
   # define compartmental changes

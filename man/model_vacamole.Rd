@@ -85,13 +85,13 @@ age-specific effects on social contacts, as well as for guidance on how to
 concatenate multiple overlapping interventions into a single \verb{<intervention>}
 object.}
 
-\item{vaccination}{A \verb{<vaccination>} object representing an optional
-vaccination regime with two doses followed during the course of the
+\item{vaccination}{A \verb{<vaccination>} object representing a
+vaccination regime with \strong{two doses} followed during the course of the
 epidemic, with a start and end time, and age-specific vaccination rates for
 each dose. See \code{\link[=vaccination]{vaccination()}}.}
 
 \item{time_dependence}{A named list where each name
-is a model parameter (see \code{infection}), and each element is a function with
+is a model parameter, and each element is a function with
 the first two arguments being the current simulation \code{time}, and \code{x}, a value
 that is dependent on \code{time} (\code{x} represents a model parameter).
 See \strong{Details} for more information, as well as the vignette on time-
@@ -176,16 +176,20 @@ vaccinated.
 }
 }
 
-\subsection{Implementing time-dependent parameters}{
+\subsection{Rate interventions and time-dependence}{
 
-Model rates or parameters can be made time-dependent by passing a function
-which modifies the parameter based on the current ODE simulation time.
-For example, a function that increases the transmission rate
-\code{transmissibility} could be passed as
-\code{time_dependence = list(transmissibility = function(time, x) x * time)}.
-This functionality may be used to model events that are expected to have some
-effect on model parameters, such as seasonality or annual schedules such as
-holidays.
+This model allows interventions on only the primary model rates:
+transmissibility, infectiousness rate, hospitalisation rate, mortality rate,
+and the recovery rate. Interventions on the secondary model rates calculated
+as vaccination-linked modifications of these rates cannot be targeted by rate
+interventions or time dependence.
+
+See the vignette on rate interventions to represent pharmaceutical
+interventions (\code{vignette("rate_interventions", package = "epidemics")})
+and the vignette on time dependence
+(\code{vignette("time_dependence", package = "epidemics")})
+for worked out examples on how to
+implement these features.
 }
 }
 \examples{

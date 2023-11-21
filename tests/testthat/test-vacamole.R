@@ -162,12 +162,34 @@ test_that("Vacamole with no hospitalisation", {
 
 #### Test for Vacamole model run with wrong inputs ####
 test_that("Vacamole model errors correctly", {
+  # error because vaccination doses are wrong
   expect_error(
     model_vacamole_cpp(
-      model_name = "vacamole",
       population = uk_population,
-      vaccination = no_vaccination(uk_population, doses = 3L),
-      time_end = 400, increment = 1
+      vaccination = no_vaccination(uk_population, doses = 3L)
+    )
+  )
+
+  # error because disallowed model parameters are targeted
+  expect_error(
+    model_vacamole_cpp(
+      population = uk_population,
+      vaccination = no_vaccination(uk_population, doses = 2L),
+      intervention = list(
+        transmissibility = no_rate_intervention(), # works okay
+        transmissibility_vax = no_rate_intervention() # should error
+      )
+    )
+  )
+
+  expect_error(
+    model_vacamole_cpp(
+      population = uk_population,
+      vaccination = no_vaccination(uk_population, doses = 2L),
+      time_dependence = list(
+        transmissibility = no_time_dependence(), # works okay
+        transmissibility_vax = no_time_dependence() # should error
+      )
     )
   )
 })

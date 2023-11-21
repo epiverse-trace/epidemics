@@ -150,9 +150,7 @@
   }
 
   # handle time dependence if present and check for allowed primary parameters
-  if (!"time_dependence" %in% names(mod_args)) {
-    mod_args[["time_dependence"]] <- no_time_dependence()
-  } else {
+  if ("time_dependence" %in% names(mod_args)) {
     checkmate::assert_names(
       names(mod_args[["time_dependence"]]),
       subset.of = c(
@@ -160,6 +158,8 @@
         "mortality_rate", "recovery_rate"
       )
     )
+  } else {
+    mod_args[["time_dependence"]] <- no_time_dependence()
   }
 
   # return arguments invisibly

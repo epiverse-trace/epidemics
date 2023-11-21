@@ -114,10 +114,10 @@ contact_data <- socialmixr::contact_matrix(
 )
 
 # prepare contact matrix
-contact_matrix <- t(contact_data$matrix)
+contact_matrix <- t(contact_data[["matrix"]])
 
 # prepare the demography vector
-demography_vector <- contact_data$demography$population
+demography_vector <- contact_data[["demography"]][["population"]]
 names(demography_vector) <- rownames(contact_matrix)
 ```
 
@@ -154,27 +154,6 @@ uk_population <- population(
 )
 ```
 
-Prepare an `<infection>` class object to store the parameters of the
-infection which is causing the epidemic which is being modelled.
-
-``` r
-# simulate a pandemic, with an R0,
-# an infectious period, and an pre-infectious period
-pandemic_influenza <- infection(
-  r0 = 1.5,
-  preinfectious_period = 3,
-  infectious_period = 7
-)
-
-pandemic_influenza
-#> <infection>
-#> infection name: NA
-#> R0: 1.5
-#> Infectious period: 7
-#> Other infection parameters:
-#> "preinfectious_period"
-```
-
 Define an intervention to close schools for two months. This
 intervention mostly only affects individuals in the age range 0 – 19,
 and reduces their contacts by 50%, reducing the contacts of other age
@@ -193,31 +172,35 @@ close_schools <- intervention(
 
 # view the intervention
 close_schools
-#> <contacts_intervention>
-#> Intervention name: NA
 #> 
-#> Time begin:
+#>  Intervention name: 
+#>  Begins at: 
 #> [1] 200
 #> 
-#> Time end:
+#>  Ends at: 
 #> [1] 260
 #> 
-#> Reduction:
+#>  Reduction: 
 #>              Interv. 1
 #> Demo. grp. 1      0.50
 #> Demo. grp. 2      0.01
 #> Demo. grp. 3      0.01
 ```
 
-Run the default epidemic model, using the function `epidemic()`. We
-assume an $R_0$ of 1.5 which is similar to pandemic influenza, an
-infectious period of 7 days, and a pre-infectious period of 3 days.
+Run the default epidemic model, using the function
+`model_default_cpp()`. We assume an $R_0$ of 1.5 which is similar to
+pandemic influenza, an infectious period of 7 days, and a pre-infectious
+period of 3 days. From these values we can calculate transmissibility
+$\beta$ `1.5 / 7.0`, infectiousness_rate $\alpha$ `1.0 / 3.0` and
+recovery_rate $\gamma$ `1.0 / 7.0`.
 
 ``` r
 # run an epidemic model using `epidemic()`
 output <- model_default_cpp(
   population = uk_population,
-  infection = pandemic_influenza,
+  transmissibility = 1.5 / 7.0,
+  infectiousness_rate = 1.0 / 3.0,
+  recovery_rate = 1.0 / 7.0,
   intervention = list(contacts = close_schools),
   time_end = 600, increment = 1.0
 )
@@ -228,7 +211,7 @@ over model time. Note that these curves represent the number of
 individuals that are infectious, and not the number of newly infectious
 individuals.
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
 ## Package vignettes
 

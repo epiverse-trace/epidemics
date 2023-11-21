@@ -190,15 +190,15 @@ object.</p></dd>
 
 
 <dt>vaccination</dt>
-<dd><p>A <code>&lt;vaccination&gt;</code> object representing an optional
-vaccination regime with two doses followed during the course of the
+<dd><p>A <code>&lt;vaccination&gt;</code> object representing a
+vaccination regime with <strong>two doses</strong> followed during the course of the
 epidemic, with a start and end time, and age-specific vaccination rates for
 each dose. See <code><a href="vaccination.html">vaccination()</a></code>.</p></dd>
 
 
 <dt>time_dependence</dt>
 <dd><p>A named list where each name
-is a model parameter (see <code>infection</code>), and each element is a function with
+is a model parameter, and each element is a function with
 the first two arguments being the current simulation <code>time</code>, and <code>x</code>, a value
 that is dependent on <code>time</code> (<code>x</code> represents a model parameter).
 See <strong>Details</strong> for more information, as well as the vignette on time-
@@ -280,17 +280,20 @@ vaccinated.</p></li>
 </ul></div>
 
 <div class="section">
-<h3 id="implementing-time-dependent-parameters">Implementing time-dependent parameters<a class="anchor" aria-label="anchor" href="#implementing-time-dependent-parameters"></a></h3>
+<h3 id="rate-interventions-and-time-dependence">Rate interventions and time-dependence<a class="anchor" aria-label="anchor" href="#rate-interventions-and-time-dependence"></a></h3>
 
 
-<p>Model rates or parameters can be made time-dependent by passing a function
-which modifies the parameter based on the current ODE simulation time.
-For example, a function that increases the transmission rate
-<code>transmissibility</code> could be passed as
-<code>time_dependence = list(transmissibility = function(time, x) x * time)</code>.
-This functionality may be used to model events that are expected to have some
-effect on model parameters, such as seasonality or annual schedules such as
-holidays.</p>
+<p>This model allows interventions on only the primary model rates:
+transmissibility, infectiousness rate, hospitalisation rate, mortality rate,
+and the recovery rate. Interventions on the secondary model rates calculated
+as vaccination-linked modifications of these rates cannot be targeted by rate
+interventions or time dependence.</p>
+<p>See the vignette on rate interventions to represent pharmaceutical
+interventions (<code><a href="../articles/rate_interventions.html">vignette("rate_interventions", package = "epidemics")</a></code>)
+and the vignette on time dependence
+(<code><a href="../articles/time_dependence.html">vignette("time_dependence", package = "epidemics")</a></code>)
+for worked out examples on how to
+implement these features.</p>
 </div>
 
     </div>

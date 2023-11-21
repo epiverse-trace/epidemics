@@ -157,54 +157,39 @@ The only rate in the model that can be influenced by an intervention is the tran
 </details>
 </div>
 <div class="section level2">
-<h2 id="prepare-pathogen-parameters">Prepare pathogen parameters<a class="anchor" aria-label="anchor" href="#prepare-pathogen-parameters"></a>
+<h2 id="prepare-model-parameters">Prepare model parameters<a class="anchor" aria-label="anchor" href="#prepare-model-parameters"></a>
 </h2>
-<p>We prepare an <code>&lt;infection&gt;</code> class object for ebola, with an <span class="math inline">\(R_0\)</span> taken from the value estimated for ebola in Guinea <span class="citation">(<a href="#ref-althaus2014" role="doc-biblioref">Althaus 2014</a>)</span>.</p>
-<p>We assume that ebola has a mean infectious period of 12 days, and that the time between exposure and symptom onset — the pre-infectious period — is 5 days.</p>
-<p>This model does not yet have an explicit “deaths” compartment, but rather, the “removed” compartment holds all individuals who have recovered and who have died and been buried safely (see <strong>Details</strong>).
+<p>We use the default model parameters, beginning with an <span class="math inline">\(R_0\)</span> taken from the value estimated for ebola in Guinea <span class="citation">(<a href="#ref-althaus2014" role="doc-biblioref">Althaus 2014</a>)</span>.
+We assume that ebola has a mean infectious period of 12 days, and that the time between exposure and symptom onset — the pre-infectious period — is 5 days.</p>
+<p>Together, these give the following values:</p>
+<ul>
+<li><p>Transmissibility (<span class="math inline">\(\beta\)</span>): 0.125,</p></li>
+<li><p>Infectiousness rate (<span class="math inline">\(\gamma^E\)</span> in <span class="citation">Getz and Dougherty (<a href="#ref-getz2018" role="doc-biblioref">2018</a>)</span>): 0.4,</p></li>
+<li><p>Removal rate (<span class="math inline">\(\gamma^I\)</span> in <span class="citation">Getz and Dougherty (<a href="#ref-getz2018" role="doc-biblioref">2018</a>)</span>): 0.1667</p></li>
+</ul>
+<p>This model does not yet have an explicit “deaths” compartment, but rather, the “removed” compartment holds all individuals who have recovered and who have died and been buried safely.
 Functionally, they are similar as they are not part of the model dynamics.</p>
-<p>We assume that only 10% of infectious individuals are hospitalised, and that hospitalisation achieves a modest 30% reduction in transmission between hospitalised individuals and those still susceptible.
-We assume also that any deaths in hospital lead to ebola-safe funerals, such that no further infections result from them.</p>
+<p>We assume that only 10% of infectious individuals are hospitalised, and that hospitalisation achieves a modest 30% reduction in transmission between hospitalised individuals and those still susceptible.</p>
+<p>We assume also that any deaths in hospital lead to ebola-safe funerals, such that no further infections result from them.</p>
 <p>We assume that infectious individuals who are not hospitalised die in the community, and that their funerals are potentially not ebola-safe.
 We assume that the transmission rate of ebola at funerals is 50% of the baseline transmission rate.
 This can also be interpreted as the proportion of funerals that are ebola-safe.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Prepare ebola parameters as an infection class object</span></span>
-<span><span class="va">ebola</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infection.html">infection</a></span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"ebolavirus disease"</span>,</span>
-<span>  r0 <span class="op">=</span> <span class="fl">1.5</span>,</span>
-<span>  infectious_period <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  preinfectious_period <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  prop_community <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span>  etu_risk <span class="op">=</span> <span class="fl">0.7</span>,</span>
-<span>  funeral_risk <span class="op">=</span> <span class="fl">0.5</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># print to visualise</span></span>
-<span><span class="va">ebola</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  <span style="color: #BB0000;">Name: </span></span></span>
-<span><span class="co">#&gt;  <span style="color: #BB0000;">R0: </span></span></span>
-<span><span class="co">#&gt;  <span style="color: #BB0000;">Infectious period: </span></span></span>
-<span><span class="co">#&gt;  <span style="color: #BB0000;">Other parameters: </span></span></span></code></pre></div>
-</details>
 </div>
 <div class="section level2">
 <h2 id="run-epidemic-model">Run epidemic model<a class="anchor" aria-label="anchor" href="#run-epidemic-model"></a>
 </h2>
-<p>We run the model using the function <code><a href="../reference/epidemic_ebola.html">model_ebola_r()</a></code>.
+<p>We run the model using the function <code><a href="../reference/model_ebola.html">model_ebola_r()</a></code>.
 While there is a C++ equivalent of this model, it was not found to be much faster than the R-only version, and is not made available to users.</p>
 <p>The model is run for 100 days, with data reported on each day.
 This is an appropriate period over which to obtain initial predictions for the outbreak, and after which response efforts such as non-pharmaceutical interventions and vaccination campaigns are likely to be launched to bring the outbreak under control.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set seed to get consistent results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># run the epidemic model using `epidemic`</span></span>
 <span><span class="co"># we call the model "ebola" from the library</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">ebola</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -223,7 +208,7 @@ This is an appropriate period over which to obtain initial predictions for the o
 <h2 id="prepare-data-and-visualise-infections">Prepare data and visualise infections<a class="anchor" aria-label="anchor" href="#prepare-data-and-visualise-infections"></a>
 </h2>
 <p>We plot the ebola epidemic over time, showing the number of individuals exposed and infectious.</p>
-<details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot figure of epidemic curve</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">data</span><span class="op">[</span><span class="va">compartment</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exposed"</span>, <span class="st">"infectious"</span><span class="op">)</span>, <span class="op">]</span>,</span>
@@ -255,8 +240,8 @@ This is an appropriate period over which to obtain initial predictions for the o
 <span>    y <span class="op">=</span> <span class="st">"Individuals"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-6"></span>
-<img src="ebola_model_files/figure-html/unnamed-chunk-6-1.png" alt="Model results from a single run showing the number of individuals in the exposed and infectious compartments over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-5"></span>
+<img src="ebola_model_files/figure-html/unnamed-chunk-5-1.png" alt="Model results from a single run showing the number of individuals in the exposed and infectious compartments over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others."><p class="caption">
 Figure 1: Model results from a single run showing the number of individuals in the exposed and infectious compartments over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others.
 </p>
 </div>
@@ -266,7 +251,7 @@ Figure 1: Model results from a single run showing the number of individuals in t
 </h2>
 <p>Since the ebola model is a stochastic one, model results will vary in each run.
 We can run the model multiple times — here, 100 times — and plot the number of infectious people, to get a consensus idea of what an ebola outbreak might look like.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set seed for consistent output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span></span>
@@ -274,9 +259,8 @@ We can run the model multiple times — here, 100 times — and plot the number 
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Map</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
 <span>  f <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
+<span>    <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
 <span>      population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>      infection <span class="op">=</span> <span class="va">ebola</span>,</span>
 <span>      time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span>    <span class="op">)</span></span>
 <span></span>
@@ -289,7 +273,7 @@ We can run the model multiple times — here, 100 times — and plot the number 
 <span><span class="co"># use data.table to collect the data</span></span>
 <span><span class="va">data_timeseries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
 </details><p>We plot the data.</p>
-<details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_timeseries</span><span class="op">[</span><span class="va">compartment</span> <span class="op">==</span> <span class="st">"infectious"</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, group <span class="op">=</span> <span class="va">replicate</span><span class="op">)</span>,</span>
@@ -322,8 +306,8 @@ We can run the model multiple times — here, 100 times — and plot the number 
 <span>    y <span class="op">=</span> <span class="st">"Individuals infectious with ebola"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-8"></span>
-<img src="ebola_model_files/figure-html/unnamed-chunk-8-1.png" alt="Model results from 100 runs showing the number of individuals in the infectious compartments over 100 days of each outbreak. All models assume that 1 initially infectious person has exposed 10 others. A simple summary using the mean (black line with standard error as shaded red regions), plotted over the individual model runs (grey) show that there can be wide variation in individual outbreak trajectories."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-7"></span>
+<img src="ebola_model_files/figure-html/unnamed-chunk-7-1.png" alt="Model results from 100 runs showing the number of individuals in the infectious compartments over 100 days of each outbreak. All models assume that 1 initially infectious person has exposed 10 others. A simple summary using the mean (black line with standard error as shaded red regions), plotted over the individual model runs (grey) show that there can be wide variation in individual outbreak trajectories."><p class="caption">
 Figure 2: Model results from 100 runs showing the number of individuals in the infectious compartments over 100 days of each outbreak. All models assume that 1 initially infectious person has exposed 10 others. A simple summary using the mean (black line with standard error as shaded red regions), plotted over the individual model runs (grey) show that there can be wide variation in individual outbreak trajectories.
 </p>
 </div>
@@ -331,14 +315,14 @@ Figure 2: Model results from 100 runs showing the number of individuals in the i
 However, in a number of replicates, the outbreak has only a low daily incidence within the simulation time, although these replicates might show exponential growth later.</p>
 <p>We can find the ‘final size’ of each replicate using the <code><a href="../reference/epidemic_size.html">epidemic_size()</a></code> function on the original simulation data.
 Note that the final size here refers to the final size after 365 days, which is the duration of our simulation.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># apply the function over each replicate</span></span>
 <span><span class="va">data_final_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Map</a></span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  f <span class="op">=</span> <span class="va">epidemic_size</span>, deaths <span class="op">=</span> <span class="cn">FALSE</span>, by_group <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">data_final_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">data_final_size</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot a histogram of the replicates</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span></span>
@@ -360,8 +344,8 @@ Note that the final size here refers to the final size after 365 days, which is 
 <span>    y <span class="op">=</span> <span class="st">"Number of replicates"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-10"></span>
-<img src="ebola_model_files/figure-html/unnamed-chunk-10-1.png" alt="Histogram of the final outbreak sizes of 100 ebola outbreaks. These are taken from the 100 model runs presented in the earlier figure, and show that most outbreaks may affect fewer than 500 individuals within their first 100 days."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-9"></span>
+<img src="ebola_model_files/figure-html/unnamed-chunk-9-1.png" alt="Histogram of the final outbreak sizes of 100 ebola outbreaks. These are taken from the 100 model runs presented in the earlier figure, and show that most outbreaks may affect fewer than 500 individuals within their first 100 days."><p class="caption">
 Figure 3: Histogram of the final outbreak sizes of 100 ebola outbreaks. These are taken from the 100 model runs presented in the earlier figure, and show that most outbreaks may affect fewer than 500 individuals within their first 100 days.
 </p>
 </div>
@@ -372,32 +356,30 @@ Figure 3: Histogram of the final outbreak sizes of 100 ebola outbreaks. These ar
 </h2>
 <p>An intervention that reduces transmission can be applied by passing a <code>&lt;rate_intervention&gt;</code> on the transmission rate parameter, <code>beta</code>.</p>
 <p>We begin with an initial simple example that models an intervention that begins 15 days into the outbreak, and reduces transmission by 20%.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create an intervention on the transmission rate</span></span>
 <span><span class="va">reduce_transmission</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"rate"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">15</span>, time_end <span class="op">=</span> <span class="fl">100</span>, reduction <span class="op">=</span> <span class="fl">0.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><p>We can pass the intervention to the model function’s <code>intervention</code> argument.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># run the epidemic model and save data as the baseline</span></span>
-<span><span class="va">data_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
+<span><span class="va">data_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">ebola</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co"># note that the intervention is passed within a list,</span></span>
 <span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
+<span><span class="va">data_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">ebola</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    beta <span class="op">=</span> <span class="va">reduce_transmission</span></span>
+<span>    transmissibility <span class="op">=</span> <span class="va">reduce_transmission</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
@@ -408,7 +390,7 @@ Figure 3: Histogram of the final outbreak sizes of 100 ebola outbreaks. These ar
 <span></span>
 <span><span class="co"># bind the data together</span></span>
 <span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_intervention</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">[</span><span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
@@ -431,8 +413,8 @@ Figure 3: Histogram of the final outbreak sizes of 100 ebola outbreaks. These ar
 <span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-13"></span>
-<img src="ebola_model_files/figure-html/unnamed-chunk-13-1.png" alt="Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-12"></span>
+<img src="ebola_model_files/figure-html/unnamed-chunk-12-1.png" alt="Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."><p class="caption">
 Figure 4: Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak.
 </p>
 </div>
@@ -442,14 +424,14 @@ Figure 4: Effect of implementing an intervention that reduces transmission by 30
 <h2 id="modelling-the-roll-out-of-vaccination">Modelling the roll-out of vaccination<a class="anchor" aria-label="anchor" href="#modelling-the-roll-out-of-vaccination"></a>
 </h2>
 <p>We can also model the rollout of vaccination against EVD, but because this model is structured differently from other models in <em>epidemics</em>, vaccination must be modelled differently too.</p>
-<p><code><a href="../reference/epidemic_ebola.html">model_ebola_r()</a></code> does not accept a vaccination regime as a <code>&lt;vaccination&gt;</code> object, but we can still model the effect of vaccination as a gradual decrease in the transmission rate <span class="math inline">\(\beta\)</span> over time.</p>
+<p><code><a href="../reference/model_ebola.html">model_ebola_r()</a></code> does not accept a vaccination regime as a <code>&lt;vaccination&gt;</code> object, but we can still model the effect of vaccination as a gradual decrease in the transmission rate <span class="math inline">\(\beta\)</span> over time.</p>
 <p>This is done by using the <em>time dependence</em> functionality of <em>epidemics</em>.</p>
 <div class="alert alert-warning">
 <p><strong>New to implementing parameter time dependence in <em>epidemics</em>?</strong> It may help to read the <a href="time_dependence.html">vignette on time dependence functionality</a> first!</p>
 </div>
 <p>We first define a function suitable for the <code>time_dependence</code> argument.
 This function assumes that the baseline transmission rate of ebola decreases over time, with a 5% reduction each day due to vaccination.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># we assume a maximum time of 100 days, and a 5% daily reduction</span></span>
 <span><span class="co"># we assume that this vaccination begins on the 15th day</span></span>
 <span><span class="va">time_dep_vax</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span></span>
@@ -461,16 +443,15 @@ This function assumes that the baseline transmission rate of ebola decreases ove
 <span>    <span class="va">x</span> <span class="op">*</span> <span class="op">(</span><span class="op">(</span><span class="fl">1.0</span> <span class="op">-</span> <span class="va">reduction</span><span class="op">)</span><span class="op">^</span><span class="op">(</span><span class="va">time</span> <span class="op">/</span> <span class="va">max_time</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co"># note that the intervention is passed within a list,</span></span>
 <span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_apply_vax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
+<span><span class="va">data_apply_vax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">ebola</span>,</span>
 <span>  time_dependence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    beta <span class="op">=</span> <span class="va">time_dep_vax</span></span>
+<span>    transmissibility <span class="op">=</span> <span class="va">time_dep_vax</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
@@ -480,7 +461,7 @@ This function assumes that the baseline transmission rate of ebola decreases ove
 <span></span>
 <span><span class="co"># bind the data together</span></span>
 <span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_apply_vax</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">[</span><span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
@@ -503,8 +484,8 @@ This function assumes that the baseline transmission rate of ebola decreases ove
 <span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-16"></span>
-<img src="ebola_model_files/figure-html/unnamed-chunk-16-1.png" alt="Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-15"></span>
+<img src="ebola_model_files/figure-html/unnamed-chunk-15-1.png" alt="Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality."><p class="caption">
 Figure 5: Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality.
 </p>
 </div>
@@ -525,21 +506,20 @@ Figure 5: Effect of implementing a vaccination regime that gradually reduces ebo
 <h3 id="improving-hospitalisation">Improving hospitalisation<a class="anchor" aria-label="anchor" href="#improving-hospitalisation"></a>
 </h3>
 <p>We first model an intervention that begins 15 days into the outbreak, and reduces the proportion of individuals who are infectious in the community by 30%, thus improving the proportion that are hospitalised.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create an intervention on the transmission rate</span></span>
 <span><span class="va">improve_hospitalisation</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"rate"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">15</span>, time_end <span class="op">=</span> <span class="fl">100</span>, reduction <span class="op">=</span> <span class="fl">0.3</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><p>We can pass the interventions to the model function’s <code>intervention</code> argument as a named list, with the names indicating the infection parameters to target.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co"># note that the intervention is passed within a list,</span></span>
 <span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_improve_hosp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
+<span><span class="va">data_improve_hosp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">ebola</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    prop_community <span class="op">=</span> <span class="va">improve_hospitalisation</span></span>
 <span>  <span class="op">)</span>,</span>
@@ -551,7 +531,7 @@ Figure 5: Effect of implementing a vaccination regime that gradually reduces ebo
 <span></span>
 <span><span class="co"># bind the data together</span></span>
 <span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_improve_hosp</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">[</span><span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
@@ -574,8 +554,8 @@ Figure 5: Effect of implementing a vaccination regime that gradually reduces ebo
 <span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-19"></span>
-<img src="ebola_model_files/figure-html/unnamed-chunk-19-1.png" alt="Effect of implementing an intervention that reduces the proportion of infectious cases in the community by transferring them to a hospitalisation setting."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-18"></span>
+<img src="ebola_model_files/figure-html/unnamed-chunk-18-1.png" alt="Effect of implementing an intervention that reduces the proportion of infectious cases in the community by transferring them to a hospitalisation setting."><p class="caption">
 Figure 6: Effect of implementing an intervention that reduces the proportion of infectious cases in the community by transferring them to a hospitalisation setting.
 </p>
 </div>
@@ -584,20 +564,19 @@ Figure 6: Effect of implementing an intervention that reduces the proportion of 
 <h3 id="improve-etu-safety">Improve ETU safety<a class="anchor" aria-label="anchor" href="#improve-etu-safety"></a>
 </h3>
 <p>We next model an intervention to improve the safety of ETUs by reducing transmission risk by 70%, alongside the earlier improvement in hospitalisation.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create an intervention on the transmission rate</span></span>
 <span><span class="va">improve_etu_safety</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"rate"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">15</span>, time_end <span class="op">=</span> <span class="fl">100</span>, reduction <span class="op">=</span> <span class="fl">0.7</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co"># note that the intervention is passed within a list,</span></span>
 <span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_improve_etu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
+<span><span class="va">data_improve_etu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">ebola</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    etu_risk <span class="op">=</span> <span class="va">improve_etu_safety</span></span>
 <span>  <span class="op">)</span>,</span>
@@ -609,7 +588,7 @@ Figure 6: Effect of implementing an intervention that reduces the proportion of 
 <span></span>
 <span><span class="co"># bind the data together</span></span>
 <span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_improve_etu</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">[</span><span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
@@ -632,8 +611,8 @@ Figure 6: Effect of implementing an intervention that reduces the proportion of 
 <span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-22"></span>
-<img src="ebola_model_files/figure-html/unnamed-chunk-22-1.png" alt="Effect of implementing an intervention that reduces the risk of ebola transmission in a hospitalisation context."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-21"></span>
+<img src="ebola_model_files/figure-html/unnamed-chunk-21-1.png" alt="Effect of implementing an intervention that reduces the risk of ebola transmission in a hospitalisation context."><p class="caption">
 Figure 7: Effect of implementing an intervention that reduces the risk of ebola transmission in a hospitalisation context.
 </p>
 </div>
@@ -644,20 +623,19 @@ In this model, the large majority of cases remain in the community, and improvin
 <h3 id="improve-funeral-safety">Improve funeral safety<a class="anchor" aria-label="anchor" href="#improve-funeral-safety"></a>
 </h3>
 <p>We next model an intervention to improve the safety of funeral practices, by reducing transmission risk associated with funerals by 50%.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create an intervention on the transmission rate</span></span>
 <span><span class="va">reduce_funeral_risk</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"rate"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">15</span>, time_end <span class="op">=</span> <span class="fl">100</span>, reduction <span class="op">=</span> <span class="fl">0.5</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co"># note that the intervention is passed within a list,</span></span>
 <span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_improve_funeral</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
+<span><span class="va">data_improve_funeral</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">ebola</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    funeral_risk <span class="op">=</span> <span class="va">reduce_funeral_risk</span></span>
 <span>  <span class="op">)</span>,</span>
@@ -669,7 +647,7 @@ In this model, the large majority of cases remain in the community, and improvin
 <span></span>
 <span><span class="co"># bind the data together</span></span>
 <span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_improve_funeral</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">[</span><span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
@@ -693,8 +671,8 @@ In this model, the large majority of cases remain in the community, and improvin
 <span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-25"></span>
-<img src="ebola_model_files/figure-html/unnamed-chunk-25-1.png" alt="Effect of implementing an intervention that reduces the risk of ebola transmission in a funeral context."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-24"></span>
+<img src="ebola_model_files/figure-html/unnamed-chunk-24-1.png" alt="Effect of implementing an intervention that reduces the risk of ebola transmission in a funeral context."><p class="caption">
 Figure 8: Effect of implementing an intervention that reduces the risk of ebola transmission in a funeral context.
 </p>
 </div>
@@ -702,16 +680,15 @@ Figure 8: Effect of implementing an intervention that reduces the risk of ebola 
 <div class="section level3">
 <h3 id="combined-interventions">Combined interventions<a class="anchor" aria-label="anchor" href="#combined-interventions"></a>
 </h3>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co"># note that the intervention is passed within a list,</span></span>
 <span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_combined_interventions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
+<span><span class="va">data_combined_interventions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola_r</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">ebola</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    beta <span class="op">=</span> <span class="va">reduce_transmission</span>,</span>
+<span>    transmissibility <span class="op">=</span> <span class="va">reduce_transmission</span>,</span>
 <span>    prop_community <span class="op">=</span> <span class="va">improve_hospitalisation</span>,</span>
 <span>    etu_risk <span class="op">=</span> <span class="va">improve_etu_safety</span>,</span>
 <span>    funeral_risk <span class="op">=</span> <span class="va">reduce_funeral_risk</span></span>
@@ -726,7 +703,7 @@ Figure 8: Effect of implementing an intervention that reduces the risk of ebola 
 <span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_combined_interventions</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">[</span><span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
@@ -749,8 +726,8 @@ Figure 8: Effect of implementing an intervention that reduces the risk of ebola 
 <span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-27"></span>
-<img src="ebola_model_files/figure-html/unnamed-chunk-27-1.png" alt="Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-26"></span>
+<img src="ebola_model_files/figure-html/unnamed-chunk-26-1.png" alt="Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days."><p class="caption">
 Figure 9: Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days.
 </p>
 </div>
@@ -759,14 +736,14 @@ Figure 9: Effect of implementing multiple simultaneous interventions to reduce t
 <div class="section level2">
 <h2 id="details-discrete-time-ebola-virus-disease-model">Details: Discrete-time ebola virus disease model<a class="anchor" aria-label="anchor" href="#details-discrete-time-ebola-virus-disease-model"></a>
 </h2>
-<p>This model has compartments adopted from a consensus model for Ebola virus disease presented in <span class="citation">(<a href="#ref-li2019" role="doc-biblioref">Li et al. 2019</a>)</span>, but some of the compartmental transitions allowed have been simplified (see sub-section on hospitalisation).</p>
-<p>The model implementation differs from <span class="citation">Getz and Dougherty (<a href="#ref-getz2018" role="doc-biblioref">2018</a>)</span> in allowing users to set the basic reproductive number <span class="math inline">\(R_0\)</span>, and the mean infectious (<span class="math inline">\(\rho^I\)</span> in Getz and Dougherty) and pre-infectious periods in days (<span class="math inline">\(\rho^E\)</span> in Getz and Dougherty).
-Getz and Dougherty instead calculate these from other model parameters.</p>
-<p>The shape of the Erlang distributions of passage times through the exposed and infectious compartments (<span class="math inline">\(k^E\)</span> and <span class="math inline">\(k^I\)</span>) are fixed to 2 (this was allowed to vary in Getz and Dougherty).</p>
-<p>The transition rates between the exposed and infectious, and infectious and funeral compartments, <span class="math inline">\(\gamma^E\)</span> and <span class="math inline">\(\gamma^I\)</span> in Getz and Dougherty’s notation, are calculated following their equation (6).</p>
+<p>This model has compartments adopted from the consensus model for Ebola virus disease presented in Li et al. (2019), and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from Getz and Dougherty (2018); see <strong>References</strong>.</p>
+<p>The R code for this model is adapted from code by Ha Minh Lam and initially made available on <em>Epirecipes</em> (<a href="https://github.com/epirecipes/epicookbook" class="external-link uri">https://github.com/epirecipes/epicookbook</a>) under the MIT license.</p>
+<p>The transition rates between the exposed and infectious, and infectious and funeral compartments (and also hospitalised to removed), <span class="math inline">\(\gamma^E\)</span> and <span class="math inline">\(\gamma^I\)</span> in Getz and Dougherty’s notation, are passed by the user as the <code>infectiousness_rate</code> and <code>removal_rate</code> respectively.</p>
+<p>The shape of the Erlang distributions of passage times through the exposed and infectious compartments (<span class="math inline">\(k^E\)</span> and <span class="math inline">\(k^I\)</span>) are recommended to be set to 2 as a sensible choice, which is the default value for the <code>erlang_sbubcompartments</code> argument, but can be allowed to vary (but not independently).</p>
+<p>Getz and Dougherty’s equation (6) gives the relationship between these parameters and the mean pre-infectious <span class="math inline">\(\rho^E\)</span> and infectious <span class="math inline">\(\rho^I\)</span> periods.</p>
 <p><span class="math display">\[\gamma^E = \dfrac{k^E}{\rho^E} = \dfrac{2}{\rho^E} ~\text{and}~
 \gamma^I = \dfrac{k^I}{\rho^I} = \dfrac{2}{\rho^I}\]</span></p>
-<p>In this discrete time model, <span class="math inline">\(\gamma^E\)</span> and <span class="math inline">\(\gamma^I\)</span> are used to determine the number of Erlang sub-compartments in each epidemiological compartment, and the probability of newly exposed or infectious individuals beginning in one of the compartments (thus allowing for variation in passage times).</p>
+<p>In this discrete time model, <span class="math inline">\(\gamma^E\)</span> and <span class="math inline">\(\gamma^I\)</span> are used to determine the passage times of newly exposed or infectious individuals through their respective compartments (thus allowing for variation in passage times).</p>
 <div class="section level3">
 <h3 id="hospitalisation-funerals-and-removal">Hospitalisation, funerals, and removal<a class="anchor" aria-label="anchor" href="#hospitalisation-funerals-and-removal"></a>
 </h3>
@@ -776,11 +753,11 @@ This model simplifies these transitions to only two pathways:</p>
 <li><p>Infectious → funeral → removed (safe burial)</p></li>
 <li><p>Infectious → hospitalised → removed (recovery or safe burial)</p></li>
 </ol>
-<p>Infectious individuals have a probability <span class="math inline">\(p_\text{hosp}\)</span> of being transferred to the hospitalised compartment.
-Infectious individual with <span class="math inline">\(N\)</span> timesteps before exiting the infectious compartment will exit the hospitalised compartment in the same time.</p>
+<p>A proportion, <code>1.0 - prop_community</code>, of infectious individuals are transferred to the hospitalised compartment in each timestep, This compartment represents Ebola Treatment Units (ETUs), and individuals in the hospitalised compartment are considered to be infectious but no longer in the community.</p>
+<p>The passage time of individuals in the hospitalised compartment is similar to that of individuals in the infectious compartment (i.e., infectious in the community), which means that an infectious individual with <span class="math inline">\(N\)</span> timesteps before exiting the infectious compartment will exit the hospitalised compartment in the same time.</p>
 <p>Hospitalised individuals can contribute to transmission of Ebola to susceptibles depending on the value of <span class="math inline">\(p_\text{ETU}\)</span>, which is the probability (or proportion) of hospitalised cases contributing to the infection of susceptibles.
 This is interpreted as the relative safety of Ebolavirus treatment units (ETUs), with a range of 0.0 – 1.0, where 0.0 indicates that hospitalisation does not reduce transmission at all, while 1.0 indicates that hospitalisation prevents onward transmission entirely.
-This is passed as the <code>etu_safety</code> value of the <code>&lt;infection&gt;</code>-class object passed to the <code>infection</code> argument in <code><a href="../reference/epidemic_ebola.html">model_ebola_r()</a></code>.</p>
+This is passed as the <code>etu_safety</code> value of the <code>&lt;infection&gt;</code>-class object passed to the <code>infection</code> argument in <code><a href="../reference/model_ebola.html">model_ebola_r()</a></code>.</p>
 <p>We assume that deaths in hospital lead to Ebola-safe funerals, and individuals exiting the hospitalised compartment move to the ‘removed’ compartment, which holds both recoveries and deaths.</p>
 <p>We assume that infectious individuals who are not hospitalised die, and that deaths outside of hospital lead to funerals that are potentially not Ebola-safe, and the contribution of funerals to Ebola transmission is determined by <span class="math inline">\(p_\text{funeral}\)</span>, which can be interpreted as the probability of transmission at a funeral, or the proportion of funerals that are Ebola-safe.
 The relative safety of funerals is passed as the <code>funeral_safety</code> value of the <code>infection</code> argument.</p>

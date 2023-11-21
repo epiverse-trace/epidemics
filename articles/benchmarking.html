@@ -138,13 +138,6 @@
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Prepare epi parameters</span></span>
-<span><span class="va">pandemic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infection.html">infection</a></span><span class="op">(</span></span>
-<span>  r0 <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  preinfectious_period <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  infectious_period <span class="op">=</span> <span class="fl">7</span></span>
-<span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># create a multi intervention</span></span>
 <span><span class="va">multi_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
@@ -172,16 +165,14 @@
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span><span class="op">(</span></span>
 <span>  <span class="co"># run epidemic model, expect no conditions</span></span>
-<span>  <span class="st">"epidemic default R"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_r</a></span><span class="op">(</span></span>
+<span>  <span class="st">"epidemic default R"</span> <span class="op">=</span> <span class="fu"><a href="../reference/model_default.html">model_default_r</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>    infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>    intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">multi_intervention</span><span class="op">)</span>,</span>
 <span>    vaccination <span class="op">=</span> <span class="va">vax_regime</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  <span class="st">"epidemic default Rcpp"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<span>  <span class="st">"epidemic default Rcpp"</span> <span class="op">=</span> <span class="fu"><a href="../reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>    infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>    intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">multi_intervention</span><span class="op">)</span>,</span>
 <span>    vaccination <span class="op">=</span> <span class="va">vax_regime</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
@@ -193,8 +184,8 @@
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression                min  median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic default R    0.051<span style="text-decoration: underline;">8</span>  0.055<span style="text-decoration: underline;">7</span>       18.0    2.23MB    25.0 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic default Rcpp 0.002<span style="text-decoration: underline;">00</span> 0.002<span style="text-decoration: underline;">18</span>     462.   155.21KB     8.47</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic default R    0.057<span style="text-decoration: underline;">3</span>  0.058<span style="text-decoration: underline;">9</span>       16.9     2.2MB    23.5 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic default Rcpp 0.002<span style="text-decoration: underline;">18</span> 0.002<span style="text-decoration: underline;">24</span>     441.    158.9KB     7.63</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">
@@ -237,16 +228,6 @@
 <span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Prepare epi parameters</span></span>
-<span><span class="va">pandemic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infection.html">infection</a></span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"covid"</span>, r0 <span class="op">=</span> <span class="fl">5</span>, infectious_period <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  preinfectious_period <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  eta <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">1000</span>, omega <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">1000</span>,</span>
-<span>  susc_reduction_vax <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  hosp_reduction_vax <span class="op">=</span> <span class="fl">0.7</span>,</span>
-<span>  mort_reduction_vax <span class="op">=</span> <span class="fl">0.9</span></span>
-<span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># create a multi intervention</span></span>
 <span><span class="va">multi_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
@@ -284,16 +265,14 @@
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span><span class="op">(</span></span>
 <span>  <span class="co"># run epidemic model, expect no conditions</span></span>
-<span>  <span class="st">"epidemic Vacamole R"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_vacamole.html">model_vacamole_r</a></span><span class="op">(</span></span>
+<span>  <span class="st">"epidemic Vacamole R"</span> <span class="op">=</span> <span class="fu"><a href="../reference/model_vacamole.html">model_vacamole_r</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>    infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>    intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">multi_intervention</span><span class="op">)</span>,</span>
 <span>    vaccination <span class="op">=</span> <span class="va">double_vaccination</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  <span class="st">"epidemic Vacamole Rcpp"</span> <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_vacamole.html">model_vacamole_cpp</a></span><span class="op">(</span></span>
+<span>  <span class="st">"epidemic Vacamole Rcpp"</span> <span class="op">=</span> <span class="fu"><a href="../reference/model_vacamole.html">model_vacamole_cpp</a></span><span class="op">(</span></span>
 <span>    population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>    infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>    intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">multi_intervention</span><span class="op">)</span>,</span>
 <span>    vaccination <span class="op">=</span> <span class="va">double_vaccination</span>,</span>
 <span>    time_end <span class="op">=</span> <span class="fl">100</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
@@ -302,11 +281,13 @@
 <span>  time_unit <span class="op">=</span> <span class="st">"s"</span>,</span>
 <span>  check <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Some expressions had a GC in every iteration; so filtering is</span></span>
+<span><span class="co">#&gt; disabled.</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression                 min  median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic Vacamole R    0.051<span style="text-decoration: underline;">0</span>  0.054<span style="text-decoration: underline;">1</span>       18.5    1.47MB    26.0 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic Vacamole Rcpp 0.002<span style="text-decoration: underline;">85</span> 0.003<span style="text-decoration: underline;">11</span>     325.   299.98KB     6.97</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic Vacamole R    0.104   0.107        9.20    2.27MB     9.51</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic Vacamole Rcpp 0.003<span style="text-decoration: underline;">18</span> 0.003<span style="text-decoration: underline;">25</span>    296.    312.23KB     5.33</span></span></code></pre></div>
 </details>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -89,7 +89,7 @@ at that stage of the epidemic.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>data</dt>
 <dd><p>A <code>data.table</code> (or <code>data.frame</code>) of model output, typically
-the output of <code><a href="epidemic_default.html">model_default_cpp()</a></code> or similar functions.</p></dd>
+the output of <code><a href="model_default.html">model_default_cpp()</a></code> or similar functions.</p></dd>
 
 
 <dt>stage</dt>
@@ -142,30 +142,22 @@ group as well as the total epidemic size.</p>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># create an infection object</span></span></span>
-<span class="r-in"><span><span class="va">pandemic_influenza</span> <span class="op">&lt;-</span> <span class="fu"><a href="infection.html">infection</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  r0 <span class="op">=</span> <span class="fl">1.5</span>, infectious_period <span class="op">=</span> <span class="fl">7</span>, preinfectious_period <span class="op">=</span> <span class="fl">3</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># run epidemic simulation with no vaccination or intervention</span></span></span>
-<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span></span>
-<span class="r-in"><span>  infection <span class="op">=</span> <span class="va">pandemic_influenza</span>,</span></span>
-<span class="r-in"><span>  time_end <span class="op">=</span> <span class="fl">200</span>,</span></span>
-<span class="r-in"><span>  increment <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="model_default.html">model_default_cpp</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  population <span class="op">=</span> <span class="va">uk_population</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get the final epidemic size</span></span></span>
 <span class="r-in"><span><span class="fu">epidemic_size</span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No 'dead' compartment found in `data`; counting only 'recovered' individuals in the epidemic size.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> demo_group_1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     27950895 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     481200.2 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get the epidemic size at the halfway point</span></span></span>
 <span class="r-in"><span><span class="fu">epidemic_size</span><span class="op">(</span><span class="va">data</span>, stage <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> No 'dead' compartment found in `data`; counting only 'recovered' individuals in the epidemic size.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> demo_group_1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      1132229 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     81921.88 </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

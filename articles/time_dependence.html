@@ -136,24 +136,17 @@
 <span>    nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>    byrow <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Prepare epi parameters</span></span>
-<span><span class="va">pandemic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infection.html">infection</a></span><span class="op">(</span></span>
-<span>  r0 <span class="op">=</span> <span class="fl">1.18</span>,</span>
-<span>  preinfectious_period <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  infectious_period <span class="op">=</span> <span class="fl">7</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">
 <h2 id="defining-a-time-dependent-function">Defining a time-dependent function<a class="anchor" aria-label="anchor" href="#defining-a-time-dependent-function"></a>
 </h2>
-<p>Next we prepare a function that affects the transmission rate <span class="math inline">\(\beta\)</span> in such a way that there are two peaks and two troughs in the transmission rate over the course of a year.</p>
+<p>Next we prepare a function that affects the transmissibility (often denoted <span class="math inline">\(\beta\)</span>) in such a way that there are two peaks and two troughs in the transmissibility rate over the course of a year.</p>
 <p>Note that this example uses an arbitrary function, and that we might want to choose a more realistic function in a model.
 Nonetheless, as the figures later will show, this can still generate realistic looking epidemic curves and is a good starting point for understanding how this feature works.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># prepare function</span></span>
+<code class="sourceCode R"><span><span class="co"># prepare function, refer to transmissiblity as beta in function name</span></span>
 <span><span class="va">mod_beta</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">time</span>, <span class="va">x</span>, <span class="va">tmax</span> <span class="op">=</span> <span class="fl">365</span> <span class="op">/</span> <span class="fl">4</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="va">x</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sinpi</a></span><span class="op">(</span><span class="va">time</span> <span class="op">/</span> <span class="va">tmax</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -175,13 +168,14 @@ Nonetheless, as the figures later will show, this can still generate realistic l
 <div class="section level2">
 <h2 id="model-with-time-dependent-transmission">Model with time-dependent transmission<a class="anchor" aria-label="anchor" href="#model-with-time-dependent-transmission"></a>
 </h2>
-<p>Next we run an epidemic model while including the time dependence of <span class="math inline">\(\beta\)</span>.</p>
+<p>Next we run an epidemic model while including the time dependence of transmissibility.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="co"># note transmissibility is the function/model parameter</span></span>
+<span><span class="co"># the function that affects it may have any name</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  time_dependence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    beta <span class="op">=</span> <span class="va">mod_beta</span></span>
+<span>    transmissibility <span class="op">=</span> <span class="va">mod_beta</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">365</span>, increment <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
@@ -267,12 +261,11 @@ Note that plotting code is folded and can be expanded.</p>
 </details><p>Then we run the model while specifying the time-dependence of the transmission rate, as well as the intervention on social contacts.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run the model with interventions and time-dependence</span></span>
-<span><span class="va">data_npi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data_npi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">npis</span><span class="op">)</span>,</span>
 <span>  time_dependence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    beta <span class="op">=</span> <span class="va">mod_beta</span></span>
+<span>    transmissibility <span class="op">=</span> <span class="va">mod_beta</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">365</span>, increment <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
@@ -365,12 +358,11 @@ We also assume that a single dose of the vaccine confers immunity (i.e., non-lea
 </details><p>We model the effect of administering vaccine doses between the expected peaks of the epidemic waves, and plot the outcome.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># pass time dependence and vaccination. Note no interventions</span></span>
-<span><span class="va">data_vax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data_vax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  vaccination <span class="op">=</span> <span class="va">vax_regime</span>,</span>
 <span>  time_dependence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    beta <span class="op">=</span> <span class="va">mod_beta</span></span>
+<span>    transmissibility <span class="op">=</span> <span class="va">mod_beta</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">365</span>, increment <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>

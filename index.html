@@ -179,7 +179,7 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># simulate a pandemic, with an R0,</span></span>
 <span><span class="co"># an infectious period, and an pre-infectious period</span></span>
-<span><span class="va">pandemic_influenza</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/infection.html">infection</a></span><span class="op">(</span></span>
+<span><span class="va">pandemic_influenza</span> <span class="op">&lt;-</span> <span class="fu">infection</span><span class="op">(</span></span>
 <span>  r0 <span class="op">=</span> <span class="fl">1.5</span>,</span>
 <span>  preinfectious_period <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  infectious_period <span class="op">=</span> <span class="fl">7</span></span>
@@ -221,7 +221,7 @@
 <p>Run the default epidemic model, using the function <code>epidemic()</code>. We assume an <span class="math inline"><em>R</em><sub>0</sub></span> of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run an epidemic model using `epidemic()`</span></span>
-<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  infection <span class="op">=</span> <span class="va">pandemic_influenza</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">close_schools</span><span class="op">)</span>,</span>

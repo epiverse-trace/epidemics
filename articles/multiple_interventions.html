@@ -112,10 +112,9 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 </details><div class="section level2">
-<h2 id="prepare-population-initial-conditions-and-pathogen">Prepare population, initial conditions, and pathogen<a class="anchor" aria-label="anchor" href="#prepare-population-initial-conditions-and-pathogen"></a>
+<h2 id="prepare-population-and-initial-conditions">Prepare population and initial conditions<a class="anchor" aria-label="anchor" href="#prepare-population-and-initial-conditions"></a>
 </h2>
 <p>We prepare population and contact data from the U.K., with epidemiological compartments matching the default epidemic model (SEIR-V).</p>
-<p>We prepare an <code>infection</code> object to simulate a pathogen with an <span class="math inline">\(R_0\)</span> of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.</p>
 <p>We assume that one in every million people has been infected and is infectious, translating to about 67 total infections for a U.K. population of 67 million.</p>
 <p>The code for these steps is similar to that in the <a href="epidemics.html">“Getting started vignette”</a> and is hidden here, although it can be expanded for reference.</p>
 <details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -157,32 +156,24 @@
 <span>  demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
 <span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Prepare epidemiological parameters as an infection object</span></span>
-<span><span class="va">pandemic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infection.html">infection</a></span><span class="op">(</span></span>
-<span>  r0 <span class="op">=</span> <span class="fl">1.3</span>,</span>
-<span>  preinfectious_period <span class="op">=</span> <span class="fl">1.5</span>,</span>
-<span>  infectious_period <span class="op">=</span> <span class="fl">5</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">
 <h2 id="examine-the-baseline">Examine the baseline<a class="anchor" aria-label="anchor" href="#examine-the-baseline"></a>
 </h2>
 <p>We first examine the baseline scenario — no interventions are implemented to slow the spread of the epidemic — and visualise the outcomes in terms of daily new infections.</p>
-<p>We simulate an epidemic using <code><a href="../reference/epidemic_default.html">model_default_cpp()</a></code>, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>We simulate an epidemic using <code><a href="../reference/model_default.html">model_default_cpp()</a></code>, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># no intervention baseline scenario</span></span>
-<span><span class="va">data_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">400</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># get new infections</span></span>
 <span><span class="va">data_baseline_infections</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_infections.html">new_infections</a></span><span class="op">(</span><span class="va">data_baseline</span>, by_group <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </details><p>We show one instance of the plotting code using the <em>ggplot2</em> package here, with further instances hidden to keep the vignette short.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># visualise the spread of the epidemic in terms of new infections</span></span>
 <span><span class="co"># plot figure of epidemic curve</span></span>
 <span><span class="va">plot_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -214,8 +205,8 @@
 <span></span>
 <span><span class="va">plot_baseline</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-7"></span>
-<img src="multiple_interventions_files/figure-html/unnamed-chunk-7-1.png" alt="A model of an infectious disease epidemic, assuming a directly transmitted infection such as influenza, with an $R_0$ of 1.3, an infectious period of 5 days, and a pre-infectious period of 1.5 days."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-6"></span>
+<img src="multiple_interventions_files/figure-html/unnamed-chunk-6-1.png" alt="A model of an infectious disease epidemic, assuming a directly transmitted infection such as influenza, with an $R_0$ of 1.3, an infectious period of 5 days, and a pre-infectious period of 1.5 days."><p class="caption">
 Figure 1: A model of an infectious disease epidemic, assuming a directly transmitted infection such as influenza, with an <span class="math inline">\(R_0\)</span> of 1.3, an infectious period of 5 days, and a pre-infectious period of 1.5 days.
 </p>
 </div>
@@ -234,7 +225,7 @@ Figure 1: A model of an infectious disease epidemic, assuming a directly transmi
 <p>We first prepare an intervention that simulates the effect of closing schools to reduce the contacts of younger people.
 We assume that this reduces the contacts of the age group 0 – 19 by 30%, and the contacts of all other age groups by only 1% (as most adults meet individuals their own age).</p>
 <p>This intervention is assumed to last 6 months or approximately 180 days, beginning from the 100th day of the outbreak — this is similar to the duration of initial school closures during the Covid-19 pandemic in 2020 in the U.K.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># prepare an intervention that models school closures for ~3 months (100 days)</span></span>
 <span><span class="va">close_schools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"School closure"</span>,</span>
@@ -260,18 +251,17 @@ We assume that this reduces the contacts of the age group 0 – 19 by 30%, and t
 <span><span class="co">#&gt; Demo. grp. 2      0.01</span></span>
 <span><span class="co">#&gt; Demo. grp. 3      0.01</span></span></code></pre></div>
 </details><p>We simulate the epidemic for 600 days as we expect the intervention to spread disease incidence out over a longer period.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># no intervention baseline scenario</span></span>
-<span><span class="va">data_schools_closed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data_schools_closed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">close_schools</span><span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># get new infections</span></span>
 <span><span class="va">data_noschool_infections</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_infections.html">new_infections</a></span><span class="op">(</span><span class="va">data_schools_closed</span>, by_group <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># visualise the spread of the epidemic in terms of new infections when</span></span>
 <span><span class="co"># schools are closed</span></span>
 <span><span class="va">plot_noschool</span> <span class="op">&lt;-</span></span>
@@ -322,13 +312,13 @@ We assume that this reduces the contacts of the age group 0 – 19 by 30%, and t
 <span></span>
 <span><span class="va">plot_noschool</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-10"></span>
-<img src="multiple_interventions_files/figure-html/unnamed-chunk-10-1.png" alt="Epidemic model with an intervention that targets infections among children by closing schools for six months, thus reducing children's social contacts."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-9"></span>
+<img src="multiple_interventions_files/figure-html/unnamed-chunk-9-1.png" alt="Epidemic model with an intervention that targets infections among children by closing schools for six months, thus reducing children's social contacts."><p class="caption">
 Figure 2: Epidemic model with an intervention that targets infections among children by closing schools for six months, thus reducing children’s social contacts.
 </p>
 </div>
 <p>In the school closures only scenario, the epidemic would continue for approximately 600 days, or more than one and a half years, with more than 10,000 daily new infections for over one year.</p>
-<p>In this scenario, the epidemic is expected to have a final size of around 21 million individuals infected overall.</p>
+<p>In this scenario, the epidemic is expected to have a final size of around 22 million individuals infected overall.</p>
 </div>
 <div class="section level3">
 <h3 id="workplace-closures">Workplace closures<a class="anchor" aria-label="anchor" href="#workplace-closures"></a>
@@ -336,7 +326,7 @@ Figure 2: Epidemic model with an intervention that targets infections among chil
 <p>General workplace closures are a broad-based measure aimed at reducing infections among all working age adults.</p>
 <p>We shall prepare an intervention that simulates the effect of closing workplaces <strong>in addition to closing schools</strong>, and we assume that this reduces the contacts of the age group 20 – 65 by 30%, and the contacts of all other age groups by only 1% (we assume that individuals in other age groups are not meeting many individuals in workplaces).</p>
 <p>This intervention is assumed to last 60 days, beginning from the 80th day of the outbreak — this simulates a situation in which policymakers decide to close workplaces three weeks after deciding to close schools, and in which they choose not to keep workplaces closed for as long (2 months or 60 days vs. 6 months or 180 days for school closures).</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># prepare an intervention which mostly affects adults 20 -- 65</span></span>
 <span><span class="va">intervention_duration</span> <span class="op">&lt;-</span> <span class="fl">60</span></span>
 <span><span class="va">close_workplaces</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
@@ -368,13 +358,13 @@ Figure 2: Epidemic model with an intervention that targets infections among chil
 <h3 id="combining-interventions">Combining interventions<a class="anchor" aria-label="anchor" href="#combining-interventions"></a>
 </h3>
 <p>We can use the <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> function to combine two <code>intervention</code> objects into a single <code>intervention</code> that accommodates the effect of both interventions.
-This multiple intervention can then be passed — as a single <code>intervention</code> object — to an epidemic model in <code><a href="../reference/epidemic_default.html">model_default_cpp()</a></code>.</p>
+This multiple intervention can then be passed — as a single <code>intervention</code> object — to an epidemic model in <code><a href="../reference/model_default.html">model_default_cpp()</a></code>.</p>
 <p>When an <code>intervention</code> object is made up of multiple interventions the first intervention to be specified is treated as the baseline intervention, with an age-specific effect on reducing contacts during its duration of effect.</p>
 <p>All further interventions are assumed to be <strong>additional percentage point</strong> increases on the effect of any active interventions.</p>
 </div>
 <p>We can use the <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> function to combine two <code>intervention</code> objects into a single <code>intervention</code> that accommodates the effect of both interventions.
-This multiple intervention can then be passed — as a single <code>intervention</code> object — to an epidemic model in <code><a href="../reference/epidemic_default.html">model_default_cpp()</a></code>.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+This multiple intervention can then be passed — as a single <code>intervention</code> object — to an epidemic model in <code><a href="../reference/model_default.html">model_default_cpp()</a></code>.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># combine interventions using `c()`</span></span>
 <span><span class="va">combined_interventions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="va">close_schools</span>, <span class="va">close_workplaces</span></span>
@@ -399,27 +389,26 @@ This multiple intervention can then be passed — as a single <code>intervention
 <span><span class="co">#&gt; Demo. grp. 3      0.01      0.01</span></span></code></pre></div>
 </details><div class="alert alert-primary">
 <ul>
-<li><p>We can combine any number of <code>intervention</code> objects into a single <code>intervention</code> object to be passed to <code><a href="../reference/epidemic_default.html">model_default_cpp()</a></code>.
+<li><p>We can combine any number of <code>intervention</code> objects into a single <code>intervention</code> object to be passed to <code><a href="../reference/model_default.html">model_default_cpp()</a></code>.
 The cumulative effect of the interventions is handled automatically by the C++ code underlying <em>epidemics</em>.</p></li>
 <li><p>Remember that two multiple interventions can also be combined using <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>.
 It is important to be careful when doing this and make sure that only the interventions you intend to combine are concatenated together.
 For example, <code>c(combined_interventions, combined_interventions)</code> is valid, and would effectively double the effect of school and workplace closures in the example.</p></li>
 </ul>
 </div>
-<p>We simulate an epidemic using the <code><a href="../reference/epidemic_default.html">model_default_cpp()</a></code> function, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
+<p>We simulate an epidemic using the <code><a href="../reference/model_default.html">model_default_cpp()</a></code> function, calling the default model outlined in the <a href="epidemics.html">“Get started vignette”</a>.</p>
 <p>We simulate the epidemic for 600 days.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get data from an epidemic model with both interventions</span></span>
-<span><span class="va">data_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">combined_interventions</span><span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># get data on new infections</span></span>
 <span><span class="va">data_infections</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_infections.html">new_infections</a></span><span class="op">(</span><span class="va">data_combined</span>, by_group <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot_intervention_cases</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
@@ -486,8 +475,8 @@ For example, <code>c(combined_interventions, combined_interventions)</code> is v
 <span></span>
 <span><span class="va">plot_intervention_cases</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-14"></span>
-<img src="multiple_interventions_files/figure-html/unnamed-chunk-14-1.png" alt="Epidemic model with two overlapping interventions in the early phase of the outbreak: school closures that target infections among younger people, and workplace closures which target infections among working-age adults."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<img src="multiple_interventions_files/figure-html/unnamed-chunk-13-1.png" alt="Epidemic model with two overlapping interventions in the early phase of the outbreak: school closures that target infections among younger people, and workplace closures which target infections among working-age adults."><p class="caption">
 Figure 3: Epidemic model with two overlapping interventions in the early phase of the outbreak: school closures that target infections among younger people, and workplace closures which target infections among working-age adults.
 </p>
 </div>
@@ -497,9 +486,9 @@ Figure 3: Epidemic model with two overlapping interventions in the early phase o
 <div class="section level3">
 <h3 id="re-applying-workplace-closures">Re-applying workplace closures<a class="anchor" aria-label="anchor" href="#re-applying-workplace-closures"></a>
 </h3>
-<p>In the scenario with combined interventions, daily new infections are forecast to exceed 50,000 on the 356th day of the epidemic.</p>
+<p>In the scenario with combined interventions, daily new infections are forecast to exceed 50,000 on the 397th day of the epidemic.</p>
 <p>In this final example, we simulate re-implementing two months of workplace closures, but not school closures, to reduce infections.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># log the date that cases exceed 50000 daily</span></span>
 <span><span class="va">start_date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span></span>
@@ -515,21 +504,20 @@ Figure 3: Epidemic model with two overlapping interventions in the early phase o
 <span>  reduction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.3</span>, <span class="fl">0.01</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><p>Combine the multiple interventions object with two interventions with the third intervention.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combined_interventions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">combined_interventions</span>, <span class="va">workplace_closures_2</span><span class="op">)</span></span></code></pre></div>
-</details><p>We simulate an epidemic using the <code><a href="../reference/epidemic_default.html">model_default_cpp()</a></code> function for 600 days as before.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+</details><p>We simulate an epidemic using the <code><a href="../reference/model_default.html">model_default_cpp()</a></code> function for 600 days as before.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get data from an epidemic model with both interventions</span></span>
-<span><span class="va">data_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<span><span class="va">data_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  infection <span class="op">=</span> <span class="va">pandemic</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">combined_interventions</span><span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># get data on new infections</span></span>
 <span><span class="va">data_infections</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_infections.html">new_infections</a></span><span class="op">(</span><span class="va">data_combined</span>, by_group <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot_three_interventions</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
@@ -600,13 +588,13 @@ Figure 3: Epidemic model with two overlapping interventions in the early phase o
 <span></span>
 <span><span class="va">plot_three_interventions</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-18"></span>
-<img src="multiple_interventions_files/figure-html/unnamed-chunk-18-1.png" alt="Epidemic model with two initial, overlapping interventions on schools and workplaces, followed by a later intervention on workplaces."><p class="caption">
+<span style="display:block;" id="fig:unnamed-chunk-17"></span>
+<img src="multiple_interventions_files/figure-html/unnamed-chunk-17-1.png" alt="Epidemic model with two initial, overlapping interventions on schools and workplaces, followed by a later intervention on workplaces."><p class="caption">
 Figure 4: Epidemic model with two initial, overlapping interventions on schools and workplaces, followed by a later intervention on workplaces.
 </p>
 </div>
 <p>In this scenario with school closures for 6 months as well as two phases of workplace closures for 2 months each, the epidemic would continue for over 600 days, or more than one and a half years, but the number of days with 10,000 or more daily cases would be reduced, and these typically occur once the interventions on workplaces are lifted — this is similar to the previous example.</p>
-<p>In this scenario, the epidemic is expected to have a final size of around 19 million individuals infected overall — this is lower than the previous examples.</p>
+<p>In this scenario, the epidemic is expected to have a final size of around 15 million individuals infected overall — this is lower than the previous examples.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

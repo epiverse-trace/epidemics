@@ -159,7 +159,7 @@ We use the <span class="math inline">\(R\)</span> estimate (the mean and standar
 <div class="section level2">
 <h2 id="prepare-epidemic-model-inputs">Prepare epidemic model inputs<a class="anchor" aria-label="anchor" href="#prepare-epidemic-model-inputs"></a>
 </h2>
-<p>We define inputs for the default, SEIR-V model in <em>epidemics</em> in the form of <code>&lt;population&gt;</code> and <code>&lt;infection&gt;</code> objects.
+<p>We define inputs for the default, SEIR-V model in <em>epidemics</em> in the form of a <code>&lt;population&gt;</code> object.
 We omit non-pharmaceutical interventions and vaccinations for this example.</p>
 <p>Since this step is identical to that in previous vignettes, the code is folded, but can be expanded for clarity.</p>
 <details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -215,26 +215,19 @@ We omit non-pharmaceutical interventions and vaccinations for this example.</p>
 </h2>
 <p>Loop over sampled <span class="math inline">\(R\)</span> values to generate epidemic model outputs with uncertainty.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># iterate over the R samples, running the epidemic model for each value of R</span></span>
+<code class="sourceCode R"><span><span class="co"># define the infectious period</span></span>
+<span><span class="va">infectious_period</span> <span class="op">&lt;-</span> <span class="fl">7</span></span>
+<span></span>
+<span><span class="co"># iterate over the R samples, running the epidemic model for each value of R</span></span>
 <span><span class="va">output_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Map</a></span><span class="op">(</span></span>
 <span>  <span class="va">r_samples</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">r_samples</span><span class="op">)</span>,</span>
 <span>  f <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co"># Prepare an &lt;infection&gt; class object to store the parameters of</span></span>
-<span>    <span class="co"># the infection which is causing the epidemic which is being modelled.</span></span>
-<span></span>
-<span>    <span class="co"># simulate a pandemic, with an R0,</span></span>
-<span>    <span class="co"># an infectious period, and an pre-infectious period</span></span>
-<span>    <span class="va">pandemic_influenza</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infection.html">infection</a></span><span class="op">(</span></span>
-<span>      r0 <span class="op">=</span> <span class="va">x</span>,</span>
-<span>      preinfectious_period <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>      infectious_period <span class="op">=</span> <span class="fl">7</span></span>
-<span>    <span class="op">)</span></span>
-<span></span>
 <span>    <span class="co"># run an epidemic model using `epidemic()`</span></span>
-<span>    <span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_default.html">model_default_cpp</a></span><span class="op">(</span></span>
+<span>    <span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default_cpp</a></span><span class="op">(</span></span>
 <span>      population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>      infection <span class="op">=</span> <span class="va">pandemic_influenza</span>,</span>
+<span>      transmissibility <span class="op">=</span> <span class="va">x</span> <span class="op">/</span> <span class="va">infectious_period</span>,</span>
+<span>      recovery_rate <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="va">infectious_period</span>,</span>
 <span>      intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">close_schools</span><span class="op">)</span>,</span>
 <span>      time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span>    <span class="op">)</span></span>
@@ -257,18 +250,18 @@ We omit non-pharmaceutical interventions and vaccinations for this example.</p>
 <span><span class="co">#&gt; 1:    0              40+       0.000000        1 1.47341</span></span>
 <span><span class="co">#&gt; 2:    0           [0,20)       0.000000        1 1.47341</span></span>
 <span><span class="co">#&gt; 3:    0          [20,40)       0.000000        1 1.47341</span></span>
-<span><span class="co">#&gt; 4:    1              40+       4.470485        1 1.47341</span></span>
-<span><span class="co">#&gt; 5:    1           [0,20)       3.499938        1 1.47341</span></span>
-<span><span class="co">#&gt; 6:    1          [20,40)       3.399749        1 1.47341</span></span>
+<span><span class="co">#&gt; 4:    1              40+       4.488961        1 1.47341</span></span>
+<span><span class="co">#&gt; 5:    1           [0,20)       3.516643        1 1.47341</span></span>
+<span><span class="co">#&gt; 6:    1          [20,40)       3.414592        1 1.47341</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
 <span><span class="co">#&gt;    time demography_group new_infections scenario        R</span></span>
 <span><span class="co">#&gt; 1:    0              40+       0.000000        2 1.812195</span></span>
 <span><span class="co">#&gt; 2:    0           [0,20)       0.000000        2 1.812195</span></span>
 <span><span class="co">#&gt; 3:    0          [20,40)       0.000000        2 1.812195</span></span>
-<span><span class="co">#&gt; 4:    1              40+       5.510658        2 1.812195</span></span>
-<span><span class="co">#&gt; 5:    1           [0,20)       4.315776        2 1.812195</span></span>
-<span><span class="co">#&gt; 6:    1          [20,40)       4.191314        2 1.812195</span></span>
+<span><span class="co">#&gt; 4:    1              40+       5.538607        2 1.812195</span></span>
+<span><span class="co">#&gt; 5:    1           [0,20)       4.341045        2 1.812195</span></span>
+<span><span class="co">#&gt; 6:    1          [20,40)       4.213767        2 1.812195</span></span>
 <span></span>
 <span><span class="co"># combine to prepare for plotting</span></span>
 <span><span class="va">output_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">output_samples</span><span class="op">)</span></span></code></pre></div>

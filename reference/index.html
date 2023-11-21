@@ -69,8 +69,40 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="model-functions">Model functions<a class="anchor" aria-label="anchor" href="#model-functions"></a></h2>
       
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="model_default.html">model_default_cpp()</a></code> <code><a href="model_default.html">model_default_r()</a></code> 
+        </dt>
+        <dd>Model an SEIR-V epidemic with interventions</dd>
+      </dl><dl><dt>
+          
+          <code><a href="model_ebola.html">model_ebola_r()</a></code> 
+        </dt>
+        <dd>Model an Ebola virus disease epidemic</dd>
+      </dl><dl><dt>
+          
+          <code><a href="model_vacamole.html">model_vacamole_cpp()</a></code> <code><a href="model_vacamole.html">model_vacamole_r()</a></code> 
+        </dt>
+        <dd>Model leaky, two-dose vaccination in an epidemic using Vacamole</dd>
+      </dl></div><div class="section level2">
+      <h2 id="classes-and-related-functions">Classes and related functions<a class="anchor" aria-label="anchor" href="#classes-and-related-functions"></a></h2>
+      
+      
+
+      
+    </div><div class="section level2">
+      
+      <h3 id="intervention">Intervention<a class="anchor" aria-label="anchor" href="#intervention"></a></h3>
       
 
       
@@ -86,21 +118,6 @@
         <dd>Convert a list to a intervention object</dd>
       </dl><dl><dt>
           
-          <code><a href="as.vaccination.html">as.vaccination()</a></code> 
-        </dt>
-        <dd>Convert a list to a vaccination object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="epidemic_size.html">epidemic_size()</a></code> 
-        </dt>
-        <dd>Get the epidemic size</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_parameter.html">get_parameter()</a></code> 
-        </dt>
-        <dd>Get parameters from {epidemics} classes</dd>
-      </dl><dl><dt>
-          
           <code><a href="intervention.html">intervention()</a></code> <code><a href="intervention.html">is_intervention()</a></code> <code><a href="intervention.html">is_contacts_intervention()</a></code> <code><a href="intervention.html">is_rate_intervention()</a></code> <code><a href="intervention.html">no_contacts_intervention()</a></code> <code><a href="intervention.html">c(<i>&lt;contacts_intervention&gt;</i>)</a></code> <code><a href="intervention.html">c(<i>&lt;rate_intervention&gt;</i>)</a></code> <code><a href="intervention.html">no_rate_intervention()</a></code> 
         </dt>
         <dd>Create an intervention for an epidemic model</dd>
@@ -111,25 +128,21 @@
         <dd>Apply interventions to rate parameters</dd>
       </dl><dl><dt>
           
-          <code><a href="model_default.html">model_default_cpp()</a></code> <code><a href="model_default.html">model_default_r()</a></code> 
+          <code><a href="print_intervention.html">print(<i>&lt;intervention&gt;</i>)</a></code> <code><a href="print_intervention.html">print(<i>&lt;contact_intervention&gt;</i>)</a></code> <code><a href="print_intervention.html">print(<i>&lt;rate_intervention&gt;</i>)</a></code> 
         </dt>
-        <dd>Model an SEIR-V epidemic with interventions</dd>
-      </dl><dl><dt>
-          
-          <code><a href="model_ebola.html">model_ebola_r()</a></code> 
-        </dt>
-        <dd>Model an Ebola virus disease epidemic</dd>
-      </dl><dl><dt>
-          
-          <code><a href="model_vacamole.html">model_vacamole_cpp()</a></code> <code><a href="model_vacamole.html">model_vacamole_r()</a></code> 
-        </dt>
-        <dd>Model leaky, two-dose vaccination in an epidemic using Vacamole</dd>
-      </dl><dl><dt>
-          
-          <code><a href="new_infections.html">new_infections()</a></code> 
-        </dt>
-        <dd>Get new infections</dd>
-      </dl><dl><dt>
+        <dd>Print an object of the <code>&lt;intervention&gt;</code> super-class</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="population">Population<a class="anchor" aria-label="anchor" href="#population"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="population.html">population()</a></code> <code><a href="population.html">is_population()</a></code> 
         </dt>
@@ -139,6 +152,22 @@
           <code><a href="print.population.html">print(<i>&lt;population&gt;</i>)</a></code> 
         </dt>
         <dd>Print a <code>&lt;population&gt;</code> object</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="vaccination">Vaccination<a class="anchor" aria-label="anchor" href="#vaccination"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="as.vaccination.html">as.vaccination()</a></code> 
+        </dt>
+        <dd>Convert a list to a vaccination object</dd>
       </dl><dl><dt>
           
           <code><a href="print.vaccination.html">print(<i>&lt;vaccination&gt;</i>)</a></code> 
@@ -146,16 +175,43 @@
         <dd>Print a <code>&lt;vaccination&gt;</code> object</dd>
       </dl><dl><dt>
           
-          <code><a href="print_intervention.html">print(<i>&lt;intervention&gt;</i>)</a></code> <code><a href="print_intervention.html">print(<i>&lt;contact_intervention&gt;</i>)</a></code> <code><a href="print_intervention.html">print(<i>&lt;rate_intervention&gt;</i>)</a></code> 
-        </dt>
-        <dd>Print an object of the <code>&lt;intervention&gt;</code> super-class</dd>
-      </dl><dl><dt>
-          
           <code><a href="vaccination.html">vaccination()</a></code> <code><a href="vaccination.html">is_vaccination()</a></code> <code><a href="vaccination.html">no_vaccination()</a></code> <code><a href="vaccination.html">c(<i>&lt;vaccination&gt;</i>)</a></code> 
         </dt>
         <dd>Construct a new vaccination regime for an epidemic model</dd>
+      </dl></div><div class="section level2">
+      <h2 id="helper-functions">Helper functions<a class="anchor" aria-label="anchor" href="#helper-functions"></a></h2>
+      
+      <p class="section-desc"></p><p>Functions to help with handling package classes and outputs.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="get_parameter.html">get_parameter()</a></code> 
+        </dt>
+        <dd>Get parameters from {epidemics} classes</dd>
+      </dl><dl><dt>
+          
+          <code><a href="no_time_dependence.html">no_time_dependence()</a></code> 
+        </dt>
+        <dd>Specify no time dependence of model rates</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epidemic_size.html">epidemic_size()</a></code> 
+        </dt>
+        <dd>Get the epidemic size</dd>
+      </dl><dl><dt>
+          
+          <code><a href="new_infections.html">new_infections()</a></code> 
+        </dt>
+        <dd>Get new infections</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

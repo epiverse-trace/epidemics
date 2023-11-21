@@ -34,8 +34,8 @@ namespace epidemics {
 /// @brief Struct containing the Vacamole epidemic ODE system
 struct epidemic_vacamole {
   // two maps for the infection parameters, one for dynamic modification
-  const std::unordered_map<std::string, double> infection_params;
-  std::unordered_map<std::string, double> infection_params_temp;
+  const std::unordered_map<std::string, double> model_params;
+  std::unordered_map<std::string, double> model_params_temp;
   const Eigen::MatrixXd contact_matrix;
   Eigen::MatrixXd cm_temp;
   // related to interventions
@@ -49,7 +49,7 @@ struct epidemic_vacamole {
   const Rcpp::List time_dependence;
 
   /// @brief Constructor for the Vacamole epidemic struct
-  /// @param infection_params An unordered map of string-double pairs, with the
+  /// @param model_params An unordered map of string-double pairs, with the
   /// infection parameters as keys, and parameter values as values. The
   /// model parameters are:
   /// - transmissibility The transmission rate for un-or-single vaccinated
@@ -72,14 +72,14 @@ struct epidemic_vacamole {
   /// @param vax_time_end The age- and dose-specific vaccination end time
   /// @param vax_nu The age- and dose-specific vaccination rate
   /// @param interventions An unordered map of string-intervention pairs. The
-  /// keys must refer to parameters in `infection_params`. The `intervention`
+  /// keys must refer to parameters in `model_params`. The `intervention`
   /// struct is defined in `inst/include/intervention.h`.
   /// @param time_dependence An Rcpp List with named elements, where each name
   /// is a model parameter (see above), and each element is a function with
   /// the first two arguments being the current simulation time, and x, a value
   /// that is dependent on time (x is supposed to be a model parameter).
   epidemic_vacamole(
-      const std::unordered_map<std::string, double>& infection_params,
+      const std::unordered_map<std::string, double>& model_params,
       const Eigen::MatrixXd contact_matrix,
       const Rcpp::NumericVector npi_time_begin,
       const Rcpp::NumericVector npi_time_end, const Rcpp::NumericMatrix npi_cr,
@@ -88,8 +88,8 @@ struct epidemic_vacamole {
       const std::unordered_map<std::string, intervention::rate_intervention>&
           interventions,
       const Rcpp::List& time_dependence)
-      : infection_params(infection_params),
-        infection_params_temp(infection_params),
+      : model_params(model_params),
+        model_params_temp(model_params),
         contact_matrix(contact_matrix),
         cm_temp(contact_matrix),
         npi_time_begin(npi_time_begin),
@@ -119,12 +119,12 @@ struct epidemic_vacamole {
         t, contact_matrix, npi_time_begin, npi_time_end, npi_cr);
 
     // apply time dependence
-    infection_params_temp = time_dependence::apply_time_dependence(
-        t, infection_params, time_dependence);
+    model_params_temp = time_dependence::apply_time_dependence(t, model_params,
+                                                               time_dependence);
 
     // rate interventions
-    infection_params_temp = intervention::intervention_on_rates(
-        t, infection_params_temp, interventions);
+    model_params_temp = intervention::intervention_on_rates(
+        t, model_params_temp, interventions);
 
     // get current vaccination rate
     vax_nu_current =
@@ -138,7 +138,7 @@ struct epidemic_vacamole {
 
     // compartmental transitions without accounting for contacts
     // Susceptible (unvaccinated) to exposed
-    Eigen::ArrayXd sToE = infection_params_temp["transmissibility"] *
+    Eigen::ArrayXd sToE = model_params_temp["transmissibility"] *
                           x.col(0).array() *
                           (cm_temp * (x.col(5) + x.col(6))).array();
 
@@ -148,55 +148,53 @@ struct epidemic_vacamole {
     Eigen::ArrayXd v1ToV2 = vax_nu_current.col(1).array() * x.col(1).array();
 
     // Vaccinated one dose to exposed - same as susceptible to exposed
-    Eigen::ArrayXd v1ToE = infection_params_temp["transmissibility"] *
+    Eigen::ArrayXd v1ToE = model_params_temp["transmissibility"] *
                            x.col(1).array() *
                            (cm_temp * (x.col(5) + x.col(6))).array();
     // Vaccinated two doses to exposed - uses different transmissibility
-    Eigen::ArrayXd v2ToEv = infection_params_temp["transmissibility_vax"] *
+    Eigen::ArrayXd v2ToEv = model_params_temp["transmissibility_vax"] *
                             x.col(2).array() *
                             (cm_temp * (x.col(5) + x.col(6))).array();
 
     // Exposed unvaccinated or not protected to infectious
     Eigen::ArrayXd eToI =
-        infection_params_temp["infectiousness_rate"] * x.col(3).array();
+        model_params_temp["infectiousness_rate"] * x.col(3).array();
     // Exposed vaccinated to infectious
     Eigen::ArrayXd evToIv =
-        infection_params_temp["infectiousness_rate"] * x.col(4).array();
+        model_params_temp["infectiousness_rate"] * x.col(4).array();
 
     // Infectious to hospitalised
     Eigen::ArrayXd iToH =
-        infection_params_temp["hospitalisation_rate"] * x.col(5).array();
+        model_params_temp["hospitalisation_rate"] * x.col(5).array();
     // Vaccinated infectious to hospitalised
     Eigen::ArrayXd ivToHv =
-        infection_params_temp["hospitalisation_rate_vax"] * x.col(6).array();
+        model_params_temp["hospitalisation_rate_vax"] * x.col(6).array();
 
     // Infectious to dead
     Eigen::ArrayXd iToD =
-        infection_params_temp["mortality_rate"] * x.col(5).array();
+        model_params_temp["mortality_rate"] * x.col(5).array();
     // Infectious vaccinated to dead
     Eigen::ArrayXd ivToD =
-        infection_params_temp["mortality_rate_vax"] * x.col(6).array();
+        model_params_temp["mortality_rate_vax"] * x.col(6).array();
 
     // Hospitalised to dead
     Eigen::ArrayXd hToD =
-        infection_params_temp["mortality_rate"] * x.col(7).array();
+        model_params_temp["mortality_rate"] * x.col(7).array();
     // Hospitalised vaccinated to dead
     Eigen::ArrayXd hvToD =
-        infection_params_temp["mortality_rate_vax"] * x.col(8).array();
+        model_params_temp["mortality_rate_vax"] * x.col(8).array();
 
     // Infectious to recovered
-    Eigen::ArrayXd iToR =
-        infection_params_temp["recovery_rate"] * x.col(5).array();
+    Eigen::ArrayXd iToR = model_params_temp["recovery_rate"] * x.col(5).array();
     // Infectious vaccinated to recovered
     Eigen::ArrayXd ivToR =
-        infection_params_temp["recovery_rate"] * x.col(6).array();
+        model_params_temp["recovery_rate"] * x.col(6).array();
 
     // Hospitalised to recovered
-    Eigen::ArrayXd hToR =
-        infection_params_temp["recovery_rate"] * x.col(7).array();
+    Eigen::ArrayXd hToR = model_params_temp["recovery_rate"] * x.col(7).array();
     // Hospitalised vaccinated to recovered
     Eigen::ArrayXd hvToR =
-        infection_params_temp["recovery_rate"] * x.col(8).array();
+        model_params_temp["recovery_rate"] * x.col(8).array();
 
     // compartmental changes accounting for contacts
     // β: transmissibility; βv: transmissibility for doubly vaccinated;

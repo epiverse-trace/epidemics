@@ -109,13 +109,13 @@
         )
     )
 
-    # check for any other intervention list element names
+    # check for any other intervention list element names - allow only
+    # primary model parameters and not derived ones
     checkmate::assert_names(
       names(mod_args[["intervention"]]),
       subset.of = c(
-        "transmissibility", "transmissibility_vax", "infectiousness_rate",
-        "hospitalisation_rate", "hospitalisation_rate_vax",
-        "mortality_rate", "mortality_rate_vax", "recovery_rate", "contacts"
+        "transmissibility", "infectiousness_rate", "hospitalisation_rate",
+        "mortality_rate", "recovery_rate", "contacts"
       )
     )
 
@@ -149,9 +149,17 @@
     )
   }
 
-  # handle time dependence if present
+  # handle time dependence if present and check for allowed primary parameters
   if (!"time_dependence" %in% names(mod_args)) {
     mod_args[["time_dependence"]] <- no_time_dependence()
+  } else {
+    checkmate::assert_names(
+      names(mod_args[["time_dependence"]]),
+      subset.of = c(
+        "transmissibility", "infectiousness_rate", "hospitalisation_rate",
+        "mortality_rate", "recovery_rate"
+      )
+    )
   }
 
   # return arguments invisibly

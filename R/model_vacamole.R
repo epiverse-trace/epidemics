@@ -9,9 +9,6 @@
 #' This model is aimed at estimating the impact of 'leaky' vaccination on an
 #' epidemic. See **Details** for more information.
 #'
-#' @param population An object of the `population` class, which holds a
-#' population contact matrix, a demography vector, and the initial conditions
-#' of each demographic group. See [population()].
 #' @inheritParams model_default
 #' @param hospitalisation_rate A single number for the hospitalisation rate of
 #' infectious individuals.
@@ -26,26 +23,10 @@
 #' @param mort_reduction_vax A single value between 0.0 and 1.0
 #' giving the reduction in mortality of infectious and hospitalised individuals
 #' who have received two doses of the vaccine.
-#' @param intervention An `<intervention>` object representing an optional
-#' non-pharmaceutical intervention applied to the population during the
-#' epidemic. See [intervention()] for details on constructing interventions with
-#' age-specific effects on social contacts, as well as for guidance on how to
-#' concatenate multiple overlapping interventions into a single `<intervention>`
-#' object.
-#' @param vaccination A `<vaccination>` object representing an optional
-#' vaccination regime with two doses followed during the course of the
+#' @param vaccination A `<vaccination>` object representing a
+#' vaccination regime with **two doses** followed during the course of the
 #' epidemic, with a start and end time, and age-specific vaccination rates for
 #' each dose. See [vaccination()].
-#' @param time_dependence A named list where each name
-#' is a model parameter (see `infection`), and each element is a function with
-#' the first two arguments being the current simulation `time`, and `x`, a value
-#' that is dependent on `time` (`x` represents a model parameter).
-#' See **Details** for more information, as well as the vignette on time-
-#' dependence \code{vignette("time_dependence", package = "epidemics")}.
-#' @param time_end The maximum number of timesteps over which to run the model.
-#' Taken as days, with a default value of 200 days.
-#' @param increment The size of the time increment. Taken as days, with a
-#' default value of 1 day.
 #' @details
 #' This model allows for:
 #'
@@ -108,16 +89,20 @@
 #' assuming a 20% reduction in mortality for individuals who are doubly
 #' vaccinated.
 #'
-#' ## Implementing time-dependent parameters
+#' ## Rate interventions and time-dependence
 #'
-#' Model rates or parameters can be made time-dependent by passing a function
-#' which modifies the parameter based on the current ODE simulation time.
-#' For example, a function that increases the transmission rate
-#' `transmissibility` could be passed as
-#' `time_dependence = list(transmissibility = function(time, x) x * time)`.
-#' This functionality may be used to model events that are expected to have some
-#' effect on model parameters, such as seasonality or annual schedules such as
-#' holidays.
+#' This model allows interventions on only the primary model rates:
+#' transmissibility, infectiousness rate, hospitalisation rate, mortality rate,
+#' and the recovery rate. Interventions on the secondary model rates calculated
+#' as vaccination-linked modifications of these rates cannot be targeted by rate
+#' interventions or time dependence.
+#'
+#' See the vignette on rate interventions to represent pharmaceutical
+#' interventions (\code{vignette("rate_interventions", package = "epidemics")})
+#' and the vignette on time dependence
+#' (\code{vignette("time_dependence", package = "epidemics")})
+#' for worked out examples on how to
+#' implement these features.
 #'
 #' @return A `data.table` with the columns "time", "compartment", "age_group",
 #' "value". The compartments correspond to the compartments of the model
@@ -197,7 +182,7 @@ model_vacamole_cpp <- function(population,
   checkmate::assert_number(time_end, lower = 0, finite = TRUE)
   checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
 
-  # collect population, infection, and model arguments passed as `...`
+  # collect model arguments
   model_arguments <- list(
     population = population,
     transmissibility = transmissibility,
@@ -291,8 +276,8 @@ model_vacamole_cpp <- function(population,
     cr = params[["npi_cr"]]
   )
 
-  # modify parameters
-  infection_params <- params[
+  # allow modification of only some parameters
+  model_params <- params[
     c(
       "transmissibility", "transmissibility_vax", "infectiousness_rate",
       "hospitalisation_rate", "hospitalisation_rate_vax",
@@ -300,11 +285,32 @@ model_vacamole_cpp <- function(population,
     )
   ]
 
-  infection_params <- intervention_on_rates(
+  # modifiable parameters
+  model_params_primary <- model_params[c(
+    "transmissibility", "infectiousness_rate", "hospitalisation_rate",
+    "mortality_rate", "recovery_rate"
+  )]
+
+  # apply time dependence before interventions
+  time_dependent_params <- Map(
+    model_params_primary[names(params$time_dependence)],
+    params$time_dependence,
+    f = function(x, func) {
+      func(time = t, x = x)
+    }
+  )
+
+  # assign time-modified param values
+  model_params_primary[names(time_dependent_params)] <- time_dependent_params
+
+  model_params_primary <- intervention_on_rates(
     t = t,
     interventions = params[["rate_interventions"]],
-    parameters = infection_params
+    parameters = model_params_primary
   )
+
+  # reassign all modified values to model_params
+  model_params[names(model_params_primary)] <- model_params_primary
 
   # modify the vaccination rate depending on the regime
   # the number of doses is already checked before passing
@@ -314,41 +320,41 @@ model_vacamole_cpp <- function(population,
       (params[["vax_time_end"]] > t))
 
   # calculate transitions
-  s_to_e <- (params[["transmissibility"]] * y[, 1] *
+  s_to_e <- (model_params[["transmissibility"]] * y[, 1] *
     contact_matrix_ %*% (y[, 6] + y[, 7]))
   # transitions into the vaccinated compartments
   s_to_v1 <- current_nu[, 1] * y[, 1]
   v1_to_v2 <- current_nu[, 2] * y[, 2]
 
   # transitions into the exposed compartment
-  v1_to_e <- params[["transmissibility"]] * y[, 2] *
+  v1_to_e <- model_params[["transmissibility"]] * y[, 2] *
     (contact_matrix_ %*% (y[, 6] + y[, 7]))
-  v2_to_ev <- params[["transmissibility_vax"]] * y[, 3] *
+  v2_to_ev <- model_params[["transmissibility_vax"]] * y[, 3] *
     (contact_matrix_ %*% (y[, 6] + y[, 7]))
 
   # transitions into the infectious compartment
-  e_to_i <- params[["infectiousness_rate"]] * y[, 4]
-  ev_to_iv <- params[["infectiousness_rate"]] * y[, 5]
+  e_to_i <- model_params[["infectiousness_rate"]] * y[, 4]
+  ev_to_iv <- model_params[["infectiousness_rate"]] * y[, 5]
 
   # transitions from infectious to hospitalised
-  i_to_h <- params[["hospitalisation_rate"]] * y[, 6]
-  iv_to_hv <- params[["hospitalisation_rate_vax"]] * y[, 7]
+  i_to_h <- model_params[["hospitalisation_rate"]] * y[, 6]
+  iv_to_hv <- model_params[["hospitalisation_rate_vax"]] * y[, 7]
 
   # transitions from infectious to dead
-  i_to_d <- params[["mortality_rate"]] * y[, 6]
-  iv_to_d <- params[["mortality_rate_vax"]] * y[, 7]
+  i_to_d <- model_params[["mortality_rate"]] * y[, 6]
+  iv_to_d <- model_params[["mortality_rate_vax"]] * y[, 7]
 
   # transitions from hospitalied to dead
-  h_to_d <- params[["mortality_rate"]] * y[, 8]
-  hv_to_d <- params[["mortality_rate_vax"]] * y[, 9]
+  h_to_d <- model_params[["mortality_rate"]] * y[, 8]
+  hv_to_d <- model_params[["mortality_rate_vax"]] * y[, 9]
 
   # transitions from infectious to recovered
-  i_to_r <- params[["recovery_rate"]] * y[, 6]
-  iv_to_r <- params[["recovery_rate"]] * y[, 7]
+  i_to_r <- model_params[["recovery_rate"]] * y[, 6]
+  iv_to_r <- model_params[["recovery_rate"]] * y[, 7]
 
   # transitions from hospitalised to recovered
-  h_to_r <- params[["recovery_rate"]] * y[, 8]
-  hv_to_r <- params[["recovery_rate"]] * y[, 9]
+  h_to_r <- model_params[["recovery_rate"]] * y[, 8]
+  hv_to_r <- model_params[["recovery_rate"]] * y[, 9]
 
   # define compartmental changes
   dS <- -s_to_e - s_to_v1

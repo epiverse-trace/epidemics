@@ -175,15 +175,15 @@ inline double cumulative_rate_intervention(
 
 /// @brief Apply rate_interventions on the rate parameters
 /// @param t The current simulation time
-/// @param infection_params A map of the infection rate parameters
+/// @param model_params A map of the infection rate parameters
 /// @param rate_interventions A map of the rate_interventions
 inline std::unordered_map<std::string, double> intervention_on_rates(
     const double &t,
-    const std::unordered_map<std::string, double> &infection_params,
+    const std::unordered_map<std::string, double> &model_params,
     const std::unordered_map<std::string, rate_intervention>
         &rate_interventions) {
   // make copy of infection params
-  std::unordered_map<std::string, double> params_temp = infection_params;
+  std::unordered_map<std::string, double> params_temp = model_params;
 
   // loop over rate_interventions and check
   for (const auto &pair : rate_interventions) {

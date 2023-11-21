@@ -25,8 +25,8 @@ namespace epidemics {
 /// @brief Struct containing the default epidemic ODE system
 struct epidemic_default {
   // two maps for the infection parameters, one for dynamic modification
-  const std::unordered_map<std::string, double> infection_params;
-  std::unordered_map<std::string, double> infection_params_temp;
+  const std::unordered_map<std::string, double> model_params;
+  std::unordered_map<std::string, double> model_params_temp;
   const Eigen::MatrixXd contact_matrix;
   Eigen::MatrixXd cm_temp;
   // related to interventions
@@ -40,7 +40,7 @@ struct epidemic_default {
   const Rcpp::List time_dependence;
 
   /// @brief Constructor for the default epidemic struct
-  /// @param infection_params An unordered map of string-double pairs, with the
+  /// @param model_params An unordered map of string-double pairs, with the
   /// infection parameters as keys, and parameter values as values. The
   /// model parameters are:
   /// - transmissibility The transmission rate
@@ -54,14 +54,14 @@ struct epidemic_default {
   /// @param vax_time_end The age- and dose-specific vaccination end time
   /// @param vax_nu The age- and dose-specific vaccination rate
   /// @param interventions An unordered map of string-intervention pairs. The
-  /// keys must refer to parameters in `infection_params`. The `intervention`
+  /// keys must refer to parameters in `model_params`. The `intervention`
   /// struct is defined in `inst/include/intervention.h`.
   /// @param time_dependence An Rcpp List with named elements, where each name
   /// is a model parameter (see above), and each element is a function with
   /// the first two arguments being the current simulation time, and x, a value
   /// that is dependent on time (x is supposed to be a model parameter).
   epidemic_default(
-      const std::unordered_map<std::string, double>& infection_params,
+      const std::unordered_map<std::string, double>& model_params,
       const Eigen::MatrixXd contact_matrix,
       const Rcpp::NumericVector npi_time_begin,
       const Rcpp::NumericVector npi_time_end, const Rcpp::NumericMatrix npi_cr,
@@ -70,8 +70,8 @@ struct epidemic_default {
       const std::unordered_map<std::string, intervention::rate_intervention>&
           interventions,
       const Rcpp::List& time_dependence)
-      : infection_params(infection_params),
-        infection_params_temp(infection_params),
+      : model_params(model_params),
+        model_params_temp(model_params),
         contact_matrix(contact_matrix),
         cm_temp(contact_matrix),
         npi_time_begin(npi_time_begin),
@@ -101,12 +101,12 @@ struct epidemic_default {
         t, contact_matrix, npi_time_begin, npi_time_end, npi_cr);
 
     // apply time dependence
-    infection_params_temp = time_dependence::apply_time_dependence(
-        t, infection_params, time_dependence);
+    model_params_temp = time_dependence::apply_time_dependence(t, model_params,
+                                                               time_dependence);
 
     // rate interventions
-    infection_params_temp = intervention::intervention_on_rates(
-        t, infection_params_temp, interventions);
+    model_params_temp = intervention::intervention_on_rates(
+        t, model_params_temp, interventions);
 
     // get current vaccination rate
     vax_nu_current =
@@ -116,12 +116,11 @@ struct epidemic_default {
     // for vectorised operations
 
     // compartmental transitions without accounting for contacts
-    Eigen::ArrayXd sToE = infection_params_temp["transmissibility"] *
+    Eigen::ArrayXd sToE = model_params_temp["transmissibility"] *
                           x.col(0).array() * (cm_temp * x.col(2)).array();
     Eigen::ArrayXd eToI =
-        infection_params_temp["infectiousness_rate"] * x.col(1).array();
-    Eigen::ArrayXd iToR =
-        infection_params_temp["recovery_rate"] * x.col(2).array();
+        model_params_temp["infectiousness_rate"] * x.col(1).array();
+    Eigen::ArrayXd iToR = model_params_temp["recovery_rate"] * x.col(2).array();
     Eigen::ArrayXd sToV = vax_nu_current.col(0).array() * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)

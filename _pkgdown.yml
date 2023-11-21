@@ -22,19 +22,10 @@ articles:
   - benchmarking
 
 reference:
-  - title: Package Overview
+  - title: Model functions
     contents:
-    - model_default_r
-    - model_ebola_r
-    - model_vacamole_r
-    - model_default_cpp
-    - model_vacamole_cpp
-    - epidemic_size
+    - starts_with("model_")
   - title: Classes and related functions
-  - subtitle: Infection
-    contents:
-    - contains("infection")
-    - get_transmission_rate
   - subtitle: Intervention
     contents:
     - contains("intervention")
@@ -45,9 +36,9 @@ reference:
     contents:
     - contains("vaccination")
   - title: Helper functions
+    desc: Functions to help with handling package classes and outputs.
     contents:
     - get_parameter
     - no_time_dependence
-  - title: Internal functions
-    contents:
-    - prob_discrete_erlang
+    - epidemic_size
+    - new_infections

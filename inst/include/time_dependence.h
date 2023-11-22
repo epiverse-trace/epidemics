@@ -14,7 +14,7 @@ namespace time_dependence {
 /// @brief Apply time-dependence functions to model parameters
 /// @param t The time; this argument is passed to the functions in
 /// `time_dependence`
-/// @param model_params The infection parameters as key-value pairs
+/// @param model_params The model parameters as key-value pairs
 /// @param time_dependence The time-dependence functions as a list of
 /// Rcpp functions whose first argument is time, and whose second argument is
 /// the parameter.

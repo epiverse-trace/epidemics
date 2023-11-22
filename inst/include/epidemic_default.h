@@ -24,7 +24,7 @@ namespace epidemics {
 
 /// @brief Struct containing the default epidemic ODE system
 struct epidemic_default {
-  // two maps for the infection parameters, one for dynamic modification
+  // two maps for the model parameters, one for dynamic modification
   const std::unordered_map<std::string, double> model_params;
   std::unordered_map<std::string, double> model_params_temp;
   const Eigen::MatrixXd contact_matrix;
@@ -41,7 +41,7 @@ struct epidemic_default {
 
   /// @brief Constructor for the default epidemic struct
   /// @param model_params An unordered map of string-double pairs, with the
-  /// infection parameters as keys, and parameter values as values. The
+  /// model parameters as keys, and parameter values as values. The
   /// model parameters are:
   /// - transmissibility The transmission rate
   /// - infectiousness_rate The rate at which individuals become infectious

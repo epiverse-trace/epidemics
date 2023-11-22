@@ -89,7 +89,7 @@ vaccinate_elders <- vaccination(
   name = "vaccinate elders",
   time_begin = matrix(100, nrow(contact_matrix)),
   time_end = matrix(250, nrow(contact_matrix)),
-  nu = matrix(c(0.0001, 0.0001, 0.0001))
+  nu = matrix(c(0.0001, 0, 0))
 )
 
 # view vaccination object

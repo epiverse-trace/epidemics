@@ -93,7 +93,7 @@ test_that("Default model with multiple interventions", {
     time_end = 100
   )
   expect_lte(
-    epidemic_size(data_2_npi, by_group = FALSE, deaths = FALSE),
-    epidemic_size(data_1_npi, by_group = FALSE, deaths = FALSE)
+    epidemic_size(data_2_npi, by_group = FALSE, include_deaths = FALSE),
+    epidemic_size(data_1_npi, by_group = FALSE, include_deaths = FALSE)
   )
 })

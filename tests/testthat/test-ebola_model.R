@@ -29,7 +29,7 @@ test_that("Ebola model: basic expectations", {
     time_end = 200
   )
   expect_s3_class(
-    data, "data.table"
+    data, "data.frame"
   )
   expect_length(data, 4L)
   expect_named(
@@ -142,7 +142,7 @@ test_that("Ebola model works with rate interventions", {
   )
 
   # expect basic outcomes
-  expect_s3_class(data, "data.table")
+  expect_s3_class(data, "data.frame")
   expect_length(data, 4L)
   expect_named(
     data, c("compartment", "demography_group", "value", "time"),

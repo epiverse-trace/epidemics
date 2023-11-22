@@ -63,7 +63,7 @@ test_that("Epidemic size functions", {
   )
 })
 
-#### Test that epidemic size with no deaths is same as deaths = FALSE
+#### Test that epidemic size with no deaths is same as include_deaths = FALSE
 # make initial conditions - order is important
 initial_conditions <- c(
   S = 1 - 1e-6,
@@ -93,7 +93,7 @@ test_that("Epidemic size with no deaths is correct", {
     time_end = 400, increment = 1
   )
   expect_identical(
-    epidemic_size(data, deaths = FALSE),
+    epidemic_size(data, include_deaths = FALSE),
     epidemic_size(data)
   )
 })

@@ -43,7 +43,7 @@ test_that("Output of default epidemic model Cpp", {
   )
 
   # check for output type and contents
-  expect_s3_class(data, "data.table")
+  expect_s3_class(data, "data.frame")
   expect_length(data, 4L)
   expect_named(
     data, c("compartment", "demography_group", "value", "time"),
@@ -222,7 +222,7 @@ test_that("Output of default epidemic model R", {
   )
 
   # check for output type and contents
-  expect_s3_class(data, "data.table")
+  expect_s3_class(data, "data.frame")
   expect_length(data, 4L)
   expect_named(
     data, c("compartment", "demography_group", "value", "time"),

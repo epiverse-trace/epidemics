@@ -2,12 +2,12 @@
 % Please edit documentation in R/helpers.R
 \name{new_infections}
 \alias{new_infections}
-\title{Get new infections}
+\title{Get new infections over model time}
 \usage{
-new_infections(data, compartments_from_susceptible, by_group = TRUE)
+new_infections(data, compartments_from_susceptible = NULL, by_group = TRUE)
 }
 \arguments{
-\item{data}{A \code{data.table} (or \code{data.frame}) of model output, typically
+\item{data}{A \verb{<data.frame>} of model output, typically
 the output of \code{\link[=model_default_cpp]{model_default_cpp()}} or similar functions.}
 
 \item{compartments_from_susceptible}{An optional argument, for a character
@@ -21,12 +21,12 @@ returned by demographic group, or whether a single population-wide value is
 returned.}
 }
 \value{
-A \code{data.table} with the same columns as \code{data}, but with the
+A \verb{<data.frame>} with the same columns as \code{data}, but with the
 additional variable under \code{compartment}, "new_infections", resulting in
 additional rows.
 }
 \description{
-Get new infections
+Get new infections over model time
 }
 \examples{
 # create a population

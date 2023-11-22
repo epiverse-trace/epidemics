@@ -12,14 +12,14 @@ epidemic) models, with the names "x" and "time", where "x" represents the
 condition of each compartment at each timestep in "time".}
 
 \item{population}{A \verb{<population>} object corresponding to the population
-used in the epidemic model; see \code{\link[=population]{population()}}.
+used in the epidemic model.
 The \verb{<population>} object is used to generate the names of the demographic
 groups, if these are named.}
 
 \item{compartments}{A vector for the model compartment names.}
 }
 \value{
-A \code{data.table} with the columns "compartment", "demography_group",
+A \verb{<data.frame>} with the columns "compartment", "demography_group",
 "value", and "time"; these specify the epidemiological compartment, the
 name of the demography group, the number of individuals of that group in the
 compartment, and the model timestep, respectively.

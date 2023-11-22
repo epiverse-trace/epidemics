@@ -4,10 +4,10 @@
 \alias{epidemic_size}
 \title{Get the epidemic size}
 \usage{
-epidemic_size(data, stage = 1, by_group = TRUE, deaths = TRUE)
+epidemic_size(data, stage = 1, by_group = TRUE, include_deaths = TRUE)
 }
 \arguments{
-\item{data}{A \code{data.table} (or \code{data.frame}) of model output, typically
+\item{data}{A \verb{<data.frame>} of model output, typically
 the output of \code{\link[=model_default_cpp]{model_default_cpp()}} or similar functions.}
 
 \item{stage}{The stage of the epidemic at which to return the epidemic size;
@@ -18,16 +18,19 @@ epidemic.}
 
 \item{by_group}{A logical representing whether the epidemic size should be
 returned by demographic group, or whether a single population-wide value is
-returned.}
+returned. Defaults to \code{TRUE}.}
 
-\item{deaths}{A logical value that indicates whether to count individuals in
-the epidemic size calculation. Setting \code{deaths = TRUE} looks for a \code{"dead"}
-compartment in the data. If there is no such column, the function returns
-only the final number of recovered individuals in each demographic group.}
+\item{include_deaths}{A logical value that indicates whether to count dead
+individuals in the epidemic size calculation.
+Defaults to \code{TRUE}, which makes the function look for a \code{"dead"} compartment
+in the data. If there is no such column, the function returns
+only the final number of recovered or removed individuals in each demographic
+group.}
 }
 \value{
 A single number when \code{by_group = FALSE}, or a vector of numbers of
 the same length as the number of demographic groups when \code{by_group = TRUE}.
+Returns the absolute sizes and not proportions.
 }
 \description{
 Get the size of the epidemic at any stage between the start and the end.

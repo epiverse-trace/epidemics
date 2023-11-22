@@ -164,18 +164,33 @@ model_vacamole_cpp <- function(population,
   # check class on required inputs
   checkmate::assert_class(population, "population")
 
-  # check model parameters
+  # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
   checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
   checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_number(hospitalisation_rate, lower = 0, finite = TRUE)
   checkmate::assert_number(mortality_rate, lower = 0, finite = TRUE)
   checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
 
+  # parameters for derived rates are bounded 0 - 1
   checkmate::assert_number(susc_reduction_vax, lower = 0, upper = 1)
   checkmate::assert_number(hosp_reduction_vax, lower = 0, upper = 1)
   checkmate::assert_number(mort_reduction_vax, lower = 0, upper = 1)
 
-  checkmate::assert_class(vaccination, "vaccination")
+  # all intervention sub-classes pass check for intervention superclass
+  checkmate::assert_list(intervention, types = "intervention", null.ok = TRUE)
+  checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
+
+  # check that time-dependence functions are passed as a list with at least the
+  # arguments `time` and `x`
+  # time must be before x, and they must be first two args
+  checkmate::assert_list(time_dependence, "function", null.ok = TRUE)
+  # lapply on null returns an empty list
+  invisible(
+    lapply(time_dependence, checkmate::assert_function,
+      args = c("time", "x"),
+      ordered = TRUE
+    )
+  )
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
@@ -193,31 +208,11 @@ model_vacamole_cpp <- function(population,
     susc_reduction_vax = susc_reduction_vax,
     hosp_reduction_vax = hosp_reduction_vax,
     mort_reduction_vax = mort_reduction_vax,
+    intervention = intervention,
     vaccination = vaccination,
+    time_dependence = time_dependence,
     time_end = time_end, increment = increment
   )
-
-  # check class add intervention and vaccination if not NULL
-  if (!is.null(intervention)) {
-    checkmate::assert_list(
-      intervention,
-      types = c("contacts_intervention", "rate_intervention")
-    )
-    model_arguments[["intervention"]] <- intervention
-  }
-  # check that time-dependence functions are passed as a list with at least the
-  # arguments `time` and `x`
-  # time must be before x, and they must be first two args
-  if (!is.null(time_dependence)) {
-    checkmate::assert_list(time_dependence, "function")
-    invisible(
-      lapply(time_dependence, checkmate::check_function,
-        args = c("time", "x"),
-        ordered = TRUE
-      )
-    )
-    model_arguments[["time_dependence"]] <- time_dependence
-  }
 
   # prepare checked arguments for function
   # this necessary as check_args adds intervention and vaccination
@@ -401,25 +396,40 @@ model_vacamole_r <- function(population,
   # check class on required inputs
   checkmate::assert_class(population, "population")
 
-  # check model parameters
+  # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
   checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
   checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_number(hospitalisation_rate, lower = 0, finite = TRUE)
   checkmate::assert_number(mortality_rate, lower = 0, finite = TRUE)
   checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
 
+  # parameters for derived rates are bounded 0 - 1
   checkmate::assert_number(susc_reduction_vax, lower = 0, upper = 1)
   checkmate::assert_number(hosp_reduction_vax, lower = 0, upper = 1)
   checkmate::assert_number(mort_reduction_vax, lower = 0, upper = 1)
 
-  checkmate::assert_class(vaccination, "vaccination")
+  # all intervention sub-classes pass check for intervention superclass
+  checkmate::assert_list(intervention, types = "intervention", null.ok = TRUE)
+  checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
+
+  # check that time-dependence functions are passed as a list with at least the
+  # arguments `time` and `x`
+  # time must be before x, and they must be first two args
+  checkmate::assert_list(time_dependence, "function", null.ok = TRUE)
+  # lapply on null returns an empty list
+  invisible(
+    lapply(time_dependence, checkmate::assert_function,
+      args = c("time", "x"),
+      ordered = TRUE
+    )
+  )
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
   checkmate::assert_number(time_end, lower = 0, finite = TRUE)
   checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
 
-  # collect population, infection, and model arguments passed as `...`
+  # collect model arguments
   model_arguments <- list(
     population = population,
     transmissibility = transmissibility,
@@ -430,32 +440,11 @@ model_vacamole_r <- function(population,
     susc_reduction_vax = susc_reduction_vax,
     hosp_reduction_vax = hosp_reduction_vax,
     mort_reduction_vax = mort_reduction_vax,
+    intervention = intervention,
     vaccination = vaccination,
+    time_dependence = time_dependence,
     time_end = time_end, increment = increment
   )
-
-  # check class add intervention and vaccination if not NULL
-  if (!is.null(intervention)) {
-    checkmate::assert_list(
-      intervention,
-      types = c("contacts_intervention", "rate_intervention")
-    )
-    model_arguments[["intervention"]] <- intervention
-  }
-
-  # check that time-dependence functions are passed as a list with at least the
-  # arguments `time` and `x`
-  # time must be before x, and they must be first two args
-  if (!is.null(time_dependence)) {
-    checkmate::assert_list(time_dependence, "function")
-    invisible(
-      lapply(time_dependence, checkmate::check_function,
-        args = c("time", "x"),
-        ordered = TRUE
-      )
-    )
-    model_arguments[["time_dependence"]] <- time_dependence
-  }
 
   # prepare checked arguments for function
   # this necessary as check_args adds intervention and vaccination

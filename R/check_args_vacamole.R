@@ -92,25 +92,23 @@
   # the Vacamole model expects two vaccination doses
   assert_vaccination(
     mod_args[["vaccination"]],
-    doses = 2L,
-    population = mod_args[["population"]]
+    doses = 2L, population = mod_args[["population"]]
   )
 
-  # add null intervention if this is missing
+  # add null intervention and vaccination if these are missing
+  # if not missing, check that they conform to expectations
+  # add null rate_intervention if this is missing
   # if not missing, check that it conforms to expectations
-  if ("intervention" %in% names(mod_args)) {
-    # if interventions are passed, check for the types and names
-    stopifnot(
-      "`intervention` must be a list of <intervention>s" =
-        checkmate::test_list(
-          mod_args[["intervention"]],
-          types = c("contacts_intervention", "rate_intervention"),
-          names = "unique"
-        )
+  if (is.null(mod_args[["intervention"]])) {
+    # add dummy list elements named "contacts", and one named "transmissibility"
+    mod_args[["intervention"]] <- list(
+      contacts = no_contacts_intervention(
+        mod_args[["population"]]
+      ),
+      transmissibility = no_rate_intervention()
     )
-
-    # check for any other intervention list element names - allow only
-    # primary model parameters and not derived ones
+  } else {
+    # check intervention list names
     checkmate::assert_names(
       names(mod_args[["intervention"]]),
       subset.of = c(
@@ -118,7 +116,6 @@
         "mortality_rate", "recovery_rate", "contacts"
       )
     )
-
     # if a contacts intervention is passed, check it
     if ("contacts" %in% names(mod_args[["intervention"]])) {
       # check the intervention on contacts
@@ -134,32 +131,22 @@
     }
 
     # if there is only an intervention on contacts, add a dummy intervention
-    # on the transmission rate transmissibility
+    # on the transmissibility
     if (identical(names(mod_args[["intervention"]]), "contacts")) {
       mod_args[["intervention"]]$transmissibility <- no_rate_intervention()
     }
-  } else {
-    # add as a list element named "contacts", and one named "transmissibility"
-    mod_args[["intervention"]] <- list(
-      contacts = no_contacts_intervention(
-        mod_args[["population"]]
-      ),
-      # a dummy intervention on the rate parameter transmissibility
-      transmissibility = no_rate_intervention()
-    )
   }
 
-  # handle time dependence if present and check for allowed primary parameters
-  if ("time_dependence" %in% names(mod_args)) {
+  # handle time dependence if not present, and check targets if present
+  if (is.null(mod_args[["time_dependence"]])) {
+    mod_args[["time_dependence"]] <- no_time_dependence()
+  } else {
     checkmate::assert_names(
       names(mod_args[["time_dependence"]]),
       subset.of = c(
-        "transmissibility", "infectiousness_rate", "hospitalisation_rate",
-        "mortality_rate", "recovery_rate"
+        "transmissibility", "infectiousness_rate", "recovery_rate"
       )
     )
-  } else {
-    mod_args[["time_dependence"]] <- no_time_dependence()
   }
 
   # return arguments invisibly
@@ -185,7 +172,7 @@
     get_parameter(mod_args[["population"]], "initial_conditions") *
       get_parameter(mod_args[["population"]], "demography_vector")
 
-  # calculate derived infection parameters
+  # calculate derived model parameters
 
   # modified parameters for the two-dose vaccinated compartment
   transmissibility_vax <- mod_args$transmissibility *
@@ -214,6 +201,7 @@
   vax_nu <- get_parameter(mod_args[["vaccination"]], "nu")
 
   # return selected arguments for internal C++ function
+  # order is important
   list(
     initial_state = initial_state,
     transmissibility = mod_args$transmissibility,

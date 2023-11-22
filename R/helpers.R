@@ -20,12 +20,12 @@ get_parameter <- function(x, parameter) {
 #' epidemic) models, with the names "x" and "time", where "x" represents the
 #' condition of each compartment at each timestep in "time".
 #' @param population A `<population>` object corresponding to the population
-#' used in the epidemic model; see [population()].
+#' used in the epidemic model.
 #' The `<population>` object is used to generate the names of the demographic
 #' groups, if these are named.
 #' @param compartments A vector for the model compartment names.
 #' @keywords internal
-#' @return A `data.table` with the columns "compartment", "demography_group",
+#' @return A `<data.frame>` with the columns "compartment", "demography_group",
 #' "value", and "time"; these specify the epidemiological compartment, the
 #' name of the demography group, the number of individuals of that group in the
 #' compartment, and the model timestep, respectively.
@@ -39,13 +39,13 @@ output_to_df <- function(output, population, compartments) {
   )
   checkmate::assert_names(
     names(output),
-    must.include = c("x", "time")
+    identical.to = c("x", "time")
   )
   checkmate::assert_character(compartments,
     any.missing = FALSE,
     all.missing = FALSE, unique = TRUE
   )
-  checkmate::assert_class(population, "population")
+  assert_population(population, compartments)
 
   # get demographic group names if any
   names_demo_groups <- rownames(population$contact_matrix)
@@ -75,13 +75,14 @@ output_to_df <- function(output, population, compartments) {
     values <- t(values)
   }
 
-  # return a data.table
-  data.table::data.table(
+  # return a data.frame
+  data <- data.table::data.table(
     time = rep(output$time, each = n_groups * length(compartments)),
     demography_group = vec_demo_groups,
     compartment = vec_compartments,
     value = as.vector(values)
   )
+  data.table::setDF(data)[]
 }
 
 #' Get the epidemic size
@@ -97,7 +98,7 @@ output_to_df <- function(output, population, compartments) {
 #' The function allows for the calculation of epidemic sizes by demographic
 #' group as well as the total epidemic size.
 #'
-#' @param data A `data.table` (or `data.frame`) of model output, typically
+#' @param data A `<data.frame>` of model output, typically
 #' the output of [model_default_cpp()] or similar functions.
 #' @param stage The stage of the epidemic at which to return the epidemic size;
 #' here, 0.0 represents the initial conditions of the epidemic (0% of model time
@@ -106,14 +107,16 @@ output_to_df <- function(output, population, compartments) {
 #' epidemic.
 #' @param by_group A logical representing whether the epidemic size should be
 #' returned by demographic group, or whether a single population-wide value is
-#' returned.
-#' @param deaths A logical value that indicates whether to count individuals in
-#' the epidemic size calculation. Setting `deaths = TRUE` looks for a `"dead"`
-#' compartment in the data. If there is no such column, the function returns
-#' only the final number of recovered individuals in each demographic group.
-#'
+#' returned. Defaults to `TRUE`.
+#' @param include_deaths A logical value that indicates whether to count dead
+#' individuals in the epidemic size calculation.
+#' Defaults to `TRUE`, which makes the function look for a `"dead"` compartment
+#' in the data. If there is no such column, the function returns
+#' only the final number of recovered or removed individuals in each demographic
+#' group.
 #' @return A single number when `by_group = FALSE`, or a vector of numbers of
 #' the same length as the number of demographic groups when `by_group = TRUE`.
+#' Returns the absolute sizes and not proportions.
 #' @export
 #'
 #' @examples
@@ -138,11 +141,20 @@ output_to_df <- function(output, population, compartments) {
 #'
 #' # get the epidemic size at the halfway point
 #' epidemic_size(data, stage = 0.5)
-epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
-  # input checking for data
-  checkmate::assert_data_table(data)
-  checkmate::assert_logical(by_group)
-  checkmate::assert_logical(deaths)
+epidemic_size <- function(
+    data, stage = 1.0, by_group = TRUE,
+    include_deaths = TRUE) {
+  # input checking for data - this allows data.tables as well
+  checkmate::assert_data_frame(
+    data,
+    ncols = 4L, min.rows = 1, any.missing = FALSE
+  )
+  checkmate::assert_names(
+    colnames(data),
+    identical.to = c("time", "demography_group", "compartment", "value")
+  )
+  checkmate::assert_logical(by_group, len = 1L)
+  checkmate::assert_logical(include_deaths, len = 1L)
   checkmate::assert_number(stage, lower = 0.0, upper = 1.0, finite = TRUE)
 
   stopifnot(
@@ -153,19 +165,19 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
   )
   # if deaths are requested to be counted, but no "dead" compartment exists
   # throw a message
-  if (deaths && (!"dead" %in% unique(data$compartment))) {
+  if (include_deaths && (!"dead" %in% unique(data$compartment))) {
     message(
       "No 'dead' compartment found in `data`; counting only 'recovered'",
       " individuals in the epidemic size."
     )
   }
-  # add deaths to compartments to search
+  # add include_deaths to compartments to search
   size_compartments <- ifelse(
     "recovered" %in% unique(data$compartment),
     "recovered", "removed"
   )
-  if (deaths) {
-    size_compartments <- c(size_compartments, "deaths")
+  if (include_deaths) {
+    size_compartments <- c(size_compartments, "include_deaths")
   }
 
   # get final numbers recovered - operate on data.table as though data.frame
@@ -184,9 +196,9 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
   epidemic_size_
 }
 
-#' Get new infections
+#' Get new infections over model time
 #'
-#' @param data A `data.table` (or `data.frame`) of model output, typically
+#' @param data A `<data.frame>` of model output, typically
 #' the output of [model_default_cpp()] or similar functions.
 #' @param compartments_from_susceptible An optional argument, for a character
 #' vector of the names of model compartments into which individuals transition
@@ -196,7 +208,7 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
 #' @param by_group A logical representing whether the epidemic size should be
 #' returned by demographic group, or whether a single population-wide value is
 #' returned.
-#' @return A `data.table` with the same columns as `data`, but with the
+#' @return A `<data.frame>` with the same columns as `data`, but with the
 #' additional variable under `compartment`, "new_infections", resulting in
 #' additional rows.
 #' @export
@@ -222,28 +234,34 @@ epidemic_size <- function(data, stage = 1.0, by_group = TRUE, deaths = TRUE) {
 #' new_infections(data)
 #'
 new_infections <- function(data,
-                           compartments_from_susceptible,
+                           compartments_from_susceptible = NULL,
                            by_group = TRUE) {
   # input checking for class and susceptible compartment
-  checkmate::expect_data_table(data)
+  # input checking for data - this allows data.tables as well
+  checkmate::assert_data_frame(
+    data,
+    ncols = 4, min.rows = 1, any.missing = FALSE
+  )
+  checkmate::assert_names(
+    colnames(data),
+    identical.to = c("time", "demography_group", "compartment", "value")
+  )
+  checkmate::assert_character(
+    compartments_from_susceptible,
+    min.len = 1, null.ok = TRUE,
+    any.missing = FALSE, unique = TRUE
+  )
   checkmate::assert_logical(by_group, len = 1L)
   stopifnot(
     "Compartment 'susceptible' not found in data, check compartment names." =
-      "susceptible" %in% unique(data$compartment)
+      "susceptible" %in% unique(data$compartment),
+    "Compartments from 'susceptible' not all found in data, check names." =
+      all(compartments_from_susceptible %in% unique(data$compartment)) ||
+        is.null(compartments_from_susceptible)
   )
 
-  # check for compartments deriving from susceptible
-  if (!missing(compartments_from_susceptible)) {
-    checkmate::assert_character(
-      compartments_from_susceptible,
-      any.missing = FALSE
-    )
-    stopifnot(
-      "Compartments from 'susceptible' not all found in data, check names." =
-        all(compartments_from_susceptible %in% unique(data$compartment))
-    )
-  }
-
+  # set data to a data.table for internal operations
+  data.table::setDT(data)
   # cast data wide, this makes a copy
   data <- data.table::dcast(
     data,
@@ -251,10 +269,11 @@ new_infections <- function(data,
     value.var = "value"
   )
 
+  # check for compartments deriving from susceptible and
   # calculate new infections as the change in susceptibles -
   # the change in susceptibles due to non-infection related transitions
   # such as vaccination
-  if (missing(compartments_from_susceptible)) {
+  if (is.null(compartments_from_susceptible)) {
     data[, new_infections := c(0, -diff(get("susceptible"))),
       by = "demography_group"
     ]
@@ -269,8 +288,8 @@ new_infections <- function(data,
   }
 
   # return data in long format, by demographic group by default,
-  # or aggregated otherwise
-  # do not return other compartments
+  # or aggregated otherwise; do not return other compartments
+  # subsetting below creates a copy - input `data` is safe
   data <- data[, c("time", "demography_group", "new_infections")]
   if (!by_group) {
     data <- data[, list(new_infections = sum(new_infections)), by = "time"]

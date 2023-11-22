@@ -68,14 +68,12 @@ funeral transmission is equivalent to transmission in the community.
 \code{funeral_risk} is used to scale the value of transmissibility for the
 transmissibility \eqn{\beta}. Defaults to 0.5.}
 
-\item{intervention}{An optional \verb{<rate_intervention>} object representing
-pharmaceutical or non-pharmaceutical interventions applied to the infection's
-parameters, such as the transmission rate, over the epidemic.
-See \code{\link[=intervention]{intervention()}} for details on constructing rate interventions.
-Defaults to \code{NULL}, representing no interventions on model parameters.}
+\item{intervention}{A named list of \verb{<rate_intervention>} objects
+representing optional pharmaceutical or non-pharmaceutical interventions
+applied to the model parameters listed above.}
 
 \item{time_dependence}{A named list where each name
-is a model parameter (see \code{infection}), and each element is a function with
+is a model parameter, and each element is a function with
 the first two arguments being the current simulation \code{time}, and \code{x}, a value
 that is dependent on \code{time} (\code{x} represents a model parameter).
 See \strong{Details} for more information, as well as the vignette on time-
@@ -148,8 +146,7 @@ before exiting the infectious compartment will exit the hospitalised
 compartment in the same time.
 
 Hospitalised individuals can contribute to transmission of Ebola to
-susceptibles depending on the value of \code{etu_risk} passed as part of the
-\code{infection} argument, which scales the
+susceptibles depending on the value of \code{etu_risk} which scales the
 baseline transmission rate \eqn{\beta} for hospitalised individuals.
 
 We assume that deaths in hospital lead to Ebola-safe funerals, and

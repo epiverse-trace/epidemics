@@ -89,14 +89,11 @@ prob_discrete_erlang <- function(shape, rate) {
 #' funeral transmission is equivalent to transmission in the community.
 #' `funeral_risk` is used to scale the value of transmissibility for the
 #' transmissibility \eqn{\beta}. Defaults to 0.5.
-#' @param intervention An optional `<rate_intervention>` object representing
-#' pharmaceutical or non-pharmaceutical interventions applied to the infection's
-#' parameters, such as the transmission rate, over the epidemic.
-#' See [intervention()] for details on constructing rate interventions.
-#' Defaults to `NULL`, representing no interventions on model parameters.
-#'
+#' @param intervention A named list of `<rate_intervention>` objects
+#' representing optional pharmaceutical or non-pharmaceutical interventions
+#' applied to the model parameters listed above.
 #' @param time_dependence A named list where each name
-#' is a model parameter (see `infection`), and each element is a function with
+#' is a model parameter, and each element is a function with
 #' the first two arguments being the current simulation `time`, and `x`, a value
 #' that is dependent on `time` (`x` represents a model parameter).
 #' See **Details** for more information, as well as the vignette on time-
@@ -159,8 +156,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #' compartment in the same time.
 #'
 #' Hospitalised individuals can contribute to transmission of Ebola to
-#' susceptibles depending on the value of `etu_risk` passed as part of the
-#' `infection` argument, which scales the
+#' susceptibles depending on the value of `etu_risk` which scales the
 #' baseline transmission rate \eqn{\beta} for hospitalised individuals.
 #'
 #' We assume that deaths in hospital lead to Ebola-safe funerals, and

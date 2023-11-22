@@ -7,7 +7,7 @@
 #' developed at RIVM, the National Institute for Public Health and the
 #' Environment in the Netherlands.
 #' This model is aimed at estimating the impact of 'leaky' vaccination on an
-#' epidemic. See **Details** for more information.
+#' epidemic. See **Details** and **References** for more information.
 #'
 #' @inheritParams model_default
 #' @param hospitalisation_rate A single number for the hospitalisation rate of
@@ -28,6 +28,7 @@
 #' epidemic, with a start and end time, and age-specific vaccination rates for
 #' each dose. See [vaccination()].
 #' @details
+#'
 #' This model allows for:
 #'
 #'  1. A 'hospitalised' compartment along with a hospitalisation rates;
@@ -40,26 +41,15 @@
 #' ## R and Rcpp implementations
 #'
 #' `model_vacamole_cpp()` is a wrapper function for
-#' [.model_vacamole_cpp()], a C++ function that uses Boost _odeint_ solvers
-#' to implement the RIVM Vacamole model.
-#'
-#' `model_vacamole_r()` is a wrapper around the internal function
-#' `.ode_model_vacamole()`, which is passed to [deSolve::lsoda()].
-#'
+#' [.model_vacamole_cpp()], an internal C++ function that uses Boost _odeint_
+#' solvers, while `model_vacamole_r()` is a wrapper around [deSolve::lsoda()]
+#' which takes the the internal function ``.ode_model_vacamole()`.
 #' Both models return equivalent results, but the C++ implementation is faster.
-#'
-#' `.model_vacamole_cpp()` and `.ode_model_vacamole()` both accept
-#' arguments that are created by processing the `population`, `infection`,
-#' `intervention` and `vaccination` arguments to the wrapper function into
-#' simpler forms.
 #'
 #' ## Model parameters
 #'
 #' This model only allows for single, population-wide rates of
-#' transition between the 'susceptible' and 'exposed' compartments, between the
-#' 'exposed' and 'infectious' compartments, and in the recovery rate.
-#'
-#' The default values are:
+#' transitions between compartments. The default values are:
 #'
 #' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.186, resulting from
 #' an \eqn{R_0} = 1.3 and an infectious period of 7 days.
@@ -89,22 +79,7 @@
 #' assuming a 20% reduction in mortality for individuals who are doubly
 #' vaccinated.
 #'
-#' ## Rate interventions and time-dependence
-#'
-#' This model allows interventions on only the primary model rates:
-#' transmissibility, infectiousness rate, hospitalisation rate, mortality rate,
-#' and the recovery rate. Interventions on the secondary model rates calculated
-#' as vaccination-linked modifications of these rates cannot be targeted by rate
-#' interventions or time dependence.
-#'
-#' See the vignette on rate interventions to represent pharmaceutical
-#' interventions (\code{vignette("rate_interventions", package = "epidemics")})
-#' and the vignette on time dependence
-#' (\code{vignette("time_dependence", package = "epidemics")})
-#' for worked out examples on how to
-#' implement these features.
-#'
-#' @return A `data.table` with the columns "time", "compartment", "age_group",
+#' @return A `data.frame` with the columns "time", "compartment", "age_group",
 #' "value". The compartments correspond to the compartments of the model
 #' chosen with `model`.
 #' The current default model has the compartments "susceptible",

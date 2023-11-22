@@ -50,24 +50,22 @@ population.}
 from the infectious to the recovered compartment. Often denoted as
 \eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.}
 
-\item{intervention}{An \verb{<intervention>} object representing an optional
-non-pharmaceutical intervention applied to the population during the
-epidemic. See \code{\link[=intervention]{intervention()}} for details on constructing interventions with
-age-specific effects on social contacts, as well as for guidance on how to
-concatenate multiple overlapping interventions into a single \verb{<intervention>}
-object.}
+\item{intervention}{A named list of \verb{<intervention>}s representing optional
+non-pharmaceutical or pharmaceutical interventions applied during the
+epidemic. Only a single intervention on social contacts of the class
+\verb{<contacts_intervention>} is allowed as the named element "contacts".
+Multiple \verb{<rate_interventions>} on the model parameters are allowed; see
+\strong{Details} for the model parameters for which interventions are supported.}
 
 \item{vaccination}{A \verb{<vaccination>} object representing an optional
 vaccination regime with a single dose, followed during the course of the
-epidemic, with a start and end time, and age-specific vaccination rates.
-See \code{\link[=vaccination]{vaccination()}}.}
+epidemic, with a start and end time, and age-specific vaccination rates.}
 
-\item{time_dependence}{A named list where each name
-is a model parameter, and each element is a function with
-the first two arguments being the current simulation \code{time}, and \code{x}, a value
-that is dependent on \code{time} (\code{x} represents a model parameter).
-See \strong{Details} for more information, as well as the vignette on time-
-dependence \code{vignette("time_dependence", package = "epidemics")}.}
+\item{time_dependence}{A named list of functions that modify model parameters
+as a function of model time. List element names must correspond to model
+parameter names. List elements must be functions of the form
+\verb{function(time, x, ...)}, where \code{time} is the simulation \code{time} and \code{x}
+represents a model parameter. The order of function arguments is important.}
 
 \item{time_end}{The maximum number of timesteps over which to run the model.
 Taken as days, with a default value of 200 days.}
@@ -76,7 +74,7 @@ Taken as days, with a default value of 200 days.}
 default value of 1 day.}
 }
 \value{
-A \code{data.table} with the columns "time", "compartment", "age_group",
+A \code{data.frame} with the columns "time", "compartment", "age_group",
 "value". The compartments correspond to the compartments of the model
 chosen with \code{model}.
 The current default model has the compartments "susceptible", "exposed",
@@ -99,46 +97,25 @@ See \strong{Details} for more information.
 \details{
 \subsection{R and Rcpp implementations}{
 
-\code{model_default_cpp()} is a wrapper function for \code{\link[=.model_default_cpp]{.model_default_cpp()}},
-an internal C++ function that uses Boost \emph{odeint} solvers for an SEIR-V model
-.
-\code{\link[=.model_default_cpp]{.model_default_cpp()}} accepts arguments that
-are created by processing the \code{population}, \code{infection}, \code{intervention} and
-\code{vaccination} arguments to the wrapper function into simpler forms.
-
-\code{model_default_r()} is a wrapper around the internal function
-\code{.ode_model_default()}, which is passed to \code{\link[deSolve:lsoda]{deSolve::lsoda()}}.
-
+\code{model_default_cpp()} is a wrapper function for the internal C++ function
+\code{\link[=.model_default_cpp]{.model_default_cpp()}} that uses Boost \emph{odeint} solvers, while
+\code{model_default_r()} is a wrapper around \code{\link[deSolve:lsoda]{deSolve::lsoda()}} which an R-only
+implementation of the ODE system in \code{.ode_model_default()}.
 Both models return equivalent results, but the C++ implementation is faster.
 }
 
 \subsection{Model parameters}{
 
 This model only allows for single, population-wide rates of
-transition between the 'susceptible' and 'exposed' compartments, between the
-'exposed' and 'infectious' compartments, and in the recovery rate.
-
-The default values are:
+transitions between compartments. The default values are:
 \itemize{
-\item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.186, resulting from
-an \eqn{R_0} = 1.3 and an infectious period of 7 days.
+\item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.186, assuming an
+\eqn{R_0} = 1.3 and an infectious period of 7 days.
 \item Infectiousness rate (\eqn{\sigma}, \code{infectiousness_rate}): 0.5, assuming
 a pre-infectious period of 2 days.
 \item Recovery rate (\eqn{\gamma}, \code{recovery_rate}): 0.143, assuming an
 infectious period of 7 days.
 }
-}
-
-\subsection{Implementing time-dependent parameters}{
-
-Model rates or parameters can be made time-dependent by passing a function
-which modifies the parameter based on the current ODE simulation time.
-For example, a function that modifies the transmission rate
-\code{transmissibility} could be passed as
-\code{time_dependence = list(transmissibility = function(time, x) x * time)}.
-This functionality may be used to model events that are expected to have some
-effect on model parameters, such as seasonality or annual schedules such as
-holidays.
 }
 }
 \examples{

@@ -76,8 +76,8 @@ Rcpp::List model_vacamole_cpp_internal(
   // initial conditions from input
   odetools::state_type x = initial_state;
 
-  // create a map of the infection parameters
-  std::unordered_map<std::string, double> infection_params{
+  // create a map of the model parameters
+  std::unordered_map<std::string, double> model_params{
       {"transmissibility", transmissibility},
       {"transmissibility_vax", transmissibility_vax},
       {"infectiousness_rate", infectiousness_rate},
@@ -94,7 +94,7 @@ Rcpp::List model_vacamole_cpp_internal(
 
   // create a default epidemic with parameters
   epidemics::epidemic_vacamole this_model(
-      infection_params, contact_matrix, npi_time_begin, npi_time_end, npi_cr,
+      model_params, contact_matrix, npi_time_begin, npi_time_end, npi_cr,
       vax_time_begin, vax_time_end, vax_nu, rate_interventions_cpp,
       time_dependence);
 

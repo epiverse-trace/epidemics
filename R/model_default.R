@@ -131,46 +131,43 @@ model_default_cpp <- function(population,
                               increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
+  # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
   checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
   checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
+
+  # all intervention sub-classes pass check for intervention superclass
+  checkmate::assert_list(intervention, types = "intervention", null.ok = TRUE)
+  checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
+
+  # check that time-dependence functions are passed as a list with at least the
+  # arguments `time` and `x`
+  # time must be before x, and they must be first two args
+  checkmate::assert_list(time_dependence, "function", null.ok = TRUE)
+  # lapply on null returns an empty list
+  invisible(
+    lapply(time_dependence, checkmate::assert_function,
+      args = c("time", "x"),
+      ordered = TRUE
+    )
+  )
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
   checkmate::assert_number(time_end, lower = 0, finite = TRUE)
   checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
 
-  # collect population, infection, and model arguments passed as `...`
+  # collect all model arguments
   model_arguments <- list(
     population = population,
     transmissibility = transmissibility,
     infectiousness_rate = infectiousness_rate,
     recovery_rate = recovery_rate,
+    intervention = intervention,
+    vaccination = vaccination,
+    time_dependence = time_dependence,
     time_end = time_end, increment = increment
   )
-
-  # check class add intervention and vaccination if not NULL
-  if (!is.null(intervention)) {
-    checkmate::assert_list(intervention, types = "intervention")
-    model_arguments[["intervention"]] <- intervention
-  }
-  if (!is.null(vaccination)) {
-    checkmate::assert_class(vaccination, "vaccination")
-    model_arguments[["vaccination"]] <- vaccination
-  }
-  # check that time-dependence functions are passed as a list with at least the
-  # arguments `time` and `x`
-  # time must be before x, and they must be first two args
-  if (!is.null(time_dependence)) {
-    checkmate::assert_list(time_dependence, "function")
-    invisible(
-      lapply(time_dependence, checkmate::check_function,
-        args = c("time", "x"),
-        ordered = TRUE
-      )
-    )
-    model_arguments[["time_dependence"]] <- time_dependence
-  }
 
   # prepare checked arguments for function
   # this necessary as check_args adds intervention and vaccination
@@ -288,47 +285,43 @@ model_default_r <- function(population,
                             increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
+  # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
+  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
+  checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
+
+  # all intervention sub-classes pass check for intervention superclass
+  checkmate::assert_list(intervention, types = "intervention", null.ok = TRUE)
+  checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
+
+  # check that time-dependence functions are passed as a list with at least the
+  # arguments `time` and `x`
+  # time must be before x, and they must be first two args
+  checkmate::assert_list(time_dependence, "function", null.ok = TRUE)
+  # lapply on null returns an empty list
+  invisible(
+    lapply(time_dependence, checkmate::assert_function,
+      args = c("time", "x"),
+      ordered = TRUE
+    )
+  )
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
   checkmate::assert_number(time_end, lower = 0, finite = TRUE)
   checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
 
-  # collect population, infection, and model arguments passed as `...`
+  # collect all model arguments
   model_arguments <- list(
     population = population,
     transmissibility = transmissibility,
     infectiousness_rate = infectiousness_rate,
     recovery_rate = recovery_rate,
-    time_end = time_end, increment = increment,
-    time_dependence = time_dependence
+    intervention = intervention,
+    vaccination = vaccination,
+    time_dependence = time_dependence,
+    time_end = time_end, increment = increment
   )
-
-  # check class add intervention and vaccination if not NULL
-  if (!is.null(intervention)) {
-    checkmate::assert_list(
-      intervention,
-      types = c("intervention", "list")
-    )
-    model_arguments[["intervention"]] <- intervention
-  }
-  if (!is.null(vaccination)) {
-    checkmate::assert_class(vaccination, "vaccination")
-    model_arguments[["vaccination"]] <- vaccination
-  }
-  # check that time-dependence functions are passed as a list with at least the
-  # arguments `time` and `x`
-  # time must be before x, and they must be first two args
-  if (!is.null(time_dependence)) {
-    checkmate::assert_list(time_dependence, "function")
-    invisible(
-      lapply(time_dependence, checkmate::check_function,
-        args = c("time", "x"),
-        ordered = TRUE
-      )
-    )
-    model_arguments[["time_dependence"]] <- time_dependence
-  }
 
   # prepare checked arguments for function
   # this necessary as check_args adds intervention and vaccination

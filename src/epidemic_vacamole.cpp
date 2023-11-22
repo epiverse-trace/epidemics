@@ -79,12 +79,9 @@ Rcpp::List model_vacamole_cpp_internal(
   // create a map of the model parameters
   std::unordered_map<std::string, double> model_params{
       {"transmissibility", transmissibility},
-      {"transmissibility_vax", transmissibility_vax},
       {"infectiousness_rate", infectiousness_rate},
       {"mortality_rate", mortality_rate},
-      {"mortality_rate_vax", mortality_rate_vax},
       {"hospitalisation_rate", hospitalisation_rate},
-      {"hospitalisation_rate_vax", hospitalisation_rate_vax},
       {"recovery_rate", recovery_rate}};
 
   // create a map of the rate interventions

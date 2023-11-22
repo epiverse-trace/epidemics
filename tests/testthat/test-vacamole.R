@@ -68,7 +68,7 @@ test_that("Vacamole model works", {
   )
 
   # expect output is a data.table
-  expect_s3_class(data, "data.table")
+  expect_s3_class(data, "data.frame")
   # expect output has correct compartments
   expect_identical(
     unique(data$compartment),
@@ -120,8 +120,8 @@ test_that("Vacamole model with no vaccination", {
   )
   # test that no individuals are vaccinated in any compartments related to
   # vaccination - e.g. hospitalised-vaccinated etc.
-  pop_vaxxed <- data[time == max(time) &
-    grepl("vaccinated", data$compartment, fixed = TRUE)]$value
+  pop_vaxxed <- data[data$time == max(data$time) &
+    grepl("vaccinated", data$compartment, fixed = TRUE), ]$value
   expect_identical(
     unique(pop_vaxxed), 0.0,
     tolerance = 1e-6
@@ -136,8 +136,8 @@ test_that("Vacamole with non-fatal infection", {
     time_end = 400, increment = 1
   )
   # test that no individuals are dead
-  pop_dead <- data[time == max(time) &
-    grepl("dead", data$compartment, fixed = TRUE)]$value
+  pop_dead <- data[data$time == max(data$time) &
+    grepl("dead", data$compartment, fixed = TRUE), ]$value
   expect_identical(
     unique(pop_dead), 0.0,
     tolerance = 1e-6
@@ -152,8 +152,8 @@ test_that("Vacamole with no hospitalisation", {
     time_end = 400, increment = 1
   )
   # test that no individuals are dead
-  pop_hospitalised <- data[time == max(time) &
-    grepl("hospitalised", data$compartment, fixed = TRUE)]$value
+  pop_hospitalised <- data[data$time == max(data$time) &
+    grepl("hospitalised", data$compartment, fixed = TRUE), ]$value
   expect_identical(
     unique(pop_hospitalised), 0.0,
     tolerance = 1e-6
@@ -215,7 +215,7 @@ test_that("Output of the Vacamole epidemic model R", {
   )
 
   # check for output type and contents
-  expect_s3_class(data, "data.table")
+  expect_s3_class(data, "data.frame")
   expect_length(data, 4L)
   expect_named(
     data, c("compartment", "demography_group", "value", "time"),

@@ -823,7 +823,7 @@ cumulative_rate_intervention <- function(t, time_begin, time_end, reduction) {
 #' simulation.
 #' @param parameters A named list of numeric parameters affected by
 #' `interventions`.
-#' This represents the infection parameters, such as the transmission rate,
+#' This represents the model parameters, such as the transmission rate,
 #' \eqn{\beta}, or the recovery rate, \eqn{\gamma}.
 #' @return A named list of the same length as `parameters`, with the same names.
 #' These parameters can then be used in a timestep of an ODE model.

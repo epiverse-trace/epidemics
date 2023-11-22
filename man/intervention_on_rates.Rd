@@ -16,7 +16,7 @@ simulation.}
 
 \item{parameters}{A named list of numeric parameters affected by
 \code{interventions}.
-This represents the infection parameters, such as the transmission rate,
+This represents the model parameters, such as the transmission rate,
 \eqn{\beta}, or the recovery rate, \eqn{\gamma}.}
 }
 \value{

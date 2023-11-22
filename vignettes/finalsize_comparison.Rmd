@@ -83,9 +83,9 @@ While _finalsize_ does not allow for the implementation of a _dynamic_ vaccinati
 
 The two methods are comparable if we model vaccination in _epidemics_ as occurring before the main wave of the epidemic, as this sets up underlying susceptibility.
 
-### Prepare population and infection parameters
+### Prepare population and model parameters
 
-We first prepare the population (modelled on the U.K.), initial conditions, and infection parameters, before passing them to `epidemics::model_default_cpp()`.
+We first prepare the population (modelled on the U.K.), initial conditions, and model parameters, before passing them to `epidemics::model_default_cpp()`.
 This example does not include any interventions or vaccination regimes.
 
 Code to prepare model inputs is folded below for brevity. See the ["Get started"](epidemics.html) vignette for an explanation of how to prepare these inputs.

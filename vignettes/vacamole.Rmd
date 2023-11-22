@@ -227,10 +227,12 @@ data_scenarios <- Map(
   f = function(df, sc) {
     df_ <- unique(df[, "demography_group"], by = "demography_group")
     # get total deaths per group
-    df_$total_deaths <- df[time == max(time) & compartment == "dead", ]$value
+    df_$total_deaths <- df[df$time == max(df$time) &
+      df$compartment == "dead", ]$value
 
     # get total recoveries per group using helper function `epidemic_size()`
-    df_$total_recovered <- epidemic_size(df, deaths = FALSE) # do not count dead
+    # do not count dead
+    df_$total_recovered <- epidemic_size(df, include_deaths = FALSE)
 
     # add scenario information
     df_$scenario <- sc

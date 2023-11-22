@@ -243,7 +243,7 @@ Note that the final size here refers to the final size after 365 days, which is 
 # apply the function over each replicate
 data_final_size <- Map(
   data,
-  f = epidemic_size, deaths = FALSE, by_group = FALSE
+  f = epidemic_size, include_deaths = FALSE, by_group = FALSE
 )
 data_final_size <- unlist(data_final_size)
 ```
@@ -445,7 +445,7 @@ improve_hospitalisation <- intervention(
 )
 ```
 
-We can pass the interventions to the model function's `intervention` argument as a named list, with the names indicating the infection parameters to target.
+We can pass the interventions to the model function's `intervention` argument as a named list, with the names indicating the model parameters to target.
 
 ```{r}
 # set a seed for comparison with the baseline model
@@ -689,13 +689,13 @@ A proportion, `1.0 - prop_community`, of infectious individuals are transferred 
 The passage time of individuals in the hospitalised compartment is similar to that of individuals in the infectious compartment (i.e., infectious in the community), which means that an infectious individual with $N$ timesteps before exiting the infectious compartment will exit the hospitalised compartment in the same time.
 
 Hospitalised individuals can contribute to transmission of Ebola to susceptibles depending on the value of $p_\text{ETU}$, which is the probability (or proportion) of hospitalised cases contributing to the infection of susceptibles.
-This is interpreted as the relative safety of Ebolavirus treatment units (ETUs), with a range of 0.0 -- 1.0, where 0.0 indicates that hospitalisation does not reduce transmission at all, while 1.0 indicates that hospitalisation prevents onward transmission entirely.
-This is passed as the `etu_safety` value of the `<infection>`-class object passed to the `infection` argument in `model_ebola_r()`.
+This is interpreted as the relative risk of Ebolavirus treatment units (ETUs), with a range of 0.0 -- 1.0, where 0.0 indicates that hospitalisation prevents onward transmission entirely, while 1.0 indicates that hospitalisation does not reduce transmission at all.
+This is passed as the argument `etu_risk`.
 
 We assume that deaths in hospital lead to Ebola-safe funerals, and individuals exiting the hospitalised compartment move to the 'removed' compartment, which holds both recoveries and deaths.
 
-We assume that infectious individuals who are not hospitalised die, and that deaths outside of hospital lead to funerals that are potentially not Ebola-safe, and the contribution of funerals to Ebola transmission is determined by $p_\text{funeral}$, which can be interpreted as the probability of transmission at a funeral, or the proportion of funerals that are Ebola-safe.
-The relative safety of funerals is passed as the `funeral_safety` value of the `infection` argument.
+We assume that infectious individuals who are not hospitalised die, and that deaths outside of hospital lead to funerals that are potentially not Ebola-safe, and the contribution of funerals to Ebola transmission is determined by $p_\text{funeral}$, which can be interpreted as the relative risk of funerals, and is passed as the `funeral_risk` argument.
+Values closer to 0.0 indicate that there is low to no risk of Ebola transmission at funerals, while values closer to 1.0 indicate that the risk is similar to that of transmission in the community.
 
 Individuals are assumed to spend only a single timestep in the funeral transmission compartment, before they move into the 'removed' compartment. Individuals in the 'removed' compartment do not affect model dynamics.
 

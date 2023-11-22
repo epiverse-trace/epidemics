@@ -218,6 +218,10 @@ data_vaccination <- model_vacamole_cpp(
 First, we calculate the total number of infections resulting in recoveries and deaths over the course of the simulation; this is the epidemic's final size.
 
 ```{r}
+# set data.table
+setDT(data)
+setDT(data_vaccination)
+
 # collect data from the two scenarios
 data_scenarios <- list(data, data_vaccination)
 

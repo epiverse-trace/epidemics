@@ -4,19 +4,19 @@
 \alias{assert_vaccination}
 \title{Assert properties of a \code{vaccination} object}
 \usage{
-assert_vaccination(x, doses, population)
+assert_vaccination(x, doses, population = NULL)
 }
 \arguments{
 \item{x}{A \link{vaccination} object.}
 
 \item{doses}{The number of doses expected in the vaccination object.}
 
-\item{population}{An optional argument which is a \link{population} object.
+\item{population}{An optional argument which is a \verb{<population>} object.
 When present, this is used to check whether the vaccination object \code{x} has
 corresponding values for each demographic group in \code{population}.}
 }
 \value{
-Silently returns the \code{vaccination} object \code{x}.
+Silently returns the \verb{<vaccination>} object \code{x}.
 Primarily called for its side effects of throwing errors when \code{x} does not
 meet certain requirements.
 }

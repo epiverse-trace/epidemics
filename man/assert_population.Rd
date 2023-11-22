@@ -4,17 +4,20 @@
 \alias{assert_population}
 \title{Assert properties of a \code{population} object}
 \usage{
-assert_population(x, demography_groups = NULL, compartments)
+assert_population(x, compartments, demography_vector = NULL)
 }
 \arguments{
-\item{x}{A \link{population} object.}
+\item{x}{A \verb{<population>} object.}
 
 \item{compartments}{A character vector giving the names of model compartments
 whose length is taken as the reference for the number of columns in the
 \code{initial_conditions} matrix in \code{x}.}
+
+\item{demography_vector}{An optional numeric vector whose length is used to
+check the length of the demography vector present in \code{x}.}
 }
 \value{
-Silently returns the \code{population} object \code{x}.
+Silently returns the \verb{<population>} object \code{x}.
 Primarily called for its side effects of throwing errors when \code{x} does not
 meet certain requirements.
 }

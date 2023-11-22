@@ -4,7 +4,7 @@
 \alias{assert_intervention}
 \title{Assert properties of a \code{intervention} object}
 \usage{
-assert_intervention(x, type = c("contacts", "rate"), population)
+assert_intervention(x, type = c("contacts", "rate"), population = NULL)
 }
 \arguments{
 \item{x}{A \link{intervention} object.}
@@ -18,7 +18,8 @@ corresponding values of \code{reduction} for each demographic group in
 \code{population}.}
 }
 \value{
-Silently returns the \code{intervention} object \code{x}.
+Silently returns the \verb{<intervention>}-superclass object \code{x} of the
+same class as \code{x}, i.e., \verb{<rate_intervention>} or \verb{<contacts_intervention>}.
 Primarily called for its side effects of throwing errors when \code{x} does not
 meet certain requirements.
 }

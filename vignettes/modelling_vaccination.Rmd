@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(epidemics)
-library(data.table)
+library(dplyr)
 library(ggplot2)
 ```
 
@@ -113,15 +113,15 @@ Plot epidemic over time, showing only the number of individuals in the exposed, 
 
 ```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
-ggplot(
-  output[compartment %in% c("exposed", "infectious")],
-  aes(
-    x = time,
-    y = value,
-    col = demography_group,
-    linetype = compartment
-  )
-) +
+filter(output, compartment %in% c("exposed", "infectious")) %>%
+  ggplot(
+    aes(
+      x = time,
+      y = value,
+      col = demography_group,
+      linetype = compartment
+    )
+  ) +
   geom_line() +
   scale_y_continuous(
     labels = scales::comma

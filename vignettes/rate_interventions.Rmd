@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(epidemics)
-library(data.table)
+library(dplyr)
 library(ggplot2)
 ```
 
@@ -145,7 +145,7 @@ data$scenario <- "baseline"
 data_masks$scenario <- "masks"
 
 # bind data together
-data_combined <- rbindlist(list(data, data_masks))
+data_combined <- bind_rows(data, data_masks)
 ```
 
 We plot the data to examine the effect that implementing a mask mandate has on the daily number of new infections.

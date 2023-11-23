@@ -46,7 +46,7 @@ The only rate in the model that can be influenced by an intervention is the tran
 ```{r setup}
 # some initial setup to load necessary packages
 library(epidemics)
-library(data.table)
+library(dplyr)
 library(ggplot2)
 ```
 
@@ -138,14 +138,14 @@ We plot the ebola epidemic over time, showing the number of individuals exposed 
 
 ```{r class.source = 'fold-hide', fig.cap="Model results from a single run showing the number of individuals in the exposed and infectious compartments over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others."}
 # plot figure of epidemic curve
-ggplot(
-  data[compartment %in% c("exposed", "infectious"), ],
-  aes(
-    x = time,
-    y = value,
-    colour = compartment
-  )
-) +
+filter(data, compartment %in% c("exposed", "infectious")) %>%
+  ggplot(
+    aes(
+      x = time,
+      y = value,
+      colour = compartment
+    )
+  ) +
   geom_line() +
   scale_y_continuous(
     labels = scales::comma
@@ -179,9 +179,9 @@ We can run the model multiple times --- here, 100 times --- and plot the number 
 set.seed(1)
 
 # run the simulation 100 times
-data <- Map(
-  x = seq(100),
-  f = function(x) {
+data <- lapply(
+  X = seq(100),
+  FUN = function(x) {
     data <- model_ebola_r(
       population = guinea_population,
       time_end = 100
@@ -194,13 +194,14 @@ data <- Map(
 )
 
 # use data.table to collect the data
-data_timeseries <- rbindlist(data)
+data_timeseries <- bind_rows(data)
 ```
 
 We plot the data.
 
 ```{r class.source = 'fold-hide', fig.cap="Model results from 100 runs showing the number of individuals in the infectious compartments over 100 days of each outbreak. All models assume that 1 initially infectious person has exposed 10 others. A simple summary using the mean (black line with standard error as shaded red regions), plotted over the individual model runs (grey) show that there can be wide variation in individual outbreak trajectories."}
-ggplot(data_timeseries[compartment == "infectious", ]) +
+filter(data_timeseries, compartment == "infectious") %>%
+  ggplot() +
   geom_line(
     aes(time, value, group = replicate),
     alpha = 0.3, colour = "grey50"
@@ -241,9 +242,9 @@ Note that the final size here refers to the final size after 365 days, which is 
 
 ```{r}
 # apply the function over each replicate
-data_final_size <- Map(
-  data,
-  f = epidemic_size, include_deaths = FALSE, by_group = FALSE
+data_final_size <- lapply(
+  X = data,
+  FUN = epidemic_size, include_deaths = FALSE, by_group = FALSE
 )
 data_final_size <- unlist(data_final_size)
 ```
@@ -315,11 +316,12 @@ data_baseline$scenario <- "baseline"
 data_intervention$scenario <- "intervention"
 
 # bind the data together
-data_scenarios <- rbindlist(list(data_baseline, data_intervention))
+data_scenarios <- bind_rows(data_baseline, data_intervention)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."}
-ggplot(data_scenarios[compartment == "removed", ]) +
+filter(data_scenarios, compartment == "removed") %>%
+  ggplot() +
   geom_vline(
     xintercept = 15,
     linetype = "dotted"
@@ -390,11 +392,12 @@ data_apply_vax <- model_ebola_r(
 data_apply_vax$scenario <- "apply_vaccination"
 
 # bind the data together
-data_scenarios <- rbindlist(list(data_baseline, data_apply_vax))
+data_scenarios <- bind_rows(data_baseline, data_apply_vax)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality."}
-ggplot(data_scenarios[compartment == "removed", ]) +
+filter(data_scenarios, compartment == "removed") %>%
+  ggplot() +
   geom_vline(
     xintercept = 15,
     linetype = "dotted"
@@ -464,11 +467,12 @@ data_improve_hosp <- model_ebola_r(
 data_improve_hosp$scenario <- "improve_hosp"
 
 # bind the data together
-data_scenarios <- rbindlist(list(data_baseline, data_improve_hosp))
+data_scenarios <- bind_rows(data_baseline, data_improve_hosp)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the proportion of infectious cases in the community by transferring them to a hospitalisation setting."}
-ggplot(data_scenarios[compartment == "removed", ]) +
+filter(data_scenarios, compartment == "removed") %>%
+  ggplot() +
   geom_vline(
     xintercept = 15,
     linetype = "dotted"
@@ -520,11 +524,12 @@ data_improve_etu <- model_ebola_r(
 data_improve_etu$scenario <- "improve_etu"
 
 # bind the data together
-data_scenarios <- rbindlist(list(data_baseline, data_improve_etu))
+data_scenarios <- bind_rows(data_baseline, data_improve_etu)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the risk of ebola transmission in a hospitalisation context."}
-ggplot(data_scenarios[compartment == "removed", ]) +
+filter(data_scenarios, compartment == "removed") %>%
+  ggplot() +
   geom_vline(
     xintercept = 15,
     linetype = "dotted"
@@ -579,11 +584,12 @@ data_improve_funeral <- model_ebola_r(
 data_improve_funeral$scenario <- "improve_funeral"
 
 # bind the data together
-data_scenarios <- rbindlist(list(data_baseline, data_improve_funeral))
+data_scenarios <- bind_rows(data_baseline, data_improve_funeral)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the risk of ebola transmission in a funeral context."}
-ggplot(data_scenarios[compartment == "removed", ]) +
+filter(data_scenarios, compartment == "removed") %>%
+  ggplot() +
   geom_vline(
     xintercept = 15,
     linetype = "dotted"
@@ -629,13 +635,12 @@ data_combined_interventions <- model_ebola_r(
 data_combined_interventions$scenario <- "combined_interventions"
 
 # bind the data together
-data_scenarios <- rbindlist(
-  list(data_baseline, data_combined_interventions)
-)
+data_scenarios <- bind_rows(data_baseline, data_combined_interventions)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days."}
-ggplot(data_scenarios[compartment == "removed", ]) +
+filter(data_scenarios, compartment == "removed") %>%
+  ggplot() +
   geom_vline(
     xintercept = 15,
     linetype = "dotted"

@@ -29,8 +29,8 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(epidemics)
+library(dplyr)
 library(ggplot2)
-library(data.table)
 ```
 
 ::: {.alert .alert-warning}
@@ -204,7 +204,7 @@ data_infections$scenario <- "baseline"
 data_infections_npi$scenario <- "intervention"
 
 # combine the data
-data_npi_compare <- rbindlist(list(data_infections, data_infections_npi))
+data_npi_compare <- bind_rows(data_infections, data_infections_npi)
 ```
 
 ```{r class.source = 'fold-hide'}
@@ -289,7 +289,7 @@ data_vax_infections <- new_infections(
 data_vax_infections$scenario <- "vaccination"
 
 # combine data
-data_vax_compare <- rbindlist(list(data_infections, data_vax_infections))
+data_vax_compare <- bind_rows(data_infections, data_vax_infections)
 ```
 
 ```{r class.source = 'fold-hide'}
@@ -302,7 +302,9 @@ ggplot(data_vax_compare) +
     fill = "grey", alpha = 0.1
   ) +
   geom_line(
-    data = data_vax[compartment == "vaccinated" & demography_group == "40+", ],
+    data = filter(
+      data_vax, compartment == "vaccinated" & demography_group == "40+"
+    ),
     aes(time, value / 1e2),
     colour = "darkblue"
   ) +

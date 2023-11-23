@@ -19,5 +19,6 @@
 #include "time_dependence.h"
 #include "epidemic_default.h"
 #include "epidemic_vacamole.h"
+#include "epidemic_diphtheria.h"
 
 #endif  // epidemics_epidemics_H_

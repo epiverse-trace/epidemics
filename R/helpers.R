@@ -147,11 +147,11 @@ epidemic_size <- function(
   # input checking for data - this allows data.tables as well
   checkmate::assert_data_frame(
     data,
-    ncols = 4L, min.rows = 1, any.missing = FALSE
+    min.cols = 4L, min.rows = 1, any.missing = FALSE
   )
   checkmate::assert_names(
     colnames(data),
-    identical.to = c("time", "demography_group", "compartment", "value")
+    must.include = c("time", "demography_group", "compartment", "value")
   )
   checkmate::assert_logical(by_group, len = 1L)
   checkmate::assert_logical(include_deaths, len = 1L)
@@ -240,11 +240,11 @@ new_infections <- function(data,
   # input checking for data - this allows data.tables as well
   checkmate::assert_data_frame(
     data,
-    ncols = 4, min.rows = 1, any.missing = FALSE
+    min.cols = 4, min.rows = 1, any.missing = FALSE
   )
   checkmate::assert_names(
     colnames(data),
-    identical.to = c("time", "demography_group", "compartment", "value")
+    must.include = c("time", "demography_group", "compartment", "value")
   )
   checkmate::assert_character(
     compartments_from_susceptible,

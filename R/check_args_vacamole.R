@@ -5,15 +5,11 @@
 #' @description Check and prepare the four main arguments to
 #' [model_vacamole_cpp()] for use with [.model_vacamole_cpp()].
 #'
-#' `.check_args_model_vacamole()` adds an empty `<intervention>` object if
-#' this is missing from the model arguments.
-#'
 #' @return
 #'
-#' `.check_args_model_vacamole()` invisibly returns the model arguments
-#' passed in `mod_args`. If the model arguments did not previously contain
-#' elements named `intervention` this is added as dummy objects of the
-#' corresponding classes.
+#' `.check_args_model_vacamole()` invisibly returns the model arguments passed
+#' in `mod_args`. Model functionalities, such as interventions,
+#' passed as `NULL` are replaced with dummy values for internal functions.
 #'
 #' `.prepare_args_model_vacamole()` returns a list of model arguments
 #' suitable for [.model_vacamole_cpp()]. This is a named list consisting of:

@@ -12,9 +12,8 @@
 }
 \value{
 \code{.check_args_model_default()} invisibly returns the model arguments passed
-in \code{mod_args}. If the model arguments did not previously contain elements
-named \code{intervention} and \code{vaccination}, these are added as dummy objects of
-the corresponding classes.
+in \code{mod_args}. Model functionalities, such as vaccination or interventions,
+passed as \code{NULL} are replaced with dummy values for internal functions.
 
 \code{.prepare_args_model_default()} returns a list of model arguments suitable
 for \code{\link[=.model_default_cpp]{.model_default_cpp()}}. This is a named list consisting of:
@@ -41,9 +40,6 @@ is incremented.
 \description{
 Check and prepare the four main arguments to
 \code{\link[=model_default_cpp]{model_default_cpp()}} for use with \code{\link[=.model_default_cpp]{.model_default_cpp()}}.
-
-\code{.check_args_model_default()} adds an empty \verb{<intervention>} and
-\verb{<vaccination>} object if these are missing from the model arguments.
 }
 \details{
 \code{.prepare_args_model_default()} prepares arguments for

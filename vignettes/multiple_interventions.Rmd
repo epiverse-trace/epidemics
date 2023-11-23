@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(epidemics)
-library(data.table)
+library(dplyr)
 library(ggplot2)
 ```
 

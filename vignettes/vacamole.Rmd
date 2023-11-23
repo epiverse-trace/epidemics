@@ -62,7 +62,8 @@ The details of the ODE system for the version of Vacamole included in _epidemics
 
 ```{r setup}
 library(epidemics)
-library(data.table)
+library(dplyr)
+library(tidyr)
 library(ggplot2)
 library(colorspace)
 library(scales)
@@ -218,10 +219,6 @@ data_vaccination <- model_vacamole_cpp(
 First, we calculate the total number of infections resulting in recoveries and deaths over the course of the simulation; this is the epidemic's final size.
 
 ```{r}
-# set data.table
-setDT(data)
-setDT(data_vaccination)
-
 # collect data from the two scenarios
 data_scenarios <- list(data, data_vaccination)
 
@@ -229,10 +226,12 @@ data_scenarios <- list(data, data_vaccination)
 data_scenarios <- Map(
   data_scenarios, c("no_vax", "vax"),
   f = function(df, sc) {
-    df_ <- unique(df[, "demography_group"], by = "demography_group")
+    df_ <- distinct(df, demography_group)
+
     # get total deaths per group
-    df_$total_deaths <- df[df$time == max(df$time) &
-      df$compartment == "dead", ]$value
+    df_$total_deaths <- filter(
+      df, time == max(time) & compartment == "dead"
+    ) %>% pull(value)
 
     # get total recoveries per group using helper function `epidemic_size()`
     # do not count dead
@@ -247,12 +246,13 @@ data_scenarios <- Map(
 )
 
 # collect data
-data_scenarios <- rbindlist(data_scenarios)
+data_scenarios <- bind_rows(data_scenarios)
 
 # transform to long format
-data_scenarios <- melt(
+data_scenarios <- pivot_longer(
   data_scenarios,
-  id.vars = c("demography_group", "scenario")
+  cols = c("total_deaths", "total_recovered"),
+  names_to = "measure"
 )
 ```
 
@@ -264,12 +264,12 @@ ggplot(data_scenarios) +
     colour = "black"
   ) +
   facet_wrap(
-    ~variable,
+    facets = vars(measure),
     scales = "free_y",
     labeller = labeller(
-      variable = c(
+      measure = c(
         total_deaths = "Total deaths",
-        total_recovered = "Epidemic size (infections, not counting deaths)"
+        total_recovered = "Epidemic size (infections without deaths)"
       )
     )
   ) +
@@ -317,17 +317,21 @@ data_scenarios <- list(data, data_vaccination)
 peak_hospital_occupancy <- vapply(data_scenarios, function(df) {
   # get highest hospital occupancy
   # first get total hospitalisations among vaccinated and un- or part-vacc.
-  df <- dcast(
-    df[compartment %like% "hospitalised", ],
-    time + demography_group ~ compartment,
-    value.var = "value"
-  )
-  df[, total_hosp := hospitalised + hospitalised_vaccinated]
-
-  # sum all age groups
-  df <- df[, list(total_hosp = sum(total_hosp)), by = "time"]
-
-  df[total_hosp == max(total_hosp), ]$total_hosp
+  df <- filter(
+    df,
+    grepl(
+      pattern = "hospitalised", x = compartment,
+      fixed = TRUE
+    )
+  ) %>%
+    # summarise all hospitalised over time, aggregating away age groups
+    summarise(
+      total_hosp = sum(value), .by = "time"
+    ) %>%
+    # filter for the time point with highest hospital occupancy
+    filter(total_hosp == max(total_hosp)) %>%
+    # get the value
+    pull(total_hosp)
 }, FUN.VALUE = numeric(1))
 
 # set names for comprehensibility

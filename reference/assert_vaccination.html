@@ -85,7 +85,7 @@ function is for internal use in argument checking functions.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assert_vaccination</span><span class="op">(</span><span class="va">x</span>, <span class="va">doses</span>, <span class="va">population</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assert_vaccination</span><span class="op">(</span><span class="va">x</span>, <span class="va">doses</span>, population <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -99,7 +99,7 @@ function is for internal use in argument checking functions.</p>
 
 
 <dt>population</dt>
-<dd><p>An optional argument which is a <a href="population.html">population</a> object.
+<dd><p>An optional argument which is a <code>&lt;population&gt;</code> object.
 When present, this is used to check whether the vaccination object <code>x</code> has
 corresponding values for each demographic group in <code>population</code>.</p></dd>
 
@@ -108,7 +108,7 @@ corresponding values for each demographic group in <code>population</code>.</p><
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Silently returns the <code>vaccination</code> object <code>x</code>.
+<p>Silently returns the <code>&lt;vaccination&gt;</code> object <code>x</code>.
 Primarily called for its side effects of throwing errors when <code>x</code> does not
 meet certain requirements.</p>
     </div>

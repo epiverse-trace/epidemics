@@ -82,13 +82,13 @@ at that stage of the epidemic.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">epidemic_size</span><span class="op">(</span><span class="va">data</span>, stage <span class="op">=</span> <span class="fl">1</span>, by_group <span class="op">=</span> <span class="cn">TRUE</span>, deaths <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">epidemic_size</span><span class="op">(</span><span class="va">data</span>, stage <span class="op">=</span> <span class="fl">1</span>, by_group <span class="op">=</span> <span class="cn">TRUE</span>, include_deaths <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>data</dt>
-<dd><p>A <code>data.table</code> (or <code>data.frame</code>) of model output, typically
+<dd><p>A <code>&lt;data.frame&gt;</code> of model output, typically
 the output of <code><a href="model_default.html">model_default_cpp()</a></code> or similar functions.</p></dd>
 
 
@@ -103,14 +103,16 @@ epidemic.</p></dd>
 <dt>by_group</dt>
 <dd><p>A logical representing whether the epidemic size should be
 returned by demographic group, or whether a single population-wide value is
-returned.</p></dd>
+returned. Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>deaths</dt>
-<dd><p>A logical value that indicates whether to count individuals in
-the epidemic size calculation. Setting <code>deaths = TRUE</code> looks for a <code>"dead"</code>
-compartment in the data. If there is no such column, the function returns
-only the final number of recovered individuals in each demographic group.</p></dd>
+<dt>include_deaths</dt>
+<dd><p>A logical value that indicates whether to count dead
+individuals in the epidemic size calculation.
+Defaults to <code>TRUE</code>, which makes the function look for a <code>"dead"</code> compartment
+in the data. If there is no such column, the function returns
+only the final number of recovered or removed individuals in each demographic
+group.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -118,7 +120,8 @@ only the final number of recovered individuals in each demographic group.</p></d
     
 
 <p>A single number when <code>by_group = FALSE</code>, or a vector of numbers of
-the same length as the number of demographic groups when <code>by_group = TRUE</code>.</p>
+the same length as the number of demographic groups when <code>by_group = TRUE</code>.
+Returns the absolute sizes and not proportions.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

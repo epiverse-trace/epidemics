@@ -177,16 +177,14 @@ transmissibility \(\beta\). Defaults to 0.5.</p></dd>
 
 
 <dt>intervention</dt>
-<dd><p>An optional <code>&lt;rate_intervention&gt;</code> object representing
-pharmaceutical or non-pharmaceutical interventions applied to the infection's
-parameters, such as the transmission rate, over the epidemic.
-See <code><a href="intervention.html">intervention()</a></code> for details on constructing rate interventions.
-Defaults to <code>NULL</code>, representing no interventions on model parameters.</p></dd>
+<dd><p>A named list of <code>&lt;rate_intervention&gt;</code> objects
+representing optional pharmaceutical or non-pharmaceutical interventions
+applied to the model parameters listed above.</p></dd>
 
 
 <dt>time_dependence</dt>
 <dd><p>A named list where each name
-is a model parameter (see <code>infection</code>), and each element is a function with
+is a model parameter, and each element is a function with
 the first two arguments being the current simulation <code>time</code>, and <code>x</code>, a value
 that is dependent on <code>time</code> (<code>x</code> represents a model parameter).
 See <strong>Details</strong> for more information, as well as the vignette on time-
@@ -249,8 +247,7 @@ community), which means that an infectious individual with \(N\) timesteps
 before exiting the infectious compartment will exit the hospitalised
 compartment in the same time.</p>
 <p>Hospitalised individuals can contribute to transmission of Ebola to
-susceptibles depending on the value of <code>etu_risk</code> passed as part of the
-<code>infection</code> argument, which scales the
+susceptibles depending on the value of <code>etu_risk</code> which scales the
 baseline transmission rate \(\beta\) for hospitalised individuals.</p>
 <p>We assume that deaths in hospital lead to Ebola-safe funerals, and
 individuals exiting the hospitalised compartment move to the 'removed'
@@ -322,13 +319,13 @@ epidemic models. Journal of Biological Dynamics, 12(1), 16–38.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># view some data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    time demography_group  compartment    value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:    1     demo_group_1  susceptible 13999972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:    1     demo_group_1      exposed       14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:    1     demo_group_1   infectious       14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4:    1     demo_group_1 hospitalised        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5:    1     demo_group_1      funeral        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6:    1     demo_group_1      removed        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   time demography_group  compartment    value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1     demo_group_1  susceptible 13999972</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    1     demo_group_1      exposed       14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1     demo_group_1   infectious       14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    1     demo_group_1 hospitalised        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    1     demo_group_1      funeral        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    1     demo_group_1      removed        0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

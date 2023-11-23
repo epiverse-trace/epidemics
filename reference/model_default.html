@@ -161,28 +161,26 @@ from the infectious to the recovered compartment. Often denoted as
 
 
 <dt>intervention</dt>
-<dd><p>An <code>&lt;intervention&gt;</code> object representing an optional
-non-pharmaceutical intervention applied to the population during the
-epidemic. See <code><a href="intervention.html">intervention()</a></code> for details on constructing interventions with
-age-specific effects on social contacts, as well as for guidance on how to
-concatenate multiple overlapping interventions into a single <code>&lt;intervention&gt;</code>
-object.</p></dd>
+<dd><p>A named list of <code>&lt;intervention&gt;</code>s representing optional
+non-pharmaceutical or pharmaceutical interventions applied during the
+epidemic. Only a single intervention on social contacts of the class
+<code>&lt;contacts_intervention&gt;</code> is allowed as the named element "contacts".
+Multiple <code>&lt;rate_interventions&gt;</code> on the model parameters are allowed; see
+<strong>Details</strong> for the model parameters for which interventions are supported.</p></dd>
 
 
 <dt>vaccination</dt>
 <dd><p>A <code>&lt;vaccination&gt;</code> object representing an optional
 vaccination regime with a single dose, followed during the course of the
-epidemic, with a start and end time, and age-specific vaccination rates.
-See <code><a href="vaccination.html">vaccination()</a></code>.</p></dd>
+epidemic, with a start and end time, and age-specific vaccination rates.</p></dd>
 
 
 <dt>time_dependence</dt>
-<dd><p>A named list where each name
-is a model parameter, and each element is a function with
-the first two arguments being the current simulation <code>time</code>, and <code>x</code>, a value
-that is dependent on <code>time</code> (<code>x</code> represents a model parameter).
-See <strong>Details</strong> for more information, as well as the vignette on time-
-dependence <code><a href="../articles/time_dependence.html">vignette("time_dependence", package = "epidemics")</a></code>.</p></dd>
+<dd><p>A named list of functions that modify model parameters
+as a function of model time. List element names must correspond to model
+parameter names. List elements must be functions of the form
+<code>function(time, x, ...)</code>, where <code>time</code> is the simulation <code>time</code> and <code>x</code>
+represents a model parameter. The order of function arguments is important.</p></dd>
 
 
 <dt>time_end</dt>
@@ -199,7 +197,7 @@ default value of 1 day.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A <code>data.table</code> with the columns "time", "compartment", "age_group",
+<p>A <code>data.frame</code> with the columns "time", "compartment", "age_group",
 "value". The compartments correspond to the compartments of the model
 chosen with <code>model</code>.
 The current default model has the compartments "susceptible", "exposed",
@@ -212,15 +210,11 @@ The current default model has the compartments "susceptible", "exposed",
 <h3 id="r-and-rcpp-implementations">R and Rcpp implementations<a class="anchor" aria-label="anchor" href="#r-and-rcpp-implementations"></a></h3>
 
 
-<p><code>model_default_cpp()</code> is a wrapper function for <code><a href="dot-model_default_cpp.html">.model_default_cpp()</a></code>,
-an internal C++ function that uses Boost <em>odeint</em> solvers for an SEIR-V model
-.
-<code><a href="dot-model_default_cpp.html">.model_default_cpp()</a></code> accepts arguments that
-are created by processing the <code>population</code>, <code>infection</code>, <code>intervention</code> and
-<code>vaccination</code> arguments to the wrapper function into simpler forms.</p>
-<p><code>model_default_r()</code> is a wrapper around the internal function
-<code><a href="dot-ode_model_default.html">.ode_model_default()</a></code>, which is passed to <code><a href="https://rdrr.io/pkg/deSolve/man/lsoda.html" class="external-link">deSolve::lsoda()</a></code>.</p>
-<p>Both models return equivalent results, but the C++ implementation is faster.</p>
+<p><code>model_default_cpp()</code> is a wrapper function for the internal C++ function
+<code><a href="dot-model_default_cpp.html">.model_default_cpp()</a></code> that uses Boost <em>odeint</em> solvers, while
+<code>model_default_r()</code> is a wrapper around <code><a href="https://rdrr.io/pkg/deSolve/man/lsoda.html" class="external-link">deSolve::lsoda()</a></code> which an R-only
+implementation of the ODE system in <code><a href="dot-ode_model_default.html">.ode_model_default()</a></code>.
+Both models return equivalent results, but the C++ implementation is faster.</p>
 </div>
 
 <div class="section">
@@ -228,29 +222,13 @@ are created by processing the <code>population</code>, <code>infection</code>, <
 
 
 <p>This model only allows for single, population-wide rates of
-transition between the 'susceptible' and 'exposed' compartments, between the
-'exposed' and 'infectious' compartments, and in the recovery rate.</p>
-<p>The default values are:</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.186, resulting from
-an \(R_0\) = 1.3 and an infectious period of 7 days.</p></li>
+transitions between compartments. The default values are:</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.186, assuming an
+\(R_0\) = 1.3 and an infectious period of 7 days.</p></li>
 <li><p>Infectiousness rate (\(\sigma\), <code>infectiousness_rate</code>): 0.5, assuming
 a pre-infectious period of 2 days.</p></li>
 <li><p>Recovery rate (\(\gamma\), <code>recovery_rate</code>): 0.143, assuming an
 infectious period of 7 days.</p></li>
 </ul></div>
-
-<div class="section">
-<h3 id="implementing-time-dependent-parameters">Implementing time-dependent parameters<a class="anchor" aria-label="anchor" href="#implementing-time-dependent-parameters"></a></h3>
-
-
-<p>Model rates or parameters can be made time-dependent by passing a function
-which modifies the parameter based on the current ODE simulation time.
-For example, a function that modifies the transmission rate
-<code>transmissibility</code> could be passed as
-<code>time_dependence = list(transmissibility = function(time, x) x * time)</code>.
-This functionality may be used to model events that are expected to have some
-effect on model parameters, such as seasonality or annual schedules such as
-holidays.</p>
-</div>
 
     </div>
 
@@ -274,13 +252,13 @@ holidays.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># view some data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    time demography_group compartment    value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:    0     demo_group_1 susceptible 66993300</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:    0     demo_group_1     exposed     6700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:    0     demo_group_1  infectious        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4:    0     demo_group_1   recovered        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5:    0     demo_group_1  vaccinated        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6:    1     demo_group_1 susceptible 66993044</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   time demography_group compartment    value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0     demo_group_1 susceptible 66993300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0     demo_group_1     exposed     6700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0     demo_group_1  infectious        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0     demo_group_1   recovered        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0     demo_group_1  vaccinated        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    1     demo_group_1 susceptible 66993044</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

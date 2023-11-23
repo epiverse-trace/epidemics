@@ -89,7 +89,7 @@ condition of each compartment at each timestep in "time".</p></dd>
 
 <dt>population</dt>
 <dd><p>A <code>&lt;population&gt;</code> object corresponding to the population
-used in the epidemic model; see <code><a href="population.html">population()</a></code>.
+used in the epidemic model.
 The <code>&lt;population&gt;</code> object is used to generate the names of the demographic
 groups, if these are named.</p></dd>
 
@@ -102,7 +102,7 @@ groups, if these are named.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A <code>data.table</code> with the columns "compartment", "demography_group",
+<p>A <code>&lt;data.frame&gt;</code> with the columns "compartment", "demography_group",
 "value", and "time"; these specify the epidemiological compartment, the
 name of the demography group, the number of individuals of that group in the
 compartment, and the model timestep, respectively.

@@ -133,7 +133,8 @@
 </div>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://colorspace.R-Forge.R-project.org/" class="external-link">colorspace</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org" class="external-link">scales</a></span><span class="op">)</span></span></code></pre></div>
@@ -293,12 +294,16 @@
 <span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Map</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_scenarios</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no_vax"</span>, <span class="st">"vax"</span><span class="op">)</span>,</span>
 <span>  f <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">sc</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">df_</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">[</span>, <span class="st">"demography_group"</span><span class="op">]</span>, by <span class="op">=</span> <span class="st">"demography_group"</span><span class="op">)</span></span>
+<span>    <span class="va">df_</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">demography_group</span><span class="op">)</span></span>
+<span></span>
 <span>    <span class="co"># get total deaths per group</span></span>
-<span>    <span class="va">df_</span><span class="op">$</span><span class="va">total_deaths</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="va">time</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">compartment</span> <span class="op">==</span> <span class="st">"dead"</span>, <span class="op">]</span><span class="op">$</span><span class="va">value</span></span>
+<span>    <span class="va">df_</span><span class="op">$</span><span class="va">total_deaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
+<span>      <span class="va">df</span>, <span class="va">time</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"dead"</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
 <span></span>
 <span>    <span class="co"># get total recoveries per group using helper function `epidemic_size()`</span></span>
-<span>    <span class="va">df_</span><span class="op">$</span><span class="va">total_recovered</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_size.html">epidemic_size</a></span><span class="op">(</span><span class="va">df</span>, deaths <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># do not count dead</span></span>
+<span>    <span class="co"># do not count dead</span></span>
+<span>    <span class="va">df_</span><span class="op">$</span><span class="va">total_recovered</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epidemic_size.html">epidemic_size</a></span><span class="op">(</span><span class="va">df</span>, include_deaths <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span>    <span class="co"># add scenario information</span></span>
 <span>    <span class="va">df_</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="va">sc</span></span>
@@ -309,12 +314,13 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># collect data</span></span>
-<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">)</span></span>
+<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># transform to long format</span></span>
-<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/melt.data.table.html" class="external-link">melt</a></span><span class="op">(</span></span>
+<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_scenarios</span>,</span>
-<span>  id.vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"demography_group"</span>, <span class="st">"scenario"</span><span class="op">)</span></span>
+<span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"total_deaths"</span>, <span class="st">"total_recovered"</span><span class="op">)</span>,</span>
+<span>  names_to <span class="op">=</span> <span class="st">"measure"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">)</span> <span class="op">+</span></span>
@@ -324,12 +330,12 @@
 <span>    colour <span class="op">=</span> <span class="st">"black"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span></span>
-<span>    <span class="op">~</span><span class="va">variable</span>,</span>
+<span>    facets <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">measure</span><span class="op">)</span>,</span>
 <span>    scales <span class="op">=</span> <span class="st">"free_y"</span>,</span>
 <span>    labeller <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labeller.html" class="external-link">labeller</a></span><span class="op">(</span></span>
-<span>      variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>      measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>        total_deaths <span class="op">=</span> <span class="st">"Total deaths"</span>,</span>
-<span>        total_recovered <span class="op">=</span> <span class="st">"Epidemic size (infections, not counting deaths)"</span></span>
+<span>        total_recovered <span class="op">=</span> <span class="st">"Epidemic size (infections without deaths)"</span></span>
 <span>      <span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
@@ -374,17 +380,21 @@
 <span><span class="va">peak_hospital_occupancy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">data_scenarios</span>, <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># get highest hospital occupancy</span></span>
 <span>  <span class="co"># first get total hospitalisations among vaccinated and un- or part-vacc.</span></span>
-<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/dcast.data.table.html" class="external-link">dcast</a></span><span class="op">(</span></span>
-<span>    <span class="va">df</span><span class="op">[</span><span class="va">compartment</span> <span class="op"><a href="https://Rdatatable.gitlab.io/data.table/reference/like.html" class="external-link">%like%</a></span> <span class="st">"hospitalised"</span>, <span class="op">]</span>,</span>
-<span>    <span class="va">time</span> <span class="op">+</span> <span class="va">demography_group</span> <span class="op">~</span> <span class="va">compartment</span>,</span>
-<span>    value.var <span class="op">=</span> <span class="st">"value"</span></span>
-<span>  <span class="op">)</span></span>
-<span>  <span class="va">df</span><span class="op">[</span>, <span class="va">total_hosp</span> <span class="op">:=</span> <span class="va">hospitalised</span> <span class="op">+</span> <span class="va">hospitalised_vaccinated</span><span class="op">]</span></span>
-<span></span>
-<span>  <span class="co"># sum all age groups</span></span>
-<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>total_hosp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">total_hosp</span><span class="op">)</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"time"</span><span class="op">]</span></span>
-<span></span>
-<span>  <span class="va">df</span><span class="op">[</span><span class="va">total_hosp</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">total_hosp</span><span class="op">)</span>, <span class="op">]</span><span class="op">$</span><span class="va">total_hosp</span></span>
+<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
+<span>    <span class="va">df</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span></span>
+<span>      pattern <span class="op">=</span> <span class="st">"hospitalised"</span>, x <span class="op">=</span> <span class="va">compartment</span>,</span>
+<span>      fixed <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="co"># summarise all hospitalised over time, aggregating away age groups</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
+<span>      total_hosp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span>, .by <span class="op">=</span> <span class="st">"time"</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="co"># filter for the time point with highest hospital occupancy</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">total_hosp</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">total_hosp</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="co"># get the value</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">total_hosp</span><span class="op">)</span></span>
 <span><span class="op">}</span>, FUN.VALUE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># set names for comprehensibility</span></span>
@@ -393,8 +403,8 @@
 <span><span class="co"># show peak hospital occupancy in a readable format</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">peak_hospital_occupancy</span>, big.mark <span class="op">=</span> <span class="st">","</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; No vaccination    Vaccination </span></span>
-<span><span class="co">#&gt;        "1,813"        "  149"</span></span></code></pre></div>
-</details><p>This example demonstrates that implementing vaccination can substantially reduce peak hospital occupancy (by about 92%) compared to a scenario in which no vaccines are deployed.</p>
+<span><span class="co">#&gt;        "1,813"        "    5"</span></span></code></pre></div>
+</details><p>This example demonstrates that implementing vaccination can substantially reduce peak hospital occupancy (by about 100%) compared to a scenario in which no vaccines are deployed.</p>
 </div>
 <div class="section level2">
 <h2 id="vacamole-ode-system-for-epidemics">Vacamole ODE system for {epidemics}<a class="anchor" aria-label="anchor" href="#vacamole-ode-system-for-epidemics"></a>

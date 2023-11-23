@@ -3,11 +3,11 @@
 developed at RIVM, the National Institute for Public Health and the
 Environment in the Netherlands.
 This model is aimed at estimating the impact of 'leaky' vaccination on an
-epidemic. See Details for more information."><title>Model leaky, two-dose vaccination in an epidemic using Vacamole — model_vacamole • epidemics</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Model leaky, two-dose vaccination in an epidemic using Vacamole — model_vacamole"><meta property="og:description" content="Simulate an epidemic using the Vacamole model for Covid-19
+epidemic. See Details and References for more information."><title>Model leaky, two-dose vaccination in an epidemic using Vacamole — model_vacamole • epidemics</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Model leaky, two-dose vaccination in an epidemic using Vacamole — model_vacamole"><meta property="og:description" content="Simulate an epidemic using the Vacamole model for Covid-19
 developed at RIVM, the National Institute for Public Health and the
 Environment in the Netherlands.
 This model is aimed at estimating the impact of 'leaky' vaccination on an
-epidemic. See Details for more information."><meta property="og:image" content="https://epiverse.github.io/epidemics/logo.svg"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+epidemic. See Details and References for more information."><meta property="og:image" content="https://epiverse.github.io/epidemics/logo.svg"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-XZ471458FQ"></script><script>
@@ -83,7 +83,7 @@ epidemic. See Details for more information."><meta property="og:image" content="
 developed at RIVM, the National Institute for Public Health and the
 Environment in the Netherlands.
 This model is aimed at estimating the impact of 'leaky' vaccination on an
-epidemic. See <strong>Details</strong> for more information.</p>
+epidemic. See <strong>Details</strong> and <strong>References</strong> for more information.</p>
     </div>
 
     <div class="section level2">
@@ -181,12 +181,12 @@ who have received two doses of the vaccine.</p></dd>
 
 
 <dt>intervention</dt>
-<dd><p>An <code>&lt;intervention&gt;</code> object representing an optional
-non-pharmaceutical intervention applied to the population during the
-epidemic. See <code><a href="intervention.html">intervention()</a></code> for details on constructing interventions with
-age-specific effects on social contacts, as well as for guidance on how to
-concatenate multiple overlapping interventions into a single <code>&lt;intervention&gt;</code>
-object.</p></dd>
+<dd><p>A named list of <code>&lt;intervention&gt;</code>s representing optional
+non-pharmaceutical or pharmaceutical interventions applied during the
+epidemic. Only a single intervention on social contacts of the class
+<code>&lt;contacts_intervention&gt;</code> is allowed as the named element "contacts".
+Multiple <code>&lt;rate_interventions&gt;</code> on the model parameters are allowed; see
+<strong>Details</strong> for the model parameters for which interventions are supported.</p></dd>
 
 
 <dt>vaccination</dt>
@@ -197,12 +197,11 @@ each dose. See <code><a href="vaccination.html">vaccination()</a></code>.</p></d
 
 
 <dt>time_dependence</dt>
-<dd><p>A named list where each name
-is a model parameter, and each element is a function with
-the first two arguments being the current simulation <code>time</code>, and <code>x</code>, a value
-that is dependent on <code>time</code> (<code>x</code> represents a model parameter).
-See <strong>Details</strong> for more information, as well as the vignette on time-
-dependence <code><a href="../articles/time_dependence.html">vignette("time_dependence", package = "epidemics")</a></code>.</p></dd>
+<dd><p>A named list of functions that modify model parameters
+as a function of model time. List element names must correspond to model
+parameter names. List elements must be functions of the form
+<code>function(time, x, ...)</code>, where <code>time</code> is the simulation <code>time</code> and <code>x</code>
+represents a model parameter. The order of function arguments is important.</p></dd>
 
 
 <dt>time_end</dt>
@@ -219,7 +218,7 @@ default value of 1 day.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A <code>data.table</code> with the columns "time", "compartment", "age_group",
+<p>A <code>data.frame</code> with the columns "time", "compartment", "age_group",
 "value". The compartments correspond to the compartments of the model
 chosen with <code>model</code>.
 The current default model has the compartments "susceptible",
@@ -239,15 +238,10 @@ such as 'hospitalised' or 'dead'.</p></li>
 
 
 <p><code>model_vacamole_cpp()</code> is a wrapper function for
-<code><a href="dot-model_vacamole_cpp.html">.model_vacamole_cpp()</a></code>, a C++ function that uses Boost <em>odeint</em> solvers
-to implement the RIVM Vacamole model.</p>
-<p><code>model_vacamole_r()</code> is a wrapper around the internal function
-<code><a href="dot-ode_model_vacamole.html">.ode_model_vacamole()</a></code>, which is passed to <code><a href="https://rdrr.io/pkg/deSolve/man/lsoda.html" class="external-link">deSolve::lsoda()</a></code>.</p>
-<p>Both models return equivalent results, but the C++ implementation is faster.</p>
-<p><code><a href="dot-model_vacamole_cpp.html">.model_vacamole_cpp()</a></code> and <code><a href="dot-ode_model_vacamole.html">.ode_model_vacamole()</a></code> both accept
-arguments that are created by processing the <code>population</code>, <code>infection</code>,
-<code>intervention</code> and <code>vaccination</code> arguments to the wrapper function into
-simpler forms.</p>
+<code><a href="dot-model_vacamole_cpp.html">.model_vacamole_cpp()</a></code>, an internal C++ function that uses Boost <em>odeint</em>
+solvers, while <code>model_vacamole_r()</code> is a wrapper around <code><a href="https://rdrr.io/pkg/deSolve/man/lsoda.html" class="external-link">deSolve::lsoda()</a></code>
+which takes the the internal function ``.ode_model_vacamole()`.
+Both models return equivalent results, but the C++ implementation is faster.</p>
 </div>
 
 <div class="section">
@@ -255,9 +249,7 @@ simpler forms.</p>
 
 
 <p>This model only allows for single, population-wide rates of
-transition between the 'susceptible' and 'exposed' compartments, between the
-'exposed' and 'infectious' compartments, and in the recovery rate.</p>
-<p>The default values are:</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.186, resulting from
+transitions between compartments. The default values are:</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.186, resulting from
 an \(R_0\) = 1.3 and an infectious period of 7 days.</p></li>
 <li><p>Infectiousness rate (\(\sigma\), <code>infectiousness_rate</code>): 0.5, assuming
 a pre-infectious period of 2 days.</p></li>
@@ -278,23 +270,6 @@ vaccinated.</p></li>
 assuming a 20% reduction in mortality for individuals who are doubly
 vaccinated.</p></li>
 </ul></div>
-
-<div class="section">
-<h3 id="rate-interventions-and-time-dependence">Rate interventions and time-dependence<a class="anchor" aria-label="anchor" href="#rate-interventions-and-time-dependence"></a></h3>
-
-
-<p>This model allows interventions on only the primary model rates:
-transmissibility, infectiousness rate, hospitalisation rate, mortality rate,
-and the recovery rate. Interventions on the secondary model rates calculated
-as vaccination-linked modifications of these rates cannot be targeted by rate
-interventions or time dependence.</p>
-<p>See the vignette on rate interventions to represent pharmaceutical
-interventions (<code><a href="../articles/rate_interventions.html">vignette("rate_interventions", package = "epidemics")</a></code>)
-and the vignette on time dependence
-(<code><a href="../articles/time_dependence.html">vignette("time_dependence", package = "epidemics")</a></code>)
-for worked out examples on how to
-implement these features.</p>
-</div>
 
     </div>
     <div class="section level2">
@@ -334,13 +309,13 @@ the Netherlands, summer 2021. Eurosurveillance, 27(44), 2101090.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># view some data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    time demography_group         compartment    value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:    0     demo_group_1         susceptible 66993300</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:    0     demo_group_1 vaccinated_one_dose        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:    0     demo_group_1 vaccinated_two_dose        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4:    0     demo_group_1             exposed        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5:    0     demo_group_1  exposed_vaccinated        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6:    0     demo_group_1          infectious     6700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   time demography_group         compartment    value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0     demo_group_1         susceptible 66993300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0     demo_group_1 vaccinated_one_dose        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0     demo_group_1 vaccinated_two_dose        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0     demo_group_1             exposed        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0     demo_group_1  exposed_vaccinated        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0     demo_group_1          infectious     6700</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

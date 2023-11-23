@@ -238,17 +238,33 @@ model_ebola_r <- function(population,
                           funeral_risk = 0.5,
                           intervention = NULL,
                           time_dependence = NULL, time_end = 100) {
-  # input checking for the ebola R model
-  assert_population(
-    population,
-    compartments = c(
-      "susceptible", "exposed", "infectious",
-      "hospitalised", "funeral", "removed"
-    )
+  # input checking for the ebola R model - there is no dedicated checker fn
+  # and input checking is performed here, making it different from other models
+  # define compartment names
+  compartments <- c(
+    "susceptible", "exposed", "infectious",
+    "hospitalised", "funeral", "removed"
   )
 
-  # TODO: check model parameters
+  assert_population(
+    population,
+    compartments = compartments
+  )
 
+  # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
+  checkmate::assert_count(erlang_subcompartments, positive = TRUE)
+  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
+  checkmate::assert_number(removal_rate, lower = 0, finite = TRUE)
+  # ratios are bounded 0 - 1
+  checkmate::assert_number(prop_community, lower = 0, upper = 1)
+  checkmate::assert_number(etu_risk, lower = 0, upper = 1)
+  checkmate::assert_number(funeral_risk, lower = 0, upper = 1)
+
+  # check time is a count
+  checkmate::assert_count(time_end, positive = TRUE)
+
+  # check all interventions are rate_interventions and target correct params
   if (!is.null(intervention)) {
     checkmate::assert_list(
       intervention,
@@ -256,25 +272,39 @@ model_ebola_r <- function(population,
       names = "unique", any.missing = FALSE,
       types = "rate_intervention"
     )
+    # check for model parameters targeted
+    checkmate::assert_names(
+      names(intervention),
+      subset.of = c(
+        "transmissibility", "infectiousness_rate", "removal_rate",
+        "prop_community", "etu_risk", "funeral_risk"
+      )
+    )
   }
   # check that time-dependence functions are passed as a list with at least the
   # arguments `time` and `x`
   # time must be before x, and they must be first two args
   if (!is.null(time_dependence)) {
-    checkmate::assert_list(time_dependence, "function")
+    checkmate::assert_list(
+      time_dependence,
+      types = "function",
+      names = "unique", any.missing = FALSE
+    )
     invisible(
       lapply(time_dependence, checkmate::check_function,
         args = c("time", "x"),
         ordered = TRUE
       )
     )
+    # check for model parameters targeted
+    checkmate::assert_names(
+      names(time_dependence),
+      subset.of = c(
+        "transmissibility", "infectiousness_rate", "removal_rate",
+        "prop_community", "etu_risk", "funeral_risk"
+      )
+    )
   }
-
-  # define compartment names
-  compartments <- c(
-    "susceptible", "exposed", "infectious",
-    "hospitalised", "funeral", "removed"
-  )
 
   # get initial conditions
   initial_state <- as.numeric(

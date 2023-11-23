@@ -115,13 +115,22 @@ model_default_cpp <- function(population,
   checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
 
   # all intervention sub-classes pass check for intervention superclass
-  checkmate::assert_list(intervention, types = "intervention", null.ok = TRUE)
+  # note intervention and time-dependence targets are checked in dedicated fn
+  checkmate::assert_list(
+    intervention,
+    types = "intervention", null.ok = TRUE,
+    any.missing = FALSE, names = "unique"
+  )
   checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
 
   # check that time-dependence functions are passed as a list with at least the
   # arguments `time` and `x`
   # time must be before x, and they must be first two args
-  checkmate::assert_list(time_dependence, "function", null.ok = TRUE)
+  checkmate::assert_list(
+    time_dependence, "function",
+    null.ok = TRUE,
+    any.missing = FALSE, names = "unique"
+  )
   # lapply on null returns an empty list
   invisible(
     lapply(time_dependence, checkmate::assert_function,
@@ -269,13 +278,22 @@ model_default_r <- function(population,
   checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
 
   # all intervention sub-classes pass check for intervention superclass
-  checkmate::assert_list(intervention, types = "intervention", null.ok = TRUE)
+  checkmate::assert_list(
+    intervention,
+    types = "intervention", null.ok = TRUE,
+    names = "unique", any.missing = FALSE
+  )
+  # specifics of vaccination doses are checked in dedicated function
   checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
 
   # check that time-dependence functions are passed as a list with at least the
   # arguments `time` and `x`
   # time must be before x, and they must be first two args
-  checkmate::assert_list(time_dependence, "function", null.ok = TRUE)
+  checkmate::assert_list(
+    time_dependence, "function",
+    null.ok = TRUE,
+    names = "unique", any.missing = FALSE
+  )
   # lapply on null returns an empty list
   invisible(
     lapply(time_dependence, checkmate::assert_function,

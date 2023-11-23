@@ -43,7 +43,13 @@ effectiveness of pharmaceutical and non-pharmaceutical interventions.
     modelling haemorrhagic fevers such as Ebola Virus Disease, including
     hospitalisation and hospital and funeral transmissions, adapted from
     Li et al. ([2019](#ref-li2019)) and Getz and Dougherty
-    ([2018](#ref-getz2018)).
+    ([2018](#ref-getz2018)),
+
+4.  An initial implementation of a compartmental model for diphtheria in
+    the context of internally displaced persons camps, including a
+    reporting rate, hospitalisation rate, and delays in entering and
+    leaving hospital, taken from Finger et al.
+    ([2019](#ref-finger2019)).
 
 More models are planned to be added in the near future. Please get in
 touch if you would like to see your model added to the *epidemics* model
@@ -97,7 +103,7 @@ dampen the spread of the infection.
 # load epidemics
 library(epidemics)
 library(ggplot2)
-library(data.table)
+library(dplyr)
 ```
 
 Prepare the social contact pattern for a population (here, the U.K
@@ -266,6 +272,16 @@ Bjørnstad, Ottar N., Katriona Shea, Martin Krzywinski, and Naomi Altman.
 
 ———. 2020b. “The SEIRS Model for Infectious Disease Dynamics.” *Nature
 Methods* 17 (6): 557–58. <https://doi.org/10.1038/s41592-020-0856-2>.
+
+</div>
+
+<div id="ref-finger2019" class="csl-entry">
+
+Finger, Flavio, Sebastian Funk, Kate White, M. Ruby Siddiqui, W. John
+Edmunds, and Adam J. Kucharski. 2019. “Real-Time Analysis of the
+Diphtheria Outbreak in Forcibly Displaced Myanmar Nationals in
+Bangladesh.” *BMC Medicine* 17 (March): 58.
+<https://doi.org/10.1186/s12916-019-1288-7>.
 
 </div>
 

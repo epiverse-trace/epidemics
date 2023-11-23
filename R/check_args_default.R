@@ -5,15 +5,11 @@
 #' @description Check and prepare the four main arguments to
 #' [model_default_cpp()] for use with [.model_default_cpp()].
 #'
-#' `.check_args_model_default()` adds an empty `<intervention>` and
-#' `<vaccination>` object if these are missing from the model arguments.
-#'
 #' @return
 #'
 #' `.check_args_model_default()` invisibly returns the model arguments passed
-#' in `mod_args`. If the model arguments did not previously contain elements
-#' named `intervention` and `vaccination`, these are added as dummy objects of
-#' the corresponding classes.
+#' in `mod_args`. Model functionalities, such as vaccination or interventions,
+#' passed as `NULL` are replaced with dummy values for internal functions.
 #'
 #' `.prepare_args_model_default()` returns a list of model arguments suitable
 #' for [.model_default_cpp()]. This is a named list consisting of:

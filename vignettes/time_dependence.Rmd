@@ -303,7 +303,7 @@ ggplot(data_vax_compare) +
   ) +
   geom_line(
     data = filter(
-      data_vax, compartment == "vaccinated" & demography_group == "40+"
+      data_vax, compartment == "vaccinated", demography_group == "40+"
     ),
     aes(time, value / 1e2),
     colour = "darkblue"

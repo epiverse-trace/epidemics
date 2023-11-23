@@ -230,7 +230,7 @@ data_scenarios <- Map(
 
     # get total deaths per group
     df_$total_deaths <- filter(
-      df, time == max(time) & compartment == "dead"
+      df, time == max(time), compartment == "dead"
     ) %>% pull(value)
 
     # get total recoveries per group using helper function `epidemic_size()`

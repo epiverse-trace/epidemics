@@ -32,7 +32,6 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(epidemics)
-library(dplyr)
 library(ggplot2)
 ```
 
@@ -508,4 +507,3 @@ plot_three_interventions
 In this scenario with school closures for 6 months as well as two phases of workplace closures for 2 months each, the epidemic would continue for over 600 days, or more than one and a half years, but the number of days with 10,000 or more daily cases would be reduced, and these typically occur once the interventions on workplaces are lifted --- this is similar to the previous example.
 
 In this scenario, the epidemic is expected to have a final size of around `r scales::comma(epidemic_size(data_combined, by_group = FALSE), accuracy = 1, scale = 1e-6, suffix = " million")` individuals infected overall --- this is lower than the previous examples.
-

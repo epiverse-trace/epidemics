@@ -39,6 +39,40 @@
     .Call(`_epidemics_model_default_cpp_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 
+#' @title Run an SEIHR ODE model for diphtheria using a Boost solver
+#'
+#' @description A compartmental model for diphtheria with parameters to help
+#' account for case reporting rate, delays in seeking hospitalisation, and the
+#' time spent in the hospitalised compartment.
+#'
+#' This function is intended to only be called internally from
+#' [model_diphtheria_cpp()].
+#'
+#' @param initial_state A matrix for the initial state of the compartments.
+#' @param transmissibility The transmission rate \eqn{\beta}.
+#' @param infectiousness_rate The rate of transition from exposed to infectious
+#' \eqn{\alpha}.
+#' @param recovery_rate The recovery rate \eqn{\gamma}.
+#' @param reporting_rate The recovery rate \eqn{\r}.
+#' @param prop_hosp The proportion of individuals hospitalised \eqn{\eta}.
+#' @param hosp_entry_rate The rate at which individuals are hospitalised,
+#' represented as 1 / time to hospitalisation \eqn{\tau_1}.
+#' @param hosp_exit_rate The rate at which individuals are discharged from
+#' hospital, represented as 1 / time to discharge \eqn{\tau_2}.
+#' @param rate_interventions A named list of `<rate_intervention>` objects.
+#' @param time_dependence A named list of functions for parameter time
+#' dependence.
+#' @param time_end The end time of the simulation.
+#' @param increment The time increment of the simulation.
+#' @return A two element list, where the first element is a list of matrices
+#' whose elements correspond to the numbers of individuals in each compartment
+#' as specified in the initial conditions matrix.
+#' The second list element is a vector of timesteps.
+#' @keywords internal
+.model_diphtheria_cpp <- function(initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_diphtheria_cpp_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, time_end, increment)
+}
+
 #' @title Run the RIVM Vacamole model
 #'
 #' @description Vacamole is a deterministic, compartmental epidemic model built

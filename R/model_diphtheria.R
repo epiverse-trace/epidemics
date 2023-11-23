@@ -35,7 +35,11 @@
 #' @param hosp_exit_rate A single number for the rate at which individuals are
 #' discharged from hospital to enter the 'recovered' compartment.
 #' This is calculated as 1 / time to discharge, denoted \eqn{\tau_2}.
-#' @param recovery_rate A single number for
+#' @param recovery_rate A single number for the recovery rate, denoted
+#' \eqn{\gamma}.
+#' @param prop_vaccinated A numeric vector of the same length as the number of
+#' demographic groups indicated the proportion of each group that is vaccinated.
+#' These individuals are not included in the model dynamics.
 #' @param intervention A named list of `<rate_intervention>` objects
 #' representing optional pharmaceutical or non-pharmaceutical interventions
 #' applied to the model parameters listed above.
@@ -57,8 +61,6 @@
 #' an internal C++ function that uses Boost _odeint_ solvers for an SEIHR model.
 #'
 #' ## Model parameters
-#'
-#' # TODO: Update default model parameters
 #'
 #' This model only allows for single, population-wide rates transitions between
 #' compartments. The default values are taken from Finger et al. (2019) where

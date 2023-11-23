@@ -45,8 +45,7 @@
 #' @details
 #' `.prepare_args_model_diphtheria()` prepares arguments for
 #' [.model_diphtheria_cpp()], which is the C++ function that solves the default
-#' ODE system using a Boost _odeint_ solver, and for [.ode_model_diphtheria()],
-#' which is passed to [deSolve::lsoda()] in [model_diphtheria_r()].
+#' ODE system using a Boost _odeint_ solver.
 #'
 #' `.prepare_args_model_diphtheria()` converts the arguments collected in
 #' `mod_args` into simpler structures such as lists and numeric or integer

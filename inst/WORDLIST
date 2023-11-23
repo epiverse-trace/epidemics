@@ -3,6 +3,7 @@ Altes
 Altman
 Analogs
 BH
+BMC
 Bjørnstad
 CMD
 COVID
@@ -22,7 +23,7 @@ Fonnesbeck
 Fuminari
 Getz
 Hoek
-Hạ
+IDP
 Jacco
 Jantien
 Katriona
@@ -32,7 +33,6 @@ Krzywinski
 LMIC
 Leeuwen
 Leung
-Lâm
 Melker
 Minh
 Miura
@@ -50,9 +50,11 @@ RTools
 Rcpp
 RcppEigen
 Runge
+SEIHR
 SEIR
 SEIRS
 Shou
+Siddiqui
 Susceptibles
 Tildesley
 VV

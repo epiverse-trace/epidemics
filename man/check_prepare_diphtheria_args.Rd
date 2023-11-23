@@ -46,8 +46,7 @@ Check and prepare the four main arguments to
 \details{
 \code{.prepare_args_model_diphtheria()} prepares arguments for
 \code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}}, which is the C++ function that solves the default
-ODE system using a Boost \emph{odeint} solver, and for \code{\link[=.ode_model_diphtheria]{.ode_model_diphtheria()}},
-which is passed to \code{\link[deSolve:lsoda]{deSolve::lsoda()}} in \code{\link[=model_diphtheria_r]{model_diphtheria_r()}}.
+ODE system using a Boost \emph{odeint} solver.
 
 \code{.prepare_args_model_diphtheria()} converts the arguments collected in
 \code{mod_args} into simpler structures such as lists and numeric or integer

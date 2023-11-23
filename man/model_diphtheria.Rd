@@ -37,7 +37,8 @@ move from the exposed to the infectious compartment. Often denoted as
 This value does not depend upon the number of infectious individuals in the
 population.}
 
-\item{recovery_rate}{A single number for}
+\item{recovery_rate}{A single number for the recovery rate, denoted
+\eqn{\gamma}.}
 
 \item{reporting_rate}{A single number for the proportion of infectious cases
 that is reported; this is a precursor to hospitalisation as only reported
@@ -53,6 +54,10 @@ This is calculated as 1 / time to hospitalisation, denoted \eqn{\tau_1}.}
 \item{hosp_exit_rate}{A single number for the rate at which individuals are
 discharged from hospital to enter the 'recovered' compartment.
 This is calculated as 1 / time to discharge, denoted \eqn{\tau_2}.}
+
+\item{prop_vaccinated}{A numeric vector of the same length as the number of
+demographic groups indicated the proportion of each group that is vaccinated.
+These individuals are not included in the model dynamics.}
 
 \item{intervention}{A named list of \verb{<rate_intervention>} objects
 representing optional pharmaceutical or non-pharmaceutical interventions
@@ -93,9 +98,7 @@ an internal C++ function that uses Boost \emph{odeint} solvers for an SEIHR mode
 }
 
 \subsection{Model parameters}{
-}
-}
-\section{TODO: Update default model parameters}{
+
 This model only allows for single, population-wide rates transitions between
 compartments. The default values are taken from Finger et al. (2019) where
 possible.
@@ -116,10 +119,10 @@ individuals are discharged from hospital after 5 days.
 infectious period following symptoms, of 3 days.
 }
 }
-
+}
 \references{
-Finger, F., Funk, S., White, K., Siddiqui, M. R., Edmunds, W. J., & Kucharski,
-A. J. (2019). Real-time analysis of the diphtheria outbreak in forcibly
-displaced Myanmar nationals in Bangladesh. BMC Medicine, 17, 58.
+Finger, F., Funk, S., White, K., Siddiqui, M. R., Edmunds, W. J., &
+Kucharski, A. J. (2019). Real-time analysis of the diphtheria outbreak in
+forcibly displaced Myanmar nationals in Bangladesh. BMC Medicine, 17, 58.
 \doi{10.1186/s12916-019-1288-7}.
 }

@@ -68,7 +68,7 @@ Here we show an example of using the default model in _{{ packagename }}_ to mod
 # load epidemics
 library(epidemics)
 library(ggplot2)
-library(data.table)
+library(dplyr)
 ```
 
 Prepare the social contact pattern for a population (here, the U.K population), divided into three age groups: 0 -- 19, 20 -- 39, and 40+.
@@ -155,7 +155,8 @@ output <- model_default_cpp(
 Visualise the development of individuals in the "infectious" compartment over model time. Note that these curves represent the number of individuals that are infectious, and not the number of newly infectious individuals.
 
 ```{r echo=FALSE}
-ggplot(output[compartment == "infectious", ]) +
+filter(output, compartment == "infectious") %>%
+  ggplot() +
   geom_vline(
     xintercept = c(close_schools[["time_begin"]], close_schools[["time_end"]]),
     colour = "red",

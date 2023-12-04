@@ -4,14 +4,23 @@ template:
     font_weight_base : 300
   package: epiversetheme
 articles:
-- title: Package vignettes
-  navbar: Package vignettes
+- title: Modelling interventions
+  navbar: Modelling interventions
   contents:
-  - modelling_vaccination
   - modelling_interventions
   - multiple_interventions
   - rate_interventions
+- title: Modelling vaccination
+  navbar: Modelling vaccination
+  contents:
+  - modelling_vaccination
+- title: Modelling seasonality
+  navbar: Modelling seasonality
+  contents:
   - time_dependence
+- title: Other modelling vignettes
+  navbar: Other modelling vignettes
+  contents:
   - parameter_uncertainty
   - finalsize_comparison
 - title: Guides to library models

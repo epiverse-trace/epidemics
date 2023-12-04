@@ -1,5 +1,5 @@
 ---
-title: "Using the RIVM Vacamole model of leaky vaccination and hospitalisations"
+title: "Modelling leaky vaccination and hospitalisation outcomes with Vacamole"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Using the RIVM Vacamole model of leaky vaccination and hospitalisations}
+  %\VignetteIndexEntry{Modelling leaky vaccination and hospitalisation outcomes with Vacamole}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

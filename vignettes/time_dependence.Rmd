@@ -1,5 +1,5 @@
 ---
-title: "Modelling time-dependence in epidemic parameters"
+title: "Modelling time-dependence and seasonality in epidemic parameters"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Modelling time-dependence in epidemic parameters}
+  %\VignetteIndexEntry{Modelling time-dependence and seasonality in epidemic parameters}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -34,8 +34,16 @@ library(ggplot2)
 ```
 
 ::: {.alert .alert-warning}
-**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first, and to browse through some of the other vignettes such as ["Modelling a non-pharmaceutical intervention"](modelling_interventions.html), or ["Modelling a vaccination campaign"](modelling_vaccination.html).
+**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first, and to browse through some of the other vignettes such as ["Modelling a non-pharmaceutical intervention"](modelling_interventions.html), or ["Modelling interventions on epidemic parameters"](rate_interventions.html).
 :::
+
+This vignette shows how to compose a model in which one or more epidemic parameters vary gradually over time.
+
+This functionality can be used to compose models that include a seasonal component, i.e., where the epidemic parameters vary due to variation in ambient conditions over the modelled time-period.
+
+This is intended to be different from [modelling interventions on epidemic parameters](rate_interventions.html) by allowing small, continuous changes to the epidemic parameters, while rate interventions are intended to be large step-changes as would be expected from policies such as mask mandates or the roll-out of therapeutics.
+
+The time-dependence functionality shown in this vignette is also expected to be a starting point for data-driven modelling in which epidemic parameters vary as a function of externally provided data, such as climate data.
 
 ## Setup and initial conditions
 

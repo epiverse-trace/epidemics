@@ -1,5 +1,5 @@
 ---
-title: "Modelling ebolavirus disease with a stochastic model"
+title: "Modelling responses to an Ebola virus epidemic"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Modelling ebolavirus disease with a stochastic model}
+  %\VignetteIndexEntry{Modelling responses to an Ebola virus epidemic}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -32,8 +32,8 @@ knitr::opts_chunk$set(
 **New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first!
 :::
 
-This vignette shows how to model an epidemic in which stochasticity is expected to play an important role.
-This is often the case with outbreaks of infections such as ebolavirus disease (EVD, or simply, ebola).
+This vignette shows how to model an epidemic in which **stochasticity is expected to play an important role.**
+This is often the case with outbreaks of infections such as Ebola virus disease (EVD, or simply, ebola).
 
 _epidemics_ includes a discrete time, stochastic compartmental model of ebola based on a consensus model presented in @li2019, with six compartments --- susceptible, exposed, infectious, hospitalised, funeral, and removed.
 The transitions between compartments are based on an Erlang model developed by @getz2018 for the 2014 West African EVD outbreak, with the code adapted from [Epirecipes](http://epirecip.es/epicookbook/chapters/erlang/r).
@@ -56,7 +56,7 @@ Prepare population data --- for this model, we only need the total population si
 
 We can create a `<population>` object with dummy values for the contact matrix, and assign the total size to the demography vector.
 
-We prepare a population with a total size of 14 million, corresponding to the population of Guinea, a West African country where the 2014 ebolavirus epidemic originated.
+We prepare a population with a total size of 14 million, corresponding to the population of Guinea, a West African country where the 2014 Ebola virus epidemic originated.
 
 We assume that 1 person is initially infected and infectious, and 10 other people have been exposed and is yet to become infectious.
 
@@ -663,7 +663,7 @@ filter(data_scenarios, compartment == "removed") %>%
   )
 ```
 
-## Details: Discrete-time ebola virus disease model
+## Details: Discrete-time Ebola virus disease model
 
 This model has compartments adopted from the consensus model for Ebola virus disease presented in Li et al. (2019), and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from Getz and Dougherty (2018); see **References**.
 
@@ -694,7 +694,7 @@ A proportion, `1.0 - prop_community`, of infectious individuals are transferred 
 The passage time of individuals in the hospitalised compartment is similar to that of individuals in the infectious compartment (i.e., infectious in the community), which means that an infectious individual with $N$ timesteps before exiting the infectious compartment will exit the hospitalised compartment in the same time.
 
 Hospitalised individuals can contribute to transmission of Ebola to susceptibles depending on the value of $p_\text{ETU}$, which is the probability (or proportion) of hospitalised cases contributing to the infection of susceptibles.
-This is interpreted as the relative risk of Ebolavirus treatment units (ETUs), with a range of 0.0 -- 1.0, where 0.0 indicates that hospitalisation prevents onward transmission entirely, while 1.0 indicates that hospitalisation does not reduce transmission at all.
+This is interpreted as the relative risk of Ebola virus treatment units (ETUs), with a range of 0.0 -- 1.0, where 0.0 indicates that hospitalisation prevents onward transmission entirely, while 1.0 indicates that hospitalisation does not reduce transmission at all.
 This is passed as the argument `etu_risk`.
 
 We assume that deaths in hospital lead to Ebola-safe funerals, and individuals exiting the hospitalised compartment move to the 'removed' compartment, which holds both recoveries and deaths.

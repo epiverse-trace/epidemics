@@ -1,5 +1,5 @@
 ---
-title: "When to use ODE models or analytical methods for epidemic size modelling"
+title: "Comparing mechanistic and analytical methods for epidemic size estimation"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{When to use ODE models or analytical methods for epidemic size modelling}
+  %\VignetteIndexEntry{Comparing mechanistic and analytical methods for epidemic size estimation}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

@@ -1,5 +1,5 @@
 ---
-title: "Modelling a vaccination campaign"
+title: "Modelling the effect of a vaccination campaign"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -7,7 +7,7 @@ output:
 pkgdown:
   as_is: true
 vignette: >
-  %\VignetteIndexEntry{Modelling a vaccination campaign}
+  %\VignetteIndexEntry{Modelling the effect of a vaccination campaign}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

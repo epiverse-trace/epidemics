@@ -1,5 +1,5 @@
 ---
-title: "Generating and modelling R uncertainty"
+title: "Generating and modelling parameter uncertainty"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Generating and modelling R uncertainty}
+  %\VignetteIndexEntry{Generating and modelling parameter uncertainty}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

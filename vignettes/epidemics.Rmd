@@ -1,5 +1,5 @@
 ---
-title: "Epidemic modelling with Rcpp"
+title: "Getting started with composable epidemic scenario modelling"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -7,7 +7,7 @@ output:
 pkgdown:
   as_is: true
 vignette: >
-  %\VignetteIndexEntry{Epidemic modelling with Rcpp}
+  %\VignetteIndexEntry{Getting started with composable epidemic scenario modelling}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

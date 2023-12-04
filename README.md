@@ -1,5 +1,5 @@
 
-# *epidemics*: A library of compartmental epidemic scenario models <img src="man/figures/logo.svg" align="right" width="130"/>
+# epidemics: A library of compartmental epidemic scenario models <img src="man/figures/logo.svg" align="right" width="130"/>
 
 <!-- badges: start -->
 

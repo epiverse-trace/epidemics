@@ -13,7 +13,6 @@ ECDC
 ETU
 ETUs
 EVD
-Ebolavirus
 Eigen
 EpiEstim
 Epirecipes
@@ -66,6 +65,7 @@ analogs
 cmdstanr
 codecov
 com
+composable
 dD
 dE
 dH
@@ -76,7 +76,6 @@ dV
 dfrac
 doi
 ebola
-ebolavirus
 epicookbook
 epiparameter
 epirecipes

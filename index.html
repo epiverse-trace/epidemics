@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A Library of Compartmental Epidemic Scenario Models">
 <meta property="og:description" content="Model epidemics using compartmental models.">
@@ -35,7 +35,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark"><div class="container">
     
     <a href="https://epiverse-trace.github.io/" class="external-link"><img src="logo_white.svg" id="logo" alt="Epiverse-TRACE"></a>
     <a class="navbar-brand me-2" href="index.html">epidemics</a>
@@ -105,7 +105,8 @@
 <ol style="list-style-type: decimal">
 <li><p>A deterministic SEIR-V model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates,</p></li>
 <li><p>The deterministic Vacamole model developed at <a href="https://www.rivm.nl/" class="external-link">RIVM, the Dutch Public Health Institute</a> for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination (<a href="#ref-ainslie2022">Ainslie et al. 2022</a>),</p></li>
-<li><p>A stochastic, discrete-time, compartmental SEIR model suitable for modelling haemorrhagic fevers such as Ebola Virus Disease, including hospitalisation and hospital and funeral transmissions, adapted from Li et al. (<a href="#ref-li2019">2019</a>) and Getz and Dougherty (<a href="#ref-getz2018">2018</a>).</p></li>
+<li><p>A stochastic, discrete-time, compartmental SEIR model suitable for modelling haemorrhagic fevers such as Ebola Virus Disease, including hospitalisation and hospital and funeral transmissions, adapted from Li et al. (<a href="#ref-li2019">2019</a>) and Getz and Dougherty (<a href="#ref-getz2018">2018</a>),</p></li>
+<li><p>An initial implementation of a compartmental model for diphtheria in the context of internally displaced persons camps, including a reporting rate, hospitalisation rate, and delays in entering and leaving hospital, taken from Finger et al. (<a href="#ref-finger2019">2019</a>).</p></li>
 </ol>
 <p>More models are planned to be added in the near future. Please get in touch if you would like to see your model added to the <em>epidemics</em> model library — we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.</p>
 <p><em>epidemics</em> relies on <a href="https://gitlab.com/libeigen/eigen" class="external-link">Eigen</a> via <a href="https://cran.r-project.org/web/packages/RcppEigen/index.html" class="external-link">{RcppEigen}</a>, and on <a href="https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html" class="external-link">Boost Odeint</a> via <a href="https://cran.r-project.org/web/packages/BH/index.html" class="external-link">{BH}</a>, and is developed at the <a href="https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases" class="external-link">Centre for the Mathematical Modelling of Infectious Diseases</a> at the London School of Hygiene and Tropical Medicine as part of the <a href="https://data.org/initiatives/epiverse/" class="external-link">Epiverse-TRACE initiative</a>.</p>
@@ -133,7 +134,7 @@
 <code class="sourceCode R"><span><span class="co"># load epidemics</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
 <p>Prepare the social contact pattern for a population (here, the U.K population), divided into three age groups: 0 – 19, 20 – 39, and 40+.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
@@ -246,6 +247,9 @@ Bjørnstad, Ottar N., Katriona Shea, Martin Krzywinski, and Naomi Altman. 2020a.
 </div>
 <div id="ref-bjornstad2020" class="csl-entry">
 ———. 2020b. “The SEIRS Model for Infectious Disease Dynamics.” <em>Nature Methods</em> 17 (6): 557–58. <a href="https://doi.org/10.1038/s41592-020-0856-2" class="external-link uri">https://doi.org/10.1038/s41592-020-0856-2</a>.
+</div>
+<div id="ref-finger2019" class="csl-entry">
+Finger, Flavio, Sebastian Funk, Kate White, M. Ruby Siddiqui, W. John Edmunds, and Adam J. Kucharski. 2019. “Real-Time Analysis of the Diphtheria Outbreak in Forcibly Displaced Myanmar Nationals in Bangladesh.” <em>BMC Medicine</em> 17 (March): 58. <a href="https://doi.org/10.1186/s12916-019-1288-7" class="external-link uri">https://doi.org/10.1186/s12916-019-1288-7</a>.
 </div>
 <div id="ref-getz2018" class="csl-entry">
 Getz, Wayne M., and Eric R. Dougherty. 2018. “Discrete Stochastic Analogs of Erlang Epidemic Models.” <em>Journal of Biological Dynamics</em> 12 (1): 16–38. <a href="https://doi.org/10.1080/17513758.2017.1401677" class="external-link uri">https://doi.org/10.1080/17513758.2017.1401677</a>.

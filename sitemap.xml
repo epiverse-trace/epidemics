@@ -70,6 +70,9 @@
     <loc>https://epiverse.github.io/epidemics/reference/check_prepare_default_args.html</loc>
   </url>
   <url>
+    <loc>https://epiverse.github.io/epidemics/reference/check_prepare_diphtheria_args.html</loc>
+  </url>
+  <url>
     <loc>https://epiverse.github.io/epidemics/reference/check_prepare_vacamole_args.html</loc>
   </url>
   <url>
@@ -80,6 +83,9 @@
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/dot-model_default_cpp.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/reference/dot-model_diphtheria_cpp.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/dot-model_vacamole_cpp.html</loc>
@@ -113,6 +119,9 @@
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/model_default.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/reference/model_diphtheria.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/model_ebola.html</loc>

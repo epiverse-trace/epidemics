@@ -1,5 +1,5 @@
 ---
-title: "Modelling time-dependence and seasonality in epidemic parameters"
+title: "Modelling time-dependence and seasonality in transmission dynamics"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Modelling time-dependence and seasonality in epidemic parameters}
+  %\VignetteIndexEntry{Modelling time-dependence and seasonality in transmission dynamics}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

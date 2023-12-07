@@ -1,5 +1,5 @@
 ---
-title: "Modelling interventions on epidemic parameters"
+title: "Modelling other interventions that change transmission rates"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -7,7 +7,7 @@ output:
 pkgdown:
   as_is: true
 vignette: >
-  %\VignetteIndexEntry{Modelling interventions on epidemic parameters}
+  %\VignetteIndexEntry{Modelling other interventions that change transmission rates}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

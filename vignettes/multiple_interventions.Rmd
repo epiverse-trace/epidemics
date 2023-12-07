@@ -1,5 +1,5 @@
 ---
-title: "Modelling overlapping and sequential interventions on social contacts"
+title: "Modelling overlapping and sequential interventions targeting social contacts"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -7,7 +7,7 @@ output:
 pkgdown:
   as_is: true
 vignette: >
-  %\VignetteIndexEntry{Modelling overlapping and sequential interventions on social contacts}
+  %\VignetteIndexEntry{Modelling overlapping and sequential interventions targeting social contacts}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 ```
 
 ::: {.alert .alert-warning}
-**New to _epidemics_, or to modelling non-pharmaceutical interventions?** It may help to read the ["Get started"](epidemics.html) and ["Modelling a non-pharmaceutical intervention on social contacts"](modelling_interventions.html) vignettes first!
+**New to _epidemics_, or to modelling non-pharmaceutical interventions?** It may help to read the ["Get started"](epidemics.html) and ["Modelling a non-pharmaceutical intervention targeting social contacts"](modelling_interventions.html) vignettes first!
 :::
 
 ```{r setup}

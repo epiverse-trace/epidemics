@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="epidemics">
-<title>Modelling ebolavirus disease with a stochastic model • epidemics</title>
+<title>Modelling responses to a stochastic Ebola virus epidemic • epidemics</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modelling ebolavirus disease with a stochastic model">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modelling responses to a stochastic Ebola virus epidemic">
 <meta property="og:description" content="epidemics">
 <meta property="og:image" content="https://epiverse.github.io/epidemics/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -58,18 +58,24 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <h6 class="dropdown-header" data-toc-skip>Package vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling a vaccination campaign</a>
-    <a class="dropdown-item" href="../articles/modelling_interventions.html">Modelling interventions</a>
-    <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling multiple overlapping non-pharmaceutical interventions</a>
-    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling interventions on model rates</a>
-    <a class="dropdown-item" href="../articles/time_dependence.html">Modelling time-dependence in epidemic parameters</a>
-    <a class="dropdown-item" href="../articles/parameter_uncertainty.html">Generating and modelling R uncertainty</a>
-    <a class="dropdown-item" href="../articles/finalsize_comparison.html">When to use ODE models or analytical methods for epidemic size modelling</a>
+    <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
+    <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
+    <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
+    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
+    <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
+    <a class="dropdown-item" href="../articles/time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
+    <a class="dropdown-item" href="../articles/parameter_uncertainty.html">Generating and modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/finalsize_comparison.html">Comparing simulation-based and direct analytical methods for epidemic size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
-    <a class="dropdown-item" href="../articles/vacamole.html">Using the RIVM Vacamole model of leaky vaccination and hospitalisations</a>
-    <a class="dropdown-item" href="../articles/ebola_model.html">Modelling ebolavirus disease with a stochastic model</a>
+    <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
+    <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
   </div>
 </li>
@@ -95,7 +101,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.svg" class="logo" alt=""><h1>Modelling ebolavirus disease with a stochastic model</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Modelling responses to a stochastic Ebola virus epidemic</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/epiverse-trace/epidemics/blob/HEAD/vignettes/ebola_model.Rmd" class="external-link"><code>vignettes/ebola_model.Rmd</code></a></small>
@@ -107,8 +113,8 @@
 <div class="alert alert-warning">
 <p><strong>New to <em>epidemics</em>?</strong> It may help to read the <a href="epidemics.html">“Get started”</a> vignette first!</p>
 </div>
-<p>This vignette shows how to model an epidemic in which stochasticity is expected to play an important role.
-This is often the case with outbreaks of infections such as ebolavirus disease (EVD, or simply, ebola).</p>
+<p>This vignette shows how to model an epidemic in which <strong>stochasticity is expected to play an important role.</strong>
+This is often the case with outbreaks of infections such as Ebola virus disease (EVD, or simply, ebola).</p>
 <p><em>epidemics</em> includes a discrete time, stochastic compartmental model of ebola based on a consensus model presented in <span class="citation">Li et al. (<a href="#ref-li2019" role="doc-biblioref">2019</a>)</span>, with six compartments — susceptible, exposed, infectious, hospitalised, funeral, and removed.
 The transitions between compartments are based on an Erlang model developed by <span class="citation">Getz and Dougherty (<a href="#ref-getz2018" role="doc-biblioref">2018</a>)</span> for the 2014 West African EVD outbreak, with the code adapted from <a href="http://epirecip.es/epicookbook/chapters/erlang/r" class="external-link">Epirecipes</a>.</p>
 <p>The model does not include demographic variation in contacts, as ebola spreads primarily among contacts caring for infected individuals, making age or demographic structure less important.</p>
@@ -124,7 +130,7 @@ The only rate in the model that can be influenced by an intervention is the tran
 </h2>
 <p>Prepare population data — for this model, we only need the total population size and the initial conditions.</p>
 <p>We can create a <code>&lt;population&gt;</code> object with dummy values for the contact matrix, and assign the total size to the demography vector.</p>
-<p>We prepare a population with a total size of 14 million, corresponding to the population of Guinea, a West African country where the 2014 ebolavirus epidemic originated.</p>
+<p>We prepare a population with a total size of 14 million, corresponding to the population of Guinea, a West African country where the 2014 Ebola virus epidemic originated.</p>
 <p>We assume that 1 person is initially infected and infectious, and 10 other people have been exposed and is yet to become infectious.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">population_size</span> <span class="op">&lt;-</span> <span class="fl">14e6</span></span>
@@ -739,7 +745,7 @@ Figure 9: Effect of implementing multiple simultaneous interventions to reduce t
 </div>
 </div>
 <div class="section level2">
-<h2 id="details-discrete-time-ebola-virus-disease-model">Details: Discrete-time ebola virus disease model<a class="anchor" aria-label="anchor" href="#details-discrete-time-ebola-virus-disease-model"></a>
+<h2 id="details-discrete-time-ebola-virus-disease-model">Details: Discrete-time Ebola virus disease model<a class="anchor" aria-label="anchor" href="#details-discrete-time-ebola-virus-disease-model"></a>
 </h2>
 <p>This model has compartments adopted from the consensus model for Ebola virus disease presented in Li et al. (2019), and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from Getz and Dougherty (2018); see <strong>References</strong>.</p>
 <p>The R code for this model is adapted from code by Ha Minh Lam and initially made available on <em>Epirecipes</em> (<a href="https://github.com/epirecipes/epicookbook" class="external-link uri">https://github.com/epirecipes/epicookbook</a>) under the MIT license.</p>
@@ -761,7 +767,7 @@ This model simplifies these transitions to only two pathways:</p>
 <p>A proportion, <code>1.0 - prop_community</code>, of infectious individuals are transferred to the hospitalised compartment in each timestep, This compartment represents Ebola Treatment Units (ETUs), and individuals in the hospitalised compartment are considered to be infectious but no longer in the community.</p>
 <p>The passage time of individuals in the hospitalised compartment is similar to that of individuals in the infectious compartment (i.e., infectious in the community), which means that an infectious individual with <span class="math inline">\(N\)</span> timesteps before exiting the infectious compartment will exit the hospitalised compartment in the same time.</p>
 <p>Hospitalised individuals can contribute to transmission of Ebola to susceptibles depending on the value of <span class="math inline">\(p_\text{ETU}\)</span>, which is the probability (or proportion) of hospitalised cases contributing to the infection of susceptibles.
-This is interpreted as the relative risk of Ebolavirus treatment units (ETUs), with a range of 0.0 – 1.0, where 0.0 indicates that hospitalisation prevents onward transmission entirely, while 1.0 indicates that hospitalisation does not reduce transmission at all.
+This is interpreted as the relative risk of Ebola virus treatment units (ETUs), with a range of 0.0 – 1.0, where 0.0 indicates that hospitalisation prevents onward transmission entirely, while 1.0 indicates that hospitalisation does not reduce transmission at all.
 This is passed as the argument <code>etu_risk</code>.</p>
 <p>We assume that deaths in hospital lead to Ebola-safe funerals, and individuals exiting the hospitalised compartment move to the ‘removed’ compartment, which holds both recoveries and deaths.</p>
 <p>We assume that infectious individuals who are not hospitalised die, and that deaths outside of hospital lead to funerals that are potentially not Ebola-safe, and the contribution of funerals to Ebola transmission is determined by <span class="math inline">\(p_\text{funeral}\)</span>, which can be interpreted as the relative risk of funerals, and is passed as the <code>funeral_risk</code> argument.

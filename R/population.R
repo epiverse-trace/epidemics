@@ -20,15 +20,15 @@ new_population <- function(name = NA_character_,
                            demography_vector = numeric(),
                            initial_conditions = matrix()) {
   # create and return population class
-  structure(
-    list(
-      name = name,
-      contact_matrix = contact_matrix,
-      demography_vector = demography_vector,
-      initial_conditions = initial_conditions
-    ),
-    class = "population"
+  x <- list(
+    name = name,
+    contact_matrix = contact_matrix,
+    demography_vector = demography_vector,
+    initial_conditions = initial_conditions
   )
+  class(x) <- "population"
+
+  x
 }
 
 #' Construct a new population for an epidemic model

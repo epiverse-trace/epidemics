@@ -18,15 +18,15 @@ new_vaccination <- function(name = NA_character_,
                             time_end,
                             nu) {
   # create and return vaccination class
-  structure(
-    list(
-      name = name,
-      time_begin = time_begin,
-      time_end = time_end,
-      nu = nu
-    ),
-    class = "vaccination"
+  x <- list(
+    name = name,
+    time_begin = time_begin,
+    time_end = time_end,
+    nu = nu
   )
+  class(x) <- "vaccination"
+
+  x
 }
 
 #' Construct a new vaccination regime for an epidemic model

@@ -33,16 +33,16 @@ new_intervention <- function(name = NA_character_,
   # argument class is empty to force interventions to have a sub-class
 
   # create and return intervention class
-  structure(
-    list(
-      name = name,
-      time_begin = time_begin,
-      time_end = time_end,
-      reduction = reduction,
-      ...
-    ),
-    class = c(class, "intervention")
+  x <- list(
+    name = name,
+    time_begin = time_begin,
+    time_end = time_end,
+    reduction = reduction,
+    ...
   )
+  class(x) <- c(class, "intervention")
+
+  x
 }
 
 #' Constructor for a new <contacts_intervention>

@@ -19,7 +19,7 @@ knitr::opts_chunk[["set"]](
 # {{ packagename }}: A library of compartmental epidemic scenario models <img src="man/figures/logo.svg" align="right" width="130"/>
 
 <!-- badges: start -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit/)
 [![R-CMD-check](https://github.com/{{ gh_repo }}/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/{{ gh_repo }}/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/{{ gh_repo }}/branch/main/graph/badge.svg)](https://app.codecov.io/gh/{{ gh_repo }}?branch=main)
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
@@ -43,7 +43,7 @@ _{{ packagename }}_ currently provides three models:
 More models are planned to be added in the near future.
 Please get in touch if you would like to see your model added to the _{{ packagename }}_ model library --- we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.
 
-_{{ packagename }}_ relies on [Eigen](https://gitlab.com/libeigen/eigen) via [{RcppEigen}](https://cran.r-project.org/web/packages/RcppEigen/index.html), and on [Boost Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html) via [{BH}](https://cran.r-project.org/web/packages/BH/index.html), and is developed at the [Centre for the Mathematical Modelling of Infectious Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases) at the London School of Hygiene and Tropical Medicine as part of the [Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
+_{{ packagename }}_ relies on [Eigen](https://gitlab.com/libeigen/eigen) via [{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on [Boost Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html) via [{BH}](https://cran.r-project.org/package=BH), and is developed at the [Centre for the Mathematical Modelling of Infectious Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases) at the London School of Hygiene and Tropical Medicine as part of the [Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
 
 ## Installation
 
@@ -154,7 +154,7 @@ output <- model_default_cpp(
 
 Visualise the development of individuals in the "infectious" compartment over model time. Note that these curves represent the number of individuals that are infectious, and not the number of newly infectious individuals.
 
-```{r echo=FALSE}
+```{r fig-modelout, echo=FALSE}
 filter(output, compartment == "infectious") %>%
   ggplot() +
   geom_vline(
@@ -195,6 +195,15 @@ filter(output, compartment == "infectious") %>%
 ## Package vignettes
 
 More details on how to use _{{ packagename }}_ can be found in the [online documentation as package vignettes](https://epiverse-trace.github.io/{{ packagename }}/), under "Articles".
+
+## Related projects
+
+_epidemics_ aims to be a library of published epidemiological models, and the following projects may be useful for building your own models:
+
+- The [R package _finalsize_](https://cran.r-project.org/package=finalsize) is also developed by Epiverse-TRACE and helps to calculate the final size of an epidemic in a heterogeneous population, and is a quicker option for estimates of total infections when the temporal dynamics are less important;
+- The [Epirecipes project](http://epirecip.es/epicookbook/) is a cookbook-style guide that focuses on different ways to implement epidemic models in R and other languages;
+- The [R package _odin_](https://cran.r-project.org/package=odin) generates systems of ordinary differential equations (ODE) and integrate them, using a domain specific language (DSL), and is widely used to translate compartmental models from R to C code for performance gains;
+- Many R packages provide modelling options, and these can be found on the [CRAN Epidemiology Task View](https://cran.r-project.org/view=Epidemiology) under the section "Infectious disease modelling".
 
 ## Help
 

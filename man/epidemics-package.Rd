@@ -6,7 +6,7 @@
 \alias{epidemics-package}
 \title{epidemics: A Library of Compartmental Epidemic Scenario Models}
 \description{
-Model epidemics using compartmental models.
+A library of compartmental epidemic models taken from the published literature, and classes to represent populations with heterogeneous characteristics, public health response measures including non-pharmaceutical interventions on social contacts, non-pharmaceutical and pharmaceutical interventions that affect disease transmissibility, vaccination regimes, and disease seasonality, which can be combined to compose epidemic scenarios.
 }
 \seealso{
 Useful links:

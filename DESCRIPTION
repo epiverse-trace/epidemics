@@ -1,97 +1,68 @@
 Package: epidemics
 Title: A Library of Compartmental Epidemic Scenario Models
 Version: 0.0.0.9000
-Authors@R: 
-    c(
-        person(
-            given = "Pratik",
-            family = "Gupte",
-            role = c("aut", "cre", "cph"),
-            email = "pratik.gupte@lshtm.ac.uk",
-            comment = c(ORCID = "https://orcid.org/0000-0001-5294-7819")
-        ),
-        person(
-            given = "Rosalind",
-            family = "Eggo",
-            role = c("aut", "cph"),
-            email = "rosalind.eggo@lshtm.ac.uk",
-            comment = c(ORCID = "https://orcid.org/0000-0002-0362-6717")
-        ),
-        person(
-            given = "Edwin",
-            family = "Van Leeuwen",
-            role = c("aut", "cph"),
-            email = "edwin.vanleeuwen@ukhsa.gov.uk",
-            comment = c(ORCID = "https://orcid.org/0000-0002-2383-5305")
-        ),
-        person(
-            given = "Adam",
-            family = "Kucharski",
-            role = c("ctb", "rev"),
-            email = "adam.kucharski@lshtm.ac.uk",
-            comment = c(ORCID = "https://orcid.org/0000-0001-8814-9421")
-        ),
-        person(
-            given = "Tim",
-            family = "Taylor",
-            role = c("ctb", "rev"),
-            email = "tim.taylor@hiddenelephants.co.uk",
-            comment = c(ORCID = "https://orcid.org/0000-0002-8587-7113")
-        ),
-        person(
-            given = "Hugo",
-            family = "Gruson",
-            role = c("rev"),
-            email = "hugo.gruson@data.org",
-            comment = c(ORCID = "https://orcid.org/0000-0002-4094-1476")
-        ),
-        person(
-            given = "Joshua W.",
-            family = "Lambert",
-            role = c("rev"),
-            email = "joshua.lambert@lshtm.ac.uk",
-            comment = c(ORCID = "https://orcid.org/0000-0001-5218-3046")
-        )
-    )
-Description: Model epidemics using compartmental models.
+Authors@R: c(
+    person("Pratik", "Gupte", , "pratik.gupte@lshtm.ac.uk", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "https://orcid.org/0000-0001-5294-7819")),
+    person("Rosalind", "Eggo", , "rosalind.eggo@lshtm.ac.uk", role = c("aut", "cph"),
+           comment = c(ORCID = "https://orcid.org/0000-0002-0362-6717")),
+    person("Edwin", "Van Leeuwen", , "edwin.vanleeuwen@ukhsa.gov.uk", role = c("aut", "cph"),
+           comment = c(ORCID = "https://orcid.org/0000-0002-2383-5305")),
+    person("Adam", "Kucharski", , "adam.kucharski@lshtm.ac.uk", role = c("ctb", "rev"),
+           comment = c(ORCID = "https://orcid.org/0000-0001-8814-9421")),
+    person("Tim", "Taylor", , "tim.taylor@hiddenelephants.co.uk", role = c("ctb", "rev"),
+           comment = c(ORCID = "https://orcid.org/0000-0002-8587-7113")),
+    person("Hugo", "Gruson", , "hugo.gruson@data.org", role = "rev",
+           comment = c(ORCID = "https://orcid.org/0000-0002-4094-1476")),
+    person("Joshua W.", "Lambert", , "joshua.lambert@lshtm.ac.uk", role = "rev",
+           comment = c(ORCID = "https://orcid.org/0000-0001-5218-3046"))
+  )
+Description: A library of compartmental epidemic models taken from the
+    published literature, and classes to represent populations with
+    heterogeneous characteristics, public health response measures
+    including non-pharmaceutical interventions on social contacts,
+    non-pharmaceutical and pharmaceutical interventions that affect
+    disease transmissibility, vaccination regimes, and disease
+    seasonality, which can be combined to compose epidemic scenarios.
 License: MIT + file LICENSE
-URL: https://github.com/epiverse-trace/epidemics, https://epiverse-trace.github.io/epidemics/
+URL: https://github.com/epiverse-trace/epidemics,
+    https://epiverse-trace.github.io/epidemics/
 BugReports: https://github.com/epiverse-trace/epidemics/issues
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
 Imports:
     checkmate,
+    cli,
+    data.table,
+    deSolve,
+    glue,
     Rcpp,
     RcppEigen,
-    data.table,
-    glue,
-    utils,
     stats,
-    deSolve,
-    cli
+    utils
 Suggests: 
+    bench,
     bookdown,
     colorspace,
+    dplyr,
+    EpiEstim,
+    finalsize,
     ggplot2,
     knitr,
-    dplyr,
-    tidyr,
-    tibble,
-    finalsize,
-    bench,
     rmarkdown,
     scales,
     socialmixr,
     spelling,
     testthat (>= 3.0.0),
-    EpiEstim
-Config/testthat/edition: 3
-VignetteBuilder: knitr
+    tibble,
+    tidyr
 LinkingTo: 
-    Rcpp,
     BH,
+    Rcpp,
     RcppEigen
+VignetteBuilder: 
+    knitr
+Config/Needs/website: epiverse-trace/epiversetheme
+Config/testthat/edition: 3
+Encoding: UTF-8
 Language: en-GB
-Config/Needs/website:
-    epiverse-trace/epiversetheme
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3

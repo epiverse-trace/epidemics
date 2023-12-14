@@ -16,6 +16,7 @@ on:
       - 'inst/**'
       - 'DESCRIPTION'
       - '.github/workflows/test-coverage.yaml'
+  merge_group:
   pull_request:
     paths:
       - 'R/**'

@@ -9,7 +9,12 @@ type: software
 license: MIT
 title: 'epidemics: A Library of Compartmental Epidemic Scenario Models'
 version: 0.0.0.9000
-abstract: Model epidemics using compartmental models.
+abstract: A library of compartmental epidemic models taken from the published literature,
+  and classes to represent populations with heterogeneous characteristics, public
+  health response measures including non-pharmaceutical interventions on social contacts,
+  non-pharmaceutical and pharmaceutical interventions that affect disease transmissibility,
+  vaccination regimes, and disease seasonality, which can be combined to compose epidemic
+  scenarios.
 authors:
 - family-names: Gupte
   given-names: Pratik
@@ -59,6 +64,70 @@ references:
     orcid: https://orcid.org/0000-0001-9754-0393
   year: '2023'
 - type: software
+  title: cli
+  abstract: 'cli: Helpers for Developing Command Line Interfaces'
+  notes: Imports
+  url: https://cli.r-lib.org
+  repository: https://CRAN.R-project.org/package=cli
+  authors:
+  - family-names: Csárdi
+    given-names: Gábor
+    email: csardi.gabor@gmail.com
+  year: '2023'
+- type: software
+  title: data.table
+  abstract: 'data.table: Extension of `data.frame`'
+  notes: Imports
+  url: https://r-datatable.com
+  repository: https://CRAN.R-project.org/package=data.table
+  authors:
+  - family-names: Barrett
+    given-names: Tyson
+    email: t.barrett88@gmail.com
+  - family-names: Dowle
+    given-names: Matt
+    email: mattjdowle@gmail.com
+  - family-names: Srinivasan
+    given-names: Arun
+    email: asrini@pm.me
+  year: '2023'
+- type: software
+  title: deSolve
+  abstract: 'deSolve: Solvers for Initial Value Problems of Differential Equations
+    (''ODE'', ''DAE'', ''DDE'')'
+  notes: Imports
+  url: http://desolve.r-forge.r-project.org/
+  repository: https://CRAN.R-project.org/package=deSolve
+  authors:
+  - family-names: Soetaert
+    given-names: Karline
+    email: karline.soetaert@nioz.nl
+    orcid: https://orcid.org/0000-0003-4603-7100
+  - family-names: Petzoldt
+    given-names: Thomas
+    email: thomas.petzoldt@tu-dresden.de
+    orcid: https://orcid.org/0000-0002-4951-6468
+  - family-names: Setzer
+    given-names: R. Woodrow
+    email: setzer.woodrow@epa.gov
+    orcid: https://orcid.org/0000-0002-6709-9186
+  year: '2023'
+- type: software
+  title: glue
+  abstract: 'glue: Interpreted String Literals'
+  notes: Imports
+  url: https://glue.tidyverse.org/
+  repository: https://CRAN.R-project.org/package=glue
+  authors:
+  - family-names: Hester
+    given-names: Jim
+    orcid: https://orcid.org/0000-0002-2739-7082
+  - family-names: Bryan
+    given-names: Jennifer
+    email: jenny@rstudio.com
+    orcid: https://orcid.org/0000-0002-6983-2759
+  year: '2023'
+- type: software
   title: Rcpp
   abstract: 'Rcpp: Seamless R and C++ Integration'
   notes: Imports
@@ -102,34 +171,16 @@ references:
     given-names: Yixuan Qiu; the authors of Eigen for the included version of
   year: '2023'
 - type: software
-  title: data.table
-  abstract: 'data.table: Extension of `data.frame`'
+  title: stats
+  abstract: 'R: A Language and Environment for Statistical Computing'
   notes: Imports
-  url: https://r-datatable.com
-  repository: https://CRAN.R-project.org/package=data.table
   authors:
-  - family-names: Dowle
-    given-names: Matt
-    email: mattjdowle@gmail.com
-  - family-names: Srinivasan
-    given-names: Arun
-    email: asrini@pm.me
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
   year: '2023'
-- type: software
-  title: glue
-  abstract: 'glue: Interpreted String Literals'
-  notes: Imports
-  url: https://glue.tidyverse.org/
-  repository: https://CRAN.R-project.org/package=glue
-  authors:
-  - family-names: Hester
-    given-names: Jim
-    orcid: https://orcid.org/0000-0002-2739-7082
-  - family-names: Bryan
-    given-names: Jennifer
-    email: jenny@rstudio.com
-    orcid: https://orcid.org/0000-0002-6983-2759
-  year: '2023'
+  institution:
+    name: R Foundation for Statistical Computing
 - type: software
   title: utils
   abstract: 'R: A Language and Environment for Statistical Computing'
@@ -142,47 +193,17 @@ references:
   institution:
     name: R Foundation for Statistical Computing
 - type: software
-  title: stats
-  abstract: 'R: A Language and Environment for Statistical Computing'
-  notes: Imports
+  title: bench
+  abstract: 'bench: High Precision Timing of R Expressions'
+  notes: Suggests
+  url: https://bench.r-lib.org/
+  repository: https://CRAN.R-project.org/package=bench
   authors:
-  - name: R Core Team
-  location:
-    name: Vienna, Austria
-  year: '2023'
-  institution:
-    name: R Foundation for Statistical Computing
-- type: software
-  title: deSolve
-  abstract: 'deSolve: Solvers for Initial Value Problems of Differential Equations
-    (''ODE'', ''DAE'', ''DDE'')'
-  notes: Imports
-  url: http://desolve.r-forge.r-project.org/
-  repository: https://CRAN.R-project.org/package=deSolve
-  authors:
-  - family-names: Soetaert
-    given-names: Karline
-    email: karline.soetaert@nioz.nl
-    orcid: https://orcid.org/0000-0003-4603-7100
-  - family-names: Petzoldt
-    given-names: Thomas
-    email: thomas.petzoldt@tu-dresden.de
-    orcid: https://orcid.org/0000-0002-4951-6468
-  - family-names: Setzer
-    given-names: R. Woodrow
-    email: setzer.woodrow@epa.gov
-    orcid: https://orcid.org/0000-0002-6709-9186
-  year: '2023'
-- type: software
-  title: cli
-  abstract: 'cli: Helpers for Developing Command Line Interfaces'
-  notes: Imports
-  url: https://cli.r-lib.org
-  repository: https://CRAN.R-project.org/package=cli
-  authors:
-  - family-names: Csárdi
-    given-names: Gábor
-    email: csardi.gabor@gmail.com
+  - family-names: Hester
+    given-names: Jim
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
   year: '2023'
 - type: software
   title: bookdown
@@ -236,6 +257,62 @@ references:
     orcid: https://orcid.org/0000-0003-0918-3766
   year: '2023'
 - type: software
+  title: dplyr
+  abstract: 'dplyr: A Grammar of Data Manipulation'
+  notes: Suggests
+  url: https://dplyr.tidyverse.org
+  repository: https://CRAN.R-project.org/package=dplyr
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: François
+    given-names: Romain
+    orcid: https://orcid.org/0000-0002-2444-4226
+  - family-names: Henry
+    given-names: Lionel
+  - family-names: Müller
+    given-names: Kirill
+    orcid: https://orcid.org/0000-0002-1416-3412
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
+    orcid: https://orcid.org/0000-0003-4777-038X
+  year: '2023'
+- type: software
+  title: EpiEstim
+  abstract: 'EpiEstim: Estimate Time Varying Reproduction Numbers from Epidemic Curves'
+  notes: Suggests
+  url: https://github.com/mrc-ide/EpiEstim
+  repository: https://CRAN.R-project.org/package=EpiEstim
+  authors:
+  - family-names: Cori
+    given-names: Anne
+    email: a.cori@imperial.ac.uk
+    orcid: https://orcid.org/0000-0002-8443-9162
+  year: '2023'
+- type: software
+  title: finalsize
+  abstract: 'finalsize: Calculate the Final Size of an Epidemic'
+  notes: Suggests
+  url: https://epiverse-trace.github.io/finalsize/
+  repository: https://CRAN.R-project.org/package=finalsize
+  authors:
+  - family-names: Gupte
+    given-names: Pratik
+    email: pratik.gupte@lshtm.ac.uk
+    orcid: https://orcid.org/0000-0001-5294-7819
+  - family-names: Van Leeuwen
+    given-names: Edwin
+    email: edwin.vanleeuwen@ukhsa.gov.uk
+    orcid: https://orcid.org/0000-0002-2383-5305
+  - family-names: Kucharski
+    given-names: Adam
+    email: adam.kucharski@lshtm.ac.uk
+    orcid: https://orcid.org/0000-0001-8814-9421
+  year: '2023'
+- type: software
   title: ggplot2
   abstract: 'ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics'
   notes: Suggests
@@ -281,94 +358,6 @@ references:
     given-names: Yihui
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
-  year: '2023'
-- type: software
-  title: dplyr
-  abstract: 'dplyr: A Grammar of Data Manipulation'
-  notes: Suggests
-  url: https://dplyr.tidyverse.org
-  repository: https://CRAN.R-project.org/package=dplyr
-  authors:
-  - family-names: Wickham
-    given-names: Hadley
-    email: hadley@posit.co
-    orcid: https://orcid.org/0000-0003-4757-117X
-  - family-names: François
-    given-names: Romain
-    orcid: https://orcid.org/0000-0002-2444-4226
-  - family-names: Henry
-    given-names: Lionel
-  - family-names: Müller
-    given-names: Kirill
-    orcid: https://orcid.org/0000-0002-1416-3412
-  - family-names: Vaughan
-    given-names: Davis
-    email: davis@posit.co
-    orcid: https://orcid.org/0000-0003-4777-038X
-  year: '2023'
-- type: software
-  title: tidyr
-  abstract: 'tidyr: Tidy Messy Data'
-  notes: Suggests
-  url: https://tidyr.tidyverse.org
-  repository: https://CRAN.R-project.org/package=tidyr
-  authors:
-  - family-names: Wickham
-    given-names: Hadley
-    email: hadley@posit.co
-  - family-names: Vaughan
-    given-names: Davis
-    email: davis@posit.co
-  - family-names: Girlich
-    given-names: Maximilian
-  year: '2023'
-- type: software
-  title: tibble
-  abstract: 'tibble: Simple Data Frames'
-  notes: Suggests
-  url: https://tibble.tidyverse.org/
-  repository: https://CRAN.R-project.org/package=tibble
-  authors:
-  - family-names: Müller
-    given-names: Kirill
-    email: kirill@cynkra.com
-    orcid: https://orcid.org/0000-0002-1416-3412
-  - family-names: Wickham
-    given-names: Hadley
-    email: hadley@rstudio.com
-  year: '2023'
-- type: software
-  title: finalsize
-  abstract: 'finalsize: Calculate the Final Size of an Epidemic'
-  notes: Suggests
-  url: https://epiverse-trace.github.io/finalsize/
-  repository: https://CRAN.R-project.org/package=finalsize
-  authors:
-  - family-names: Gupte
-    given-names: Pratik
-    email: pratik.gupte@lshtm.ac.uk
-    orcid: https://orcid.org/0000-0001-5294-7819
-  - family-names: Van Leeuwen
-    given-names: Edwin
-    email: edwin.vanleeuwen@ukhsa.gov.uk
-    orcid: https://orcid.org/0000-0002-2383-5305
-  - family-names: Kucharski
-    given-names: Adam
-    email: adam.kucharski@lshtm.ac.uk
-    orcid: https://orcid.org/0000-0001-8814-9421
-  year: '2023'
-- type: software
-  title: bench
-  abstract: 'bench: High Precision Timing of R Expressions'
-  notes: Suggests
-  url: https://bench.r-lib.org/
-  repository: https://CRAN.R-project.org/package=bench
-  authors:
-  - family-names: Hester
-    given-names: Jim
-  - family-names: Vaughan
-    given-names: Davis
-    email: davis@posit.co
   year: '2023'
 - type: software
   title: rmarkdown
@@ -422,7 +411,11 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@posit.co
+    orcid: https://orcid.org/0000-0002-5147-4711
   - family-names: Seidel
     given-names: Dana
   year: '2023'
@@ -469,16 +462,35 @@ references:
   year: '2023'
   version: '>= 3.0.0'
 - type: software
-  title: EpiEstim
-  abstract: 'EpiEstim: Estimate Time Varying Reproduction Numbers from Epidemic Curves'
+  title: tibble
+  abstract: 'tibble: Simple Data Frames'
   notes: Suggests
-  url: https://github.com/mrc-ide/EpiEstim
-  repository: https://CRAN.R-project.org/package=EpiEstim
+  url: https://tibble.tidyverse.org/
+  repository: https://CRAN.R-project.org/package=tibble
   authors:
-  - family-names: Cori
-    given-names: Anne
-    email: a.cori@imperial.ac.uk
-    orcid: https://orcid.org/0000-0002-8443-9162
+  - family-names: Müller
+    given-names: Kirill
+    email: kirill@cynkra.com
+    orcid: https://orcid.org/0000-0002-1416-3412
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+  year: '2023'
+- type: software
+  title: tidyr
+  abstract: 'tidyr: Tidy Messy Data'
+  notes: Suggests
+  url: https://tidyr.tidyverse.org
+  repository: https://CRAN.R-project.org/package=tidyr
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
+  - family-names: Girlich
+    given-names: Maximilian
   year: '2023'
 - type: software
   title: BH

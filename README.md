@@ -4,7 +4,7 @@
 <!-- badges: start -->
 
 [![License:
-MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit/)
 [![R-CMD-check](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/epiverse-trace/epidemics/branch/main/graph/badge.svg)](https://app.codecov.io/gh/epiverse-trace/epidemics?branch=main)
@@ -57,11 +57,11 @@ library — we are happy to help with translating it into our framework,
 with a special focus on making the model applicable to LMIC settings.
 
 *epidemics* relies on [Eigen](https://gitlab.com/libeigen/eigen) via
-[{RcppEigen}](https://cran.r-project.org/web/packages/RcppEigen/index.html),
-and on [Boost
+[{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on
+[Boost
 Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html)
-via [{BH}](https://cran.r-project.org/web/packages/BH/index.html), and
-is developed at the [Centre for the Mathematical Modelling of Infectious
+via [{BH}](https://cran.r-project.org/package=BH), and is developed at
+the [Centre for the Mathematical Modelling of Infectious
 Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases)
 at the London School of Hygiene and Tropical Medicine as part of the
 [Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
@@ -217,7 +217,7 @@ over model time. Note that these curves represent the number of
 individuals that are infectious, and not the number of newly infectious
 individuals.
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-fig-modelout-1.png" width="100%" />
 
 ## Package vignettes
 
@@ -225,6 +225,30 @@ More details on how to use *epidemics* can be found in the [online
 documentation as package
 vignettes](https://epiverse-trace.github.io/epidemics/), under
 “Articles”.
+
+## Related projects
+
+*epidemics* aims to be a library of published epidemiological models,
+and the following projects may be useful for building your own models:
+
+- The [R package
+  *finalsize*](https://cran.r-project.org/package=finalsize) is also
+  developed by Epiverse-TRACE and helps to calculate the final size of
+  an epidemic in a heterogeneous population, and is a quicker option for
+  estimates of total infections when the temporal dynamics are less
+  important;
+- The [Epirecipes project](http://epirecip.es/epicookbook/) is a
+  cookbook-style guide that focuses on different ways to implement
+  epidemic models in R and other languages;
+- The [R package *odin*](https://cran.r-project.org/package=odin)
+  generates systems of ordinary differential equations (ODE) and
+  integrate them, using a domain specific language (DSL), and is widely
+  used to translate compartmental models from R to C code for
+  performance gains;
+- Many R packages provide modelling options, and these can be found on
+  the [CRAN Epidemiology Task
+  View](https://cran.r-project.org/view=Epidemiology) under the section
+  “Infectious disease modelling”.
 
 ## Help
 

@@ -298,3 +298,65 @@ new_infections <- function(data,
   # return data
   data
 }
+
+#' Get the timing and size of a compartment's peak
+#'
+#' Get the timing and size of a compartment's peak for all demographic groups.
+#'
+#' @param data A `<data.frame>` of model output, typically
+#' the output of [model_default_cpp()] or similar functions.
+#' @param compartment The compartment of interest ;
+#' @return A `<data.frame>` of the timing and peak of the selected compartment
+#' for each of the demographic groups in `data`.
+#' @export
+#'
+#' @examples
+#' # create a population
+#' uk_population <- population(
+#'   name = "UK population",
+#'   contact_matrix = matrix(1),
+#'   demography_vector = 67e6,
+#'   initial_conditions = matrix(
+#'     c(0.9999, 0.0001, 0, 0, 0),
+#'     nrow = 1, ncol = 5L
+#'   )
+#' )
+#'
+#' # run epidemic simulation with no vaccination or intervention
+#' data <- model_default_cpp(
+#'   population = uk_population
+#' )
+#'
+#' # get the timing and peak of the infectious compartment
+#' epidemic_peak(data)
+#'
+#' # get the timing and peak of the exposed compartment
+#' epidemic_peak(data, compartment = "exposed")
+epidemic_peak <- function(data, compartment = "infectious") {
+  # check parameters are as expected
+  checkmate::assert_data_frame(
+    data,
+    min.cols = 4L, min.rows = 1, any.missing = FALSE
+  )
+  checkmate::assert_names(
+    colnames(data),
+    must.include = c("time", "demography_group", "compartment", "value")
+  )
+  checkmate::assert_character(compartment, len = 1L)
+
+  age_groups <- unique(data[["demography_group"]])
+  n_groups <- length(age_groups)
+  columns <- c("demography_group", "time", "value")
+  # compartment of interest
+  long_data <- data[data[["compartment"]] == compartment, columns]
+  nrows <- length(long_data[, "value"])
+  #  long to wide conversion
+  wide <- matrix(long_data[, "value"], nrows / n_groups, n_groups, byrow = TRUE)
+  colnames(wide) <- age_groups
+
+  col_max <- function(data) sapply(as.data.frame(data), max, na.rm = TRUE)
+  peak <- col_max(as.data.frame(wide))
+  timing <- which(wide %in% peak)
+
+  cbind(timing, peak)
+}

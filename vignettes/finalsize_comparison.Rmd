@@ -1,5 +1,5 @@
 ---
-title: "Comparing simulation-based and direct analytical methods for epidemic size estimation"
+title: "Reducing parameters required for final size estimation"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -31,13 +31,14 @@ knitr::opts_chunk$set(
 ::: {.alert .alert-warning}
 **New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first!
 
-Additionally, see how to quickly [calculate the final size of an epidemic](https://epiverse-trace.github.io/finalsize/) using an analytical method with the _finalsize_ package.
+Additionally, read how to quickly [calculate the final size of an epidemic](https://epiverse-trace.github.io/finalsize/) - with fewer epidemiological inputs than _epidemics_ required - the _finalsize_ package, which uses an analytical solution to avoid simulating the full epidemic dynamics.
 :::
 
 The total number of individuals expected to have been infected over an epidemic is called the epidemic final size [@miller2012].
 The R package [_finalsize_](https://cran.r-project.org/package=finalsize) can help to calculate the epidemic final sizes using the final size equation [@miller2012], while accounting for heterogeneity in population contacts as well as susceptibility to infection, such as due to vaccination.
 
 _epidemics_ can also be used to calculate the final size of an outbreak while accounting for heterogeneity in contacts and the rollout of vaccination campaigns.
+
 This vignette lays out which of the two is more suitable for specific tasks, and how to convert between when seeking more insight into the effect of policy decisions made during epidemic response.
 
 ```{r setup}
@@ -58,27 +59,25 @@ While both _finalsize_ and _epidemics_ can be used to calculate the epidemic fin
 **_finalsize_** assumes that both infection and population characteristics are fixed to their initial conditions.
 For the infection, this includes properties such as the transmission rate, while for the population, it includes social contacts between demographic groups, and the proportion of demographic groups that have specific levels of susceptibility to infection.
 
-This means that it cannot be used to model temporal dynamics of epidemic response, or be used to answer policy questions with a temporal component, such as when to implement interventions.
+An advantage is that _finalsize_ only requires that we define the initial transmissibility of the infection and susceptibility of the population, rather than all the time-dependent processes that drive the epidemic shape, such as the duration of infectiousness or latent period of the infection. For questions relating to epidemic shape, rather than shape, this results in a much simpler set of inputs.
 
-**_epidemics_** includes a number of scenario models, each with its own assumptions.
-However, most models allow for some modification of the initial characteristics of the outbreak due to a range of events.
-For the infection, this includes interventions (such as masking or treatments) that reduce the number of forward transmissions or deaths, but also seasonal effects which may increase or decrease the transmission rate.
+However, it also means that _finalsize_ cannot be used to model temporal dynamics of epidemic response, or be used to answer policy questions with a temporal component, such as when to implement interventions.
+
+**_epidemics_** includes a number of scenario models, each with its own assumptions. Most models allow for some modification of the initial characteristics of the outbreak due to a range of events. For the infection, this includes interventions (such as masking or treatments) that reduce the number of forward transmissions or deaths, but also seasonal effects which may increase or decrease the transmission rate.
 For the population, initial conditions of social contacts can be influenced by interventions as well.
 
 This makes it much easier to model the temporal dynamics of public-health policy decisions which are taken during epidemic response as _epidemics_ has many more features that allow for such modelling.
 
-However, it is more difficult to model scenarios in which more complicated susceptibility structure is required, such as when some demographic groups have underlying immunity to infection due to past exposure or vaccination.
+However, it requires more inputs to be defined, including time-dependent infections processes. It can also be more difficult to model scenarios in which more complicated susceptibility structure is required, such as when some demographic groups have underlying immunity to infection due to past exposure or vaccination.
 Thus _epidemics_ is likely to be especially useful for outbreaks of novel pathogens (such as the Covid-19 pandemic) where there is little population immunity to infection.
 
-It is easier to configure _finalsize_ out-of-the-box for scenarios with complex demographic patterns of underlying susceptibility to (or immunity against) infection, potentially due to a history of previous outbreaks and the policy responses (such as vaccination).
-
-Thus, while it cannot model temporal dynamics, it can quickly provide useful initial estimates of the final size of outbreaks, without having to write compartmental models which implement multiple policy decisions.
+It is easier to configure _finalsize_ out-of-the-box for scenarios with complex demographic patterns of underlying susceptibility to (or immunity against) infection, potentially due to a history of previous outbreaks and the policy responses (such as vaccination). Thus, while it cannot model temporal dynamics, it can quickly provide useful initial estimates of the final size of outbreaks, without having to write compartmental models which implement multiple policy decisions.
 
 ## Converting scenarios between _finalsize_ and _epidemics_
 
-Here, we show an example in which we show how to model a similar scenario using both _finalsize_ and _epidemics_.
+Here, we show an example in which we show how to model a similar scenario using both _finalsize_ and _epidemics_. For example, we might want to study the full epidemic dynamics in future, but start with a simpler final size estimate in the meantime. The below shows how to build equivalent models, leaving scope to extent the _epidemics_ later.
 
-We can use _epidemics_ to model the effect of vaccination on the trajectory of an epidemic.
+As an illustration, we use _epidemics_ to model the effect of vaccination on the trajectory of an epidemic.
 While _finalsize_ does not allow for the implementation of a _dynamic_ vaccination calendar, we can model reduced susceptibility to infection in the population, such as due to prior vaccination.
 
 The two methods are comparable if we model vaccination in _epidemics_ as occurring before the main wave of the epidemic, as this sets up underlying susceptibility.

@@ -51,3 +51,4 @@ reference:
     - no_time_dependence
     - epidemic_size
     - new_infections
+    - epidemic_peak

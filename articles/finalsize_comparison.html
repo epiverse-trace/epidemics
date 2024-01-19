@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="epidemics">
-<title>Comparing simulation-based and direct analytical methods for epidemic size estimation • epidemics</title>
+<title>Reducing parameters required for final size estimation • epidemics</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Comparing simulation-based and direct analytical methods for epidemic size estimation">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Reducing parameters required for final size estimation">
 <meta property="og:description" content="epidemics">
 <meta property="og:image" content="https://epiverse.github.io/epidemics/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -71,7 +71,7 @@
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
     <a class="dropdown-item" href="../articles/parameter_uncertainty.html">Generating and modelling parameter uncertainty</a>
-    <a class="dropdown-item" href="../articles/finalsize_comparison.html">Comparing simulation-based and direct analytical methods for epidemic size estimation</a>
+    <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
@@ -101,7 +101,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.svg" class="logo" alt=""><h1>Comparing simulation-based and direct analytical methods for epidemic size estimation</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Reducing parameters required for final size estimation</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/epiverse-trace/epidemics/blob/HEAD/vignettes/finalsize_comparison.Rmd" class="external-link"><code>vignettes/finalsize_comparison.Rmd</code></a></small>
@@ -112,12 +112,12 @@
     
 <div class="alert alert-warning">
 <p><strong>New to <em>epidemics</em>?</strong> It may help to read the <a href="epidemics.html">“Get started”</a> vignette first!</p>
-<p>Additionally, see how to quickly <a href="https://epiverse-trace.github.io/finalsize/" class="external-link">calculate the final size of an epidemic</a> using an analytical method with the <em>finalsize</em> package.</p>
+<p>Additionally, read how to quickly <a href="https://epiverse-trace.github.io/finalsize/" class="external-link">calculate the final size of an epidemic</a> - with fewer epidemiological inputs than <em>epidemics</em> required - the <em>finalsize</em> package, which uses an analytical solution to avoid simulating the full epidemic dynamics.</p>
 </div>
 <p>The total number of individuals expected to have been infected over an epidemic is called the epidemic final size <span class="citation">(<a href="#ref-miller2012" role="doc-biblioref">Miller 2012</a>)</span>.
 The R package <a href="https://cran.r-project.org/package=finalsize" class="external-link"><em>finalsize</em></a> can help to calculate the epidemic final sizes using the final size equation <span class="citation">(<a href="#ref-miller2012" role="doc-biblioref">Miller 2012</a>)</span>, while accounting for heterogeneity in population contacts as well as susceptibility to infection, such as due to vaccination.</p>
-<p><em>epidemics</em> can also be used to calculate the final size of an outbreak while accounting for heterogeneity in contacts and the rollout of vaccination campaigns.
-This vignette lays out which of the two is more suitable for specific tasks, and how to convert between when seeking more insight into the effect of policy decisions made during epidemic response.</p>
+<p><em>epidemics</em> can also be used to calculate the final size of an outbreak while accounting for heterogeneity in contacts and the rollout of vaccination campaigns.</p>
+<p>This vignette lays out which of the two is more suitable for specific tasks, and how to convert between when seeking more insight into the effect of policy decisions made during epidemic response.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/finalsize" class="external-link">finalsize</a></span><span class="op">)</span></span>
@@ -133,22 +133,21 @@ This vignette lays out which of the two is more suitable for specific tasks, and
 <p>While both <em>finalsize</em> and <em>epidemics</em> can be used to calculate the epidemic final size, they are aimed at different use cases.</p>
 <p><strong><em>finalsize</em></strong> assumes that both infection and population characteristics are fixed to their initial conditions.
 For the infection, this includes properties such as the transmission rate, while for the population, it includes social contacts between demographic groups, and the proportion of demographic groups that have specific levels of susceptibility to infection.</p>
-<p>This means that it cannot be used to model temporal dynamics of epidemic response, or be used to answer policy questions with a temporal component, such as when to implement interventions.</p>
-<p><strong><em>epidemics</em></strong> includes a number of scenario models, each with its own assumptions.
-However, most models allow for some modification of the initial characteristics of the outbreak due to a range of events.
-For the infection, this includes interventions (such as masking or treatments) that reduce the number of forward transmissions or deaths, but also seasonal effects which may increase or decrease the transmission rate.
+<p>An advantage is that <em>finalsize</em> only requires that we define the initial transmissibility of the infection and susceptibility of the population, rather than all the time-dependent processes that drive the epidemic shape, such as the duration of infectiousness or latent period of the infection. For questions relating to epidemic shape, rather than shape, this results in a much simpler set of inputs.</p>
+<p>However, it also means that <em>finalsize</em> cannot be used to model temporal dynamics of epidemic response, or be used to answer policy questions with a temporal component, such as when to implement interventions.</p>
+<p><strong><em>epidemics</em></strong> includes a number of scenario models, each with its own assumptions. Most models allow for some modification of the initial characteristics of the outbreak due to a range of events. For the infection, this includes interventions (such as masking or treatments) that reduce the number of forward transmissions or deaths, but also seasonal effects which may increase or decrease the transmission rate.
 For the population, initial conditions of social contacts can be influenced by interventions as well.</p>
 <p>This makes it much easier to model the temporal dynamics of public-health policy decisions which are taken during epidemic response as <em>epidemics</em> has many more features that allow for such modelling.</p>
-<p>However, it is more difficult to model scenarios in which more complicated susceptibility structure is required, such as when some demographic groups have underlying immunity to infection due to past exposure or vaccination.
+<p>However, it requires more inputs to be defined, including time-dependent infections processes. It can also be more difficult to model scenarios in which more complicated susceptibility structure is required, such as when some demographic groups have underlying immunity to infection due to past exposure or vaccination.
 Thus <em>epidemics</em> is likely to be especially useful for outbreaks of novel pathogens (such as the Covid-19 pandemic) where there is little population immunity to infection.</p>
-<p>It is easier to configure <em>finalsize</em> out-of-the-box for scenarios with complex demographic patterns of underlying susceptibility to (or immunity against) infection, potentially due to a history of previous outbreaks and the policy responses (such as vaccination).</p>
-<p>Thus, while it cannot model temporal dynamics, it can quickly provide useful initial estimates of the final size of outbreaks, without having to write compartmental models which implement multiple policy decisions.</p>
+<p>It is easier to configure <em>finalsize</em> out-of-the-box for scenarios with complex demographic patterns of underlying susceptibility to (or immunity against) infection, potentially due to a history of previous outbreaks and the policy responses (such as vaccination). Thus, while it cannot model temporal dynamics, it can quickly provide useful initial estimates of the final size of outbreaks, without having to write compartmental models which implement multiple policy decisions.</p>
 </div>
 <div class="section level2">
 <h2 id="converting-scenarios-between-finalsize-and-epidemics">Converting scenarios between <em>finalsize</em> and <em>epidemics</em><a class="anchor" aria-label="anchor" href="#converting-scenarios-between-finalsize-and-epidemics"></a>
 </h2>
-<p>Here, we show an example in which we show how to model a similar scenario using both <em>finalsize</em> and <em>epidemics</em>.</p>
-<p>We can use <em>epidemics</em> to model the effect of vaccination on the trajectory of an epidemic.
+<p>Here, we show an example in which we show how to model a similar scenario using both <em>finalsize</em> and <em>epidemics</em>. For example, we might want to study the full epidemic dynamics in future, but start with a simpler final size estimate in the meantime.
+Here we show how to build equivalent models, while allowing extensions to model epidemic temporal dynamics (using <em>epidemics</em>) later.</p>
+<p>As an illustration, we use <em>epidemics</em> to model the effect of vaccination on the trajectory of an epidemic.
 While <em>finalsize</em> does not allow for the implementation of a <em>dynamic</em> vaccination calendar, we can model reduced susceptibility to infection in the population, such as due to prior vaccination.</p>
 <p>The two methods are comparable if we model vaccination in <em>epidemics</em> as occurring before the main wave of the epidemic, as this sets up underlying susceptibility.</p>
 <div class="section level3">
@@ -409,8 +408,8 @@ This makes it much more suitable for high-performance applications such as fitti
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">#&gt;   expression        total_time</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.472</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model              8.63</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.480</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model              8.29</span></span></code></pre></div>
 </details><p><strong>Note</strong> that some model runs using <em>epidemics</em> that implement more complex compartmental structure, or multiple interventions and vaccination regimes are likely to be slower than the example shown here.</p>
 <p>However, users should choose <em>finalsize</em> only when the assumptions underlying a final size calculation are met.
 For example, in cases where vaccinations are concurrent with a large number of infections, or when interventions are applied to reduce transmission, the final size assumptions are not met.

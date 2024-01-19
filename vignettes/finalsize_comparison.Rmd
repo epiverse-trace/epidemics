@@ -75,7 +75,8 @@ It is easier to configure _finalsize_ out-of-the-box for scenarios with complex 
 
 ## Converting scenarios between _finalsize_ and _epidemics_
 
-Here, we show an example in which we show how to model a similar scenario using both _finalsize_ and _epidemics_. For example, we might want to study the full epidemic dynamics in future, but start with a simpler final size estimate in the meantime. The below shows how to build equivalent models, leaving scope to extent the _epidemics_ later.
+Here, we show an example in which we show how to model a similar scenario using both _finalsize_ and _epidemics_. For example, we might want to study the full epidemic dynamics in future, but start with a simpler final size estimate in the meantime.
+Here we show how to build equivalent models, while allowing extensions to model epidemic temporal dynamics (using _epidemics_) later.
 
 As an illustration, we use _epidemics_ to model the effect of vaccination on the trajectory of an epidemic.
 While _finalsize_ does not allow for the implementation of a _dynamic_ vaccination calendar, we can model reduced susceptibility to infection in the population, such as due to prior vaccination.

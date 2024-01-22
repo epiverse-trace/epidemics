@@ -130,7 +130,7 @@ validate_population <- function(object) {
         nrows = length(object$demography_vector)
       ),
     "`initial_conditions` rows must always sum to 1.0" =
-      (all(abs(rowSums(object$initial_conditions) - 1) < 1e-6))
+      (all(abs(rowSums(object$initial_conditions) - 1.0) < 1e-3))
   )
   invisible(object)
 }

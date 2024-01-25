@@ -43,20 +43,20 @@ inline Rcpp::NumericMatrix get_initial_conditions(
 /// This is special functionality for the diphtheria model applied to
 /// humanitarian camps.
 struct population_change {
-  const std::vector<double> times;
-  const std::vector<Rcpp::NumericVector>
-      value;  // note this is a proportion of the total
+  const Rcpp::NumericVector times;
+  const Rcpp::List value;  // note these are actually absolute values
   const int n_demo_groups;
 
   /// @brief Constructor for the population change struct
   /// @param times The times at which the population changes. Changes apply to
   /// the SUSCEPTIBLES compartment only; the assumption is that the camp is the
   /// locus of the outbreak.
-  /// @param value The proportional change in the population size.
-  /// Each demographic group increases by the same proportion.
-  population_change(const std::vector<double> &times,
-                    const std::vector<Rcpp::NumericVector> &value)
-      : times(times), value(value), n_demo_groups(value[0].size()) {}
+  /// @param value The ABSOLUTE change in the population size; an Rcpp List
+  /// of Rcpp NumericVectors, each of the same length as the number of
+  /// demographic groups.
+  population_change(const Rcpp::NumericVector &times, const Rcpp::List &value,
+                    const int &n_demo_groups)
+      : times(times), value(value), n_demo_groups(n_demo_groups) {}
 
   // member function for population change at time t
   /// @brief Calculate the population change at time t

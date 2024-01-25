@@ -65,6 +65,26 @@ struct population_change {
   const Eigen::ArrayXd get_population_change(const double &t);
 };
 
+/// @brief Calculate the population change at time t
+/// @param t The current timestep
+/// @return An Eigen Array of population size changes, which defaults to zeros
+/// if no population change is scheduled
+inline const Eigen::ArrayXd population_change::get_population_change(
+    const double &t) {
+  // empty value for timepoints of no population change
+  Eigen::ArrayXd pop_change(n_demo_groups);
+  pop_change.fill(0.0);
+
+  // crudely check for a match between current time and scheduled pop change
+  for (size_t i = 0; i < times.size(); i++) {
+    if (t > times[i] && t < (times[i] + 1.0)) {
+      pop_change = Rcpp::as<Eigen::ArrayXd>(value[i]);
+      return pop_change;
+    }
+  }
+
+  return pop_change;
+}
 
 }  // namespace population
 

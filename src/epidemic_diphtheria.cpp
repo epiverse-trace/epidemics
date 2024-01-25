@@ -32,6 +32,10 @@
 //' @param rate_interventions A named list of `<rate_intervention>` objects.
 //' @param time_dependence A named list of functions for parameter time
 //' dependence.
+//' @param pop_change_times A numeric vector of times and which the population
+//' of susceptibles changes.
+//' @param pop_change_values An Rcpp List of numeric vectors giving the value of
+//' changes to each demographic group at each change in population.
 //' @param time_end The end time of the simulation.
 //' @param increment The time increment of the simulation.
 //' @return A two element list, where the first element is a list of matrices
@@ -46,6 +50,8 @@ Rcpp::List model_diphtheria_cpp_internal(
     const double &reporting_rate, const double &prop_hosp,
     const double &hosp_entry_rate, const double &hosp_exit_rate,
     const Rcpp::List &rate_interventions, const Rcpp::List &time_dependence,
+    const Rcpp::NumericVector &pop_change_times,
+    const Rcpp::List &pop_change_values,
     const double &time_end = 100.0,  // double required by boost solver
     const double &increment = 1.0) {
   // initial conditions from input
@@ -66,9 +72,13 @@ Rcpp::List model_diphtheria_cpp_internal(
       rate_interventions_cpp =
           intervention::rate_intervention_cpp(rate_interventions);
 
+  // prepare population changes if any
+  const population::population_change pop_change(
+      pop_change_times, pop_change_values, initial_state.rows());
+
   // create a diphtheria epidemic with parameters
   epidemics::epidemic_diphtheria this_model(
-      model_params, rate_interventions_cpp, time_dependence);
+      model_params, rate_interventions_cpp, time_dependence, pop_change);
 
   // prepare storage containers for the observer
   std::vector<odetools::state_type> x_vec;  // is a vector of MatrixXd

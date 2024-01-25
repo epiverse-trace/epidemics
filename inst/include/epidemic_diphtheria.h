@@ -118,10 +118,10 @@ struct epidemic_diphtheria {
     // ν: reporting rate; τ1: 1 / time to hospitalisation;
     // τ2: 1 / time to discharge from hospital; η: prop. hospitalised
     dxdt.col(0) = -sToE + current_pop_change;  // -β*S*I + pop movements
-    dxdt.col(1) = sToE - eToI;  // β*S*I - σ*E
-    dxdt.col(2) = eToI - iToR;  // σ*E - γ*I
-    dxdt.col(3) = iToH - hToR;  // τ1*η*ν*I - τ2*H
-    dxdt.col(4) = iToR + hToR;  // γ*I + τ2*H
+    dxdt.col(1) = sToE - eToI;                 // β*S*I - σ*E
+    dxdt.col(2) = eToI - iToR;                 // σ*E - γ*I
+    dxdt.col(3) = iToH - hToR;                 // τ1*η*ν*I - τ2*H
+    dxdt.col(4) = iToR + hToR;                 // γ*I + τ2*H
   }
 };
 

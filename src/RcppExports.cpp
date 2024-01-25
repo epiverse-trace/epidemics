@@ -38,8 +38,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // model_diphtheria_cpp_internal
-Rcpp::List model_diphtheria_cpp_internal(const Eigen::MatrixXd& initial_state, const double& transmissibility, const double& infectiousness_rate, const double& recovery_rate, const double& reporting_rate, const double& prop_hosp, const double& hosp_entry_rate, const double& hosp_exit_rate, const Rcpp::List& rate_interventions, const Rcpp::List& time_dependence, const double& time_end, const double& increment);
-RcppExport SEXP _epidemics_model_diphtheria_cpp_internal(SEXP initial_stateSEXP, SEXP transmissibilitySEXP, SEXP infectiousness_rateSEXP, SEXP recovery_rateSEXP, SEXP reporting_rateSEXP, SEXP prop_hospSEXP, SEXP hosp_entry_rateSEXP, SEXP hosp_exit_rateSEXP, SEXP rate_interventionsSEXP, SEXP time_dependenceSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
+Rcpp::List model_diphtheria_cpp_internal(const Eigen::MatrixXd& initial_state, const double& transmissibility, const double& infectiousness_rate, const double& recovery_rate, const double& reporting_rate, const double& prop_hosp, const double& hosp_entry_rate, const double& hosp_exit_rate, const Rcpp::List& rate_interventions, const Rcpp::List& time_dependence, const Rcpp::NumericVector& pop_change_times, const Rcpp::List& pop_change_values, const double& time_end, const double& increment);
+RcppExport SEXP _epidemics_model_diphtheria_cpp_internal(SEXP initial_stateSEXP, SEXP transmissibilitySEXP, SEXP infectiousness_rateSEXP, SEXP recovery_rateSEXP, SEXP reporting_rateSEXP, SEXP prop_hospSEXP, SEXP hosp_entry_rateSEXP, SEXP hosp_exit_rateSEXP, SEXP rate_interventionsSEXP, SEXP time_dependenceSEXP, SEXP pop_change_timesSEXP, SEXP pop_change_valuesSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,9 +53,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double& >::type hosp_exit_rate(hosp_exit_rateSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type rate_interventions(rate_interventionsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type time_dependence(time_dependenceSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type pop_change_times(pop_change_timesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type pop_change_values(pop_change_valuesSEXP);
     Rcpp::traits::input_parameter< const double& >::type time_end(time_endSEXP);
     Rcpp::traits::input_parameter< const double& >::type increment(incrementSEXP);
-    rcpp_result_gen = Rcpp::wrap(model_diphtheria_cpp_internal(initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, time_end, increment));
+    rcpp_result_gen = Rcpp::wrap(model_diphtheria_cpp_internal(initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end, increment));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -92,7 +94,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_epidemics_model_default_cpp_internal", (DL_FUNC) &_epidemics_model_default_cpp_internal, 15},
-    {"_epidemics_model_diphtheria_cpp_internal", (DL_FUNC) &_epidemics_model_diphtheria_cpp_internal, 12},
+    {"_epidemics_model_diphtheria_cpp_internal", (DL_FUNC) &_epidemics_model_diphtheria_cpp_internal, 14},
     {"_epidemics_model_vacamole_cpp_internal", (DL_FUNC) &_epidemics_model_vacamole_cpp_internal, 20},
     {NULL, NULL, 0}
 };

@@ -30,6 +30,9 @@ struct epidemic_diphtheria {
   const std::unordered_map<std::string, intervention::rate_intervention>
       interventions;
   const Rcpp::List time_dependence;
+  /// NOTE: not marked const as this interferes with member function
+  /// TODO: diagnose issue and achieve functioning marking as const
+  population::population_change pop_change;
 
   /// @brief Constructor for the diphtheria epidemic struct
   /// @param model_params An unordered map of string-double pairs, with the
@@ -53,11 +56,13 @@ struct epidemic_diphtheria {
       const std::unordered_map<std::string, double>& model_params,
       const std::unordered_map<std::string, intervention::rate_intervention>&
           interventions,
-      const Rcpp::List& time_dependence)
+      const Rcpp::List& time_dependence,
+      const population::population_change& pop_change)
       : model_params(model_params),
         model_params_temp(model_params),
         interventions(interventions),
-        time_dependence(time_dependence) {}
+        time_dependence(time_dependence),
+        pop_change(pop_change) {}
 
   /// @brief Operator for the diphtheria model
   /// @param x The initial state of the population - rows represent age groups
@@ -85,6 +90,11 @@ struct epidemic_diphtheria {
     // 0|1|2|3|4
     // S|E|I|H|R
 
+    // calculate any population changes
+    const Eigen::ArrayXd current_pop_change =
+        pop_change.get_population_change(t);
+
+    // calculate total infections
     const double total_infections = (x.col(2).array()).sum();
 
     // compartmental transitions without accounting for stratified contacts
@@ -107,7 +117,7 @@ struct epidemic_diphtheria {
     // β: transmissibility; σ: infectiousness rate; γ: recovery rate
     // ν: reporting rate; τ1: 1 / time to hospitalisation;
     // τ2: 1 / time to discharge from hospital; η: prop. hospitalised
-    dxdt.col(0) = -sToE;        // -β*S*I
+    dxdt.col(0) = -sToE + current_pop_change;  // -β*S*I + pop movements
     dxdt.col(1) = sToE - eToI;  // β*S*I - σ*E
     dxdt.col(2) = eToI - iToR;  // σ*E - γ*I
     dxdt.col(3) = iToH - hToR;  // τ1*η*ν*I - τ2*H

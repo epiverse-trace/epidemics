@@ -9,8 +9,10 @@
 #' The model is based on Finger et al. (2019) and is intended to be used in the
 #' context of internally displaced people (IDP) or refugee camps.
 #' This model accommodates age or demographic structure and allows for a
-#' proportion of each demographic group to be vaccinated and to not contribute
-#' to the outbreak.
+#' proportion of each demographic group to be vaccinated at the start of the
+#' outbreak, and thus to not contribute to the outbreak.
+#' The model also allows for changes to the initial population size, to model
+#' influxes or evacuations from camps.
 #'
 #' @param population An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
@@ -52,10 +54,16 @@
 #' @param time_end The maximum number of timesteps over which to run the model.
 #' Taken as days, with a default value of 100 days.
 #' @param increment The size of the time increment. Taken as days, with a
+#' @param population_change A two-element list, with elements named `"time"` and
+#' `"values"`, giving the times of population changes, and the corresponding
+#' changes in the population of each demographic group at those times.
+#' `"time"` must be a numeric vector, while `"values"` must be a list of the
+#' length of `"time"`, with each element a numeric vector of the same length as
+#' the number of demographic groups in `population`.
 #' default value of 1 day.
 #' @details
 #'
-#' ## R and Rcpp implementations
+#' ## Rcpp implementations
 #'
 #' `model_diphtheria_cpp()` is a wrapper function for [.model_diphtheria_cpp()],
 #' an internal C++ function that uses Boost _odeint_ solvers for an SEIHR model.
@@ -86,6 +94,15 @@
 #'
 #' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.333, assuming an
 #' infectious period following symptoms, of 3 days.
+#' 
+#' ## Modelling population changes
+#' 
+#' This model allows changes to the number of susceptibles in each demographic
+#' group, to represent influxes or evacuations from the camp as would be
+#' expected in humanitarian relief situations.
+#' Users can specify the times and changes (to each demographic group) of
+#' changes using the `population_changes` argument, to examine the effect on
+#' outbreak dynamics.
 #'
 #' @references
 #' Finger, F., Funk, S., White, K., Siddiqui, M. R., Edmunds, W. J., &
@@ -108,6 +125,7 @@ model_diphtheria_cpp <- function(population,
                                  ),
                                  intervention = NULL,
                                  time_dependence = NULL,
+                                 population_change = NULL,
                                  time_end = 100,
                                  increment = 1) {
   # check class on required inputs
@@ -152,6 +170,12 @@ model_diphtheria_cpp <- function(population,
     )
   )
 
+  # check population change and create
+  checkmate::assert_list(
+    population_change,
+    null.ok = TRUE, len = 2L, types = c("numeric", "list")
+  )
+
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
   checkmate::assert_number(time_end, lower = 0, finite = TRUE)
@@ -169,6 +193,8 @@ model_diphtheria_cpp <- function(population,
     prop_vaccinated = prop_vaccinated,
     intervention = intervention,
     time_dependence = time_dependence,
+    pop_change_times = population_change[["time"]],
+    pop_change_values = population_change[["values"]],
     time_end = time_end, increment = increment
   )
 

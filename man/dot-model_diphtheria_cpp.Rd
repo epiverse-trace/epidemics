@@ -15,6 +15,8 @@
   hosp_exit_rate,
   rate_interventions,
   time_dependence,
+  pop_change_times,
+  pop_change_values,
   time_end = 100,
   increment = 1
 )
@@ -43,6 +45,12 @@ hospital, represented as 1 / time to discharge \eqn{\tau_2}.}
 
 \item{time_dependence}{A named list of functions for parameter time
 dependence.}
+
+\item{pop_change_times}{A numeric vector of times and which the population
+of susceptibles changes.}
+
+\item{pop_change_values}{An Rcpp List of numeric vectors giving the value of
+changes to each demographic group at each change in population.}
 
 \item{time_end}{The end time of the simulation.}
 

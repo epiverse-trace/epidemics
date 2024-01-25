@@ -27,13 +27,19 @@ vaccinated individuals, respectively;
 \item \code{infectiousness_rate}: a single number for the transition rate from the
 'exposed' and 'exposed_vaccinated' to the 'infectious' and
 'infectious_vaccinated' compartments;
+\item \code{recovery_rate}: a single number for the recovery rate from the infection;
 \item \code{reporting_rate}: a single number for the proportion of infectious cases
 reported;
 \item \code{prop_hosp}: a single number for the proportion of reported cases that
 need hospitalisation;
 \item \code{hosp_entry_rate}, \code{hosp_exit_rate}: two numbers representing the rate of
 entry and exit from the 'hospitalised' compartment;
-\item \code{recovery_rate}: a single number for the recovery rate from the infection;
+\item \code{rate_interventions}: an Rcpp List giving the interventions on model
+parameters;
+\item \code{time_dependence}: an Rcpp List giving the time-dependent effects on model
+parameters in the form of R functions;
+\item \code{pop_change_times} and \code{pop_change_values}: the times and values of changes
+in the population of susceptibles;
 \item \code{time_end}, \code{increment}: two numbers for the time at which to end the
 simulation, and the value by which the simulation time
 is incremented.

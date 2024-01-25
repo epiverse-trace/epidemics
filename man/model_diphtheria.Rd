@@ -17,6 +17,7 @@ model_diphtheria_cpp(
   prop_vaccinated = 0 * get_parameter(population, "demography_vector"),
   intervention = NULL,
   time_dependence = NULL,
+  population_change = NULL,
   time_end = 100,
   increment = 1
 )
@@ -70,11 +71,18 @@ that is dependent on \code{time} (\code{x} represents a model parameter).
 See \strong{Details} for more information, as well as the vignette on time-
 dependence \code{vignette("time_dependence", package = "epidemics")}.}
 
+\item{population_change}{A two-element list, with elements named \code{"time"} and
+\code{"values"}, giving the times of population changes, and the corresponding
+changes in the population of each demographic group at those times.
+\code{"time"} must be a numeric vector, while \code{"values"} must be a list of the
+length of \code{"time"}, with each element a numeric vector of the same length as
+the number of demographic groups in \code{population}.
+default value of 1 day.}
+
 \item{time_end}{The maximum number of timesteps over which to run the model.
 Taken as days, with a default value of 100 days.}
 
-\item{increment}{The size of the time increment. Taken as days, with a
-default value of 1 day.}
+\item{increment}{The size of the time increment. Taken as days, with a}
 }
 \value{
 A \verb{<data.frame>} with the columns "time", "compartment", "age_group",
@@ -87,11 +95,13 @@ compartmental ordinary differential equation model with the compartments
 The model is based on Finger et al. (2019) and is intended to be used in the
 context of internally displaced people (IDP) or refugee camps.
 This model accommodates age or demographic structure and allows for a
-proportion of each demographic group to be vaccinated and to not contribute
-to the outbreak.
+proportion of each demographic group to be vaccinated at the start of the
+outbreak, and thus to not contribute to the outbreak.
+The model also allows for changes to the initial population size, to model
+influxes or evacuations from camps.
 }
 \details{
-\subsection{R and Rcpp implementations}{
+\subsection{Rcpp implementations}{
 
 \code{model_diphtheria_cpp()} is a wrapper function for \code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}},
 an internal C++ function that uses Boost \emph{odeint} solvers for an SEIHR model.
@@ -118,6 +128,16 @@ individuals are discharged from hospital after 5 days.
 \item Recovery rate (\eqn{\gamma}, \code{recovery_rate}): 0.333, assuming an
 infectious period following symptoms, of 3 days.
 }
+}
+
+\subsection{Modelling population changes}{
+
+This model allows changes to the number of susceptibles in each demographic
+group, to represent influxes or evacuations from the camp as would be
+expected in humanitarian relief situations.
+Users can specify the times and changes (to each demographic group) of
+changes using the \code{population_changes} argument, to examine the effect on
+outbreak dynamics.
 }
 }
 \references{

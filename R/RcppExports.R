@@ -62,6 +62,10 @@
 #' @param rate_interventions A named list of `<rate_intervention>` objects.
 #' @param time_dependence A named list of functions for parameter time
 #' dependence.
+#' @param pop_change_times A numeric vector of times and which the population
+#' of susceptibles changes.
+#' @param pop_change_values An Rcpp List of numeric vectors giving the value of
+#' changes to each demographic group at each change in population.
 #' @param time_end The end time of the simulation.
 #' @param increment The time increment of the simulation.
 #' @return A two element list, where the first element is a list of matrices
@@ -69,8 +73,8 @@
 #' as specified in the initial conditions matrix.
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.model_diphtheria_cpp <- function(initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_diphtheria_cpp_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, time_end, increment)
+.model_diphtheria_cpp <- function(initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_diphtheria_cpp_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end, increment)
 }
 
 #' @title Run the RIVM Vacamole model

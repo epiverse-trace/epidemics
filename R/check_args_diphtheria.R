@@ -26,6 +26,8 @@
 #' 'exposed' and 'exposed_vaccinated' to the 'infectious' and
 #' 'infectious_vaccinated' compartments;
 #'
+#' - `recovery_rate`: a single number for the recovery rate from the infection;
+#'
 #'  - `reporting_rate`: a single number for the proportion of infectious cases
 #' reported;
 #'
@@ -35,7 +37,14 @@
 #' - `hosp_entry_rate`, `hosp_exit_rate`: two numbers representing the rate of
 #' entry and exit from the 'hospitalised' compartment;
 #'
-#' - `recovery_rate`: a single number for the recovery rate from the infection;
+#' - `rate_interventions`: an Rcpp List giving the interventions on model
+#' parameters;
+#'
+#' - `time_dependence`: an Rcpp List giving the time-dependent effects on model
+#' parameters in the form of R functions;
+#'
+#' - `pop_change_times` and `pop_change_values`: the times and values of changes
+#' in the population of susceptibles;
 #'
 #'  - `time_end`, `increment`: two numbers for the time at which to end the
 #' simulation, and the value by which the simulation time
@@ -101,11 +110,43 @@
     )
   }
 
+  # handle population change mechanic, check for correct demography groups
+  # check for only times being NULL and expect values also NULL
+  if (is.null(mod_args[["pop_change_times"]])) {
+    mod_args[["pop_change_times"]] <- 0
+    mod_args[["pop_change_values"]] <- list(
+      rep(
+        0, length(get_parameter(
+          mod_args[["population"]], "demography_vector"
+        ))
+      )
+    )
+  } else {
+    checkmate::assert_numeric(
+      mod_args[["pop_change_times"]],
+      lower = 0, finite = TRUE,
+      min.len = 1
+    )
+    checkmate::assert_list(
+      mod_args[["pop_change_values"]],
+      any.missing = FALSE,
+      len = length(mod_args[["pop_change_times"]])
+    )
+    invisible(
+      lapply(
+        mod_args[["pop_change_values"]], checkmate::assert_numeric,
+        len = length(get_parameter(
+          mod_args[["population"]], "demography_vector"
+        ))
+      )
+    )
+  }
+
   # return arguments invisibly
   invisible(mod_args)
 }
 
-#' @title Prepare arguments for the Vacamole epidemic function
+#' @title Prepare arguments for the diphtheria model
 #' @name check_prepare_diphtheria_args
 #' @rdname check_prepare_diphtheria_args
 #' @keywords internal
@@ -117,6 +158,7 @@
 
   # modify initial state by proportion vaccinated
   # NOTE: this assumes that the first column is 'susceptible'
+  # NOTE: there is no explicit vaccinated compartment
   initial_state[, 1] <- initial_state[, 1] * (1 - mod_args[["prop_vaccinated"]])
 
   # return mod args without population and prop_vaccinated

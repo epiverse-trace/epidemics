@@ -109,7 +109,10 @@ struct epidemic_diphtheria {
     Eigen::ArrayXd iToH =
         model_params_temp["prop_hosp"] * model_params_temp["reporting_rate"] *
         model_params_temp["hosp_entry_rate"] * x.col(2).array();
-    Eigen::ArrayXd iToR = model_params_temp["recovery_rate"] * x.col(2).array();
+
+    // recoveries are from the infectious/ed who are NOT hospitalised
+    Eigen::ArrayXd iToR =
+        model_params_temp["recovery_rate"] * (x.col(2).array() - iToH);
     Eigen::ArrayXd hToR =
         model_params_temp["hosp_exit_rate"] * x.col(3).array();
 
@@ -119,7 +122,7 @@ struct epidemic_diphtheria {
     // τ2: 1 / time to discharge from hospital; η: prop. hospitalised
     dxdt.col(0) = -sToE + current_pop_change;  // -β*S*I + pop movements
     dxdt.col(1) = sToE - eToI;                 // β*S*I - σ*E
-    dxdt.col(2) = eToI - iToR;                 // σ*E - γ*I
+    dxdt.col(2) = eToI - iToR - iToH;          // σ*E - γ*I - τ1*η*ν*I
     dxdt.col(3) = iToH - hToR;                 // τ1*η*ν*I - τ2*H
     dxdt.col(4) = iToR + hToR;                 // γ*I + τ2*H
   }

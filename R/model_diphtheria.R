@@ -94,9 +94,9 @@
 #'
 #' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.333, assuming an
 #' infectious period following symptoms, of 3 days.
-#' 
+#'
 #' ## Modelling population changes
-#' 
+#'
 #' This model allows changes to the number of susceptibles in each demographic
 #' group, to represent influxes or evacuations from the camp as would be
 #' expected in humanitarian relief situations.

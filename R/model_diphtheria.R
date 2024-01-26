@@ -175,6 +175,12 @@ model_diphtheria_cpp <- function(population,
     population_change,
     null.ok = TRUE, len = 2L, types = c("numeric", "list")
   )
+  if (!is.null(population_change)) {
+    checkmate::assert_names(
+      names(population_change),
+      identical.to = c("time", "values")
+    )
+  }
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6

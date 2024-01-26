@@ -134,10 +134,20 @@
     )
     invisible(
       lapply(
-        mod_args[["pop_change_values"]], checkmate::assert_numeric,
-        len = length(get_parameter(
-          mod_args[["population"]], "demography_vector"
-        ))
+        mod_args[["pop_change_values"]],
+        FUN = function(x) {
+          stopifnot(
+            "`population_change` `values` must be same length as demography" =
+              checkmate::test_numeric(
+                x,
+                len = length(
+                  get_parameter(
+                    mod_args[["population"]], "demography_vector"
+                  )
+                )
+              )
+          )
+        }
       )
     )
   }

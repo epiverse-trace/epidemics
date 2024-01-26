@@ -144,3 +144,91 @@ test_that("Diphtheria model with population size changes", {
     tolerance = 1e-6
   )
 })
+
+# Test for poor specification of the population change mechanic
+test_that("Diphtheria model handles population_change errors", {
+  # badly specified pop change
+  p <- list(
+    time = "some time",
+    values = list(
+      c(1, 2, 3)
+    )
+  )
+  expect_error(
+    model_diphtheria_cpp(
+      camp_pop,
+      population_change = p
+    ),
+    regexp = "May only contain the following types: \\{numeric,list\\}"
+  )
+
+  # wrong name of first element
+  p <- list(
+    timesteps = 10,
+    values = list(
+      c(1, 2, 3)
+    )
+  )
+  expect_error(
+    model_diphtheria_cpp(
+      camp_pop,
+      population_change = p
+    ),
+    regexp = "(Names must be identical)*(time)*(values)"
+  )
+
+  # wrong length of values - must be same length as demography groups
+  p <- list(
+    time = 10,
+    values = list(
+      c(1, 2)
+    )
+  )
+  expect_error(
+    model_diphtheria_cpp(
+      camp_pop,
+      population_change = p
+    ),
+    regexp = "`population_change` `values` must be same length as demography"
+  )
+})
+
+# Tests for expected failures/input checks on interventions and time-dependence
+test_that("Diphtheria model input checks", {
+  # expect no contacts interventions allowed
+  expect_error(
+    model_diphtheria_cpp(
+      camp_pop,
+      intervention = list(
+        contacts = no_contacts_intervention(camp_pop) # a dummy intervention
+      )
+    ),
+    regexp = "May only contain the following types: \\{rate_intervention\\}"
+  )
+
+  # expect failure on rate interventions targeting disallowed parameters
+  expect_error(
+    model_diphtheria_cpp(
+      camp_pop,
+      intervention = list(
+        beta = intervention(
+          type = "rate",
+          time_begin = 10, time_end = 20,
+          reduction = 0.1
+        )
+      )
+    ),
+    regexp = "(must be a subset of)*(but has additional elements)"
+  )
+
+  # expect failure on time dependence targeting disallowed parameters
+  expect_error(
+    model_diphtheria_cpp(
+      camp_pop,
+      time_dependence = list(
+        beta = function(time, x) x
+      )
+    ),
+    regexp = "(must be a subset of)*(but has additional elements)"
+  )
+})

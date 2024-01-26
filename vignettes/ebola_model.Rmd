@@ -41,7 +41,6 @@ The transitions between compartments are based on an Erlang model developed by @
 The model does not include demographic variation in contacts, as ebola spreads primarily among contacts caring for infected individuals, making age or demographic structure less important.
 
 This model can currently accommodate interventions on model rates only (as there are no demographic groups for contacts interventions).
-The only rate in the model that can be influenced by an intervention is the transmission rate $\beta$.
 
 ```{r setup}
 # some initial setup to load necessary packages

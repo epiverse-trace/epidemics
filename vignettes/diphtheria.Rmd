@@ -39,7 +39,7 @@ _epidemics_ provides a simple SEIHR compartmental model based on @finger2019, in
 This model only tracks infections by demographic groups, and does not include demographic variation in contacts, as this is assumed to be less important in the camp setting.
 The model also does not allow interventions on social contacts, and does not include a 'vaccinated' compartment.
 
-However, the model does allow for seasonlity in model parameters and interventions on model parameters.
+However, the model does allow for seasonality in model parameters and interventions on model parameters.
 Similarly, the model allows for a proportion of the initial camp population to be considered vaccinated and thus immune from infection.
 
 ```{r setup}
@@ -51,7 +51,7 @@ library(ggplot2)
 ## Modelling an outbreak with pre-existing immunity
 
 We create a population object corresponding to the Kutupalong camp in Bangladesh, rounded to the nearest 100, as described in Additional file 1 provided with @finger2019.
-This population has three age groups, < 5 years, 5 -- 14 years, $\qeq$ 15 years.
+This population has three age groups, < 5 years, 5 -- 14 years, $\geq$ 15 years.
 We assume that only one individual is infectious in each age group.
 
 ```{r camp-population}

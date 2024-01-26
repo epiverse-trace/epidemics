@@ -52,11 +52,11 @@ test_that("Diptheria model, basic expectations", {
   # check for identical numbers of individuals at start and end
   # NOTE: high tolerance because hospitalised compartment is not directly
   # linked to infectious compartment per Finger et al. model structure.
-  # leads to more individuals at final state than initial state
+  # leads to different individuals at final state than initial state
   expect_identical(
     sum(output[output$time == min(output$time), ]$value),
     sum(output[output$time == max(output$time), ]$value),
-    tolerance = 100
+    tolerance = 1e-6
   )
   # check that all age groups in the simulation are the same
   # size as the demography vector

@@ -67,3 +67,80 @@ test_that("Diptheria model, basic expectations", {
   # NOTE: no checks for final state equal to demography vector as
   # vaccinated individuals are removed from model
 })
+
+# Expectations for the diphtheria model with changed population sizes
+test_that("Diphtheria model with population size changes", {
+  # model runs with population change functionality
+  # create population change data
+  p <- list(
+    time = 70,
+    values = list(
+      c(1e4, 2e5, 1e5)
+    )
+  )
+
+  expect_no_condition(
+    model_diphtheria_cpp(
+      population = camp_pop,
+      population_change = p
+    )
+  )
+
+  # NOTE: expected final population size is larger than the initial
+  # but identical to the original + added population
+  data <- model_diphtheria_cpp(
+    population = camp_pop,
+    prop_hosp = 0.08,
+    population_change = p,
+    time_end = 200
+  )
+
+  last_value <- aggregate(
+    value ~ demography_group,
+    data = data[data$time == max(data$time), ], FUN = "sum"
+  )
+  last_value
+
+  expect_identical(
+    last_value$value,
+    camp_pop$demography_vector + p$values[[1]],
+    tolerance = 1e-6
+  )
+
+  ## Multiple population changes including decreases
+  p <- list(
+    time = c(70, 80),
+    values = list(
+      c(1e4, 2e5, 1e5), # influx to camp
+      c(-9e3, -1.5e5, -0.5e5) # evacuation from camp
+    )
+  )
+
+  expect_no_condition(
+    model_diphtheria_cpp(
+      population = camp_pop,
+      population_change = p
+    )
+  )
+
+  # NOTE: expected final population size is larger than the initial
+  # but identical to the original + net added population
+  data <- model_diphtheria_cpp(
+    population = camp_pop,
+    prop_hosp = 0.08,
+    population_change = p,
+    time_end = 200
+  )
+
+  last_value <- aggregate(
+    value ~ demography_group,
+    data = data[data$time == max(data$time), ], FUN = "sum"
+  )
+  last_value
+
+  expect_identical(
+    last_value$value,
+    camp_pop$demography_vector + Reduce(x = p$values, f = `+`),
+    tolerance = 1e-6
+  )
+})

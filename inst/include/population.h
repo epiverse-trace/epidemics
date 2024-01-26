@@ -77,7 +77,7 @@ inline const Eigen::ArrayXd population_change::get_population_change(
 
   // crudely check for a match between current time and scheduled pop change
   for (size_t i = 0; i < times.size(); i++) {
-    if (t > times[i] && t < (times[i] + 1.0)) {
+    if (t >= times[i] && t < (times[i] + 1.0)) {
       pop_change = Rcpp::as<Eigen::ArrayXd>(value[i]);
       return pop_change;
     }

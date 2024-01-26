@@ -1,0 +1,199 @@
+---
+title: "Modelling a diphtheria outbreak in a humanitarian camp setting"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+bibliography: references.json
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Modelling a diphtheria outbreak in a humanitarian camp setting}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 5,
+  fig.height = 4,
+  dpi = 300
+)
+```
+
+::: {.alert .alert-warning}
+**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first!
+:::
+
+This vignette shows how to model an outbreak of diphtheria (or other diseases) within the setting of a humanitarian aid camp, where the camp population may fluctuate due to external factors, including influxes from the affected area and evacuations to other camps or to other areas.
+In such situations, implementing large-scale public health measures such as non-pharmaceutical interventions on social contacts or mass vaccination may be impractical.
+
+_epidemics_ provides a simple SEIHR compartmental model based on @finger2019, in which it is possible to vary the population of each demographic group throughout the model's simulation time.
+This model only tracks infections by demographic groups, and does not include demographic variation in contacts, as this is assumed to be less important in the camp setting.
+The model also does not allow interventions on social contacts, and does not include a 'vaccinated' compartment.
+
+However, the model does allow for seasonlity in model parameters and interventions on model parameters.
+Similarly, the model allows for a proportion of the initial camp population to be considered vaccinated and thus immune from infection.
+
+```{r setup}
+library(epidemics)
+library(dplyr)
+library(ggplot2)
+```
+
+## Modelling an outbreak with pre-existing immunity
+
+We create a population object corresponding to the Kutupalong camp in Bangladesh, rounded to the nearest 100, as described in Additional file 1 provided with @finger2019.
+This population has three age groups, < 5 years, 5 -- 14 years, $\qeq$ 15 years.
+We assume that only one individual is infectious in each age group.
+
+```{r camp-population}
+# three age groups with five compartments SEIHR
+n_age_groups <- 3
+demography_vector <- c(83000, 108200, 224600)
+initial_conditions <- matrix(0, nrow = n_age_groups, ncol = 5)
+
+# 1 individual in each group is infectious
+initial_conditions[, 1] <- demography_vector - 1
+initial_conditions[, 3] <- rep(1, n_age_groups)
+
+# camp social contacts are assumed to be uniform
+camp_pop <- population(
+  contact_matrix = matrix(1, nrow = n_age_groups, ncol = n_age_groups),
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions / demography_vector
+)
+
+camp_pop
+```
+
+We assume, following @finger2019, that 20% of the 5 -- 14 year-olds are vaccinated against and immune to diphtheria, but that coverage is much lower among other age groups.
+
+```{r}
+# 20% of 5-14 year-olds are vaccinated
+prop_vaccinated <- c(0.05, 0.2, 0.05)
+```
+
+We run the model with its default parameters, assuming that:
+- diphtheria has an $\R_0$ of 4.0 and a mean infectious period of 4.5 days, giving a transmissibility ($\beta$) of about 0.889;
+- diphtheria has a pre-infectious or incubation period of 3 days, giving an infectiousness rate ($\sigma$) of about 0.33; and
+- the recovery rate of diphtheria is about 0.33.
+
+We also stick to default assumptions regarding: case reporting (that about 3% of cases are reported), the proportion of reported needing hospitalisation (1%), the time taken by cases needing hospitalisation to seek and be admitted to hospital (5 days, giving a hospitalisation rate of 0.2), and the time spent in hospital (5 days, giving a hospitalisation recovery rate of 0.2).
+
+We assume there are no interventions or seasonal effects, and run the model and plot the outcomes.
+
+```{r diphtheria-basic}
+data <- model_diphtheria_cpp(
+  population = camp_pop,
+  prop_vaccinated = prop_vaccinated
+)
+```
+
+```{r class.source = 'fold-hide', fig.cap="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak."}
+filter(data, compartment == "infectious") |>
+  ggplot() +
+  geom_line(
+    aes(time, value, colour = demography_group)
+  ) +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = "Age group",
+    labels = c("<5", "5-15", ">15")
+  ) +
+  expand_limits(
+    x = c(0, 101)
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    y = "Individuals infectious"
+  )
+```
+
+## Modelling an outbreak with changing population sizes
+
+We now model the same outbreak, but with fluctuation in susceptible individuals towards the end of the outbreak, to illustrate the effect this could have on outbreak dynamics.
+In this example, we do not assume any prior immunity.
+
+We prepare a population change schedule as a named list giving the times of each change, and the corresponding changes to each demographic group.
+
+Note that the model assumes that these changes apply _only to the susceptible compartment_, as we assume that the wider population entering the camp is not yet affected by diphtheria, and that infected or hospitalised individuals do not leave the camp.
+
+```{r pop_change}
+# susceptibles increase by about 12%, 92%, and 89% of initial sizes
+pop_change <- list(
+  time = 70,
+  values = list(
+    c(1e4, 1e5, 2e5)
+  )
+)
+```
+
+Here, the number of individuals increases by about 75% overall, which is well within reported values in real world scenarios [@finger2019].
+
+```{r}
+data <- model_diphtheria_cpp(
+  population = camp_pop,
+  population_change = pop_change
+)
+```
+
+```{r class.source = 'fold-hide', fig.cap="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak, with an increase in the camp population size."}
+filter(data, compartment == "infectious") |>
+  ggplot() +
+  geom_line(
+    aes(time, value, colour = demography_group)
+  ) +
+  geom_vline(
+    xintercept = pop_change$time,
+    colour = "red",
+    linetype = "dashed",
+    linewidth = 0.2
+  ) +
+  annotate(
+    geom = "text",
+    x = pop_change$time,
+    y = 20e3,
+    label = "Population increase",
+    angle = 90,
+    vjust = "inward",
+    colour = "red"
+  ) +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    name = "Age group",
+    labels = c("<5", "5-15", ">15")
+  ) +
+  expand_limits(
+    x = c(0, 101)
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  ) +
+  labs(
+    x = "Simulation time (days)",
+    y = "Individuals infectious"
+  )
+```
+
+This example shows how an increase in the number of susceptibles in the population can lead to a rise in the number of infections and extend the duration of an outbreak.
+
+## References

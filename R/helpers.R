@@ -293,7 +293,7 @@ epidemic_size <- function(
 #'   increment = 1
 #' )
 #'
-#' new_infections(data)
+#' head(new_infections(data))
 #'
 new_infections <- function(data,
                            compartments_from_susceptible = NULL,
@@ -359,5 +359,5 @@ new_infections <- function(data,
   }
 
   # return data
-  data
+  data.table::setDF(data)
 }

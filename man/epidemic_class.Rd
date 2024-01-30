@@ -3,9 +3,12 @@
 \name{epidemic_class}
 \alias{epidemic_class}
 \alias{epidemic}
+\alias{is_epidemic}
 \title{Create an \verb{<epidemic>} object}
 \usage{
 epidemic(model_fn, data, parameters)
+
+is_epidemic(x)
 }
 \arguments{
 \item{model_fn}{A string giving the name of the model function.}
@@ -16,6 +19,8 @@ named "time", "demography_group", "compartment", and value.}
 \item{parameters}{A named list of model parameters used in a model run. These
 may of atomic or more complex types, such as \verb{<intervention>}, or NULL for
 unused, optional arguments.}
+
+\item{x}{An object to be checked as belonging to the \verb{<epidemic>} class.}
 }
 \description{
 A simple class to hold the output of epidemic models along with the model

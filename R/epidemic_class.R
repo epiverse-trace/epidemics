@@ -153,8 +153,8 @@ validate_epidemic <- function(x) {
 #'
 #' @param x An object to be checked as belonging to the `<epidemic>` class.
 #'
-#' @name epidemic
-#' @rdname epidemic
+#' @name epidemic_class
+#' @rdname epidemic_class
 #' @export
 is_epidemic <- function(x) {
   inherits(x, "epidemic")

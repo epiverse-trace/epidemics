@@ -20,7 +20,7 @@ uk_population <- population(
 )
 
 # run epidemic simulation with no vaccination or intervention
-data <- model_default_cpp(
+output <- model_default_cpp(
   population = uk_population,
   time_end = 200,
   increment = 1
@@ -28,7 +28,7 @@ data <- model_default_cpp(
 
 test_that("Epidemic size functions", {
   # test for the initial size = 0.0
-  epidemic_initial_size <- epidemic_size(data, stage = 0.0)
+  epidemic_initial_size <- epidemic_size(output, stage = 0.0)
   expect_equal(
     epidemic_initial_size,
     initial_conditions[, "infectious"],
@@ -36,7 +36,8 @@ test_that("Epidemic size functions", {
   )
 
   # test the final size
-  epidemic_final_size <- epidemic_size(data)
+  epidemic_final_size <- epidemic_size(output)
+  data <- get_parameter(output, "data")
   expect_equal(
     epidemic_final_size,
     data[data$compartment == "recovered" & data$time == max(data$time), ]$value,
@@ -52,14 +53,14 @@ test_that("Epidemic size functions", {
   )
 
   # test that final size is greater than size at 50% epidemic time
-  epidemic_half_size <- epidemic_size(data, stage = 0.5)
+  epidemic_half_size <- epidemic_size(output, stage = 0.5)
   expect_true(
     all(epidemic_final_size > epidemic_half_size)
   )
 
   # test that by group FALSE returns a single value
   expect_length(
-    epidemic_size(data, by_group = FALSE), 1
+    epidemic_size(output, by_group = FALSE), 1
   )
 })
 
@@ -86,14 +87,14 @@ uk_population <- population(
 )
 
 test_that("Epidemic size with no deaths is correct", {
-  data <- model_vacamole_cpp(
+  output <- model_vacamole_cpp(
     population = uk_population,
     mortality_rate = 0,
     vaccination = no_vaccination(uk_population, doses = 2L),
     time_end = 400, increment = 1
   )
   expect_identical(
-    epidemic_size(data, include_deaths = FALSE),
-    epidemic_size(data)
+    epidemic_size(output, include_deaths = FALSE),
+    epidemic_size(output)
   )
 })

@@ -34,7 +34,7 @@ test_that("Output of default epidemic model Cpp", {
     )
   )
 
-  data <- model_default_cpp(
+  output <- model_default_cpp(
     population = uk_population,
     intervention = list(
       contacts = no_contacts_intervention(uk_population)
@@ -43,14 +43,21 @@ test_that("Output of default epidemic model Cpp", {
   )
 
   # check for output type and contents
-  expect_s3_class(data, "data.frame")
+  expect_s3_class(output, "epidemic")
+
+  # check for snapshot
+  expect_snapshot(
+    output
+  )
+
+  data <- get_parameter(output, "data")
   expect_length(data, 4L)
   expect_named(
     data, c("compartment", "demography_group", "value", "time"),
     ignore.order = TRUE
   )
   expect_identical(
-    unique(data$compartment),
+    get_parameter(output, "compartments"),
     c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
   )
 
@@ -89,7 +96,7 @@ test_that("Higher transmissibility gives larger final size, default model", {
   infectious_period <- 7
 
   # get data
-  data <- lapply(
+  output <- lapply(
     # transmissibility = r0 / infectious period
     c(r0_low, r0_high) / infectious_period,
     function(beta) {
@@ -103,7 +110,7 @@ test_that("Higher transmissibility gives larger final size, default model", {
   )
 
   # get final size as total recoveries
-  final_sizes <- lapply(data, epidemic_size)
+  final_sizes <- lapply(output, epidemic_size)
 
   # test for effect of R0
   expect_true(
@@ -132,12 +139,12 @@ dummy_population <- population(
 )
 
 test_that("Identical population sizes lead to identical final size", {
-  data <- model_default_cpp(
+  output <- model_default_cpp(
     population = dummy_population,
     time_end = 200, increment = 0.1
   )
 
-  final_sizes <- epidemic_size(data)
+  final_sizes <- epidemic_size(output)
 
   # both groups have same final size
   expect_equal(
@@ -150,7 +157,7 @@ test_that("Higher infectiousness rate leads to larger final size", {
   # make a temporary pre-infectious period vector
   # lower values mean quicker transition from E => I
   infectiousness_rates <- 1 / c(2, 3) # 1 / pre-infectious period in days
-  data <- lapply(
+  output <- lapply(
     infectiousness_rates,
     function(sigma) {
       model_default_cpp(
@@ -161,7 +168,7 @@ test_that("Higher infectiousness rate leads to larger final size", {
     }
   )
 
-  final_sizes <- lapply(data, epidemic_size)
+  final_sizes <- lapply(output, epidemic_size)
 
   # both groups have same final size
   expect_true(
@@ -181,12 +188,12 @@ test_that("Group with more contacts has larger final size and infections", {
   # add to dummy pop
   dummy_population$contact_matrix <- contact_matrix
 
-  data <- model_default_cpp(
+  output <- model_default_cpp(
     population = dummy_population,
     time_end = 200, increment = 0.1
   )
 
-  final_sizes <- epidemic_size(data)
+  final_sizes <- epidemic_size(output)
 
   # group 1 with more contacts has higher final size
   expect_gt(
@@ -195,6 +202,7 @@ test_that("Group with more contacts has larger final size and infections", {
 
   # calculate individuals still infected and check that
   # group with more contacts has more current infections
+  data <- get_parameter(output, "data")
   current_infections <- data[data$compartment == "infectious" &
     data$time == max(data$time), ]$value
   expect_gt(
@@ -213,7 +221,7 @@ test_that("Output of default epidemic model R", {
     )
   )
 
-  data <- model_default_r(
+  output <- model_default_r(
     population = uk_population,
     intervention = list(
       contacts = no_contacts_intervention(uk_population)
@@ -222,7 +230,9 @@ test_that("Output of default epidemic model R", {
   )
 
   # check for output type and contents
-  expect_s3_class(data, "data.frame")
+  expect_s3_class(output, "epidemic")
+
+  data <- get_parameter(output, "data")
   expect_length(data, 4L)
   expect_named(
     data, c("compartment", "demography_group", "value", "time"),
@@ -290,7 +300,7 @@ test_that("Equivalence of default model R and Cpp", {
   )
 
   # run epidemic model, expect no conditions
-  data_r <- model_default_r(
+  output_r <- model_default_r(
     population = uk_population,
     intervention = list(
       contacts = multi_intervention
@@ -299,7 +309,7 @@ test_that("Equivalence of default model R and Cpp", {
     time_end = 100, increment = 1.0
   )
 
-  data_cpp <- model_default_cpp(
+  output_cpp <- model_default_cpp(
     population = uk_population,
     intervention = list(
       contacts = multi_intervention
@@ -307,6 +317,9 @@ test_that("Equivalence of default model R and Cpp", {
     vaccination = vax_regime,
     time_end = 100, increment = 1.0
   )
+
+  data_r <- get_parameter(output_r, "data")
+  data_cpp <- get_parameter(output_cpp, "data")
 
   expect_identical(
     tail(data_r),
@@ -315,8 +328,8 @@ test_that("Equivalence of default model R and Cpp", {
   )
 
   expect_identical(
-    epidemic_size(data_r),
-    epidemic_size(data_cpp),
+    epidemic_size(output_r),
+    epidemic_size(output_cpp),
     tolerance = 1.0
   )
 })

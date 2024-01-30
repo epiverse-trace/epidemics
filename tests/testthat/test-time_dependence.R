@@ -59,14 +59,14 @@ test_that("Basic expectations for time dependence functions", {
     )
   )
 
-  data_cpp <- model_default_cpp(
+  output_cpp <- model_default_cpp(
     population = uk_population,
     time_dependence = list(
       transmissibility = mod_transmissibility
     ),
     time_end = 365, increment = 1
   )
-  data_r <- model_default_cpp(
+  output_r <- model_default_cpp(
     population = uk_population,
     time_dependence = list(
       transmissibility = mod_transmissibility
@@ -75,7 +75,7 @@ test_that("Basic expectations for time dependence functions", {
   )
 
   expect_identical(
-    tail(data_r, 20),
-    tail(data_cpp, 20)
+    tail(get_parameter(output_cpp, "data"), 20),
+    tail(get_parameter(output_r, "data"), 20)
   )
 })

@@ -61,17 +61,23 @@ test_that("Vacamole model works", {
     )
   )
 
-  data <- model_vacamole_cpp(
+  output <- model_vacamole_cpp(
     population = uk_population,
     vaccination = double_vaccination,
     time_end = 400, increment = 1
   )
 
-  # expect output is a data.table
-  expect_s3_class(data, "data.frame")
+  # expect output is a data.frame
+  expect_s3_class(output, "epidemic")
+
+  # check for snapshot
+  expect_snapshot(
+    output
+  )
+
   # expect output has correct compartments
   expect_identical(
-    unique(data$compartment),
+    get_parameter(output, "compartments"),
     c(
       "susceptible", "vaccinated_one_dose", "vaccinated_two_dose",
       "exposed", "exposed_vaccinated", "infectious", "infectious_vaccinated",
@@ -80,6 +86,7 @@ test_that("Vacamole model works", {
   )
 
   # check for all positive values within the range 0 and total population size
+  data <- get_parameter(output, "data")
   expect_true(
     all(
       data$value >= 0 & data$value <= sum(uk_population$demography_vector)
@@ -113,15 +120,18 @@ no_vaccination <- no_vaccination(uk_population, doses = 2)
 
 test_that("Vacamole model with no vaccination", {
   # check model runs silently
-  data <- model_vacamole_cpp(
+  output <- model_vacamole_cpp(
     population = uk_population,
     vaccination = no_vaccination,
     time_end = 400, increment = 1
   )
+
   # test that no individuals are vaccinated in any compartments related to
   # vaccination - e.g. hospitalised-vaccinated etc.
+  data <- get_parameter(output, "data")
   pop_vaxxed <- data[data$time == max(data$time) &
     grepl("vaccinated", data$compartment, fixed = TRUE), ]$value
+
   expect_identical(
     unique(pop_vaxxed), 0.0,
     tolerance = 1e-6
@@ -129,15 +139,18 @@ test_that("Vacamole model with no vaccination", {
 })
 
 test_that("Vacamole with non-fatal infection", {
-  data <- model_vacamole_cpp(
+  output <- model_vacamole_cpp(
     population = uk_population,
     mortality_rate = 0,
     vaccination = no_vaccination,
     time_end = 400, increment = 1
   )
+
   # test that no individuals are dead
+  data <- get_parameter(output, "data")
   pop_dead <- data[data$time == max(data$time) &
     grepl("dead", data$compartment, fixed = TRUE), ]$value
+
   expect_identical(
     unique(pop_dead), 0.0,
     tolerance = 1e-6
@@ -145,15 +158,18 @@ test_that("Vacamole with non-fatal infection", {
 })
 
 test_that("Vacamole with no hospitalisation", {
-  data <- model_vacamole_cpp(
+  output <- model_vacamole_cpp(
     population = uk_population,
     hospitalisation_rate = 0,
     vaccination = no_vaccination,
     time_end = 400, increment = 1
   )
+
   # test that no individuals are dead
+  data <- get_parameter(output, "data")
   pop_hospitalised <- data[data$time == max(data$time) &
     grepl("hospitalised", data$compartment, fixed = TRUE), ]$value
+
   expect_identical(
     unique(pop_hospitalised), 0.0,
     tolerance = 1e-6
@@ -207,7 +223,7 @@ test_that("Output of the Vacamole epidemic model R", {
     )
   )
 
-  data <- model_vacamole_r(
+  output <- model_vacamole_r(
     population = uk_population,
     intervention = list(contacts = no_contacts_intervention(uk_population)),
     vaccination = double_vaccination,
@@ -215,14 +231,16 @@ test_that("Output of the Vacamole epidemic model R", {
   )
 
   # check for output type and contents
-  expect_s3_class(data, "data.frame")
+  expect_s3_class(output, "epidemic")
+
+  data <- get_parameter(output, "data")
   expect_length(data, 4L)
   expect_named(
     data, c("compartment", "demography_group", "value", "time"),
     ignore.order = TRUE
   )
   expect_identical(
-    unique(data$compartment),
+    get_parameter(output, "compartments"),
     c(
       "susceptible", "vaccinated_one_dose", "vaccinated_two_dose",
       "exposed", "exposed_vaccinated", "infectious", "infectious_vaccinated",
@@ -279,19 +297,22 @@ test_that("Equivalence of vacamole model R and Cpp", {
   )
 
   # run epidemic model, expect no conditions
-  data_r <- model_vacamole_r(
+  output_r <- model_vacamole_r(
     population = uk_population,
     intervention = list(contacts = multi_intervention),
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0
   )
 
-  data_cpp <- model_vacamole_cpp(
+  output_cpp <- model_vacamole_cpp(
     population = uk_population,
     intervention = list(contacts = multi_intervention),
     vaccination = double_vaccination,
     time_end = 100, increment = 1.0
   )
+
+  data_r <- get_parameter(output_r, "data")
+  data_cpp <- get_parameter(output_cpp, "data")
 
   expect_identical(
     tail(data_r),
@@ -300,8 +321,8 @@ test_that("Equivalence of vacamole model R and Cpp", {
   )
 
   expect_identical(
-    epidemic_size(data_r),
-    epidemic_size(data_cpp),
+    epidemic_size(output_r),
+    epidemic_size(output_cpp),
     tolerance = 1.0
   )
 })

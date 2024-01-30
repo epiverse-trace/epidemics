@@ -71,15 +71,17 @@ test_that("Population is correctly initialised", {
 })
 
 # run model with different populations
-data_full_pop <- model_default_cpp(
+output_full_pop <- model_default_cpp(
   population = uk_population,
   time_end = 200, increment = 1.0
 )
+data_full_pop <- get_parameter(output_full_pop, "data")
 
-data_half_pop <- model_default_cpp(
+output_half_pop <- model_default_cpp(
   population = half_population,
   time_end = 200, increment = 1.0
 )
+data_half_pop <- get_parameter(output_half_pop, "data")
 
 # expect that smaller population has a smaller final size
 test_that("Effect of population on final size", {

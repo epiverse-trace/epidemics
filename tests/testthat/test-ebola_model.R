@@ -24,13 +24,14 @@ test_that("Ebola model: basic expectations", {
 
   set.seed(1)
   # returns a data.table
-  data <- model_ebola_r(
+  output <- model_ebola_r(
     population = pop,
     time_end = 200
   )
-  expect_s3_class(
-    data, "data.frame"
-  )
+  expect_s3_class(output, "epidemic")
+
+  # model data
+  data <- get_parameter(output, "data")
   expect_length(data, 4L)
   expect_named(
     data, c("compartment", "demography_group", "value", "time"),
@@ -71,10 +72,17 @@ test_that("Ebola model: basic expectations", {
     tolerance = 1
   )
 
-  # snaphshot test
-  expect_snapshot(
-    head(data)
+  # check parameters
+  parameters <- output[["parameters"]]
+  expect_identical(
+    names(parameters),
+    c(
+      names(formals(model_ebola_r)),
+      "compartments"
+    )
   )
+  # snaphshot test for epidemic output
+  expect_snapshot(output)
 })
 
 test_that("Higher transmissibility leads to larger final size, ebola model", {
@@ -90,7 +98,7 @@ test_that("Higher transmissibility leads to larger final size, ebola model", {
     transmissibility_vec,
     function(beta) {
       # run model on data
-      data <- model_ebola_r(
+      output <- model_ebola_r(
         population = pop,
         transmissibility = beta,
         time_end = 100
@@ -135,21 +143,23 @@ test_that("Ebola model works with rate interventions", {
   )
 
   # ideally no conditions are triggered
-  data <- model_ebola_r(
+  output <- model_ebola_r(
     population = population,
     intervention = intervention,
     time_end = 100
   )
 
   # expect basic outcomes
-  expect_s3_class(data, "data.frame")
+  expect_s3_class(output, "epidemic")
+
+  data <- get_parameter(output, "data")
   expect_length(data, 4L)
   expect_named(
     data, c("compartment", "demography_group", "value", "time"),
     ignore.order = TRUE
   )
   expect_setequal(
-    unique(data$compartment),
+    get_parameter(output, "compartments"),
     c(
       "susceptible", "exposed", "infectious",
       "hospitalised", "funeral", "removed"
@@ -160,7 +170,7 @@ test_that("Ebola model works with rate interventions", {
   # epidemic size is the same as `total_cases` for the rate intervention
   # which completely stops transmission
   expect_equal(
-    epidemic_size(data),
+    epidemic_size(output),
     total_cases,
     ignore_attr = TRUE
   )
@@ -168,12 +178,14 @@ test_that("Ebola model works with rate interventions", {
 
 # test that hospitalisations work
 test_that("Ebola model with hospitalisation", {
-  data <- model_ebola_r(
+  output <- model_ebola_r(
     population = population,
     prop_community = 1.0,
     time_end = 100
   )
+
   # expect that there are no hospitalisations
+  data <- get_parameter(output, "data")
   expect_identical(
     unique(data[data$compartment == "hospitalised", ]$value),
     0
@@ -193,13 +205,13 @@ test_that("Ebola model with hospitalisation", {
   )
 
   # expect that the final size is the same as `total_cases` (20)
-  data <- model_ebola_r(
+  output <- model_ebola_r(
     population = population,
     prop_community = 0, etu_risk = 0,
     time_end = 100
   )
   expect_equal(
-    epidemic_size(data),
+    epidemic_size(output),
     total_cases,
     ignore_attr = TRUE
   )
@@ -221,13 +233,13 @@ test_that("Ebola model with funeral safety", {
   )
 
   # expect that the final size is the same as `total_cases` (20)
-  data <- model_ebola_r(
+  output <- model_ebola_r(
     population = population,
     prop_community = 1, funeral_risk = 0,
     time_end = 100
   )
   expect_equal(
-    epidemic_size(data),
+    epidemic_size(output),
     total_cases,
     ignore_attr = TRUE
   )

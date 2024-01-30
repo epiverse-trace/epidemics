@@ -34,19 +34,29 @@ test_that("Diptheria model, basic expectations", {
     population = camp_pop,
     prop_vaccinated = prop_vaccinated
   )
-  expect_s3_class(output, "data.frame")
+  expect_s3_class(output, "epidemic")
+
+  # check for snapshot
+  # NOTE: this snapshot shows fractional individuals not equal to
+  # initial conditions - this is because initial susceptibles are reduced
+  # by prop_vaccinated
+  expect_snapshot(
+    output
+  )
+
+  data <- get_parameter(output, "data")
   expect_named(
-    output, c("compartment", "demography_group", "value", "time"),
+    data, c("compartment", "demography_group", "value", "time"),
     ignore.order = TRUE
   )
   expect_identical(
-    unique(output$compartment),
+    get_parameter(output, "compartments"),
     c("susceptible", "exposed", "infectious", "hospitalised", "recovered")
   )
   # check for all positive values within the range 0 and total population size
   expect_true(
     all(
-      output$value >= 0 & output$value <= sum(demography_vector)
+      data$value >= 0 & data$value <= sum(demography_vector)
     )
   )
   # check for identical numbers of individuals at start and end
@@ -54,14 +64,14 @@ test_that("Diptheria model, basic expectations", {
   # linked to infectious compartment per Finger et al. model structure.
   # leads to different individuals at final state than initial state
   expect_identical(
-    sum(output[output$time == min(output$time), ]$value),
-    sum(output[output$time == max(output$time), ]$value),
+    sum(data[data$time == min(data$time), ]$value),
+    sum(data[data$time == max(data$time), ]$value),
     tolerance = 1e-6
   )
   # check that all age groups in the simulation are the same
   # size as the demography vector
   final_state <- matrix(
-    unlist(output[output$time == max(output$time), ]$value),
+    unlist(data[data$time == max(data$time), ]$value),
     nrow = n_age_groups
   )
   # NOTE: no checks for final state equal to demography vector as
@@ -88,12 +98,13 @@ test_that("Diphtheria model with population size changes", {
 
   # NOTE: expected final population size is larger than the initial
   # but identical to the original + added population
-  data <- model_diphtheria_cpp(
+  output <- model_diphtheria_cpp(
     population = camp_pop,
     prop_hosp = 0.08,
     population_change = p,
     time_end = 200
   )
+  data <- get_parameter(output, "data")
 
   last_value <- aggregate(
     value ~ demography_group,
@@ -125,12 +136,13 @@ test_that("Diphtheria model with population size changes", {
 
   # NOTE: expected final population size is larger than the initial
   # but identical to the original + net added population
-  data <- model_diphtheria_cpp(
+  output <- model_diphtheria_cpp(
     population = camp_pop,
     prop_hosp = 0.08,
     population_change = p,
     time_end = 200
   )
+  data <- get_parameter(output, "data")
 
   last_value <- aggregate(
     value ~ demography_group,

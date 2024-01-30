@@ -119,20 +119,22 @@ test_that("Multi-dose vaccination using `c()`", {
 })
 
 # run model with vaccination
-data_vaccination <- model_default_cpp(
+output_vaccination <- model_default_cpp(
   population = uk_population,
   vaccination = elder_vaccination,
   time_end = 200, increment = 1.0
 )
 
 # run model without vaccination
-data <- model_default_cpp(
+output <- model_default_cpp(
   population = uk_population,
   time_end = 200, increment = 1.0
 )
 
 test_that("Epidemic model with vaccination", {
   # expect that only the last age group is vaccinated
+  data_vaccination <- get_parameter(output_vaccination, "data")
+
   total_vaccinated <- data_vaccination[data_vaccination$compartment ==
     "vaccinated" & data_vaccination$time ==
     max(data_vaccination$time), ]$value
@@ -150,8 +152,8 @@ test_that("Epidemic model with vaccination", {
 
   # expect that vaccination reduces epidemic final size
   # test for the overall population
-  final_size_vaccination <- epidemic_size(data_vaccination)
-  final_size_default <- epidemic_size(data)
+  final_size_vaccination <- epidemic_size(output_vaccination)
+  final_size_default <- epidemic_size(output)
 
   expect_true(
     all(final_size_vaccination < final_size_default)

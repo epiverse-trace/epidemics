@@ -28,7 +28,7 @@ vaccination <- vaccination(
 # run epidemic simulation with vaccination
 time_end <- 200
 increment <- 1
-data <- model_default_cpp(
+output <- model_default_cpp(
   population = uk_population,
   vaccination = vaccination,
   time_end = time_end,
@@ -36,7 +36,7 @@ data <- model_default_cpp(
 )
 
 test_that("New infections are correctly caculated", {
-  data_ <- new_infections(data, compartments_from_susceptible = "vaccinated")
+  data_ <- new_infections(output, compartments_from_susceptible = "vaccinated")
 
   # expect correct number of rows - single demography group
   expect_identical(
@@ -56,7 +56,8 @@ test_that("New infections are correctly caculated", {
   # - change in vaccinations
   new_infections <- data_$new_infections
 
-  # note use of original data.table
+  # note use of data.frame
+  data <- get_parameter(output, "data")
   delta_susc <- data[data$compartment == "susceptible", ][["value"]]
   delta_susc <- c(0, -diff(delta_susc))
 
@@ -70,8 +71,9 @@ test_that("New infections are correctly caculated", {
 })
 
 test_that("New infections without accounting for vaccination", {
-  data_ <- new_infections(data)
+  data_ <- new_infections(output)
   new_infections <- data_$new_infections
+  data <- get_parameter(output, "data")
 
   # note use of original data.table
   delta_susc <- data[data$compartment == "susceptible", ][["value"]]

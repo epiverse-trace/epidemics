@@ -213,7 +213,7 @@ format.epidemic <- function(x, ...) {
     )
   )
 
-  print(head(x[["data"]]))
+  print(utils::head(x[["data"]]))
 
   invisible(x)
 }

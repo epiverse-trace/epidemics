@@ -51,6 +51,7 @@ RTools
 Rcpp
 RcppEigen
 Runge
+SEIHFR
 SEIHR
 SEIR
 SEIRS
@@ -66,6 +67,7 @@ analogs
 cmdstanr
 codecov
 com
+composable
 dD
 dE
 dH

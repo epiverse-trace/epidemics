@@ -35,7 +35,7 @@ reference:
   - title: Model functions
     contents:
     - starts_with("model_")
-  - title: Classes and related functions
+  - title: Model components and output
   - subtitle: Intervention
     contents:
     - contains("intervention")
@@ -45,10 +45,12 @@ reference:
   - subtitle: Vaccination
     contents:
     - contains("vaccination")
+  - subtitle: Model output class and helpers
+    contents:
+    - contains("epidemic")
+    - new_infections
   - title: Helper functions
-    desc: Functions to help with handling package classes and outputs.
+    desc: Miscellaneous functions to help with package classes and inputs.
     contents:
     - get_parameter
     - no_time_dependence
-    - epidemic_size
-    - new_infections

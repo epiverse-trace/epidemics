@@ -3,7 +3,7 @@
 \name{model_diphtheria}
 \alias{model_diphtheria}
 \alias{model_diphtheria_cpp}
-\title{Model a diphtheria outbreak using a compartmental ODE model}
+\title{Model a diphtheria outbreak in a humanitarian camp setting}
 \usage{
 model_diphtheria_cpp(
   population,
@@ -92,7 +92,7 @@ the package version as "hash".
 \description{
 Simulate a diphtheria outbreak using a deterministic,
 compartmental ordinary differential equation model with the compartments
-"susceptible", "exposed", "infectious", "hospitalised", and"recovered".
+"susceptible", "exposed", "infectious", "hospitalised", and "recovered".
 The model is based on Finger et al. (2019) and is intended to be used in the
 context of internally displaced people (IDP) or refugee camps.
 This model accommodates age or demographic structure and allows for a
@@ -102,7 +102,7 @@ The model also allows for changes to the initial population size, to model
 influxes or evacuations from camps.
 }
 \details{
-\subsection{Rcpp implementations}{
+\subsection{Rcpp implementation}{
 
 \code{model_diphtheria_cpp()} is a wrapper function for \code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}},
 an internal C++ function that uses Boost \emph{odeint} solvers for an SEIHR model.

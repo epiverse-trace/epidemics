@@ -47,6 +47,6 @@ data <- model_default_cpp(
   increment = 1
 )
 
-new_infections(data)
+head(new_infections(data))
 
 }

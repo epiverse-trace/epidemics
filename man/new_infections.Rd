@@ -7,7 +7,7 @@
 new_infections(data, compartments_from_susceptible = NULL, by_group = TRUE)
 }
 \arguments{
-\item{data}{A \verb{<data.frame>} of model output, typically
+\item{data}{An \verb{<epidemic>} object with model output, typically
 the output of \code{\link[=model_default_cpp]{model_default_cpp()}} or similar functions.}
 
 \item{compartments_from_susceptible}{An optional argument, for a character

@@ -7,8 +7,9 @@
 epidemic_size(data, stage = 1, by_group = TRUE, include_deaths = TRUE)
 }
 \arguments{
-\item{data}{A \verb{<data.frame>} of model output, typically
-the output of \code{\link[=model_default_cpp]{model_default_cpp()}} or similar functions.}
+\item{data}{An \verb{<epidemic>} object, typically the output of
+\code{\link[=model_default_cpp]{model_default_cpp()}} or similar functions; with the class member \code{"data"}
+holding the model dynamics data.}
 
 \item{stage}{The stage of the epidemic at which to return the epidemic size;
 here, 0.0 represents the initial conditions of the epidemic (0\% of model time

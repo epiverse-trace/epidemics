@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{get_parameter}
 \alias{get_parameter}
-\title{Get parameters from \{epidemics\} classes}
+\title{Access data from \{epidemics\} classes}
 \usage{
 get_parameter(x, parameter)
 }
@@ -13,8 +13,52 @@ get_parameter(x, parameter)
 \item{parameter}{A string for the parameter to access from \code{x}.}
 }
 \value{
-An object of the class of \code{parameter} from \code{x}.
+An object of the class of \code{parameter} from \code{x}. For model
+components, this is typically a vector or matrix. For model objects of
+class \verb{<epidemic>}, this may be a model component class, a
+\verb{<data.frame>} for the model data, or an atomic type for infection
+parameters.
 }
 \description{
-Get parameters from \{epidemics\} classes
+Access data or class members from classes defined in
+\{epidemics\}. Only supports accessing one parameter at a time.
+}
+\details{
+Single components can be accessed from the \verb{<population>},
+\verb{<intervention>}, and \verb{<vaccination>} classes by naming the relevant
+class component.
+The model dynamics data can be accessed from \verb{<epidemic>} objects by
+specifying \code{"data"}, which returns a \verb{<data.frame>}.
+The model parameters, such as the transmissibility of the infection,
+can also be accessed from an \verb{<epidemic>} by passing the corresponding
+name; see examples.
+}
+\examples{
+# create a population
+uk_population <- population(
+  name = "UK population",
+  contact_matrix = matrix(1),
+  demography_vector = 67e6,
+  initial_conditions = matrix(
+    c(0.9999, 0.0001, 0, 0, 0),
+    nrow = 1, ncol = 5L
+  )
+)
+
+# get population parameters
+get_parameter(uk_population, "demography_vector")
+
+# run epidemic simulation with no vaccination or intervention
+output <- model_default_cpp(
+  population = uk_population
+)
+
+# access the model dynamics data
+head(
+  get_parameter(output, "data")
+)
+
+# access the model infection parameters
+get_parameter(output, "transmissibility")
+get_parameter(output, "recovery_rate")
 }

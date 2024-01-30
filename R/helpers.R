@@ -1,18 +1,76 @@
-#' Get parameters from \{epidemics\} classes
+#' Access data from \{epidemics\} classes
+#'
+#' @description Access data or class members from classes defined in
+#' \{epidemics\}. Only supports accessing one parameter at a time.
+#'
 #' @param x An object of one of the classes provided by _epidemics_:
 #' `<population>`, `<infection>`, `<intervention>`, or `<vaccination>`.
 #' @param parameter A string for the parameter to access from `x`.
 #'
-#' @return An object of the class of `parameter` from `x`.
+#' @details
+#' Single components can be accessed from the `<population>`,
+#' `<intervention>`, and `<vaccination>` classes by naming the relevant
+#' class component.
+#' The model dynamics data can be accessed from `<epidemic>` objects by
+#' specifying `"data"`, which returns a `<data.frame>`.
+#' The model parameters, such as the transmissibility of the infection,
+#' can also be accessed from an `<epidemic>` by passing the corresponding
+#' name; see examples.
+#'
+#' @return An object of the class of `parameter` from `x`. For model
+#' components, this is typically a vector or matrix. For model objects of
+#' class `<epidemic>`, this may be a model component class, a
+#' `<data.frame>` for the model data, or an atomic type for infection
+#' parameters.
+#'
+#' @examples
+#' # create a population
+#' uk_population <- population(
+#'   name = "UK population",
+#'   contact_matrix = matrix(1),
+#'   demography_vector = 67e6,
+#'   initial_conditions = matrix(
+#'     c(0.9999, 0.0001, 0, 0, 0),
+#'     nrow = 1, ncol = 5L
+#'   )
+#' )
+#'
+#' # get population parameters
+#' get_parameter(uk_population, "demography_vector")
+#'
+#' # run epidemic simulation with no vaccination or intervention
+#' output <- model_default_cpp(
+#'   population = uk_population
+#' )
+#'
+#' # access the model dynamics data
+#' head(
+#'   get_parameter(output, "data")
+#' )
+#'
+#' # access the model infection parameters
+#' get_parameter(output, "transmissibility")
+#' get_parameter(output, "recovery_rate")
 #' @export
 get_parameter <- function(x, parameter) {
   checkmate::assert_multi_class(
-    x, c("population", "intervention", "vaccination")
+    x, c("population", "intervention", "vaccination", "epidemic")
   )
   checkmate::assert_string(parameter)
 
+  # NOTE: consider writing generic with class methods
   # return list element
-  x[[parameter]]
+  if (is_epidemic(x)) {
+    switch(parameter,
+      data = {
+        checkmate::assert_class(x, "epidemic")
+        x[["data"]]
+      },
+      x[["parameters"]][[parameter]]
+    )
+  } else {
+    x[[parameter]]
+  }
 }
 
 #' Return ODE model output as a data.table

@@ -99,12 +99,22 @@ uk_population
 
 ## Run epidemic model
 
+Running a model returns an object of the class `<epidemic>` -- this is a convenient wrapper around the model data (a `<data.frame>`), the model parameters (such as the infection parameters), and the model's composable elements if any (such as interventions, if applied).
+
+The object also holds the package version used when running the model function. Together with the model parameters, this helps improve reproducibility as well as improving comparability between model runs.
+
 ```{r}
 # run an epidemic model using `epidemic`
 output <- model_default_cpp(
   population = uk_population,
   time_end = 600, increment = 1.0
 )
+
+# view output
+output
+
+# get model data
+data <- get_parameter(output, "data")
 ```
 
 ## Prepare data and visualise infections
@@ -113,7 +123,7 @@ Plot epidemic over time, showing only the number of individuals in the exposed a
 
 ```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
-filter(output, compartment %in% c("exposed", "infectious")) %>%
+filter(data, compartment %in% c("exposed", "infectious")) %>%
   ggplot(
     aes(
       x = time,

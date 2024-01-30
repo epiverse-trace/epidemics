@@ -122,13 +122,16 @@ set.seed(0)
 
 # run the epidemic model using `epidemic`
 # we call the model "ebola" from the library
-data <- model_ebola_r(
+output <- model_ebola_r(
   population = guinea_population,
   time_end = 100
 )
 
-# view the head of the output
-head(data)
+# View output
+output
+
+# get model data
+data <- get_parameter(output, "data")
 ```
 
 ## Prepare data and visualise infections
@@ -178,22 +181,25 @@ We can run the model multiple times --- here, 100 times --- and plot the number 
 set.seed(1)
 
 # run the simulation 100 times
-data <- lapply(
+output <- lapply(
   X = seq(100),
   FUN = function(x) {
     data <- model_ebola_r(
       population = guinea_population,
       time_end = 100
     )
-
-    # add replicate number and return data
-    data$replicate <- x
-    data
   }
 )
 
-# use data.table to collect the data
-data_timeseries <- bind_rows(data)
+# access the data from the model ojects and create a single data.frame
+data_timeseries <- Map(output, seq(100), f = function(out, i) {
+  data <- get_parameter(out, "data")
+
+  # add replicate number and return data
+  data$replicate <- i
+  data
+}) %>%
+  bind_rows()
 ```
 
 We plot the data.
@@ -242,7 +248,7 @@ Note that the final size here refers to the final size after 365 days, which is 
 ```{r}
 # apply the function over each replicate
 data_final_size <- lapply(
-  X = data,
+  X = output,
   FUN = epidemic_size, include_deaths = FALSE, by_group = FALSE
 )
 data_final_size <- unlist(data_final_size)
@@ -297,7 +303,8 @@ set.seed(0)
 data_baseline <- model_ebola_r(
   population = guinea_population,
   time_end = 100
-)
+) %>%
+  get_parameter("data")
 
 set.seed(0)
 # note that the intervention is passed within a list,
@@ -308,7 +315,8 @@ data_intervention <- model_ebola_r(
     transmissibility = reduce_transmission
   ),
   time_end = 100
-)
+) %>%
+  get_parameter("data")
 
 # assign scenario names
 data_baseline$scenario <- "baseline"
@@ -385,7 +393,8 @@ data_apply_vax <- model_ebola_r(
     transmissibility = time_dep_vax
   ),
   time_end = 100
-)
+) %>%
+  get_parameter("data")
 
 # assign scenario name
 data_apply_vax$scenario <- "apply_vaccination"
@@ -460,7 +469,8 @@ data_improve_hosp <- model_ebola_r(
     prop_community = improve_hospitalisation
   ),
   time_end = 100
-)
+) %>%
+  get_parameter("data")
 
 # assign scenario name
 data_improve_hosp$scenario <- "improve_hosp"
@@ -517,7 +527,8 @@ data_improve_etu <- model_ebola_r(
     etu_risk = improve_etu_safety
   ),
   time_end = 100
-)
+) %>%
+  get_parameter("data")
 
 # assign scenario name
 data_improve_etu$scenario <- "improve_etu"
@@ -577,7 +588,8 @@ data_improve_funeral <- model_ebola_r(
     funeral_risk = reduce_funeral_risk
   ),
   time_end = 100
-)
+) %>%
+  get_parameter("data")
 
 # assign scenario name
 data_improve_funeral$scenario <- "improve_funeral"
@@ -628,7 +640,8 @@ data_combined_interventions <- model_ebola_r(
     funeral_risk = reduce_funeral_risk
   ),
   time_end = 100
-)
+) %>%
+  get_parameter("data")
 
 # assign scenario name
 data_combined_interventions$scenario <- "combined_interventions"

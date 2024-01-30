@@ -152,7 +152,7 @@ ggplot(data_infections) +
   )
 ```
 
-Here, we can see that the epidemic has a large first wave, followed by a smaller second wave later in the model run (which represents one year).
+Here, we can see that the epidemic has a small first wave, followed by a larger second wave later in the model run (which represents one year).
 
 ## Non-pharmaceutical interventions and time-dependence
 
@@ -267,7 +267,7 @@ We also assume that a single dose of the vaccine confers immunity (i.e., non-lea
 ```{r}
 # define vaccination object
 vax_regime <- vaccination(
-  nu = matrix(0.001, nrow = 3, ncol = 1),
+  nu = matrix(0.003, nrow = 3, ncol = 1),
   time_begin = matrix(c(0, 0, 120)),
   time_end = matrix(c(0, 0, 220))
 )
@@ -280,7 +280,7 @@ We model the effect of administering vaccine doses between the expected peaks of
 
 ```{r}
 # pass time dependence and vaccination. Note no interventions
-data_vax <- model_default_cpp(
+output_vax <- model_default_cpp(
   population = uk_population,
   vaccination = vax_regime,
   time_dependence = list(
@@ -291,13 +291,19 @@ data_vax <- model_default_cpp(
 
 # collect data and add scenario
 data_vax_infections <- new_infections(
-  data_vax,
+  output_vax,
   compartments_from_susceptible = c("exposed", "vaccinated")
 )
 data_vax_infections$scenario <- "vaccination"
 
 # combine data
 data_vax_compare <- bind_rows(data_infections, data_vax_infections)
+
+# get data from vaccination model output
+data_vaccinations <- get_parameter(output_vax, "data") %>%
+  filter(
+    compartment == "vaccinated", demography_group == "40+"
+  )
 ```
 
 ```{r class.source = 'fold-hide'}
@@ -305,21 +311,19 @@ ggplot(data_vax_compare) +
   geom_rect(
     aes(
       xmin = 120, xmax = 220,
-      ymin = 0, ymax = 20e3
+      ymin = 0, ymax = 80e3
     ),
     fill = "grey", alpha = 0.1
   ) +
   geom_line(
-    data = filter(
-      data_vax, compartment == "vaccinated", demography_group == "40+"
-    ),
+    data = data_vaccinations,
     aes(time, value / 1e2),
     colour = "darkblue"
   ) +
   annotate(
     geom = "text",
     x = 190,
-    y = 10e3,
+    y = 50e3,
     label = "Vaccines administered (100 days)",
     angle = 90,
     colour = "darkblue"
@@ -354,7 +358,7 @@ ggplot(data_vax_compare) +
   ) +
   theme_bw() +
   coord_cartesian(
-    ylim = c(0, 20e3),
+    ylim = c(0, 80e3),
     expand = FALSE
   ) +
   labs(
@@ -367,7 +371,6 @@ ggplot(data_vax_compare) +
   )
 ```
 
-Here, we can see that over 2 million individuals are vaccinated (and immunised; blue line, right-hand Y axis) over the 100 days between the end of the first wave of infections, and the start of the second wave of infections.
+Here, we can see that over 7 million individuals are vaccinated (and immunised; blue line, right-hand Y axis) over the 100 days between the end of the first wave of infections, and the start of the second wave of infections.
 
-Vaccination reduces the number of daily infections among individuals of all age groups in the second wave.
-At its peak, the vaccination scenario sees approximately 5,000 fewer daily infections than the baseline scenario, which may represent a substantial benefit for public health.
+Vaccination reduces the number of daily infections among individuals of all age groups in the second wave, with a much lower peak of daily new infections than the baseline scenario (dashed line); this could represent a substantial public health benefit.

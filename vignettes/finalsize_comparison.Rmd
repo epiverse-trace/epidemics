@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Comparing simulation-based and direct analytical methods for epidemic size estimation}
+  %\VignetteIndexEntry{Reducing parameters required for final size estimation}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -204,7 +204,10 @@ To do this, we need to calculate the total proportion of individuals in each age
 
 ```{r}
 # Proportion of the individuals vaccinated
-p_vacc <- filter(output, compartment == "vaccinated", time == max(time))
+p_vacc <- filter(
+  get_parameter(output, "data"),
+  compartment == "vaccinated", time == max(time)
+)
 p_vacc <- p_vacc$value / demography_vector
 ```
 

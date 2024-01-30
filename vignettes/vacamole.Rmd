@@ -197,7 +197,7 @@ First, we run the model with no vaccination. The model's default parameters are:
  - Mortality reduction from vaccination (`mort_reduction_vax`): 0.2, assuming a 20% reduction in mortality for individuals who are doubly vaccinated.
 
 ```{r}
-data <- model_vacamole_cpp(
+output <- model_vacamole_cpp(
   population = uk_population,
   vaccination = no_vaccination, # note custom no_vaccination object
   time_end = epidemic_days
@@ -207,7 +207,7 @@ data <- model_vacamole_cpp(
 Next we run the model with a two dose vaccination regime.
 
 ```{r}
-data_vaccination <- model_vacamole_cpp(
+output_vaccination <- model_vacamole_cpp(
   population = uk_population,
   vaccination = double_vaccination, # note custom object for two doses
   time_end = epidemic_days
@@ -220,22 +220,22 @@ First, we calculate the total number of infections resulting in recoveries and d
 
 ```{r}
 # collect data from the two scenarios
-data_scenarios <- list(data, data_vaccination)
+output_scenarios <- list(output, output_vaccination)
 
 # get deaths and recoveries from infection
 data_scenarios <- Map(
-  data_scenarios, c("no_vax", "vax"),
-  f = function(df, sc) {
-    df_ <- distinct(df, demography_group)
+  output_scenarios, c("no_vax", "vax"),
+  f = function(out, sc) {
+    df_ <- get_parameter(out, "data")
 
     # get total deaths per group
-    df_$total_deaths <- filter(
-      df, time == max(time), compartment == "dead"
-    ) %>% pull(value)
+    df_ <- group_by(df_, demography_group) %>%
+      filter(time == max(time), compartment == "dead") %>%
+      select(demography_group, total_deaths = value)
 
     # get total recoveries per group using helper function `epidemic_size()`
     # do not count dead
-    df_$total_recovered <- epidemic_size(df, include_deaths = FALSE)
+    df_$total_recovered <- epidemic_size(out, include_deaths = FALSE)
 
     # add scenario information
     df_$scenario <- sc
@@ -311,10 +311,11 @@ Finally, we can compare the peak of hospital bed occupancy in each scenario --- 
 
 
 ```{r}
-# collect data from the two scenarios
-data_scenarios <- list(data, data_vaccination)
+# process data to assess peak hospital occupancy
+peak_hospital_occupancy <- vapply(output_scenarios, function(out) {
+  # get data
+  df <- get_parameter(out, "data")
 
-peak_hospital_occupancy <- vapply(data_scenarios, function(df) {
   # get highest hospital occupancy
   # first get total hospitalisations among vaccinated and un- or part-vacc.
   df <- filter(

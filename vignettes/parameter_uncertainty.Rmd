@@ -168,7 +168,11 @@ output_samples <- Map(
     output <- new_infections(output)
 
     # assign scenario number
-    output[, c("scenario", "R") := list(i, x)]
+    output <- mutate(
+      output,
+      scenario = i,
+      R = x
+    )
 
     output
   }

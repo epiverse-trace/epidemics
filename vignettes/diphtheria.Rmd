@@ -91,10 +91,16 @@ We also stick to default assumptions regarding: case reporting (that about 3% of
 We assume there are no interventions or seasonal effects, and run the model and plot the outcomes.
 
 ```{r diphtheria-basic}
-data <- model_diphtheria_cpp(
+output <- model_diphtheria_cpp(
   population = camp_pop,
   prop_vaccinated = prop_vaccinated
 )
+
+# View output
+output
+
+# get model data
+data <- get_parameter(output, "data")
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak."}
@@ -146,10 +152,13 @@ pop_change <- list(
 Here, the number of individuals increases by about 75% overall, which is well within reported values in real world scenarios [@finger2019].
 
 ```{r}
-data <- model_diphtheria_cpp(
+output <- model_diphtheria_cpp(
   population = camp_pop,
   population_change = pop_change
 )
+
+# get model data
+data <- get_parameter(output, "data")
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak, with an increase in the camp population size."}

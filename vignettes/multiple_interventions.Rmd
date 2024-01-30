@@ -33,6 +33,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(epidemics)
 library(ggplot2)
+library(dplyr)
 ```
 
 ## Prepare population and initial conditions
@@ -391,18 +392,19 @@ There is a distinct peak new infections once schools are simulated to re-open, w
 
 ### Re-applying workplace closures
 
-In the scenario with combined interventions, daily new infections are forecast to exceed 50,000 on the `r min(which(new_infections(data_combined, by_group = FALSE)[, new_infections > 50000]))`th day of the epidemic.
+```{r}
+# log the date that cases exceed 50000 daily
+infection_data <- new_infections(data_combined, by_group = FALSE)
+start_date <- filter(infection_data, new_infections > 50000) %>%
+  filter(time == min(time)) %>%
+  pull(time)
+```
+
+In the scenario with combined interventions, daily new infections are forecast to exceed 50,000 on the `r start_date`th day of the epidemic.
 
 In this final example, we simulate re-implementing two months of workplace closures, but not school closures, to reduce infections.
 
 ```{r}
-# log the date that cases exceed 50000 daily
-start_date <- min(
-  which(
-    new_infections(data_combined, by_group = FALSE)[, new_infections > 50000]
-  )
-)
-
 # create a new workplace closures object
 workplace_closures_2 <- intervention(
   type = "contacts",

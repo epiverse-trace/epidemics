@@ -105,6 +105,9 @@ output <- model_default_cpp(
   vaccination = vaccinate_elders,
   time_end = 600, increment = 1.0
 )
+
+# get data
+data <- get_parameter(output, "data")
 ```
 
 ## Prepare data and visualise infections
@@ -113,7 +116,7 @@ Plot epidemic over time, showing only the number of individuals in the exposed, 
 
 ```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
-filter(output, compartment %in% c("exposed", "infectious")) %>%
+filter(data, compartment %in% c("exposed", "infectious")) %>%
   ggplot(
     aes(
       x = time,

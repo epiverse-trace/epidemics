@@ -85,8 +85,9 @@ Taken as days, with a default value of 100 days.}
 \item{increment}{The size of the time increment. Taken as days, with a}
 }
 \value{
-A \verb{<data.frame>} with the columns "time", "compartment", "age_group",
-and "value".
+An \verb{<epidemic>} class object with the model function name,
+model data as "data", model parameters and components as "parameters", and
+the package version as "hash".
 }
 \description{
 Simulate a diphtheria outbreak using a deterministic,
@@ -139,6 +140,22 @@ Users can specify the times and changes (to each demographic group) of
 changes using the \code{population_changes} argument, to examine the effect on
 outbreak dynamics.
 }
+}
+\examples{
+n_age_groups <- 3
+demography_vector <- c(83000, 108200, 224600)
+initial_conditions <- matrix(0, nrow = n_age_groups, ncol = 5)
+# set susceptibles and infectious
+initial_conditions[, 1] <- demography_vector - 1
+initial_conditions[, 3] <- rep(1, n_age_groups)
+camp_pop <- population(
+  contact_matrix = matrix(1, nrow = n_age_groups, ncol = n_age_groups),
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions / demography_vector
+)
+
+model_diphtheria_cpp(camp_pop)
+
 }
 \references{
 Finger, F., Funk, S., White, K., Siddiqui, M. R., Edmunds, W. J., &

@@ -83,27 +83,34 @@ dependence \code{vignette("time_dependence", package = "epidemics")}.}
 in days. Defaults to 100 days.}
 }
 \value{
-A \verb{<data.table>} in
-long format with the columns "time", "compartment", "age_group", and "value",
-that gives the number of individuals in each model compartment over time (
-from 1 to \code{time_end}).
+An \verb{<epidemic>} class object with the model function name,
+model data as "data", model parameters and components as "parameters", and
+the package version as "hash".
 }
 \description{
-Simulate an epidemic using a discrete-time, stochastic SEIR
+Simulate an epidemic using a discrete-time, stochastic SEIHFR
 compartmental model with compartments based on Li et al. (2019), and with
 Erlang passage times based on a model developed by Getz and Dougherty (2017),
 developed to model the West African Ebola virus disease (EVD) outbreak of
 2013 -- 2016.
 See \strong{Details} for more information.
-
-\code{model_ebola_cpp()} is an Rcpp implementation of this model that currently
-lags behind the R implementation, and is likely to be removed.
 }
 \section{Details: Discrete-time ebola virus disease model}{
+\subsection{Compartments}{
+
 This model has compartments adopted from the consensus model for Ebola virus
-disease presented in Li et al. (2019), and with transitions between
-epidemiological compartments modelled using Erlang sub-compartments adapted
-from Getz and Dougherty (2018); see \strong{References}.
+disease presented in Li et al. (2019): "susceptible", "exposed",
+infectious in the community ("infectious"), infectious and hospitalised in a
+facility that potentially prevents onward transmission ("hospitalised"),
+undergoing a funeral which potentially leads to onward transmission
+("funeral"), and recovered or dead without the possibility of onward
+transmission ("removed").
+}
+
+\subsection{Compartmental transitions}{
+
+Transitions between epidemiological compartments modelled using Erlang
+sub-compartments adapted from Getz and Dougherty (2018); see \strong{References}.
 
 The R code for this model is adapted from code by Ha Minh Lam and
 initially made available on \emph{Epirecipes}
@@ -131,6 +138,8 @@ In this discrete time model, \eqn{\gamma^E} and \eqn{\gamma^I} are used to
 determine the passage times of newly exposed or infectious individuals
 through their respective compartments (thus allowing for variation in passage
 times).
+}
+
 \subsection{Hospitalisation, funerals, and removal}{
 
 A proportion, \code{1.0 - prop_community}, of infectious individuals are
@@ -203,12 +212,12 @@ population <- population(
 )
 
 # run epidemic simulation with no vaccination or intervention
-data <- model_ebola_r(
+output <- model_ebola_r(
   population = population
 )
 
-# view some data
-head(data)
+# view the object
+output
 }
 \references{
 Li, S.-L., Ferrari, M. J., Bjørnstad, O. N., Runge, M. C., Fonnesbeck, C. J.,

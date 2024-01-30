@@ -74,11 +74,9 @@ Taken as days, with a default value of 200 days.}
 default value of 1 day.}
 }
 \value{
-A \code{data.frame} with the columns "time", "compartment", "age_group",
-"value". The compartments correspond to the compartments of the model
-chosen with \code{model}.
-The current default model has the compartments "susceptible", "exposed",
-"infectious", "recovered", and "vaccinated".
+An \verb{<epidemic>} class object with the model function name,
+model data as "data", model parameters and components as "parameters", and
+the package version as "hash".
 }
 \description{
 Simulate an epidemic using a deterministic, compartmental
@@ -135,6 +133,6 @@ data <- model_default_cpp(
   population = uk_population
 )
 
-# view some data
-head(data)
+# view the output
+data
 }

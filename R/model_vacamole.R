@@ -29,6 +29,22 @@
 #' each dose. See [vaccination()].
 #' @details
 #'
+#' The Vacamole model has the compartments:
+#'
+#' - "susceptible", "exposed", "infectious", "hospitalised", "recovered", and
+#' "dead"; as well as the special compartments
+#'
+#' - vaccinated with one dose and fully susceptible to infection
+#' ("vaccinated_one_dose"),
+#'
+#' - vaccinated with two doses and with potentially reduced susceptibility to
+#' infection ("vaccinated_two_dose"),
+#'
+#' - infected and infectious after two doses of vaccination and with
+#' potentially reduced risk of hospitalisation ("infectious_vaccinated"),
+#'
+#' - hospitalised after two doses of vaccination and with potentially reduced
+#' risk of death ("hospitalised_vaccinated").
 #' This model allows for:
 #'
 #'  1. A 'hospitalised' compartment along with a hospitalisation rates;
@@ -79,13 +95,9 @@
 #' assuming a 20% reduction in mortality for individuals who are doubly
 #' vaccinated.
 #'
-#' @return A `data.frame` with the columns "time", "compartment", "age_group",
-#' "value". The compartments correspond to the compartments of the model
-#' chosen with `model`.
-#' The current default model has the compartments "susceptible",
-#' "vaccinated_one_dose", "vaccinated_two_dose", "exposed",
-#' "infectious", "infectious_vaccinated", "hospitalised",
-#' "hospitalised_vaccinated", "recovered",  and "dead".
+#' @return An `<epidemic>` class object with the model function name,
+#' model data as "data", model parameters and components as "parameters", and
+#' the package version as "hash".
 #'
 #' @references
 #' Ainslie, K. E. C., Backer, J. A., Boer, P. T. de, Hoek, A. J. van,
@@ -114,13 +126,13 @@
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' data <- model_vacamole_cpp(
+#' output <- model_vacamole_cpp(
 #'   population = population,
 #'   vaccination = double_vax
 #' )
 #'
-#' # view some data
-#' head(data)
+#' # view the output
+#' output
 #' @export
 model_vacamole_cpp <- function(population,
                                transmissibility = 1.3 / 7.0,
@@ -218,8 +230,12 @@ model_vacamole_cpp <- function(population,
   # run model over arguments
   output <- do.call(.model_vacamole_cpp, model_arguments)
 
-  # prepare output and return
-  output_to_df(output, population, compartments)
+  # prepare data, parameters, and return as <epidemic> class
+  data <- output_to_df(output, population, compartments)
+  parameters <- .get_model_parameters(model_vacamole_cpp)
+  parameters[["compartments"]] <- compartments
+
+  epidemic("model_default_cpp", data, parameters)
 }
 
 #' Ordinary Differential Equations for the Vacamole Model
@@ -465,7 +481,8 @@ model_vacamole_r <- function(population,
   )
 
   # convert to long format using output_to_df() and return
-  output_to_df(
+  # data and parameters as <epidemic>
+  data <- output_to_df(
     output = list(
       x = data[, setdiff(colnames(data), "time")],
       time = seq(0, time_end, increment)
@@ -473,4 +490,8 @@ model_vacamole_r <- function(population,
     population = population,
     compartments = compartments
   )
+  parameters <- .get_model_parameters(model_vacamole_r)
+  parameters[["compartments"]] <- compartments
+
+  epidemic(model_fn = "model_vacamole_r", data, parameters)
 }

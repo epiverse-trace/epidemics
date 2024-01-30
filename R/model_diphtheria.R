@@ -1,11 +1,11 @@
-#' @title Model a diphtheria outbreak using a compartmental ODE model
+#' @title Model a diphtheria outbreak in a humanitarian camp setting
 #'
 #' @name model_diphtheria
 #' @rdname model_diphtheria
 #'
 #' @description Simulate a diphtheria outbreak using a deterministic,
 #' compartmental ordinary differential equation model with the compartments
-#' "susceptible", "exposed", "infectious", "hospitalised", and"recovered".
+#' "susceptible", "exposed", "infectious", "hospitalised", and "recovered".
 #' The model is based on Finger et al. (2019) and is intended to be used in the
 #' context of internally displaced people (IDP) or refugee camps.
 #' This model accommodates age or demographic structure and allows for a
@@ -63,7 +63,7 @@
 #' default value of 1 day.
 #' @details
 #'
-#' ## Rcpp implementations
+#' ## Rcpp implementation
 #'
 #' `model_diphtheria_cpp()` is a wrapper function for [.model_diphtheria_cpp()],
 #' an internal C++ function that uses Boost _odeint_ solvers for an SEIHR model.
@@ -109,8 +109,26 @@
 #' Kucharski, A. J. (2019). Real-time analysis of the diphtheria outbreak in
 #' forcibly displaced Myanmar nationals in Bangladesh. BMC Medicine, 17, 58.
 #' \doi{10.1186/s12916-019-1288-7}.
-#' @return A `<data.frame>` with the columns "time", "compartment", "age_group",
-#' and "value".
+#' @return An `<epidemic>` class object with the model function name,
+#' model data as "data", model parameters and components as "parameters", and
+#' the package version as "hash".
+#' @examples
+#' n_age_groups <- 3
+#' demography_vector <- c(83000, 108200, 224600)
+#' initial_conditions <- matrix(0, nrow = n_age_groups, ncol = 5)
+
+#' # set susceptibles and infectious
+#' initial_conditions[, 1] <- demography_vector - 1
+#' initial_conditions[, 3] <- rep(1, n_age_groups)
+
+#' camp_pop <- population(
+#'   contact_matrix = matrix(1, nrow = n_age_groups, ncol = n_age_groups),
+#'   demography_vector = demography_vector,
+#'   initial_conditions = initial_conditions / demography_vector
+#' )
+#'
+#' model_diphtheria_cpp(camp_pop)
+#'
 #' @export
 model_diphtheria_cpp <- function(population,
                                  transmissibility = 4.0 / 4.5,
@@ -219,6 +237,10 @@ model_diphtheria_cpp <- function(population,
   # run model over arguments
   output <- do.call(.model_diphtheria_cpp, model_arguments)
 
-  # prepare output and return
-  output_to_df(output, population, compartments)
+  # prepare data and parameters and return as <epidemic>
+  data <- output_to_df(output, population, compartments)
+  parameters <- .get_model_parameters(model_diphtheria_cpp)
+  parameters[["compartments"]] <- compartments
+
+  epidemic("model_diphtheria_cpp", data, parameters)
 }

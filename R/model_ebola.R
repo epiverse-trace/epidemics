@@ -47,15 +47,12 @@ prob_discrete_erlang <- function(shape, rate) {
 #' @name model_ebola
 #' @rdname model_ebola
 #'
-#' @description Simulate an epidemic using a discrete-time, stochastic SEIR
+#' @description Simulate an epidemic using a discrete-time, stochastic SEIHFR
 #' compartmental model with compartments based on Li et al. (2019), and with
 #' Erlang passage times based on a model developed by Getz and Dougherty (2017),
 #' developed to model the West African Ebola virus disease (EVD) outbreak of
 #' 2013 -- 2016.
 #' See **Details** for more information.
-#'
-#' `model_ebola_cpp()` is an Rcpp implementation of this model that currently
-#' lags behind the R implementation, and is likely to be removed.
 #'
 #' @param population An object of the `<population>` class, see [population()].
 #'
@@ -100,19 +97,27 @@ prob_discrete_erlang <- function(shape, rate) {
 #' dependence \code{vignette("time_dependence", package = "epidemics")}.
 #' @param time_end The maximum number of timesteps over which to run the model,
 #' in days. Defaults to 100 days.
-#' @return
-#' A `<data.table>` in
-#' long format with the columns "time", "compartment", "age_group", and "value",
-#' that gives the number of individuals in each model compartment over time (
-#' from 1 to `time_end`).
+#' @return An `<epidemic>` class object with the model function name,
+#' model data as "data", model parameters and components as "parameters", and
+#' the package version as "hash".
 #' @details
 #'
 #' # Details: Discrete-time ebola virus disease model
 #'
+#' ## Compartments
+#'
 #' This model has compartments adopted from the consensus model for Ebola virus
-#' disease presented in Li et al. (2019), and with transitions between
-#' epidemiological compartments modelled using Erlang sub-compartments adapted
-#' from Getz and Dougherty (2018); see **References**.
+#' disease presented in Li et al. (2019): "susceptible", "exposed",
+#' infectious in the community ("infectious"), infectious and hospitalised in a
+#' facility that potentially prevents onward transmission ("hospitalised"),
+#' undergoing a funeral which potentially leads to onward transmission
+#' ("funeral"), and recovered or dead without the possibility of onward
+#' transmission ("removed").
+#'
+#' ## Compartmental transitions
+#'
+#' Transitions between epidemiological compartments modelled using Erlang
+#' sub-compartments adapted from Getz and Dougherty (2018); see **References**.
 #'
 #' The R code for this model is adapted from code by Ha Minh Lam and
 #' initially made available on _Epirecipes_
@@ -221,12 +226,12 @@ prob_discrete_erlang <- function(shape, rate) {
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' data <- model_ebola_r(
+#' output <- model_ebola_r(
 #'   population = population
 #' )
 #'
-#' # view some data
-#' head(data)
+#' # view the object
+#' output
 #' @export
 model_ebola_r <- function(population,
                           erlang_subcompartments = 2,
@@ -491,13 +496,14 @@ model_ebola_r <- function(population,
       new_removed
   }
 
-  # convert to long format
-  output_to_df(
+  # convert to long format, prepare parameters, return <epidemic>
+  data <- output_to_df(
     output = list(x = sim_data, time = seq_len(time_end)),
     population = population,
-    compartments = c(
-      "susceptible", "exposed", "infectious",
-      "hospitalised", "funeral", "removed"
-    )
+    compartments = compartments
   )
+  parameters <- .get_model_parameters(model_ebola_r)
+  parameters[["compartments"]] <- compartments
+
+  epidemic("model_ebola_r", data, parameters)
 }

@@ -103,13 +103,9 @@ Taken as days, with a default value of 200 days.}
 default value of 1 day.}
 }
 \value{
-A \code{data.frame} with the columns "time", "compartment", "age_group",
-"value". The compartments correspond to the compartments of the model
-chosen with \code{model}.
-The current default model has the compartments "susceptible",
-"vaccinated_one_dose", "vaccinated_two_dose", "exposed",
-"infectious", "infectious_vaccinated", "hospitalised",
-"hospitalised_vaccinated", "recovered",  and "dead".
+An \verb{<epidemic>} class object with the model function name,
+model data as "data", model parameters and components as "parameters", and
+the package version as "hash".
 }
 \description{
 Simulate an epidemic using the \emph{Vacamole} model for Covid-19
@@ -119,7 +115,20 @@ This model is aimed at estimating the impact of 'leaky' vaccination on an
 epidemic. See \strong{Details} and \strong{References} for more information.
 }
 \details{
+The Vacamole model has the compartments:
+\itemize{
+\item "susceptible", "exposed", "infectious", "hospitalised", "recovered", and
+"dead"; as well as the special compartments
+\item vaccinated with one dose and fully susceptible to infection
+("vaccinated_one_dose"),
+\item vaccinated with two doses and with potentially reduced susceptibility to
+infection ("vaccinated_two_dose"),
+\item infected and infectious after two doses of vaccination and with
+potentially reduced risk of hospitalisation ("infectious_vaccinated"),
+\item hospitalised after two doses of vaccination and with potentially reduced
+risk of death ("hospitalised_vaccinated").
 This model allows for:
+}
 \enumerate{
 \item A 'hospitalised' compartment along with a hospitalisation rates;
 \item Two doses of vaccination, with 'leaky' protection, i.e., vaccination does
@@ -183,13 +192,13 @@ double_vax <- vaccination(
 )
 
 # run epidemic simulation with no vaccination or intervention
-data <- model_vacamole_cpp(
+output <- model_vacamole_cpp(
   population = population,
   vaccination = double_vax
 )
 
-# view some data
-head(data)
+# view the output
+output
 }
 \references{
 Ainslie, K. E. C., Backer, J. A., Boer, P. T. de, Hoek, A. J. van,

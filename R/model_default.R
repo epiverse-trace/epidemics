@@ -73,11 +73,10 @@
 #' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.143, assuming an
 #' infectious period of 7 days.
 #'
-#' @return A `data.frame` with the columns "time", "compartment", "age_group",
-#' "value". The compartments correspond to the compartments of the model
-#' chosen with `model`.
-#' The current default model has the compartments "susceptible", "exposed",
-#' "infectious", "recovered", and "vaccinated".
+#' @return An `<epidemic>` class object with the model function name,
+#' model data as "data", model parameters and components as "parameters", and
+#' the package version as "hash".
+#'
 #' @examples
 #' # create a population
 #' uk_population <- population(
@@ -95,8 +94,8 @@
 #'   population = uk_population
 #' )
 #'
-#' # view some data
-#' head(data)
+#' # view the output
+#' data
 #' @export
 model_default_cpp <- function(population,
                               transmissibility = 1.3 / 7.0,
@@ -172,7 +171,11 @@ model_default_cpp <- function(population,
   output <- do.call(.model_default_cpp, model_arguments)
 
   # prepare output and return
-  output_to_df(output, population, compartments)
+  data <- output_to_df(output, population, compartments)
+  parameters <- .get_model_parameters(model_default_cpp)
+  parameters[["compartments"]] <- compartments
+
+  epidemic("model_default_cpp", data, parameters)
 }
 
 #' Ordinary Differential Equations for the Default Model
@@ -340,7 +343,7 @@ model_default_r <- function(population,
   )
 
   # convert to long format using output_to_df() and return
-  output_to_df(
+  data <- output_to_df(
     output = list(
       x = data[, setdiff(colnames(data), "time")],
       time = seq(0, time_end, increment)
@@ -348,4 +351,8 @@ model_default_r <- function(population,
     population = population,
     compartments = compartments
   )
+  parameters <- .get_model_parameters(model_default_r)
+  parameters[["compartments"]] <- compartments
+
+  epidemic("model_default_r", data, parameters)
 }

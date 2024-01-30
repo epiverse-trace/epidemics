@@ -156,8 +156,9 @@ output_to_df <- function(output, population, compartments) {
 #' The function allows for the calculation of epidemic sizes by demographic
 #' group as well as the total epidemic size.
 #'
-#' @param data A `<data.frame>` of model output, typically
-#' the output of [model_default_cpp()] or similar functions.
+#' @param data An `<epidemic>` object, typically the output of
+#' [model_default_cpp()] or similar functions; with the class member `"data"`
+#' holding the model dynamics data.
 #' @param stage The stage of the epidemic at which to return the epidemic size;
 #' here, 0.0 represents the initial conditions of the epidemic (0% of model time
 #' ), while 1.0 represents the end of the epidemic model (100% of model time).
@@ -202,6 +203,9 @@ output_to_df <- function(output, population, compartments) {
 epidemic_size <- function(
     data, stage = 1.0, by_group = TRUE,
     include_deaths = TRUE) {
+  # extract data from epidemic object
+  data <- get_parameter(data, "data")
+
   # input checking for data - this allows data.tables as well
   checkmate::assert_data_frame(
     data,
@@ -256,7 +260,7 @@ epidemic_size <- function(
 
 #' Get new infections over model time
 #'
-#' @param data A `<data.frame>` of model output, typically
+#' @param data An `<epidemic>` object with model output, typically
 #' the output of [model_default_cpp()] or similar functions.
 #' @param compartments_from_susceptible An optional argument, for a character
 #' vector of the names of model compartments into which individuals transition
@@ -296,6 +300,7 @@ new_infections <- function(data,
                            by_group = TRUE) {
   # input checking for class and susceptible compartment
   # input checking for data - this allows data.tables as well
+  data <- get_parameter(data, "data")
   checkmate::assert_data_frame(
     data,
     min.cols = 4, min.rows = 1, any.missing = FALSE

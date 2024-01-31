@@ -152,10 +152,20 @@ output <- model_default_cpp(
 )
 ```
 
+_epidemics_ models return output of the `<epidemic>` class, which encapsulates the model function name, model data (under "data"), and model parameters (such as infection parameters) and composable elements (such as interventions) under "parameters", as well as the package version used to run the model (under "hash").
+
+```{r}
+# visualise the <epidemic> object
+output
+
+# get data from model run
+data <- get_parameter(output, "data")
+```
+
 Visualise the development of individuals in the "infectious" compartment over model time. Note that these curves represent the number of individuals that are infectious, and not the number of newly infectious individuals.
 
 ```{r fig-modelout, echo=FALSE}
-filter(output, compartment == "infectious") %>%
+filter(data, compartment == "infectious") %>%
   ggplot() +
   geom_vline(
     xintercept = c(close_schools[["time_begin"]], close_schools[["time_end"]]),

@@ -212,6 +212,32 @@ output <- model_default_cpp(
 )
 ```
 
+*epidemics* models return output of the `<epidemic>` class, which
+encapsulates the model function name, model data (under “data”), and
+model parameters (such as infection parameters) and composable elements
+(such as interventions) under “parameters”, as well as the package
+version used to run the model (under “hash”).
+
+``` r
+# visualise the <epidemic> object
+output
+#> <epidemic>
+#> Model function: model_default_cpp
+#> Compartments: "susceptible", "exposed", "infectious", "recovered", "vaccinated"
+#> {epidemics} version: Local version
+#> Head of model data:
+#>   time demography_group compartment    value
+#> 1    0           [0,20) susceptible 14799275
+#> 2    0          [20,40) susceptible 16526285
+#> 3    0              40+ susceptible 28961130
+#> 4    0           [0,20)     exposed        0
+#> 5    0          [20,40)     exposed        0
+#> 6    0              40+     exposed        0
+
+# get data from model run
+data <- get_parameter(output, "data")
+```
+
 Visualise the development of individuals in the “infectious” compartment
 over model time. Note that these curves represent the number of
 individuals that are infectious, and not the number of newly infectious

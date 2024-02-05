@@ -32,12 +32,12 @@ knitr::opts_chunk$set(
 **New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first!
 :::
 
-This vignette shows how to model an outbreak of diphtheria (or other diseases) within the setting of a humanitarian aid camp, where the camp population may fluctuate due to external factors, including influxes from the affected area and evacuations to other camps or to other areas.
-In such situations, implementing large-scale public health measures such as non-pharmaceutical interventions on social contacts or mass vaccination may be impractical.
+This vignette shows how to model an outbreak of diphtheria (or a similar acute directly-transmitted infectious disease) within the setting of a humanitarian aid camp, where the camp population may fluctuate due to external factors, including influxes from crisis affected areas or evacuations to other camps or areas.
+In such situations, implementing large-scale public health measures such contact tracing and quarantine, or introducing reactive mass vaccination may be challenging.
 
-_epidemics_ provides a simple SEIHR compartmental model based on @finger2019, in which it is possible to vary the population of each demographic group throughout the model's simulation time.
-This model only tracks infections by demographic groups, and does not include demographic variation in contacts, as this is assumed to be less important in the camp setting.
-The model also does not allow interventions on social contacts, and does not include a 'vaccinated' compartment.
+_epidemics_ provides a simple SEIHR compartmental model based on @finger2019, in which it is possible to vary the population of each demographic group throughout the model's simulation time and explore the resulting epidemic dynamics.
+This baseline model only tracks infections by demographic groups, and does not include variation in contacts between demographic groups (e.g. by age or occupation), as contacts are likely to be less clearly stratified in a camp setting.
+The baseline model also does not allow interventions that target social contacts (such as social distancing or quarantine), and does not include a 'vaccinated' compartment. It is therefore suited to analysis of a rapidly spreading infection prior to the introduction of any reactive vaccine campaign.
 
 However, the model does allow for seasonality in model parameters and interventions on model parameters.
 Similarly, the model allows for a proportion of the initial camp population to be considered vaccinated and thus immune from infection.
@@ -50,7 +50,7 @@ library(ggplot2)
 
 ## Modelling an outbreak with pre-existing immunity
 
-We create a population object corresponding to the Kutupalong camp in Bangladesh, rounded to the nearest 100, as described in Additional file 1 provided with @finger2019.
+We create a population object corresponding to the Kutupalong camp in Cox's Bazar, Bangladesh in 2017-18, rounded to the nearest 100, as described in Additional file 1 provided with @finger2019.
 This population has three age groups, < 5 years, 5 -- 14 years, $\geq$ 15 years.
 We assume that only one individual is infectious in each age group.
 
@@ -64,7 +64,7 @@ initial_conditions <- matrix(0, nrow = n_age_groups, ncol = 5)
 initial_conditions[, 1] <- demography_vector - 1
 initial_conditions[, 3] <- rep(1, n_age_groups)
 
-# camp social contacts are assumed to be uniform
+# camp social contact rates are assumed to be uniform within and between age groups
 camp_pop <- population(
   contact_matrix = matrix(1, nrow = n_age_groups, ncol = n_age_groups),
   demography_vector = demography_vector,
@@ -74,7 +74,7 @@ camp_pop <- population(
 camp_pop
 ```
 
-We assume, following @finger2019, that 20% of the 5 -- 14 year-olds are vaccinated against and immune to diphtheria, but that coverage is much lower among other age groups.
+We assume, following @finger2019, that 20% of the 5 -- 14 year-olds were vaccinated against (and immune to) diphtheria prior to the start of the outbreak, but that coverage is much lower among other age groups.
 
 ```{r}
 # 20% of 5-14 year-olds are vaccinated
@@ -82,13 +82,13 @@ prop_vaccinated <- c(0.05, 0.2, 0.05)
 ```
 
 We run the model with its default parameters, assuming that:
-- diphtheria has an $\R_0$ of 4.0 and a mean infectious period of 4.5 days, giving a transmissibility ($\beta$) of about 0.889;
+- diphtheria has an $R_0$ of 4.0 and a mean infectious period of 4.5 days, giving a transmissibility ($\beta$) of about 0.889;
 - diphtheria has a pre-infectious or incubation period of 3 days, giving an infectiousness rate ($\sigma$) of about 0.33; and
 - the recovery rate of diphtheria is about 0.33.
 
-We also stick to default assumptions regarding: case reporting (that about 3% of cases are reported), the proportion of reported needing hospitalisation (1%), the time taken by cases needing hospitalisation to seek and be admitted to hospital (5 days, giving a hospitalisation rate of 0.2), and the time spent in hospital (5 days, giving a hospitalisation recovery rate of 0.2).
+We also make several assumptions regarding clinical progression and reporting. Specifically: case reporting (that about 3% of infections are reported as cases), the proportion of reported cases needing hospitalisation (1%), the time taken by cases needing hospitalisation to seek and be admitted to hospital (5 days, giving a daily hospitalisation rate of 0.2 among cases), and time spent in hospital (5 days, giving a daily hospitalisation recovery rate of 0.2).
 
-We assume there are no interventions or seasonal effects, and run the model and plot the outcomes.
+Finally, we assume there are no interventions or seasonal effects that affect the dynamics of transmission during the outbreak. We then run the model and plot the outcomes.
 
 ```{r diphtheria-basic}
 data <- model_diphtheria_cpp(
@@ -126,12 +126,12 @@ filter(data, compartment == "infectious") |>
 
 ## Modelling an outbreak with changing population sizes
 
-We now model the same outbreak, but with fluctuation in susceptible individuals towards the end of the outbreak, to illustrate the effect this could have on outbreak dynamics.
-In this example, we do not assume any prior immunity.
+We now model the same outbreak, but an increase in susceptible individuals towards the end of the outbreak, to illustrate the effect that an influx of non-immune individuals could could have on outbreak dynamics.
+In this example, we do not assume any prior immunity among new arrivals into the population.
 
 We prepare a population change schedule as a named list giving the times of each change, and the corresponding changes to each demographic group.
 
-Note that the model assumes that these changes apply _only to the susceptible compartment_, as we assume that the wider population entering the camp is not yet affected by diphtheria, and that infected or hospitalised individuals do not leave the camp.
+Note that the model assumes that these changes apply _only to the susceptible compartment_, as we assume that the wider population entering the camp is not yet affected by diphtheria (i.e. no infected or recovered arrival), and that already infected or hospitalised individuals do not leave the camp.
 
 ```{r pop_change}
 # susceptibles increase by about 12%, 92%, and 89% of initial sizes
@@ -143,7 +143,7 @@ pop_change <- list(
 )
 ```
 
-Here, the number of individuals increases by about 75% overall, which is well within reported values in real world scenarios [@finger2019].
+Here, the population size of the camp increases by about 75% overall, which is similar to reported values in the Kutupalong camp scenario [@finger2019].
 
 ```{r}
 data <- model_diphtheria_cpp(
@@ -194,6 +194,6 @@ filter(data, compartment == "infectious") |>
   )
 ```
 
-This example shows how an increase in the number of susceptibles in the population can lead to a rise in the number of infections and extend the duration of an outbreak.
+This example shows how an increase in the number of susceptibles in the population can lead to a rise in the transmission potential of the infection and therefore extend the duration of an outbreak.
 
 ## References

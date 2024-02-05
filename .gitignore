@@ -63,3 +63,7 @@ scratch*
 
 /.luarc.json
 .vscode
+
+src/*.o
+src/*.so
+src/*.dll

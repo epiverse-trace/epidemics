@@ -60,6 +60,7 @@ model_diphtheria_cpp()."><meta property="og:image" content="https://epiverse.git
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
+    <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
   </div>
 </li>
@@ -105,6 +106,8 @@ time spent in the hospitalised compartment.</p>
 <span>  <span class="va">hosp_exit_rate</span>,</span>
 <span>  <span class="va">rate_interventions</span>,</span>
 <span>  <span class="va">time_dependence</span>,</span>
+<span>  <span class="va">pop_change_times</span>,</span>
+<span>  <span class="va">pop_change_values</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  increment <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -154,6 +157,16 @@ hospital, represented as 1 / time to discharge \(\tau_2\).</p></dd>
 <dt>time_dependence</dt>
 <dd><p>A named list of functions for parameter time
 dependence.</p></dd>
+
+
+<dt>pop_change_times</dt>
+<dd><p>A numeric vector of times and which the population
+of susceptibles changes.</p></dd>
+
+
+<dt>pop_change_values</dt>
+<dd><p>An Rcpp List of numeric vectors giving the value of
+changes to each demographic group at each change in population.</p></dd>
 
 
 <dt>time_end</dt>

@@ -54,6 +54,7 @@ model_diphtheria_cpp() for use with .model_diphtheria_cpp()."><meta property="og
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
+    <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
   </div>
 </li>
@@ -109,13 +110,19 @@ vaccinated individuals, respectively;</p></li>
 <li><p><code>infectiousness_rate</code>: a single number for the transition rate from the
 'exposed' and 'exposed_vaccinated' to the 'infectious' and
 'infectious_vaccinated' compartments;</p></li>
+<li><p><code>recovery_rate</code>: a single number for the recovery rate from the infection;</p></li>
 <li><p><code>reporting_rate</code>: a single number for the proportion of infectious cases
 reported;</p></li>
 <li><p><code>prop_hosp</code>: a single number for the proportion of reported cases that
 need hospitalisation;</p></li>
 <li><p><code>hosp_entry_rate</code>, <code>hosp_exit_rate</code>: two numbers representing the rate of
 entry and exit from the 'hospitalised' compartment;</p></li>
-<li><p><code>recovery_rate</code>: a single number for the recovery rate from the infection;</p></li>
+<li><p><code>rate_interventions</code>: an Rcpp List giving the interventions on model
+parameters;</p></li>
+<li><p><code>time_dependence</code>: an Rcpp List giving the time-dependent effects on model
+parameters in the form of R functions;</p></li>
+<li><p><code>pop_change_times</code> and <code>pop_change_values</code>: the times and values of changes
+in the population of susceptibles;</p></li>
 <li><p><code>time_end</code>, <code>increment</code>: two numbers for the time at which to end the
 simulation, and the value by which the simulation time
 is incremented.</p></li>

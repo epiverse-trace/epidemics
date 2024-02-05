@@ -76,6 +76,7 @@
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
+    <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
   </div>
 </li>
@@ -118,8 +119,7 @@ This is often the case with outbreaks of infections such as Ebola virus disease 
 <p><em>epidemics</em> includes a discrete time, stochastic compartmental model of ebola based on a consensus model presented in <span class="citation">Li et al. (<a href="#ref-li2019" role="doc-biblioref">2019</a>)</span>, with six compartments — susceptible, exposed, infectious, hospitalised, funeral, and removed.
 The transitions between compartments are based on an Erlang model developed by <span class="citation">Getz and Dougherty (<a href="#ref-getz2018" role="doc-biblioref">2018</a>)</span> for the 2014 West African EVD outbreak, with the code adapted from <a href="http://epirecip.es/epicookbook/chapters/erlang/r" class="external-link">Epirecipes</a>.</p>
 <p>The model does not include demographic variation in contacts, as ebola spreads primarily among contacts caring for infected individuals, making age or demographic structure less important.</p>
-<p>This model can currently accommodate interventions on model rates only (as there are no demographic groups for contacts interventions).
-The only rate in the model that can be influenced by an intervention is the transmission rate <span class="math inline">\(\beta\)</span>.</p>
+<p>This model can currently accommodate interventions on model rates only (as there are no demographic groups for contacts interventions).</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># some initial setup to load necessary packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>

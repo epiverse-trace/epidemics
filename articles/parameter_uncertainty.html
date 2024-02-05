@@ -76,6 +76,7 @@
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
     <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
+    <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
   </div>
 </li>
@@ -252,22 +253,26 @@ We omit non-pharmaceutical interventions and vaccinations for this example.</p>
 <code class="sourceCode R"><span><span class="co"># View the firt few rows of the first two runs</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">output_samples</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, <span class="va">head</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt;    time demography_group new_infections scenario       R</span></span>
-<span><span class="co">#&gt; 1:    0              40+       0.000000        1 1.47341</span></span>
-<span><span class="co">#&gt; 2:    0           [0,20)       0.000000        1 1.47341</span></span>
-<span><span class="co">#&gt; 3:    0          [20,40)       0.000000        1 1.47341</span></span>
-<span><span class="co">#&gt; 4:    1              40+       4.488961        1 1.47341</span></span>
-<span><span class="co">#&gt; 5:    1           [0,20)       3.516643        1 1.47341</span></span>
-<span><span class="co">#&gt; 6:    1          [20,40)       3.414592        1 1.47341</span></span>
+<span><span class="co">#&gt; Key: &lt;time, demography_group&gt;</span></span>
+<span><span class="co">#&gt;     time demography_group new_infections scenario       R</span></span>
+<span><span class="co">#&gt;    &lt;num&gt;           &lt;char&gt;          &lt;num&gt;    &lt;int&gt;   &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:     0              40+       0.000000        1 1.47341</span></span>
+<span><span class="co">#&gt; 2:     0           [0,20)       0.000000        1 1.47341</span></span>
+<span><span class="co">#&gt; 3:     0          [20,40)       0.000000        1 1.47341</span></span>
+<span><span class="co">#&gt; 4:     1              40+       4.488961        1 1.47341</span></span>
+<span><span class="co">#&gt; 5:     1           [0,20)       3.516643        1 1.47341</span></span>
+<span><span class="co">#&gt; 6:     1          [20,40)       3.414592        1 1.47341</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt;    time demography_group new_infections scenario        R</span></span>
-<span><span class="co">#&gt; 1:    0              40+       0.000000        2 1.812195</span></span>
-<span><span class="co">#&gt; 2:    0           [0,20)       0.000000        2 1.812195</span></span>
-<span><span class="co">#&gt; 3:    0          [20,40)       0.000000        2 1.812195</span></span>
-<span><span class="co">#&gt; 4:    1              40+       5.538607        2 1.812195</span></span>
-<span><span class="co">#&gt; 5:    1           [0,20)       4.341045        2 1.812195</span></span>
-<span><span class="co">#&gt; 6:    1          [20,40)       4.213767        2 1.812195</span></span>
+<span><span class="co">#&gt; Key: &lt;time, demography_group&gt;</span></span>
+<span><span class="co">#&gt;     time demography_group new_infections scenario        R</span></span>
+<span><span class="co">#&gt;    &lt;num&gt;           &lt;char&gt;          &lt;num&gt;    &lt;int&gt;    &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:     0              40+       0.000000        2 1.812195</span></span>
+<span><span class="co">#&gt; 2:     0           [0,20)       0.000000        2 1.812195</span></span>
+<span><span class="co">#&gt; 3:     0          [20,40)       0.000000        2 1.812195</span></span>
+<span><span class="co">#&gt; 4:     1              40+       5.538607        2 1.812195</span></span>
+<span><span class="co">#&gt; 5:     1           [0,20)       4.341045        2 1.812195</span></span>
+<span><span class="co">#&gt; 6:     1          [20,40)       4.213767        2 1.812195</span></span>
 <span></span>
 <span><span class="co"># combine to prepare for plotting</span></span>
 <span><span class="va">output_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">output_samples</span><span class="op">)</span></span></code></pre></div>

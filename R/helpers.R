@@ -299,15 +299,24 @@ new_infections <- function(data,
   data
 }
 
-#' Get the timing and size of a compartment's peak
+#' Get the time and size of a compartment's highest peak
 #'
-#' Get the timing and size of a compartment's peak for all demographic groups.
+#' Get the time and size of a compartment's highest peak for all
+#' demography groups.
+#'
+#' @details
+#' This is used for epidemics with a single peak. It is useful from
+#' a public health policy point of view to determine how bad an epidemic will
+#' be and when that happens.
 #'
 #' @param data A `<data.frame>` of model output, typically
-#' the output of [model_default_cpp()] or similar functions.
-#' @param compartment The compartment of interest ;
-#' @return A `<data.frame>` of the timing and peak of the selected compartment
-#' for each of the demographic groups in `data`.
+#' the output of a compartmental model.
+#' @param compartments A character vector for the compartments of interest.
+#' @return A `<data.frame>` with columns "demography_group", "compartment",
+#' "time" and "value"; these specify the name of the demography group,
+#' the epidemiological compartment, the peak time and value for each compartment
+#' in "compartments".
+#'
 #' @export
 #'
 #' @examples
@@ -324,15 +333,13 @@ new_infections <- function(data,
 #'
 #' # run epidemic simulation with no vaccination or intervention
 #' data <- model_default_cpp(
-#'   population = uk_population
+#'   population = uk_population,
+#'   time_end = 600
 #' )
 #'
-#' # get the timing and peak of the infectious compartment
-#' epidemic_peak(data)
-#'
-#' # get the timing and peak of the exposed compartment
-#' epidemic_peak(data, compartment = "exposed")
-epidemic_peak <- function(data, compartment = "infectious") {
+#' # get the timing and peak of the exposed and infectious compartment
+#' epidemic_peak(data, c("exposed", "infectious"))
+epidemic_peak <- function(data, compartments = "infectious") {
   # check parameters are as expected
   checkmate::assert_data_frame(
     data,
@@ -342,21 +349,120 @@ epidemic_peak <- function(data, compartment = "infectious") {
     colnames(data),
     must.include = c("time", "demography_group", "compartment", "value")
   )
-  checkmate::assert_character(compartment, len = 1L)
+  checkmate::assert_character(
+    compartments,
+    min.len = 1,
+    any.missing = FALSE, unique = TRUE,
+    null.ok = FALSE
+  )
 
-  age_groups <- unique(data[["demography_group"]])
-  n_groups <- length(age_groups)
-  columns <- c("demography_group", "time", "value")
-  # compartment of interest
-  long_data <- data[data[["compartment"]] == compartment, columns]
-  nrows <- length(long_data[, "value"])
-  #  long to wide conversion
-  wide <- matrix(long_data[, "value"], nrows / n_groups, n_groups, byrow = TRUE)
-  colnames(wide) <- age_groups
+  data.table::setDT(data)
+  out <- data[compartment %in% compartments,
+    list(
+      time = data.table::first(time[value == max(value)]),
+      value = data.table::first(max(value))
+    ),
+    by = c("demography_group", "compartment")
+  ]
+  data.table::setDF(out)
+}
 
-  col_max <- function(data) sapply(as.data.frame(data), max, na.rm = TRUE)
-  peak <- col_max(as.data.frame(wide))
-  timing <- which(wide %in% peak)
+#' Get the number of people vaccinated
+#'
+#' Gets the number of people vaccinated in each demography group and
+#' calculate a rescale factor which when multiplied with \eqn{\nu} returns
+#' the effective vaccination rate.
+#'
+#' @param data A `<data.frame>` of model output, typically
+#' the output of a compartmental model.
+#' @return A `<data.frame>` with columns "demography_group", "vaccinated",
+#' "total" and "rescale"; these specify the name of the demography group,
+#' the number of vaccinated, the total number of people in each demography
+#' group and the rescale factor.
+#'
+#' @export
+#'
+#' @examples
+#' polymod <- socialmixr::polymod
+#' contact_data <- socialmixr::contact_matrix(
+#'   polymod,
+#'   countries = "United Kingdom",
+#'   age.limits = c(0, 20, 65),
+#'   symmetric = TRUE
+#' )
+#'
+#' # prepare contact matrix
+#' contact_matrix <- t(contact_data$matrix)
+#'
+#' # prepare the demography vector
+#' demography_vector <- contact_data$demography$population
+#' names(demography_vector) <- rownames(contact_matrix)
+#' # initial conditions
+#' initial_i <- 1e-6
+#' initial_conditions <- c(
+#'   S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
+#' )
+#'
+#' # build for all age groups
+#' initial_conditions <- rbind(
+#'   initial_conditions,
+#'   initial_conditions,
+#'   initial_conditions
+#' )
+#'
+#' # assign rownames for clarity
+#' rownames(initial_conditions) <- rownames(contact_matrix)
+#'
+#' uk_population <- population(
+#'   name = "UK",
+#'   contact_matrix = contact_matrix,
+#'   demography_vector = demography_vector,
+#'   initial_conditions = initial_conditions
+#' )
+#'
+#' # prepare a vaccination object
+#' vaccinate_elders <- vaccination(
+#'   name = "vaccinate elders",
+#'   time_begin = matrix(100, nrow(contact_matrix)),
+#'   time_end = matrix(250, nrow(contact_matrix)),
+#'   nu = matrix(c(0, 0, 0.0001))
+#' )
+#' # run an epidemic model using `epidemic`
+#' output <- model_default_cpp(
+#'   population = uk_population,
+#'   vaccination = vaccinate_elders,
+#'   time_end = 600, increment = 1.0
+#' )
+#'
+#' # get the number of vaccinated and rescale factor for each demography group
+#' num_vaccinated <- vaccinated(output)
+#' num_vaccinated
+vaccinated <- function(data) {
+  # check parameters are as expected
+  checkmate::assert_data_frame(
+    data,
+    min.cols = 4L, min.rows = 1, any.missing = FALSE
+  )
+  checkmate::assert_names(
+    colnames(data),
+    must.include = c("time", "demography_group", "compartment", "value")
+  )
+  checkmate::assert_names(
+    unique(data[["compartment"]]),
+    must.include = "vaccinated"
+  )
 
-  cbind(timing, peak)
+  data.table::setDT(data)
+  out <- data[time == data.table::first(time) | time == data.table::last(time),
+    list(
+      vaccinated = value[time == max(time) & compartment == "vaccinated"],
+      total = sum(value[time == min(time)])
+    ),
+    by = demography_group
+  ][, list(
+    vaccinated, total,
+    rescale = total / (total - vaccinated)
+  ), by = demography_group]
+
+  data.table::setDF(out)
 }

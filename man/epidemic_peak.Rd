@@ -2,22 +2,30 @@
 % Please edit documentation in R/helpers.R
 \name{epidemic_peak}
 \alias{epidemic_peak}
-\title{Get the timing and size of a compartment's peak}
+\title{Get the time and size of a compartment's highest peak}
 \usage{
-epidemic_peak(data, compartment = "infectious")
+epidemic_peak(data, compartments = "infectious")
 }
 \arguments{
 \item{data}{A \verb{<data.frame>} of model output, typically
-the output of \code{\link[=model_default_cpp]{model_default_cpp()}} or similar functions.}
+the output of a compartmental model.}
 
-\item{compartment}{The compartment of interest ;}
+\item{compartments}{A character vector for the compartments of interest.}
 }
 \value{
-A \verb{<data.frame>} of the timing and peak of the selected compartment
-for each of the demographic groups in \code{data}.
+A \verb{<data.frame>} with columns "demography_group", "compartment",
+"time" and "value"; these specify the name of the demography group,
+the epidemiological compartment, the peak time and value for each compartment
+in "compartments".
 }
 \description{
-Get the timing and size of a compartment's peak for all demographic groups.
+Get the time and size of a compartment's highest peak for all
+demography groups.
+}
+\details{
+This is used for epidemics with a single peak. It is useful from
+a public health policy point of view to determine how bad an epidemic will
+be and when that happens.
 }
 \examples{
 # create a population
@@ -33,12 +41,10 @@ uk_population <- population(
 
 # run epidemic simulation with no vaccination or intervention
 data <- model_default_cpp(
-  population = uk_population
+  population = uk_population,
+  time_end = 600
 )
 
-# get the timing and peak of the infectious compartment
-epidemic_peak(data)
-
-# get the timing and peak of the exposed compartment
-epidemic_peak(data, compartment = "exposed")
+# get the timing and peak of the exposed and infectious compartment
+epidemic_peak(data, c("exposed", "infectious"))
 }

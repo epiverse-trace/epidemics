@@ -31,6 +31,20 @@ test_intervention_bad <- intervention(
   reduction = 0.2
 )
 
+test_rate_intervention <- intervention(
+  type = "rate",
+  time_begin = 60,
+  time_end = 100,
+  reduction = 0.2
+)
+test_bad_rate_intervention <- intervention(
+  type = "rate",
+  time_begin = 60,
+  time_end = 100,
+  reduction = matrix(0.2)
+)
+
+
 test_that("Interventions are checked correctly", {
   # check for no conditions on a well formed intervention
   expect_no_condition(
@@ -46,6 +60,21 @@ test_that("Interventions are checked correctly", {
       test_intervention # with population missing
     )
   )
+
+  expect_no_condition(
+    assert_intervention(
+      type = "rate",
+      test_rate_intervention # with population missing
+    )
+  )
+  expect_no_condition(
+    assert_intervention(
+      type = "rate",
+      test_rate_intervention,
+      population = test_population
+    )
+  )
+
   expect_error(
     assert_intervention(
       test_intervention,
@@ -58,6 +87,13 @@ test_that("Interventions are checked correctly", {
   expect_error(
     assert_intervention(
       test_intervention_bad,
+      "contacts",
+      population = test_population
+    )
+  )
+  expect_error(
+    assert_intervention(
+      test_bad_rate_intervention,
       "contacts",
       population = test_population
     )

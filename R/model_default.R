@@ -102,9 +102,12 @@ model_default_cpp <- function(population,
                               transmissibility = 1.3 / 7.0,
                               infectiousness_rate = 1.0 / 2.0,
                               recovery_rate = 1.0 / 7.0,
-                              intervention = NULL,
-                              vaccination = NULL,
-                              time_dependence = NULL,
+                              intervention = list(
+                                contacts = no_contacts_intervention(population),
+                                transmissibility = no_rate_intervention()
+                              ),
+                              vaccination = no_vaccination(population),
+                              time_dependence = no_time_dependence(),
                               time_end = 100,
                               increment = 1) {
   # check class on required inputs
@@ -116,12 +119,12 @@ model_default_cpp <- function(population,
 
   # all intervention sub-classes pass check for intervention superclass
   # note intervention and time-dependence targets are checked in dedicated fn
-  checkmate::assert_list(
-    intervention,
-    types = "intervention", null.ok = TRUE,
-    any.missing = FALSE, names = "unique"
-  )
-  checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
+  # checkmate::assert_list(
+  #   intervention,
+  #   types = "intervention", null.ok = TRUE,
+  #   any.missing = FALSE, names = "unique"
+  # )
+  checkmate::assert_class(vaccination, "vaccination")
 
   # check that time-dependence functions are passed as a list with at least the
   # arguments `time` and `x`
@@ -265,9 +268,12 @@ model_default_r <- function(population,
                             transmissibility = 1.3 / 7.0,
                             infectiousness_rate = 1.0 / 2.0,
                             recovery_rate = 1.0 / 7.0,
-                            intervention = NULL,
-                            vaccination = NULL,
-                            time_dependence = NULL,
+                            intervention = list(
+                              contacts = no_contacts_intervention(population),
+                              transmissibility = no_rate_intervention()
+                            ),
+                            vaccination = no_vaccination(population),
+                            time_dependence = no_time_dependence(),
                             time_end = 100,
                             increment = 1) {
   # check class on required inputs

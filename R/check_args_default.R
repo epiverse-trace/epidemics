@@ -65,70 +65,22 @@
     compartments = compartments_default
   )
 
-  # add null intervention and vaccination if these are missing
-  # if not missing, check that they conform to expectations
-  # add null rate_intervention if this is missing
-  # if not missing, check that it conforms to expectations
-  if (is.null(mod_args[["intervention"]])) {
-    # add dummy list elements named "contacts", and one named "transmissibility"
-    mod_args[["intervention"]] <- list(
-      contacts = no_contacts_intervention(
-        mod_args[["population"]]
-      ),
-      transmissibility = no_rate_intervention()
-    )
-  } else {
-    # check intervention list names
-    checkmate::assert_names(
-      names(mod_args[["intervention"]]),
-      subset.of = c(
-        "transmissibility", "infectiousness_rate", "recovery_rate", "contacts"
-      )
-    )
-    # if a contacts intervention is passed, check it
-    if ("contacts" %in% names(mod_args[["intervention"]])) {
-      # check the intervention on contacts
-      assert_intervention(
-        mod_args[["intervention"]][["contacts"]], "contacts",
-        mod_args[["population"]]
-      )
-    } else {
-      # if not contacts intervention is passed, add a dummy one
-      mod_args[["intervention"]]$contacts <- no_contacts_intervention(
-        mod_args[["population"]]
-      )
-    }
+  assert_intervention(
+    mod_args[["intervention"]][["contacts"]], "contacts",
+    mod_args[["population"]]
+  )
 
-    # if there is only an intervention on contacts, add a dummy intervention
-    # on the transmissibility
-    if (identical(names(mod_args[["intervention"]]), "contacts")) {
-      mod_args[["intervention"]]$transmissibility <- no_rate_intervention()
-    }
-  }
+  assert_vaccination(
+    mod_args[["vaccination"]],
+    doses = 1L, mod_args[["population"]]
+  )
 
-  if (is.null(mod_args[["vaccination"]])) {
-    mod_args[["vaccination"]] <- no_vaccination(
-      mod_args[["population"]]
+  checkmate::assert_names(
+    names(mod_args[["time_dependence"]]),
+    subset.of = c(
+      "transmissibility", "infectiousness_rate", "recovery_rate"
     )
-  } else {
-    # default model only supports a single dose vaccination
-    assert_vaccination(
-      mod_args[["vaccination"]],
-      doses = 1L, mod_args[["population"]]
-    )
-  }
-
-  # handle time dependence if not present, and check targets if present
-  if (is.null(mod_args[["time_dependence"]])) {
-    mod_args[["time_dependence"]] <- no_time_dependence()
-  } else {
-    checkmate::assert_names(
-      names(mod_args[["time_dependence"]]),
-      subset.of = c(
-        "transmissibility", "infectiousness_rate", "recovery_rate"
-      )
-    )
-  }
+  )
 
   # return arguments invisibly
   invisible(mod_args)

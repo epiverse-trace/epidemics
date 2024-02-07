@@ -130,7 +130,10 @@ data <- model_default_cpp(
 # with a mask mandate
 data_masks <- model_default_cpp(
   population = uk_population,
-  intervention = list(transmissibility = mask_mandate),
+  intervention = list(
+    transmissibility = mask_mandate,
+    contacts = no_contacts_intervention(uk_population)
+  ),
   time_end = 200, increment = 1.0
 )
 ```

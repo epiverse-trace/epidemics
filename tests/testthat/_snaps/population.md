@@ -2,12 +2,12 @@
 
     Code
       uk_population
-    Message <cliMessage>
+    Message
       <population> object
     Output
       
        Population name: 
-    Message <cliMessage>
+    Message
       "UK population"
     Output
       
@@ -27,12 +27,12 @@
 
     Code
       uk_population
-    Message <cliMessage>
+    Message
       <population> object
     Output
       
        Population name: 
-    Message <cliMessage>
+    Message
       "UK population"
     Output
       

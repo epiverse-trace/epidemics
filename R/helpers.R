@@ -355,6 +355,10 @@ epidemic_peak <- function(data, compartments = "infectious") {
     any.missing = FALSE, unique = TRUE,
     null.ok = FALSE
   )
+  compartment <- NULL # solves "no visible binding for global variable"
+  value <- NULL # solves "no visible binding for global variable"
+  time <- NULL # solves "no visible binding for global variable"
+
 
   data.table::setDT(data)
   out <- data[compartment %in% compartments,
@@ -451,6 +455,12 @@ vaccinated <- function(data) {
     unique(data[["compartment"]]),
     must.include = "vaccinated"
   )
+
+  compartment <- NULL # solves "no visible binding for global variable"
+  value <- NULL # solves "no visible binding for global variable"
+  demography_group <- NULL # solves "no visible binding for global variable"
+  total <- NULL # solves "no visible binding for global variable"
+  time <- NULL # solves "no visible binding for global variable"
 
   data.table::setDT(data)
   out <- data[time == data.table::first(time) | time == data.table::last(time),

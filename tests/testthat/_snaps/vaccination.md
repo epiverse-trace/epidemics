@@ -2,12 +2,12 @@
 
     Code
       elder_vaccination
-    Message <cliMessage>
+    Message
       <vaccination> object
     Output
       
        Vaccination name: 
-    Message <cliMessage>
+    Message
       "elder_vaccination"
     Output
       
@@ -33,12 +33,12 @@
 
     Code
       triple_vaccination
-    Message <cliMessage>
+    Message
       <vaccination> object
     Output
       
        Vaccination name: 
-    Message <cliMessage>
+    Message
       "triple_vaccination"
     Output
       
@@ -58,12 +58,12 @@
 
     Code
       c(vax_1, vax_2)
-    Message <cliMessage>
+    Message
       <vaccination> object
     Output
       
        Vaccination name: 
-    Message <cliMessage>
+    Message
       "vax_regime"
     Output
       

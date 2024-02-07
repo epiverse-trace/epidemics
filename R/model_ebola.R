@@ -18,22 +18,16 @@ prob_discrete_erlang <- function(shape, rate) {
   n_bin <- 0
   factorials <- factorial(seq(0, shape))
 
-  one_sub_cumulative_probs <- NULL
+  one_sub_cumulative_probs <- double(length = 1000L) # sufficient?
   cumulative_prob <- 0
   while (cumulative_prob <= 0.99) {
     n_bin <- n_bin + 1
-
-    one_sub_cumulative_probs[n_bin] <- 0
-    for (j in seq(0, (shape - 1))) {
-      one_sub_cumulative_probs[n_bin] <-
-        one_sub_cumulative_probs[n_bin] +
-        (
-          exp(-n_bin * rate) * ((n_bin * rate)^j) / factorials[j + 1]
-        )
-    }
+    j <- seq_len(shape) - 1L
+    total <- exp(-n_bin * rate) * ((n_bin * rate)^j) / factorials[j + 1]
+    one_sub_cumulative_probs[n_bin] <- sum(total)
     cumulative_prob <- 1 - one_sub_cumulative_probs[n_bin]
   }
-  one_sub_cumulative_probs <- c(1, one_sub_cumulative_probs)
+  one_sub_cumulative_probs <- c(1, one_sub_cumulative_probs[1:n_bin])
 
   density_prob <-
     utils::head(one_sub_cumulative_probs, -1) -

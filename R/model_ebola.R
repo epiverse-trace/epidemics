@@ -27,7 +27,7 @@ prob_discrete_erlang <- function(shape, rate) {
     one_sub_cumulative_probs[n_bin] <- sum(total)
     cumulative_prob <- 1 - one_sub_cumulative_probs[n_bin]
   }
-  one_sub_cumulative_probs <- c(1, one_sub_cumulative_probs[1:n_bin])
+  one_sub_cumulative_probs <- c(1, one_sub_cumulative_probs[seq_len(n_bin)])
 
   density_prob <-
     utils::head(one_sub_cumulative_probs, -1) -

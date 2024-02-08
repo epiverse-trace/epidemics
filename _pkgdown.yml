@@ -1,54 +1,55 @@
 url: https://epiverse.github.io/epidemics
 template:
   bslib:
-    font_weight_base : 300
+    font_weight_base: 300
   package: epiversetheme
 articles:
-- title: Modelling interventions
-  navbar: Modelling interventions
-  contents:
-  - modelling_interventions
-  - multiple_interventions
-  - rate_interventions
-- title: Modelling vaccination
-  navbar: Modelling vaccination
-  contents:
-  - modelling_vaccination
-- title: Modelling seasonality
-  navbar: Modelling seasonality
-  contents:
-  - time_dependence
-- title: Other modelling vignettes
-  navbar: Other modelling vignettes
-  contents:
-  - parameter_uncertainty
-  - finalsize_comparison
-- title: Guides to library models
-  navbar: Guides to library models
-  contents:
-  - vacamole
-  - ebola_model
-  - benchmarking
+  - title: Modelling interventions
+    navbar: Modelling interventions
+    contents:
+      - modelling_interventions
+      - multiple_interventions
+      - rate_interventions
+  - title: Modelling vaccination
+    navbar: Modelling vaccination
+    contents:
+      - modelling_vaccination
+  - title: Modelling seasonality
+    navbar: Modelling seasonality
+    contents:
+      - time_dependence
+  - title: Other modelling vignettes
+    navbar: Other modelling vignettes
+    contents:
+      - parameter_uncertainty
+      - finalsize_comparison
+  - title: Guides to library models
+    navbar: Guides to library models
+    contents:
+      - vacamole
+      - ebola_model
+      - benchmarking
 
 reference:
   - title: Model functions
     contents:
-    - starts_with("model_")
+      - starts_with("model_")
   - title: Classes and related functions
   - subtitle: Intervention
     contents:
-    - contains("intervention")
+      - contains("intervention")
   - subtitle: Population
     contents:
-    - contains("population")
+      - contains("population")
   - subtitle: Vaccination
     contents:
-    - contains("vaccination")
+      - contains("vaccination")
   - title: Helper functions
     desc: Functions to help with handling package classes and outputs.
     contents:
-    - get_parameter
-    - no_time_dependence
-    - epidemic_size
-    - new_infections
-    - epidemic_peak
+      - get_parameter
+      - no_time_dependence
+      - epidemic_size
+      - new_infections
+      - epidemic_peak
+      - vaccinated

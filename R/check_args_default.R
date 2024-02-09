@@ -187,3 +187,45 @@
     increment = mod_args$increment
   )
 }
+
+.cross_check_intervention <- function(x, population, allowed_targets) {
+  # create dummy intervention set
+  tmp_intervention <- list(
+    contacts = no_contacts_intervention(population),
+    transmissibility = no_rate_intervention()
+  )
+  if (is.null(x)) {
+    return(tmp_intervention)
+  }
+
+  # check that contact interventions are suitable for population
+  if ("contacts" %in% names(x)) {
+    assert_intervention(x[["contacts"]], "contacts", population)
+  }
+
+  # replace dummy values with user values if avaialable, and return
+  tmp_intervention[names(x)] <- x
+  tmp_intervention
+}
+
+.cross_check_vaccination <- function(x, population, doses) {
+  if (is.null(x)) {
+    no_vaccination(population)
+  } else {
+    assert_vaccination(mod_args[["vaccination"]], doses = doses, population)
+    x
+  }
+}
+
+.cross_check_timedep <- function(x, allowed_targets) {
+  if (is.null(x)) {
+    no_time_dependence()
+  } else {
+    checkmate::assert_names(names(x), subset.of = allowed_targets)
+    x
+  }
+}
+
+.cross_check_popchange <- function(x, population) {
+  x
+}

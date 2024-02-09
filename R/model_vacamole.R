@@ -186,7 +186,10 @@ model_vacamole_cpp <- function(population,
     mort_reduction_vax = mort_reduction_vax,
     time_end = time_end
   )
-  assert_recyclable(params)
+  stopifnot(
+    "All parameters must be of the same length, or must have length 1" =
+      test_recyclable(params)
+  )
 
   # all intervention sub-classes pass check for intervention superclass
   # note intervention and time-dependence targets are checked in dedicated fns

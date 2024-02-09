@@ -146,7 +146,10 @@ model_default_cpp <- function(population,
     recovery_rate = recovery_rate,
     time_end = time_end
   )
-  assert_recyclable(params)
+  stopifnot(
+    "All parameters must be of the same length, or must have length 1" =
+      test_recyclable(params)
+  )
 
   # all intervention sub-classes pass check for intervention superclass
   # note intervention and time-dependence targets are checked in dedicated fn

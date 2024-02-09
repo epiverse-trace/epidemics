@@ -80,10 +80,14 @@
 #' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.143, assuming an
 #' infectious period of 7 days.
 #'
-#' @return A `data.frame` with the columns "time", "compartment", "age_group",
-#' "value", and "run", giving the number of individuals per demographic group
-#' in each compartment at each timestep in long (or "tidy") format, with "run"
-#' indicating the unique parameter combination.
+#' @return A nested `data.table` with a list column "data", which holds the
+#' model output with the columns "time", "compartment", "age_group", and
+#' "value", giving the number of individuals per demographic group
+#' in each compartment at each timestep in long (or "tidy") format.
+#' Other columns hold parameters and composable elements relating to the model
+#' run. Columns "scenario" and "param_set" identify combinations of composable
+#' elements (population, interventions, vaccination regimes), and infection
+#' parameters, respectively.
 #' @examples
 #' # create a population
 #' uk_population <- population(
@@ -104,8 +108,7 @@
 #' )
 #'
 #' # view some data
-#' head(data)
-#' tail(data)
+#' data
 #'
 #' # run epidemic simulations with differences in the end time
 #' # may be useful when considering different start dates with a fixed end point
@@ -114,8 +117,7 @@
 #'   time_end = c(50, 100, 150)
 #' )
 #'
-#' head(data)
-#' tail(data)
+#' data
 #' @export
 model_default_cpp <- function(population,
                               transmissibility = 1.3 / 7.0,
@@ -128,6 +130,12 @@ model_default_cpp <- function(population,
                               increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
+  # get compartment names
+  compartments <- c(
+    "susceptible", "exposed", "infectious", "recovered", "vaccinated"
+  )
+  assert_population(population, compartments)
+
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
   checkmate::assert_numeric(transmissibility, lower = 0, finite = TRUE)
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
@@ -151,14 +159,42 @@ model_default_cpp <- function(population,
       test_recyclable(params)
   )
 
-  # all intervention sub-classes pass check for intervention superclass
-  # note intervention and time-dependence targets are checked in dedicated fn
-  checkmate::assert_list(
-    intervention,
-    types = "intervention", null.ok = TRUE,
-    any.missing = FALSE, names = "unique"
+  # first check if `intervention` is a list of interventions or a list-of-lists
+  is_lofints <- checkmate::test_list(
+    intervention, "intervention",
+    any.missing = FALSE, null.ok = TRUE
   )
+  is_lofls <- checkmate::test_list(
+    intervention,
+    types = "list", null.ok = FALSE, any.missing = FALSE
+  ) && all(
+    vapply(unlist(intervention, recursive = FALSE), is_intervention, TRUE)
+  )
+  stopifnot(
+    "`intervention` must be a list of <intervention>s or a list of such lists" =
+      is_lofints || is_lofls
+  )
+  # standardise and prepare intervention lists
+  if (is_lofints) {
+    intervention <- .cross_check_intervention(
+      intervention, population,
+      c("contacts", "transmissibility", "infectiousness_rate", "recovery_rate")
+    )
+    # convert to list for data.table cross join
+    intervention <- list(intervention)
+  } else {
+    intervention <- lapply(
+      intervention, .cross_check_intervention, population,
+      c("contacts", "transmissibility", "infectiousness_rate", "recovery_rate")
+    )
+  }
+
+  # check the vaccination class
   checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
+  # make list after cross-checking
+  vaccination <- list(
+    .cross_check_vaccination(vaccination, population, doses = 1L)
+  )
 
   # check that time-dependence functions are passed as a list with at least the
   # arguments `time` and `x`
@@ -171,64 +207,49 @@ model_default_cpp <- function(population,
   # lapply on null returns an empty list
   invisible(
     lapply(time_dependence, checkmate::assert_function,
-      args = c("time", "x"),
-      ordered = TRUE
+      args = c("time", "x"), ordered = TRUE
+    )
+  )
+  time_dependence <- list(
+    .cross_check_timedep(
+      time_dependence,
+      c("transmissibility", "infectiousness_rate", "recovery_rate")
     )
   )
 
-  # combine parameters and composable elements into a list of lists of mod args
-  params <- .recycle_vectors(params)
-  params <- .transpose_base(params)
-  model_arguments <- lapply(
-    params, function(x) {
-      c(
-        list(
-          population = population,
-          intervention = intervention,
-          vaccination = vaccination,
-          time_dependence = time_dependence,
-          increment = increment
-        ),
-        x
-      )
-    }
-  )
+  # collect parameters and add a parameter set identifier
+  params <- data.table::as.data.table(params)
+  params[, param_set := .I]
 
-  # cross-check model arguments
-  # TODO: simplify to only check composable elements
-  model_arguments <- lapply(
-    model_arguments, function(l) {
-      .prepare_args_model_default(
-        .check_args_model_default(l)
-      )
-    }
+  # this nested data.table will be returned
+  model_output <- data.table::CJ(
+    population = list(population),
+    intervention = intervention,
+    vaccination = vaccination,
+    time_dependence = time_dependence,
+    increment = increment,
+    sorted = FALSE
   )
+  model_output[, scenario := .I]
 
-  # get compartment names
-  compartments <- c(
-    "susceptible", "exposed", "infectious", "recovered", "vaccinated"
-  )
+  # combine infection parameters and scenarios
+  # NOTE: join X[Y] must have params as X as list cols not supported for X
+  model_output <- params[, as.list(model_output), by = names(params)]
 
-  # run model over arguments, prepare output, and return list
-  # assign run number as list index - this is the specific combination of
-  # parameters
-  output <- Map(
-    model_arguments, seq_along(model_arguments),
-    f = function(l, i) {
-      output_ <- .output_to_df(
-        do.call(.model_default_cpp, l),
-        population = population,
-        compartments = compartments
-      )
-      output_$run <- i
-      output_
-    }
-  )
-  output <- data.table::rbindlist(output)
+  # collect model arguments in column data, then overwrite
+  model_output[, data := apply(model_output, 1, c)]
+  model_output[, data := lapply(data, function(l) {
+    tmp_pop_ <- l[["population"]]
+    l <- .prepare_args_model_default(l)
+    output_ <- .output_to_df(
+      do.call(.model_default_cpp, l),
+      population = tmp_pop_, # taken from local scope/env
+      compartments = compartments
+    )
+  })]
 
-  # convert to data.frame and return
-  # TODO: parameters need to be pulled along
-  data.table::setDF(output)[]
+  # return nested data.table
+  model_output[]
 }
 
 #' Ordinary Differential Equations for the Default Model

@@ -75,10 +75,14 @@ Taken as days, with a default value of 100 days. May be a numeric vector.}
 default value of 1 day.}
 }
 \value{
-A \code{data.frame} with the columns "time", "compartment", "age_group",
-"value", and "run", giving the number of individuals per demographic group
-in each compartment at each timestep in long (or "tidy") format, with "run"
-indicating the unique parameter combination.
+A nested \code{data.table} with a list column "data", which holds the
+model output with the columns "time", "compartment", "age_group", and
+"value", giving the number of individuals per demographic group
+in each compartment at each timestep in long (or "tidy") format.
+Other columns hold parameters and composable elements relating to the model
+run. Columns "scenario" and "param_set" identify combinations of composable
+elements (population, interventions, vaccination regimes), and infection
+parameters, respectively.
 }
 \description{
 Simulate an epidemic using a deterministic, compartmental
@@ -144,8 +148,7 @@ data <- model_default_cpp(
 )
 
 # view some data
-head(data)
-tail(data)
+data
 
 # run epidemic simulations with differences in the end time
 # may be useful when considering different start dates with a fixed end point
@@ -154,6 +157,5 @@ data <- model_default_cpp(
   time_end = c(50, 100, 150)
 )
 
-head(data)
-tail(data)
+data
 }

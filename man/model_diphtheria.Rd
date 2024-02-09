@@ -27,19 +27,20 @@ model_diphtheria_cpp(
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See \code{\link[=population]{population()}}.}
 
-\item{transmissibility}{A single number for the rate at which individuals
+\item{transmissibility}{A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
 \eqn{\beta = R_0 / \text{infectious period}}.}
 
-\item{infectiousness_rate}{A single number for the rate at which individuals
+\item{infectiousness_rate}{A numeric for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 This value does not depend upon the number of infectious individuals in the
 population.}
 
-\item{recovery_rate}{A single number for the recovery rate, denoted
-\eqn{\gamma}.}
+\item{recovery_rate}{A numeric for the rate at which individuals move
+from the infectious to the recovered compartment. Often denoted as
+\eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.}
 
 \item{reporting_rate}{A single number for the proportion of infectious cases
 that is reported; this is a precursor to hospitalisation as only reported
@@ -76,17 +77,19 @@ dependence \code{vignette("time_dependence", package = "epidemics")}.}
 changes in the population of each demographic group at those times.
 \code{"time"} must be a numeric vector, while \code{"values"} must be a list of the
 length of \code{"time"}, with each element a numeric vector of the same length as
-the number of demographic groups in \code{population}.
-default value of 1 day.}
+the number of demographic groups in \code{population}.}
 
 \item{time_end}{The maximum number of timesteps over which to run the model.
-Taken as days, with a default value of 100 days.}
+Taken as days, with a default value of 100 days. May be a numeric vector.}
 
-\item{increment}{The size of the time increment. Taken as days, with a}
+\item{increment}{The size of the time increment. Taken as days, with a
+default value of 1 day.}
 }
 \value{
-A \verb{<data.frame>} with the columns "time", "compartment", "age_group",
-and "value".
+A \code{data.frame} with the columns "time", "compartment", "age_group",
+"value", and "run", giving the number of individuals per demographic group
+in each compartment at each timestep in long (or "tidy") format, with "run"
+indicating the unique parameter combination.
 }
 \description{
 Simulate a diphtheria outbreak using a deterministic,
@@ -97,8 +100,8 @@ context of internally displaced people (IDP) or refugee camps.
 This model accommodates age or demographic structure and allows for a
 proportion of each demographic group to be vaccinated at the start of the
 outbreak, and thus to not contribute to the outbreak.
-The model also allows for changes to the initial population size, to model
-influxes or evacuations from camps.
+The model also allows for changes to the number of susceptibles in each age
+group to model influxes or evacuations from camps.
 }
 \details{
 \subsection{Rcpp implementations}{
@@ -110,8 +113,13 @@ an internal C++ function that uses Boost \emph{odeint} solvers for an SEIHR mode
 \subsection{Model parameters}{
 
 This model only allows for single, population-wide rates transitions between
-compartments. The default values are taken from Finger et al. (2019) where
-possible.
+compartments per model run.
+
+However, model parameters may be passed as numeric vectors. These vectors
+must follow Tidyverse recycling rules: all vectors must have the same length,
+or, vectors of length 1 will be recycled to the length of any other vector.
+
+The default values are taken from Finger et al. (2019) where possible:
 \itemize{
 \item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.8888889, assuming an
 \eqn{R_0} of 4.0 and a total infectious period of 4.5 days.
@@ -139,6 +147,54 @@ Users can specify the times and changes (to each demographic group) of
 changes using the \code{population_changes} argument, to examine the effect on
 outbreak dynamics.
 }
+}
+\examples{
+# create a dummy camp population with three age groups
+# diphtheria model is SEIHR
+# assume that most are susceptible, some infectious
+# values taken from supplementary material in Finger et al. for the
+# Kutupalong camp, rounded to the nearest 100
+n_age_groups <- 3
+demography_vector <- c(83000, 108200, 224600)
+initial_conditions <- matrix(0, nrow = n_age_groups, ncol = 5)
+
+# set susceptibles and infectious
+initial_conditions[, 1] <- demography_vector - 1
+initial_conditions[, 3] <- rep(1, n_age_groups)
+
+camp_pop <- population(
+  contact_matrix = matrix(1, nrow = n_age_groups, ncol = n_age_groups),
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions / demography_vector
+)
+
+# assume younger age groups are vaccinated
+prop_vaccinated <- c(0.2, 0.10, 0.1)
+
+# run model for single, default parameter set
+data <- model_diphtheria_cpp(
+  camp_pop,
+  prop_vaccinated = prop_vaccinated
+)
+head(data)
+tail(data)
+
+# run model with increase in population
+# create population change data
+p <- list(
+  time = 70,
+  values = list(
+    c(1e4, 2e5, 1e5)
+  )
+)
+
+data <- model_diphtheria_cpp(
+  camp_pop,
+  prop_vaccinated = prop_vaccinated,
+  population_change = p
+)
+head(data)
+tail(data)
 }
 \references{
 Finger, F., Funk, S., White, K., Siddiqui, M. R., Edmunds, W. J., &

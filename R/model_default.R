@@ -19,16 +19,16 @@
 #' @param population An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
 #' of each demographic group. See [population()].
-#' @param transmissibility A single number for the rate at which individuals
+#' @param transmissibility A numeric for the rate at which individuals
 #' move from the susceptible to the exposed compartment upon contact with an
 #' infectious individual. Often denoted as \eqn{\beta}, with
 #' \eqn{\beta = R_0 / \text{infectious period}}.
-#' @param infectiousness_rate A single number for the rate at which individuals
+#' @param infectiousness_rate A numeric for the rate at which individuals
 #' move from the exposed to the infectious compartment. Often denoted as
 #' \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 #' This value does not depend upon the number of infectious individuals in the
 #' population.
-#' @param recovery_rate A single number for the rate at which individuals move
+#' @param recovery_rate A numeric for the rate at which individuals move
 #' from the infectious to the recovered compartment. Often denoted as
 #' \eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.
 #' @param intervention A named list of `<intervention>`s representing optional
@@ -40,13 +40,14 @@
 #' @param vaccination A `<vaccination>` object representing an optional
 #' vaccination regime with a single dose, followed during the course of the
 #' epidemic, with a start and end time, and age-specific vaccination rates.
-#' @param time_dependence A named list of functions that modify model parameters
-#' as a function of model time. List element names must correspond to model
-#' parameter names. List elements must be functions of the form
-#' `function(time, x, ...)`, where `time` is the simulation `time` and `x`
-#' represents a model parameter. The order of function arguments is important.
+#' @param time_dependence A named list where each name
+#' is a model parameter, and each element is a function with
+#' the first two arguments being the current simulation `time`, and `x`, a value
+#' that is dependent on `time` (`x` represents a model parameter).
+#' See **Details** for more information, as well as the vignette on time-
+#' dependence \code{vignette("time_dependence", package = "epidemics")}.
 #' @param time_end The maximum number of timesteps over which to run the model.
-#' Taken as days, with a default value of 200 days.
+#' Taken as days, with a default value of 100 days. May be a numeric vector.
 #' @param increment The size of the time increment. Taken as days, with a
 #' default value of 1 day.
 #' @details
@@ -62,7 +63,13 @@
 #' ## Model parameters
 #'
 #' This model only allows for single, population-wide rates of
-#' transitions between compartments. The default values are:
+#' transitions between compartments per model run.
+#'
+#' However, model parameters may be passed as numeric vectors. These vectors
+#' must follow Tidyverse recycling rules: all vectors must have the same length,
+#' or, vectors of length 1 will be recycled to the length of any other vector.
+#'
+#' The default values are:
 #'
 #' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.186, assuming an
 #' \eqn{R_0} = 1.3 and an infectious period of 7 days.
@@ -74,10 +81,9 @@
 #' infectious period of 7 days.
 #'
 #' @return A `data.frame` with the columns "time", "compartment", "age_group",
-#' "value". The compartments correspond to the compartments of the model
-#' chosen with `model`.
-#' The current default model has the compartments "susceptible", "exposed",
-#' "infectious", "recovered", and "vaccinated".
+#' "value", and "run", giving the number of individuals per demographic group
+#' in each compartment at each timestep in long (or "tidy") format, with "run"
+#' indicating the unique parameter combination.
 #' @examples
 #' # create a population
 #' uk_population <- population(
@@ -91,12 +97,25 @@
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
+#' # and three discrete values of transmissibility
 #' data <- model_default_cpp(
-#'   population = uk_population
+#'   population = uk_population,
+#'   transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 #' )
 #'
 #' # view some data
 #' head(data)
+#' tail(data)
+#'
+#' # run epidemic simulations with differences in the end time
+#' # may be useful when considering different start dates with a fixed end point
+#' data <- model_default_cpp(
+#'   population = uk_population,
+#'   time_end = c(50, 100, 150)
+#' )
+#'
+#' head(data)
+#' tail(data)
 #' @export
 model_default_cpp <- function(population,
                               transmissibility = 1.3 / 7.0,
@@ -110,9 +129,24 @@ model_default_cpp <- function(population,
   # check class on required inputs
   checkmate::assert_class(population, "population")
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
-  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
-  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(time_end, lower = 0, finite = TRUE)
+
+  # check the time end and increment
+  # restrict increment to lower limit of 1e-6
+  checkmate::assert_integerish(time_end, lower = 0)
+  checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
+
+  # check all vector lengths are equal or 1L
+  params <- list(
+    transmissibility = transmissibility,
+    infectiousness_rate = infectiousness_rate,
+    recovery_rate = recovery_rate,
+    time_end = time_end
+  )
+  assert_recyclable(params)
 
   # all intervention sub-classes pass check for intervention superclass
   # note intervention and time-dependence targets are checked in dedicated fn
@@ -139,28 +173,32 @@ model_default_cpp <- function(population,
     )
   )
 
-  # check the time end and increment
-  # restrict increment to lower limit of 1e-6
-  checkmate::assert_number(time_end, lower = 0, finite = TRUE)
-  checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
-
-  # collect all model arguments
-  model_arguments <- list(
-    population = population,
-    transmissibility = transmissibility,
-    infectiousness_rate = infectiousness_rate,
-    recovery_rate = recovery_rate,
-    intervention = intervention,
-    vaccination = vaccination,
-    time_dependence = time_dependence,
-    time_end = time_end, increment = increment
+  # combine parameters and composable elements into a list of lists of mod args
+  params <- .recycle_vectors(params)
+  params <- .transpose_base(params)
+  model_arguments <- lapply(
+    params, function(x) {
+      c(
+        list(
+          population = population,
+          intervention = intervention,
+          vaccination = vaccination,
+          time_dependence = time_dependence,
+          increment = increment
+        ),
+        x
+      )
+    }
   )
 
-  # prepare checked arguments for function
-  # this necessary as check_args adds intervention and vaccination
-  # if missing
-  model_arguments <- .prepare_args_model_default(
-    .check_args_model_default(model_arguments)
+  # cross-check model arguments
+  # TODO: simplify to only check composable elements
+  model_arguments <- lapply(
+    model_arguments, function(l) {
+      .prepare_args_model_default(
+        .check_args_model_default(l)
+      )
+    }
   )
 
   # get compartment names
@@ -168,11 +206,26 @@ model_default_cpp <- function(population,
     "susceptible", "exposed", "infectious", "recovered", "vaccinated"
   )
 
-  # run model over arguments
-  output <- do.call(.model_default_cpp, model_arguments)
+  # run model over arguments, prepare output, and return list
+  # assign run number as list index - this is the specific combination of
+  # parameters
+  output <- Map(
+    model_arguments, seq_along(model_arguments),
+    f = function(l, i) {
+      output_ <- .output_to_df(
+        do.call(.model_default_cpp, l),
+        population = population,
+        compartments = compartments
+      )
+      output_$run <- i
+      output_
+    }
+  )
+  output <- data.table::rbindlist(output)
 
-  # prepare output and return
-  output_to_df(output, population, compartments)
+  # convert to data.frame and return
+  # TODO: parameters need to be pulled along
+  data.table::setDF(output)[]
 }
 
 #' Ordinary Differential Equations for the Default Model
@@ -340,7 +393,7 @@ model_default_r <- function(population,
   )
 
   # convert to long format using output_to_df() and return
-  output_to_df(
+  data <- .output_to_df(
     output = list(
       x = data[, setdiff(colnames(data), "time")],
       time = seq(0, time_end, increment)
@@ -348,4 +401,5 @@ model_default_r <- function(population,
     population = population,
     compartments = compartments
   )
+  data.table::setDF(data)[]
 }

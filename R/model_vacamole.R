@@ -10,17 +10,17 @@
 #' epidemic. See **Details** and **References** for more information.
 #'
 #' @inheritParams model_default
-#' @param hospitalisation_rate A single number for the hospitalisation rate of
+#' @param hospitalisation_rate A numeric for the hospitalisation rate of
 #' infectious individuals.
-#' @param mortality_rate A single parameter for the mortality rate of
+#' @param mortality_rate A numeric for the mortality rate of
 #' infectious or hospitalised individuals.
-#' @param susc_reduction_vax A single value between 0.0 and 1.0
+#' @param susc_reduction_vax A numeric of values between 0.0 and 1.0
 #' giving the reduction in susceptibility of infectious individuals who
 #' have received two doses of the vaccine.
-#' @param hosp_reduction_vax A single value between 0.0 and 1.0
+#' @param hosp_reduction_vax A numeric of values between 0.0 and 1.0
 #' giving the reduction in hospitalisation rate of infectious individuals who
 #' have received two doses of the vaccine.
-#' @param mort_reduction_vax A single value between 0.0 and 1.0
+#' @param mort_reduction_vax A numeric of values between 0.0 and 1.0
 #' giving the reduction in mortality of infectious and hospitalised individuals
 #' who have received two doses of the vaccine.
 #' @param vaccination A `<vaccination>` object representing a
@@ -49,7 +49,11 @@
 #' ## Model parameters
 #'
 #' This model only allows for single, population-wide rates of
-#' transitions between compartments. The default values are:
+#' transitions between compartments per model run.
+#'
+#' However, model parameters may be passed as numeric vectors. These vectors
+#' must follow Tidyverse recycling rules: all vectors must have the same length,
+#' or, vectors of length 1 will be recycled to the length of any other vector.
 #'
 #' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.186, resulting from
 #' an \eqn{R_0} = 1.3 and an infectious period of 7 days.
@@ -80,9 +84,10 @@
 #' vaccinated.
 #'
 #' @return A `data.frame` with the columns "time", "compartment", "age_group",
-#' "value". The compartments correspond to the compartments of the model
-#' chosen with `model`.
-#' The current default model has the compartments "susceptible",
+#' "value", and "run", giving the number of individuals per demographic group
+#' in each compartment at each timestep in long (or "tidy") format, with "run"
+#' indicating the unique parameter combination.
+#' The Vacamole model has the compartments "susceptible",
 #' "vaccinated_one_dose", "vaccinated_two_dose", "exposed",
 #' "infectious", "infectious_vaccinated", "hospitalised",
 #' "hospitalised_vaccinated", "recovered",  and "dead".
@@ -113,7 +118,8 @@
 #'   time_end = matrix(c(50, 80), nrow = 1)
 #' )
 #'
-#' # run epidemic simulation with no vaccination or intervention
+#' # run epidemic simulation with vaccination but no intervention
+#' # with a single set of parameters
 #' data <- model_vacamole_cpp(
 #'   population = population,
 #'   vaccination = double_vax
@@ -121,6 +127,18 @@
 #'
 #' # view some data
 #' head(data)
+#'
+#' # run epidemic simulation with no vaccination or intervention
+#' # and three discrete values of transmissibility
+#' data <- model_default_cpp(
+#'   population = uk_population,
+#'   transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
+#' )
+#'
+#' # view some data
+#' head(data)
+#' tail(data)
+#'
 #' @export
 model_vacamole_cpp <- function(population,
                                transmissibility = 1.3 / 7.0,
@@ -140,16 +158,35 @@ model_vacamole_cpp <- function(population,
   checkmate::assert_class(population, "population")
 
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
-  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
-  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(hospitalisation_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(mortality_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(hospitalisation_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(mortality_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
 
   # parameters for derived rates are bounded 0 - 1
-  checkmate::assert_number(susc_reduction_vax, lower = 0, upper = 1)
-  checkmate::assert_number(hosp_reduction_vax, lower = 0, upper = 1)
-  checkmate::assert_number(mort_reduction_vax, lower = 0, upper = 1)
+  checkmate::assert_numeric(susc_reduction_vax, lower = 0, upper = 1)
+  checkmate::assert_numeric(hosp_reduction_vax, lower = 0, upper = 1)
+  checkmate::assert_numeric(mort_reduction_vax, lower = 0, upper = 1)
+
+  # check the time end and increment
+  # restrict increment to lower limit of 1e-6
+  checkmate::assert_integerish(time_end, lower = 0)
+  checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
+
+  # check all vector lengths are equal or 1L
+  params <- list(
+    transmissibility = transmissibility,
+    infectiousness_rate = infectiousness_rate,
+    hospitalisation_rate = hospitalisation_rate,
+    mortality_rate = mortality_rate,
+    recovery_rate = recovery_rate,
+    susc_reduction_vax = susc_reduction_vax,
+    hosp_reduction_vax = hosp_reduction_vax,
+    mort_reduction_vax = mort_reduction_vax,
+    time_end = time_end
+  )
+  assert_recyclable(params)
 
   # all intervention sub-classes pass check for intervention superclass
   # note intervention and time-dependence targets are checked in dedicated fns
@@ -176,33 +213,32 @@ model_vacamole_cpp <- function(population,
     )
   )
 
-  # check the time end and increment
-  # restrict increment to lower limit of 1e-6
-  checkmate::assert_number(time_end, lower = 0, finite = TRUE)
-  checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
-
-  # collect model arguments
-  model_arguments <- list(
-    population = population,
-    transmissibility = transmissibility,
-    infectiousness_rate = infectiousness_rate,
-    hospitalisation_rate = hospitalisation_rate,
-    mortality_rate = mortality_rate,
-    recovery_rate = recovery_rate,
-    susc_reduction_vax = susc_reduction_vax,
-    hosp_reduction_vax = hosp_reduction_vax,
-    mort_reduction_vax = mort_reduction_vax,
-    intervention = intervention,
-    vaccination = vaccination,
-    time_dependence = time_dependence,
-    time_end = time_end, increment = increment
+  # combine parameters and composable elements into a list of lists of mod args
+  params <- .recycle_vectors(params)
+  params <- .transpose_base(params)
+  model_arguments <- lapply(
+    params, function(x) {
+      c(
+        list(
+          population = population,
+          intervention = intervention,
+          vaccination = vaccination,
+          time_dependence = time_dependence,
+          increment = increment
+        ),
+        x
+      )
+    }
   )
 
-  # prepare checked arguments for function
-  # this necessary as check_args adds intervention and vaccination
-  # if missing
-  model_arguments <- .prepare_args_model_vacamole(
-    .check_args_model_vacamole(model_arguments)
+  # cross-check model arguments
+  # NOTE: simplify to only check composable elements
+  model_arguments <- lapply(
+    model_arguments, function(l) {
+      .prepare_args_model_vacamole(
+        .check_args_model_vacamole(l)
+      )
+    }
   )
 
   # get compartment names
@@ -215,11 +251,26 @@ model_vacamole_cpp <- function(population,
     "recovered"
   )
 
-  # run model over arguments
-  output <- do.call(.model_vacamole_cpp, model_arguments)
+  # run model over arguments, prepare output, and return list
+  # assign run number as list index - this is the specific combination of
+  # parameters
+  output <- Map(
+    model_arguments, seq_along(model_arguments),
+    f = function(l, i) {
+      output_ <- .output_to_df(
+        do.call(.model_vacamole_cpp, l),
+        population = population,
+        compartments = compartments
+      )
+      output_$run <- i
+      output_
+    }
+  )
+  output <- data.table::rbindlist(output)
 
-  # prepare output and return
-  output_to_df(output, population, compartments)
+  # convert to data.frame and return
+  # TODO: parameters need to be pulled along
+  data.table::setDF(output)[]
 }
 
 #' Ordinary Differential Equations for the Vacamole Model
@@ -465,7 +516,7 @@ model_vacamole_r <- function(population,
   )
 
   # convert to long format using output_to_df() and return
-  output_to_df(
+  data <- .output_to_df(
     output = list(
       x = data[, setdiff(colnames(data), "time")],
       time = seq(0, time_end, increment)
@@ -473,4 +524,5 @@ model_vacamole_r <- function(population,
     population = population,
     compartments = compartments
   )
+  data.table::setDF(data)[]
 }

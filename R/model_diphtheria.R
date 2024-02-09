@@ -188,7 +188,10 @@ model_diphtheria_cpp <- function(population,
     hosp_exit_rate = hosp_exit_rate,
     time_end = time_end
   )
-  assert_recyclable(params)
+  stopifnot(
+    "All parameters must be of the same length, or must have length 1" =
+      test_recyclable(params)
+  )
 
   # check that prop_vaccinated is the same length as demography_vector
   # TODO: treat this as a composable element for vectorisation

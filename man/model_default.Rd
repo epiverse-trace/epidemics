@@ -35,18 +35,18 @@ model_default_r(
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See \code{\link[=population]{population()}}.}
 
-\item{transmissibility}{A single number for the rate at which individuals
+\item{transmissibility}{A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
 \eqn{\beta = R_0 / \text{infectious period}}.}
 
-\item{infectiousness_rate}{A single number for the rate at which individuals
+\item{infectiousness_rate}{A numeric for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 This value does not depend upon the number of infectious individuals in the
 population.}
 
-\item{recovery_rate}{A single number for the rate at which individuals move
+\item{recovery_rate}{A numeric for the rate at which individuals move
 from the infectious to the recovered compartment. Often denoted as
 \eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.}
 
@@ -61,24 +61,24 @@ Multiple \verb{<rate_interventions>} on the model parameters are allowed; see
 vaccination regime with a single dose, followed during the course of the
 epidemic, with a start and end time, and age-specific vaccination rates.}
 
-\item{time_dependence}{A named list of functions that modify model parameters
-as a function of model time. List element names must correspond to model
-parameter names. List elements must be functions of the form
-\verb{function(time, x, ...)}, where \code{time} is the simulation \code{time} and \code{x}
-represents a model parameter. The order of function arguments is important.}
+\item{time_dependence}{A named list where each name
+is a model parameter, and each element is a function with
+the first two arguments being the current simulation \code{time}, and \code{x}, a value
+that is dependent on \code{time} (\code{x} represents a model parameter).
+See \strong{Details} for more information, as well as the vignette on time-
+dependence \code{vignette("time_dependence", package = "epidemics")}.}
 
 \item{time_end}{The maximum number of timesteps over which to run the model.
-Taken as days, with a default value of 200 days.}
+Taken as days, with a default value of 100 days. May be a numeric vector.}
 
 \item{increment}{The size of the time increment. Taken as days, with a
 default value of 1 day.}
 }
 \value{
 A \code{data.frame} with the columns "time", "compartment", "age_group",
-"value". The compartments correspond to the compartments of the model
-chosen with \code{model}.
-The current default model has the compartments "susceptible", "exposed",
-"infectious", "recovered", and "vaccinated".
+"value", and "run", giving the number of individuals per demographic group
+in each compartment at each timestep in long (or "tidy") format, with "run"
+indicating the unique parameter combination.
 }
 \description{
 Simulate an epidemic using a deterministic, compartmental
@@ -107,7 +107,13 @@ Both models return equivalent results, but the C++ implementation is faster.
 \subsection{Model parameters}{
 
 This model only allows for single, population-wide rates of
-transitions between compartments. The default values are:
+transitions between compartments per model run.
+
+However, model parameters may be passed as numeric vectors. These vectors
+must follow Tidyverse recycling rules: all vectors must have the same length,
+or, vectors of length 1 will be recycled to the length of any other vector.
+
+The default values are:
 \itemize{
 \item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.186, assuming an
 \eqn{R_0} = 1.3 and an infectious period of 7 days.
@@ -131,10 +137,23 @@ uk_population <- population(
 )
 
 # run epidemic simulation with no vaccination or intervention
+# and three discrete values of transmissibility
 data <- model_default_cpp(
-  population = uk_population
+  population = uk_population,
+  transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 )
 
 # view some data
 head(data)
+tail(data)
+
+# run epidemic simulations with differences in the end time
+# may be useful when considering different start dates with a fixed end point
+data <- model_default_cpp(
+  population = uk_population,
+  time_end = c(50, 100, 150)
+)
+
+head(data)
+tail(data)
 }

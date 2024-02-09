@@ -31,7 +31,7 @@ get_parameter <- function(x, parameter) {
 #' compartment, and the model timestep, respectively.
 #' Names for the demographic groups are generated if no names are provided in
 #' the `population` object; these are of the form "demo_group_X".
-output_to_df <- function(output, population, compartments) {
+.output_to_df <- function(output, population, compartments) {
   # input checking
   checkmate::assert_list(output,
     any.missing = FALSE, all.missing = FALSE,
@@ -75,14 +75,16 @@ output_to_df <- function(output, population, compartments) {
     values <- t(values)
   }
 
-  # return a data.frame
+  # return a data.table - this will typically be one among a list,
+  # and passed to data.table::rbindlist()
   data <- data.table::data.table(
     time = rep(output$time, each = n_groups * length(compartments)),
     demography_group = vec_demo_groups,
     compartment = vec_compartments,
     value = as.vector(values)
   )
-  data.table::setDF(data)[]
+
+  data
 }
 
 #' Get the epidemic size

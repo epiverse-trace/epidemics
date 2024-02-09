@@ -1,17 +1,13 @@
-#' @title Check arguments to default epidemic function
-#' @name check_prepare_default_args
-#' @rdname check_prepare_default_args
+#' @title Prepare arguments to default epidemic function
+#' @name prepare_default_args
+#' @rdname prepare_default_args
 #'
-#' @description Check and prepare the four main arguments to
-#' [model_default_cpp()] for use with [.model_default_cpp()].
+#' @description Prepare arguments to for s[.model_default_cpp()].
+#'
+#' @param mod_args A named list of the population, and epidemic modifiers.
 #'
 #' @return
-#'
-#' `.check_args_model_default()` invisibly returns the model arguments passed
-#' in `mod_args`. Model functionalities, such as vaccination or interventions,
-#' passed as `NULL` are replaced with dummy values for internal functions.
-#'
-#' `.prepare_args_model_default()` returns a list of model arguments suitable
+#' A list of model arguments suitable
 #' for [.model_default_cpp()]. This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
@@ -49,95 +45,6 @@
 #' `mod_args` into simpler structures such as lists and numeric or integer
 #' vectors that can be interpreted as C++ types such as `Rcpp::List`,
 #' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
-.check_args_model_default <- function(mod_args) {
-  # check that arguments list has expected names
-  checkmate::assert_names(
-    names(mod_args),
-    type = "unique"
-  )
-
-  # load number of compartments to check initial conditions matrix
-  compartments_default <- c(
-    "susceptible", "exposed", "infectious", "recovered", "vaccinated"
-  )
-  assert_population(
-    mod_args[["population"]],
-    compartments = compartments_default
-  )
-
-  # add null intervention and vaccination if these are missing
-  # if not missing, check that they conform to expectations
-  # add null rate_intervention if this is missing
-  # if not missing, check that it conforms to expectations
-  if (is.null(mod_args[["intervention"]])) {
-    # add dummy list elements named "contacts", and one named "transmissibility"
-    mod_args[["intervention"]] <- list(
-      contacts = no_contacts_intervention(
-        mod_args[["population"]]
-      ),
-      transmissibility = no_rate_intervention()
-    )
-  } else {
-    # check intervention list names
-    checkmate::assert_names(
-      names(mod_args[["intervention"]]),
-      subset.of = c(
-        "transmissibility", "infectiousness_rate", "recovery_rate", "contacts"
-      )
-    )
-    # if a contacts intervention is passed, check it
-    if ("contacts" %in% names(mod_args[["intervention"]])) {
-      # check the intervention on contacts
-      assert_intervention(
-        mod_args[["intervention"]][["contacts"]], "contacts",
-        mod_args[["population"]]
-      )
-    } else {
-      # if not contacts intervention is passed, add a dummy one
-      mod_args[["intervention"]]$contacts <- no_contacts_intervention(
-        mod_args[["population"]]
-      )
-    }
-
-    # if there is only an intervention on contacts, add a dummy intervention
-    # on the transmissibility
-    if (identical(names(mod_args[["intervention"]]), "contacts")) {
-      mod_args[["intervention"]]$transmissibility <- no_rate_intervention()
-    }
-  }
-
-  if (is.null(mod_args[["vaccination"]])) {
-    mod_args[["vaccination"]] <- no_vaccination(
-      mod_args[["population"]]
-    )
-  } else {
-    # default model only supports a single dose vaccination
-    assert_vaccination(
-      mod_args[["vaccination"]],
-      doses = 1L, mod_args[["population"]]
-    )
-  }
-
-  # handle time dependence if not present, and check targets if present
-  if (is.null(mod_args[["time_dependence"]])) {
-    mod_args[["time_dependence"]] <- no_time_dependence()
-  } else {
-    checkmate::assert_names(
-      names(mod_args[["time_dependence"]]),
-      subset.of = c(
-        "transmissibility", "infectiousness_rate", "recovery_rate"
-      )
-    )
-  }
-
-  # return arguments invisibly
-  invisible(mod_args)
-}
-
-#' @title Prepare arguments to default epidemic function
-#' @name check_prepare_default_args
-#' @rdname check_prepare_default_args
-#' @keywords internal
 .prepare_args_model_default <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
   # scale the contact matrix by the maximum real eigenvalue

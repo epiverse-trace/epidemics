@@ -486,7 +486,7 @@ model_ebola_r <- function(population,
   }
 
   # convert to long format
-  output_to_df(
+  data <- .output_to_df(
     output = list(x = sim_data, time = seq_len(time_end)),
     population = population,
     compartments = c(
@@ -494,4 +494,5 @@ model_ebola_r <- function(population,
       "hospitalised", "funeral", "removed"
     )
   )
+  data.table::setDF(data)[]
 }

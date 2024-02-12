@@ -45,26 +45,26 @@
 #' `mod_args` into simpler structures such as lists and numeric or integer
 #' vectors that can be interpreted as C++ types such as `Rcpp::List`,
 #' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
-.prepare_args_model_default <- function(mod_args) {
+.check_prepare_args_default <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
-  # scale the contact matrix by the maximum real eigenvalue
-  contact_matrix <- get_parameter(mod_args[["population"]], "contact_matrix")
-  contact_matrix <- contact_matrix / max(Re(eigen(contact_matrix)$values))
+  cmat_init_state <- .prepare_population(mod_args[["population"]])
 
-  # scale rows of the contact matrix by the corresponding group population
-  contact_matrix <- contact_matrix /
-    get_parameter(mod_args[["population"]], "demography_vector")
+  # check the interventions list against the population
+  mod_args[["intervention"]] <- .cross_check_intervention(
+    mod_args[["intervention"]], mod_args[["population"]],
+    c("contacts", "transmissibility", "infectiousness_rate", "recovery_rate")
+  )
+  # check the vaccination against the population
+  mod_args[["vaccination"]] <- .cross_check_vaccination(
+    mod_args[["vaccination"]], mod_args[["population"]], 1L
+  )
 
-  # prepare initial conditions by scaling with demography
-  initial_state <-
-    get_parameter(mod_args[["population"]], "initial_conditions") *
-      get_parameter(mod_args[["population"]], "demography_vector")
-
-  # get NPI related times and contact reductions
+  # get NPI related times and contact reductions - even if these are dummy
+  # interventions
   contact_interventions <- mod_args[["intervention"]][["contacts"]]
-  npi_time_begin <- get_parameter(contact_interventions, "time_begin")
-  npi_time_end <- get_parameter(contact_interventions, "time_end")
-  npi_cr <- get_parameter(contact_interventions, "reduction")
+  npi_time_begin <- contact_interventions[["time_begin"]]
+  npi_time_end <- contact_interventions[["time_end"]]
+  npi_cr <- contact_interventions[["reduction"]]
 
   # get other interventions if any
   rate_interventions <- mod_args[["intervention"]][
@@ -72,67 +72,24 @@
   ]
 
   # get vaccination related times and rates
-  vax_time_begin <- get_parameter(mod_args[["vaccination"]], "time_begin")
-  vax_time_end <- get_parameter(mod_args[["vaccination"]], "time_end")
-  vax_nu <- get_parameter(mod_args[["vaccination"]], "nu")
+  vax_time_begin <- mod_args[["vaccination"]][["time_begin"]]
+  vax_time_end <- mod_args[["vaccination"]][["time_end"]]
+  vax_nu <- mod_args[["vaccination"]][["nu"]]
+
+  # remove processed model arguments
+  mod_args[c("population", "intervention", "vaccination")] <- NULL
+  mod_args[c("param_set", "scenario")] <- NULL
 
   # return selected arguments for internal C++ function
-  # order is important
-  list(
-    initial_state = initial_state,
-    transmissibility = mod_args$transmissibility,
-    infectiousness_rate = mod_args$infectiousness_rate,
-    recovery_rate = mod_args$recovery_rate,
-    contact_matrix = contact_matrix,
-    npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
-    npi_cr = npi_cr,
-    vax_time_begin = vax_time_begin, vax_time_end = vax_time_end,
-    vax_nu = vax_nu,
-    rate_interventions = rate_interventions,
-    time_dependence = mod_args$time_dependence,
-    time_end = mod_args$time_end,
-    increment = mod_args$increment
+  c(
+    cmat_init_state,
+    list(
+      npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
+      npi_cr = npi_cr,
+      vax_time_begin = vax_time_begin, vax_time_end = vax_time_end,
+      vax_nu = vax_nu,
+      rate_interventions = rate_interventions
+    ),
+    mod_args
   )
-}
-
-.cross_check_intervention <- function(x, population, allowed_targets) {
-  # create dummy intervention set
-  tmp_intervention <- list(
-    contacts = no_contacts_intervention(population),
-    transmissibility = no_rate_intervention()
-  )
-  if (is.null(x)) {
-    return(tmp_intervention)
-  }
-
-  # check that contact interventions are suitable for population
-  if ("contacts" %in% names(x)) {
-    assert_intervention(x[["contacts"]], "contacts", population)
-  }
-
-  # replace dummy values with user values if avaialable, and return
-  tmp_intervention[names(x)] <- x
-  tmp_intervention
-}
-
-.cross_check_vaccination <- function(x, population, doses) {
-  if (is.null(x)) {
-    no_vaccination(population)
-  } else {
-    assert_vaccination(mod_args[["vaccination"]], doses = doses, population)
-    x
-  }
-}
-
-.cross_check_timedep <- function(x, allowed_targets) {
-  if (is.null(x)) {
-    no_time_dependence()
-  } else {
-    checkmate::assert_names(names(x), subset.of = allowed_targets)
-    x
-  }
-}
-
-.cross_check_popchange <- function(x, population) {
-  x
 }

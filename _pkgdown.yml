@@ -4,32 +4,33 @@ template:
     font_weight_base: 300
   package: epiversetheme
 articles:
-  - title: Modelling interventions
-    navbar: Modelling interventions
-    contents:
-      - modelling_interventions
-      - multiple_interventions
-      - rate_interventions
-  - title: Modelling vaccination
-    navbar: Modelling vaccination
-    contents:
-      - modelling_vaccination
-  - title: Modelling seasonality
-    navbar: Modelling seasonality
-    contents:
-      - time_dependence
-  - title: Other modelling vignettes
-    navbar: Other modelling vignettes
-    contents:
-      - parameter_uncertainty
-      - finalsize_comparison
-  - title: Guides to library models
-    navbar: Guides to library models
-    contents:
-      - vacamole
-      - ebola_model
-      - diphtheria
-      - benchmarking
+
+- title: Modelling interventions
+  navbar: Modelling interventions
+  contents:
+  - modelling_interventions
+  - multiple_interventions
+  - rate_interventions
+- title: Modelling vaccination
+  navbar: Modelling vaccination
+  contents:
+  - modelling_vaccination
+- title: Modelling seasonality
+  navbar: Modelling seasonality
+  contents:
+  - time_dependence
+- title: Other modelling vignettes
+  navbar: Other modelling vignettes
+  contents:
+  - parameter_uncertainty
+  - finalsize_comparison
+- title: Guides to library models
+  navbar: Guides to library models
+  contents:
+  - vacamole
+  - ebola_model
+  - diphtheria
+  - benchmarking
 
 reference:
   - title: Model functions

@@ -75,10 +75,15 @@ Taken as days, with a default value of 100 days. May be a numeric vector.}
 default value of 1 day.}
 }
 \value{
-A nested \code{data.table} with a list column "data", which holds the
-model output with the columns "time", "compartment", "age_group", and
+A \verb{<data.table>}.
+If the model parameters and composable elements are all scalars, a single
+\verb{<data.table>} with the columns "time", "compartment", "age_group", and
 "value", giving the number of individuals per demographic group
-in each compartment at each timestep in long (or "tidy") format.
+in each compartment at each timestep in long (or "tidy") format is returned.
+
+If the model parameters or composable elements are lists or list-like,
+a nested \verb{<data.table>} is returned with a list column "data", which holds
+the compartmental values described above.
 Other columns hold parameters and composable elements relating to the model
 run. Columns "scenario" and "param_set" identify combinations of composable
 elements (population, interventions, vaccination regimes), and infection

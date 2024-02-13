@@ -80,10 +80,15 @@
 #' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.143, assuming an
 #' infectious period of 7 days.
 #'
-#' @return A nested `data.table` with a list column "data", which holds the
-#' model output with the columns "time", "compartment", "age_group", and
+#' @return A `<data.table>`. 
+#' If the model parameters and composable elements are all scalars, a single
+#' `<data.table>` with the columns "time", "compartment", "age_group", and
 #' "value", giving the number of individuals per demographic group
-#' in each compartment at each timestep in long (or "tidy") format.
+#' in each compartment at each timestep in long (or "tidy") format is returned.
+#' 
+#' If the model parameters or composable elements are lists or list-like,
+#' a nested `<data.table>` is returned with a list column "data", which holds
+#' the compartmental values described above.
 #' Other columns hold parameters and composable elements relating to the model
 #' run. Columns "scenario" and "param_set" identify combinations of composable
 #' elements (population, interventions, vaccination regimes), and infection
@@ -268,7 +273,13 @@ model_default_cpp <- function(population,
     )
   })]
 
-  # return nested data.table
+  # check for single row output, i.e., scalar arguments, and return data.frame
+  # do not return the parameters in this case
+  if (nrow(model_output) == 1L) {
+    model_output <- model_output[["data"]][[1L]] # hardcoded for special case
+  }
+
+  # return data.table
   model_output[]
 }
 

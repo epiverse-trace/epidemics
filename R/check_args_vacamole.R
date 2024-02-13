@@ -1,18 +1,12 @@
-#' @title Check arguments to the Vacamole epidemic function
-#' @name check_prepare_vacamole_args
-#' @rdname check_prepare_vacamole_args
+#' @title Prepare arguments to Vacamole epidemic function
+#' @name prepare_vacamole_args
+#' @rdname prepare_vacamole_args
 #'
-#' @description Check and prepare the four main arguments to
-#' [model_vacamole_cpp()] for use with [.model_vacamole_cpp()].
+#' @description Prepare arguments to for [.model_default_cpp()].
 #'
 #' @return
-#'
-#' `.check_args_model_vacamole()` invisibly returns the model arguments passed
-#' in `mod_args`. Model functionalities, such as interventions,
-#' passed as `NULL` are replaced with dummy values for internal functions.
-#'
-#' `.prepare_args_model_vacamole()` returns a list of model arguments
-#' suitable for [.model_vacamole_cpp()]. This is a named list consisting of:
+#' A list of model arguments suitable for [.model_vacamole_cpp()].
+#' This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
 #' rather than proportional values;
@@ -55,136 +49,32 @@
 #'
 #' @keywords internal
 #' @details
-#' `.prepare_args_model_vacamole()` prepares arguments for
-#' [.model_vacamole_cpp()], which is the C++ function that solves the default
-#' ODE system using a Boost _odeint_ solver, and for [.ode_model_vacamole()],
-#' which is passed to [deSolve::lsoda()] in [model_vacamole_r()].
-#'
-#' `.prepare_args_model_vacamole()` converts the arguments collected in
-#' `mod_args` into simpler structures such as lists and numeric or integer
-#' vectors that can be interpreted as C++ types such as `Rcpp::List`,
+#' `.check_prepare_args_vacamole()` prepares arguments for
+#' [.model_vacamole_cpp()], which is the C++ function that solves the Vacamole
+#' ODE system using a Boost _odeint_ solver, by converting some of the arguments
+#' collected in `mod_args` into simpler structures such as lists and numeric or
+#' integer vectors that can be interpreted as C++ types such as `Rcpp::List`,
 #' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
-.check_args_model_vacamole <- function(mod_args) {
-  # check that arguments list has expected names
-  checkmate::assert_names(
-    names(mod_args),
-    type = "unique",
-    must.include = "vaccination" # vaccination necessary for Vacamole
-  )
-
-  # load number of compartments to check initial conditions matrix
-  compartments_vacamole <- c(
-    "susceptible", "vaccinated_one_dose", "vaccinated_two_dose",
-    "exposed", "exposed_vaccinated", "infectious", "infectious_vaccinated",
-    "hospitalised", "hospitalised_vaccinated", "dead", "recovered"
-  )
-  # input checking on population parameters
-  assert_population(
-    mod_args[["population"]],
-    compartments = compartments_vacamole
-  )
-
-  # input checking on vaccination parameters
-  # the Vacamole model expects two vaccination doses
-  assert_vaccination(
-    mod_args[["vaccination"]],
-    doses = 2L, population = mod_args[["population"]]
-  )
-
-  # add null intervention and vaccination if these are missing
-  # if not missing, check that they conform to expectations
-  # add null rate_intervention if this is missing
-  # if not missing, check that it conforms to expectations
-  if (is.null(mod_args[["intervention"]])) {
-    # add dummy list elements named "contacts", and one named "transmissibility"
-    mod_args[["intervention"]] <- list(
-      contacts = no_contacts_intervention(
-        mod_args[["population"]]
-      ),
-      transmissibility = no_rate_intervention()
-    )
-  } else {
-    # check intervention list names
-    checkmate::assert_names(
-      names(mod_args[["intervention"]]),
-      subset.of = c(
-        "transmissibility", "infectiousness_rate", "hospitalisation_rate",
-        "mortality_rate", "recovery_rate", "contacts"
-      )
-    )
-    # if a contacts intervention is passed, check it
-    if ("contacts" %in% names(mod_args[["intervention"]])) {
-      # check the intervention on contacts
-      assert_intervention(
-        mod_args[["intervention"]][["contacts"]], "contacts",
-        mod_args[["population"]]
-      )
-    } else {
-      # if not contacts intervention is passed, add a dummy one
-      mod_args[["intervention"]]$contacts <- no_contacts_intervention(
-        mod_args[["population"]]
-      )
-    }
-
-    # if there is only an intervention on contacts, add a dummy intervention
-    # on the transmissibility
-    if (identical(names(mod_args[["intervention"]]), "contacts")) {
-      mod_args[["intervention"]]$transmissibility <- no_rate_intervention()
-    }
-  }
-
-  # handle time dependence if not present, and check targets if present
-  if (is.null(mod_args[["time_dependence"]])) {
-    mod_args[["time_dependence"]] <- no_time_dependence()
-  } else {
-    checkmate::assert_names(
-      names(mod_args[["time_dependence"]]),
-      subset.of = c(
-        "transmissibility", "infectiousness_rate", "recovery_rate"
-      )
-    )
-  }
-
-  # return arguments invisibly
-  invisible(mod_args)
-}
-
-#' @title Prepare arguments for the Vacamole epidemic function
-#' @name check_prepare_vacamole_args
-#' @rdname check_prepare_vacamole_args
-#' @keywords internal
-.prepare_args_model_vacamole <- function(mod_args) {
+.check_prepare_args_vacamole <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
-  # scale the contact matrix by the maximum real eigenvalue
-  contact_matrix <- get_parameter(mod_args[["population"]], "contact_matrix")
-  contact_matrix <- contact_matrix / max(Re(eigen(contact_matrix)$values))
+  cmat_init_state <- .prepare_population(mod_args[["population"]])
 
-  # scale rows of the contact matrix by the corresponding group population
-  contact_matrix <- contact_matrix /
-    get_parameter(mod_args[["population"]], "demography_vector")
+  # check the interventions list against the population
+  mod_args[["intervention"]] <- .cross_check_intervention(
+    mod_args[["intervention"]], mod_args[["population"]],
+    c("contacts", "transmissibility", "infectiousness_rate", "recovery_rate")
+  )
+  # check the vaccination against the population
+  mod_args[["vaccination"]] <- .cross_check_vaccination(
+    mod_args[["vaccination"]], mod_args[["population"]], 2L
+  )
 
-  # prepare initial conditions by scaling with demography
-  initial_state <-
-    get_parameter(mod_args[["population"]], "initial_conditions") *
-      get_parameter(mod_args[["population"]], "demography_vector")
-
-  # calculate derived model parameters
-
-  # modified parameters for the two-dose vaccinated compartment
-  transmissibility_vax <- mod_args$transmissibility *
-    (1.0 - mod_args[["susc_reduction_vax"]])
-
-  hospitalisation_rate_vax <- mod_args$hospitalisation_rate *
-    (1.0 - mod_args[["hosp_reduction_vax"]])
-
-  mortality_rate_vax <- mod_args$mortality_rate *
-    (1.0 - mod_args[["mort_reduction_vax"]])
-
-  # get NPI related times and contact reductions
+  # get NPI related times and contact reductions - even if these are dummy
+  # interventions
   contact_interventions <- mod_args[["intervention"]][["contacts"]]
-  npi_time_begin <- get_parameter(contact_interventions, "time_begin")
-  npi_time_end <- get_parameter(contact_interventions, "time_end")
-  npi_cr <- get_parameter(contact_interventions, "reduction")
+  npi_time_begin <- contact_interventions[["time_begin"]]
+  npi_time_end <- contact_interventions[["time_end"]]
+  npi_cr <- contact_interventions[["reduction"]]
 
   # get other interventions if any
   rate_interventions <- mod_args[["intervention"]][
@@ -192,30 +82,24 @@
   ]
 
   # get vaccination related times and rates
-  vax_time_begin <- get_parameter(mod_args[["vaccination"]], "time_begin")
-  vax_time_end <- get_parameter(mod_args[["vaccination"]], "time_end")
-  vax_nu <- get_parameter(mod_args[["vaccination"]], "nu")
+  vax_time_begin <- mod_args[["vaccination"]][["time_begin"]]
+  vax_time_end <- mod_args[["vaccination"]][["time_end"]]
+  vax_nu <- mod_args[["vaccination"]][["nu"]]
+
+  # remove processed model arguments
+  mod_args[c("population", "intervention", "vaccination")] <- NULL
+  mod_args[c("param_set", "scenario")] <- NULL
 
   # return selected arguments for internal C++ function
-  # order is important
-  list(
-    initial_state = initial_state,
-    transmissibility = mod_args$transmissibility,
-    infectiousness_rate = mod_args$infectiousness_rate,
-    hospitalisation_rate = mod_args$hospitalisation_rate,
-    mortality_rate = mod_args$mortality_rate,
-    recovery_rate = mod_args$recovery_rate,
-    transmissibility_vax = transmissibility_vax,
-    hospitalisation_rate_vax = hospitalisation_rate_vax,
-    mortality_rate_vax = mortality_rate_vax,
-    contact_matrix = contact_matrix,
-    npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
-    npi_cr = npi_cr,
-    vax_time_begin = vax_time_begin, vax_time_end = vax_time_end,
-    vax_nu = vax_nu,
-    rate_interventions = rate_interventions,
-    time_dependence = mod_args$time_dependence,
-    time_end = mod_args$time_end,
-    increment = mod_args$increment
+  c(
+    cmat_init_state,
+    list(
+      npi_time_begin = npi_time_begin, npi_time_end = npi_time_end,
+      npi_cr = npi_cr,
+      vax_time_begin = vax_time_begin, vax_time_end = vax_time_end,
+      vax_nu = vax_nu,
+      rate_interventions = rate_interventions
+    ),
+    mod_args
   )
 }

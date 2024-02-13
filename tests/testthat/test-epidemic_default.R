@@ -1,4 +1,5 @@
 # Basic tests to check for functionality
+#### Tests checking the output of a single parameter set ####
 # Prepare contact matrix and demography vector
 polymod <- socialmixr::polymod
 contact_data <- socialmixr::contact_matrix(
@@ -22,57 +23,76 @@ uk_population <- population(
   )
 )
 
-test_that("Output of default epidemic model Cpp", {
+test_that("Output of default epidemic model Cpp, scalar arguments", {
   # run epidemic model, expect no condition
+  time_end <- 100L
+  compartments <- c(
+    "susceptible", "exposed", "infectious", "recovered", "vaccinated"
+  )
+
   expect_no_condition(
     model_default_cpp(
       population = uk_population,
       intervention = list(
         contacts = no_contacts_intervention(uk_population)
       ),
-      time_end = 100, increment = 1.0
+      time_end = time_end, increment = 1.0
     )
   )
 
-  data <- model_default_cpp(
+  output <- model_default_cpp(
     population = uk_population,
     intervention = list(
       contacts = no_contacts_intervention(uk_population)
     ),
-    time_end = 100, increment = 1.0
+    time_end = time_end, increment = 1.0
   )
 
-  # check for output type and contents
-  expect_s3_class(data, "data.frame")
-  expect_length(data, 4L)
+  # check for output type and column names
+  expect_s3_class(output, "data.frame")
   expect_named(
-    data, c("compartment", "demography_group", "value", "time"),
+    output,
+    c(
+      "time", "compartment", "demography_group", "value"
+    ),
     ignore.order = TRUE
   )
+
+  # expect Nrow is time_end * compartment * demography
+  # account for time = 0 as well
   expect_identical(
-    unique(data$compartment),
-    c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
+    nrow(output),
+    (time_end + 1L) * length(demography_vector) * length(compartments)
   )
 
+  # check data columns and types
+  expect_s3_class(
+    output, "data.frame"
+  )
+  expect_identical(
+    unique(output$compartment),
+    c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
+  )
   # check for all positive values within the range 0 and total population size
   expect_true(
     all(
-      data$value >= 0 & data$value <= sum(uk_population$demography_vector)
+      output$value >= 0 & output$value <=
+        sum(uk_population$demography_vector)
     )
   )
 
   # check for identical numbers of individuals at start and end
   # Note only valid for models without births and deaths
   expect_identical(
-    sum(data[data$time == min(data$time), ]$value),
-    sum(data[data$time == max(data$time), ]$value),
+    sum(output[output$time == min(output$time), ]$value),
+    sum(output[output$time == max(output$time), ]$value),
     tolerance = 1e-6
   )
 
   # check that all age groups in the simulation are the same
   # size as the demography vector
   final_state <- matrix(
-    unlist(data[data$time == max(data$time), ]$value),
+    unlist(output[output$time == max(output$time), ]$value),
     nrow = nrow(contact_matrix)
   )
   expect_identical(
@@ -82,6 +102,8 @@ test_that("Output of default epidemic model Cpp", {
   )
 })
 
+#### Tests for statistical correctness ####
+# sense checks for variation in epidemiological parameters
 test_that("Higher transmissibility gives larger final size, default model", {
   # prepare epidemic model runs with different R0 estimates
   r0_low <- 1.1

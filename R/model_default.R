@@ -80,12 +80,12 @@
 #' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.143, assuming an
 #' infectious period of 7 days.
 #'
-#' @return A `<data.table>`. 
+#' @return A `<data.table>`.
 #' If the model parameters and composable elements are all scalars, a single
 #' `<data.table>` with the columns "time", "compartment", "age_group", and
 #' "value", giving the number of individuals per demographic group
 #' in each compartment at each timestep in long (or "tidy") format is returned.
-#' 
+#'
 #' If the model parameters or composable elements are lists or list-like,
 #' a nested `<data.table>` is returned with a list column "data", which holds
 #' the compartmental values described above.

@@ -142,11 +142,12 @@ test_recyclable <- function(x) {
 #' @param doses A single number for the expected number of doses.
 #'
 #' @return Returns `x` after checking that it is suitable for `population`, or
-#' a dummy vaccination regime.
+#' a dummy vaccination regime with `doses` number of doses for each age group.
 #' @keywords internal
 .cross_check_vaccination <- function(x, population, doses) {
+  # no input checking as this is an internal function
   if (is.null(x)) {
-    no_vaccination(population)
+    no_vaccination(population, doses = doses)
   } else {
     assert_vaccination(x, doses = doses, population)
     x

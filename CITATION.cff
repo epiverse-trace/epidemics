@@ -28,6 +28,14 @@ authors:
   given-names: Edwin
   email: edwin.vanleeuwen@ukhsa.gov.uk
   orcid: https://orcid.org/0000-0002-2383-5305
+- family-names: Kucharski
+  given-names: Adam
+  email: adam.kucharski@lshtm.ac.uk
+  orcid: https://orcid.org/0000-0001-8814-9421
+- family-names: Taylor
+  given-names: Tim
+  email: tim.taylor@hiddenelephants.co.uk
+  orcid: https://orcid.org/0000-0002-8587-7113
 repository-code: https://github.com/epiverse-trace/epidemics
 url: https://epiverse-trace.github.io/epidemics/
 contact:

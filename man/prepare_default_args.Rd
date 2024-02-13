@@ -2,17 +2,17 @@
 % Please edit documentation in R/check_args_default.R
 \name{prepare_default_args}
 \alias{prepare_default_args}
-\alias{.prepare_args_model_default}
+\alias{.check_prepare_args_default}
 \title{Prepare arguments to default epidemic function}
 \usage{
-.prepare_args_model_default(mod_args)
+.check_prepare_args_default(mod_args)
 }
 \arguments{
 \item{mod_args}{A named list of the population, and epidemic modifiers.}
 }
 \value{
-A list of model arguments suitable
-for \code{\link[=.model_default_cpp]{.model_default_cpp()}}. This is a named list consisting of:
+A list of model arguments suitable for \code{\link[=.model_default_cpp]{.model_default_cpp()}}.
+This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
 rather than proportional values;
@@ -34,17 +34,14 @@ is incremented.
 }
 }
 \description{
-Prepare arguments to for s\code{\link[=.model_default_cpp]{.model_default_cpp()}}.
+Prepare arguments to for \code{\link[=.model_default_cpp]{.model_default_cpp()}}.
 }
 \details{
-\code{.prepare_args_model_default()} prepares arguments for
+\code{.check_prepare_args_default()} prepares arguments for
 \code{\link[=.model_default_cpp]{.model_default_cpp()}}, which is the C++ function that solves the default
-ODE system using a Boost \emph{odeint} solver, and for \code{\link[=.ode_model_default]{.ode_model_default()}},
-which is passed to \code{\link[deSolve:lsoda]{deSolve::lsoda()}} in \code{\link[=model_default_r]{model_default_r()}}.
-
-\code{.prepare_args_model_default()} converts the arguments collected in
-\code{mod_args} into simpler structures such as lists and numeric or integer
-vectors that can be interpreted as C++ types such as \code{Rcpp::List},
+ODE system using a Boost \emph{odeint} solver, by converting some of the arguments
+collected in \code{mod_args} into simpler structures such as lists and numeric or
+integer vectors that can be interpreted as C++ types such as \code{Rcpp::List},
 \code{Rcpp::NumericVector}, or \code{Eigen::MatrixXd}.
 }
 \keyword{internal}

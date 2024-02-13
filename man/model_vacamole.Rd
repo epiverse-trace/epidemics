@@ -9,15 +9,15 @@
 model_vacamole_cpp(
   population,
   transmissibility = 1.3/7,
+  transmissibility_vax = 0.8 * transmissibility,
   infectiousness_rate = 1/2,
   hospitalisation_rate = 1/1000,
+  hospitalisation_rate_vax = 0.8 * hospitalisation_rate,
   mortality_rate = 1/1000,
+  mortality_rate_vax = 0.8 * mortality_rate,
   recovery_rate = 1/7,
-  susc_reduction_vax = 0.2,
-  hosp_reduction_vax = 0.2,
-  mort_reduction_vax = 0.2,
   intervention = NULL,
-  vaccination,
+  vaccination = NULL,
   time_dependence = NULL,
   time_end = 100,
   increment = 1
@@ -50,6 +50,12 @@ move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
 \eqn{\beta = R_0 / \text{infectious period}}.}
 
+\item{transmissibility_vax}{A numeric of values between 0.0 and 1.0
+giving the transmissibility of the infection to individuals who
+have received two doses of the vaccine. The default values is 80\% of the
+transmissibility of the infection to individuals who are not doubly
+vaccinated.}
+
 \item{infectiousness_rate}{A numeric for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
@@ -59,24 +65,22 @@ population.}
 \item{hospitalisation_rate}{A numeric for the hospitalisation rate of
 infectious individuals.}
 
+\item{hospitalisation_rate_vax}{A numeric of values between 0.0 and 1.0
+giving the hospitalisation rate of infectious individuals who
+have received two doses of the vaccine. The default value is 80\% of the
+hospitalisation rate of individuals who are not doubly vaccinated.}
+
 \item{mortality_rate}{A numeric for the mortality rate of
 infectious or hospitalised individuals.}
+
+\item{mortality_rate_vax}{A numeric of values between 0.0 and 1.0
+giving the mortality of infectious and hospitalised individuals
+who have received two doses of the vaccine. The default value is 80\% of the
+mortality rate of individuals who are not doubly vaccinated.}
 
 \item{recovery_rate}{A numeric for the rate at which individuals move
 from the infectious to the recovered compartment. Often denoted as
 \eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.}
-
-\item{susc_reduction_vax}{A numeric of values between 0.0 and 1.0
-giving the reduction in susceptibility of infectious individuals who
-have received two doses of the vaccine.}
-
-\item{hosp_reduction_vax}{A numeric of values between 0.0 and 1.0
-giving the reduction in hospitalisation rate of infectious individuals who
-have received two doses of the vaccine.}
-
-\item{mort_reduction_vax}{A numeric of values between 0.0 and 1.0
-giving the reduction in mortality of infectious and hospitalised individuals
-who have received two doses of the vaccine.}
 
 \item{intervention}{A named list of \verb{<intervention>}s representing optional
 non-pharmaceutical or pharmaceutical interventions applied during the
@@ -85,7 +89,7 @@ epidemic. Only a single intervention on social contacts of the class
 Multiple \verb{<rate_interventions>} on the model parameters are allowed; see
 \strong{Details} for the model parameters for which interventions are supported.}
 
-\item{vaccination}{A \verb{<vaccination>} object representing a
+\item{vaccination}{An optional \verb{<vaccination>} object representing a
 vaccination regime with \strong{two doses} followed during the course of the
 epidemic, with a start and end time, and age-specific vaccination rates for
 each dose. See \code{\link[=vaccination]{vaccination()}}.}
@@ -104,14 +108,19 @@ Taken as days, with a default value of 100 days. May be a numeric vector.}
 default value of 1 day.}
 }
 \value{
-A \code{data.frame} with the columns "time", "compartment", "age_group",
-"value", and "run", giving the number of individuals per demographic group
-in each compartment at each timestep in long (or "tidy") format, with "run"
-indicating the unique parameter combination.
-The Vacamole model has the compartments "susceptible",
-"vaccinated_one_dose", "vaccinated_two_dose", "exposed",
-"infectious", "infectious_vaccinated", "hospitalised",
-"hospitalised_vaccinated", "recovered",  and "dead".
+A \verb{<data.table>}.
+If the model parameters and composable elements are all scalars, a single
+\verb{<data.table>} with the columns "time", "compartment", "age_group", and
+"value", giving the number of individuals per demographic group
+in each compartment at each timestep in long (or "tidy") format is returned.
+
+If the model parameters or composable elements are lists or list-like,
+a nested \verb{<data.table>} is returned with a list column "data", which holds
+the compartmental values described above.
+Other columns hold parameters and composable elements relating to the model
+run. Columns "scenario" and "param_set" identify combinations of composable
+elements (population, interventions, vaccination regimes), and infection
+parameters, respectively.
 }
 \description{
 Simulate an epidemic using the \emph{Vacamole} model for Covid-19
@@ -121,9 +130,14 @@ This model is aimed at estimating the impact of 'leaky' vaccination on an
 epidemic. See \strong{Details} and \strong{References} for more information.
 }
 \details{
+The Vacamole model has the compartments "susceptible",
+"vaccinated_one_dose", "vaccinated_two_dose", "exposed", "infectious"
+"infectious_vaccinated", "hospitalised", "hospitalised_vaccinated",
+"recovered",  and "dead".
+
 This model allows for:
 \enumerate{
-\item A 'hospitalised' compartment along with a hospitalisation rates;
+\item A 'hospitalised' compartment along with a hospitalisation rate;
 \item Two doses of vaccination, with 'leaky' protection, i.e., vaccination does
 not prevent infection completely but allows for a reduction in the infection
 rate, as well as reduced rates of moving into states considered more serious,
@@ -148,25 +162,21 @@ must follow Tidyverse recycling rules: all vectors must have the same length,
 or, vectors of length 1 will be recycled to the length of any other vector.
 \itemize{
 \item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.186, resulting from
-an \eqn{R_0} = 1.3 and an infectious period of 7 days.
+an \eqn{R_0} = 1.3 and an infectious period of 7 days. The transmissibility
+for doubly vaccinated individuals (\eqn{\beta_v}) is 80\% of \eqn{\beta},
+0.1488.
 \item Infectiousness rate (\eqn{\sigma}, \code{infectiousness_rate}): 0.5, assuming
 a pre-infectious period of 2 days.
 \item Hospitalisation rate (\eqn{\eta}, \code{hospitalistion_rate}): 1.0 / 1000,
 assuming that one in every thousand infectious individuals is hospitalised.
+The hospitalisation rate of doubly vaccinated individuals (\eqn{\eta_v}) is
+80\% of \eqn{\eta}, 0.8 / 1000.
 \item Mortality rate (\eqn{\omega}, \code{mortality_rate}): 1.0 / 1000,
 assuming that one in every thousand infectious and hospitalised
-individuals dies.
+individuals dies. The mortality rate of the doubly vaccinated
+(\eqn{\omega_v}) is 80\% of \eqn{\omega}, 0.8 / 1000.
 \item Recovery rate (\eqn{\gamma}, \code{recovery_rate}): 0.143, assuming an
 infectious period of 7 days.
-\item Susceptibility reduction from vaccination (\code{susc_reduction_vax}): 0.2,
-assuming a 20\% reduction in susceptibility for individuals who are doubly
-vaccinated.
-\item Hospitalisation reduction from vaccination (\code{hosp_reduction_vax}): 0.2,
-assuming a 20\% reduction in hospitalisation for individuals who are doubly
-vaccinated.
-\item Mortality reduction from vaccination (\code{mort_reduction_vax}): 0.2,
-assuming a 20\% reduction in mortality for individuals who are doubly
-vaccinated.
 }
 }
 }

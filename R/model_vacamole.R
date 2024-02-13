@@ -14,24 +14,32 @@
 #' infectious individuals.
 #' @param mortality_rate A numeric for the mortality rate of
 #' infectious or hospitalised individuals.
-#' @param susc_reduction_vax A numeric of values between 0.0 and 1.0
-#' giving the reduction in susceptibility of infectious individuals who
-#' have received two doses of the vaccine.
-#' @param hosp_reduction_vax A numeric of values between 0.0 and 1.0
-#' giving the reduction in hospitalisation rate of infectious individuals who
-#' have received two doses of the vaccine.
-#' @param mort_reduction_vax A numeric of values between 0.0 and 1.0
-#' giving the reduction in mortality of infectious and hospitalised individuals
-#' who have received two doses of the vaccine.
-#' @param vaccination A `<vaccination>` object representing a
+#' @param transmissibility_vax A numeric of values between 0.0 and 1.0
+#' giving the transmissibility of the infection to individuals who
+#' have received two doses of the vaccine. The default values is 80% of the
+#' transmissibility of the infection to individuals who are not doubly
+#' vaccinated.
+#' @param hospitalisation_rate_vax A numeric of values between 0.0 and 1.0
+#' giving the hospitalisation rate of infectious individuals who
+#' have received two doses of the vaccine. The default value is 80% of the
+#' hospitalisation rate of individuals who are not doubly vaccinated.
+#' @param mortality_rate_vax A numeric of values between 0.0 and 1.0
+#' giving the mortality of infectious and hospitalised individuals
+#' who have received two doses of the vaccine. The default value is 80% of the
+#' mortality rate of individuals who are not doubly vaccinated.
+#' @param vaccination An optional `<vaccination>` object representing a
 #' vaccination regime with **two doses** followed during the course of the
 #' epidemic, with a start and end time, and age-specific vaccination rates for
 #' each dose. See [vaccination()].
 #' @details
+#' The Vacamole model has the compartments "susceptible",
+#' "vaccinated_one_dose", "vaccinated_two_dose", "exposed", "infectious"
+#' "infectious_vaccinated", "hospitalised", "hospitalised_vaccinated",
+#' "recovered",  and "dead".
 #'
 #' This model allows for:
 #'
-#'  1. A 'hospitalised' compartment along with a hospitalisation rates;
+#'  1. A 'hospitalised' compartment along with a hospitalisation rate;
 #'
 #'  2. Two doses of vaccination, with 'leaky' protection, i.e., vaccination does
 #' not prevent infection completely but allows for a reduction in the infection
@@ -56,41 +64,39 @@
 #' or, vectors of length 1 will be recycled to the length of any other vector.
 #'
 #' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.186, resulting from
-#' an \eqn{R_0} = 1.3 and an infectious period of 7 days.
+#' an \eqn{R_0} = 1.3 and an infectious period of 7 days. The transmissibility
+#' for doubly vaccinated individuals (\eqn{\beta_v}) is 80% of \eqn{\beta},
+#' 0.1488.
 #'
 #' - Infectiousness rate (\eqn{\sigma}, `infectiousness_rate`): 0.5, assuming
 #' a pre-infectious period of 2 days.
 #'
 #' - Hospitalisation rate (\eqn{\eta}, `hospitalistion_rate`): 1.0 / 1000,
 #' assuming that one in every thousand infectious individuals is hospitalised.
+#' The hospitalisation rate of doubly vaccinated individuals (\eqn{\eta_v}) is
+#' 80% of \eqn{\eta}, 0.8 / 1000.
 #'
 #' - Mortality rate (\eqn{\omega}, `mortality_rate`): 1.0 / 1000,
 #' assuming that one in every thousand infectious and hospitalised
-#' individuals dies.
+#' individuals dies. The mortality rate of the doubly vaccinated
+#' (\eqn{\omega_v}) is 80% of \eqn{\omega}, 0.8 / 1000.
 #'
 #' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.143, assuming an
 #' infectious period of 7 days.
 #'
-#' - Susceptibility reduction from vaccination (`susc_reduction_vax`): 0.2,
-#' assuming a 20% reduction in susceptibility for individuals who are doubly
-#' vaccinated.
+#' @return A `<data.table>`.
+#' If the model parameters and composable elements are all scalars, a single
+#' `<data.table>` with the columns "time", "compartment", "age_group", and
+#' "value", giving the number of individuals per demographic group
+#' in each compartment at each timestep in long (or "tidy") format is returned.
 #'
-#' - Hospitalisation reduction from vaccination (`hosp_reduction_vax`): 0.2,
-#' assuming a 20% reduction in hospitalisation for individuals who are doubly
-#' vaccinated.
-#'
-#' - Mortality reduction from vaccination (`mort_reduction_vax`): 0.2,
-#' assuming a 20% reduction in mortality for individuals who are doubly
-#' vaccinated.
-#'
-#' @return A `data.frame` with the columns "time", "compartment", "age_group",
-#' "value", and "run", giving the number of individuals per demographic group
-#' in each compartment at each timestep in long (or "tidy") format, with "run"
-#' indicating the unique parameter combination.
-#' The Vacamole model has the compartments "susceptible",
-#' "vaccinated_one_dose", "vaccinated_two_dose", "exposed",
-#' "infectious", "infectious_vaccinated", "hospitalised",
-#' "hospitalised_vaccinated", "recovered",  and "dead".
+#' If the model parameters or composable elements are lists or list-like,
+#' a nested `<data.table>` is returned with a list column "data", which holds
+#' the compartmental values described above.
+#' Other columns hold parameters and composable elements relating to the model
+#' run. Columns "scenario" and "param_set" identify combinations of composable
+#' elements (population, interventions, vaccination regimes), and infection
+#' parameters, respectively.
 #'
 #' @references
 #' Ainslie, K. E. C., Backer, J. A., Boer, P. T. de, Hoek, A. J. van,
@@ -142,20 +148,28 @@
 #' @export
 model_vacamole_cpp <- function(population,
                                transmissibility = 1.3 / 7.0,
+                               transmissibility_vax = 0.8 * transmissibility,
                                infectiousness_rate = 1.0 / 2.0,
                                hospitalisation_rate = 1.0 / 1000,
+                               hospitalisation_rate_vax = 0.8 *
+                                 hospitalisation_rate,
                                mortality_rate = 1.0 / 1000,
+                               mortality_rate_vax = 0.8 * mortality_rate,
                                recovery_rate = 1.0 / 7.0,
-                               susc_reduction_vax = 0.2,
-                               hosp_reduction_vax = 0.2,
-                               mort_reduction_vax = 0.2,
                                intervention = NULL,
-                               vaccination,
+                               vaccination = NULL,
                                time_dependence = NULL,
                                time_end = 100,
                                increment = 1) {
   # check class on required inputs
   checkmate::assert_class(population, "population")
+  # get compartment names
+  compartments <- c(
+    "susceptible", "vaccinated_one_dose", "vaccinated_two_dose", "exposed",
+    "exposed_vaccinated", "infectious", "infectious_vaccinated", "hospitalised",
+    "hospitalised_vaccinated", "dead", "recovered"
+  )
+  assert_population(population, compartments)
 
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
   checkmate::assert_numeric(transmissibility, lower = 0, finite = TRUE)
@@ -164,10 +178,10 @@ model_vacamole_cpp <- function(population,
   checkmate::assert_numeric(mortality_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
 
-  # parameters for derived rates are bounded 0 - 1
-  checkmate::assert_numeric(susc_reduction_vax, lower = 0, upper = 1)
-  checkmate::assert_numeric(hosp_reduction_vax, lower = 0, upper = 1)
-  checkmate::assert_numeric(mort_reduction_vax, lower = 0, upper = 1)
+  # parameters for rates affecting only doubly vaccinated
+  checkmate::assert_numeric(transmissibility_vax, lower = 0, upper = 1)
+  checkmate::assert_numeric(hospitalisation_rate_vax, lower = 0, upper = 1)
+  checkmate::assert_numeric(mortality_rate_vax, lower = 0, upper = 1)
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
@@ -181,28 +195,70 @@ model_vacamole_cpp <- function(population,
     hospitalisation_rate = hospitalisation_rate,
     mortality_rate = mortality_rate,
     recovery_rate = recovery_rate,
-    susc_reduction_vax = susc_reduction_vax,
-    hosp_reduction_vax = hosp_reduction_vax,
-    mort_reduction_vax = mort_reduction_vax,
+    transmissibility_vax = transmissibility_vax,
+    hospitalisation_rate_vax = hospitalisation_rate_vax,
+    mortality_rate_vax = mortality_rate_vax,
     time_end = time_end
   )
+  # take parameter names here as names(DT) updates by reference!
+  param_names <- names(params)
+
+  # Check if parameters can be recycled;
+  # Check if `population` is a single population or a list of such
+  # and convert to list for a data.table list column;
+  # also check if `intervention` is a list of interventions or a list-of-lists
+  # and convert to a list for a data.table list column. NULL is allowed;
+  # Check if `vaccination` is a single vaccination or a list
+  # and convert to a list for a data.table list column
+  is_lofints <- checkmate::test_list(
+    intervention, "intervention",
+    all.missing = FALSE, null.ok = TRUE
+  )
+  # allow some NULLs (a valid no intervention scenario) but not all NULLs
+  is_lofls <- checkmate::test_list(
+    intervention,
+    types = c("list", "null"), all.missing = FALSE
+  ) && all(
+    vapply(
+      unlist(intervention, recursive = FALSE),
+      FUN = function(x) {
+        is_intervention(x) || is.null(x)
+      }, TRUE
+    )
+  )
+
   stopifnot(
     "All parameters must be of the same length, or must have length 1" =
-      test_recyclable(params)
+      test_recyclable(params),
+    "`population` must be a <population> or a list of <population>s" =
+      is_population(population) || checkmate::test_list(
+        population,
+        types = "population"
+      ),
+    "`intervention` must be a list of <intervention>s or a list of such lists" =
+      is_lofints || is_lofls,
+    "`vaccination` must be a <vaccination> or a list of <vaccination>s" =
+      is_vaccination(vaccination) || checkmate::test_list(
+        vaccination,
+        type = c("vaccination", "null")
+      )
   )
 
-  # all intervention sub-classes pass check for intervention superclass
-  # note intervention and time-dependence targets are checked in dedicated fns
-  checkmate::assert_list(
-    intervention,
-    types = "intervention", null.ok = TRUE,
-    names = "unique", any.missing = FALSE
-  )
-  checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
+  # make lists if not lists
+  if (is_population(population)) {
+    population <- list(population)
+  }
+  if (is_lofints) {
+    intervention <- list(intervention)
+  }
+  if (is_vaccination(vaccination) || is.null(vaccination)) {
+    vaccination <- list(vaccination)
+  }
 
   # check that time-dependence functions are passed as a list with at least the
-  # arguments `time` and `x`
-  # time must be before x, and they must be first two args
+  # arguments `time` and `x`, in order as the first two args
+  # NOTE: this functionality is not vectorised;
+  # convert to list for data.table list column
   checkmate::assert_list(
     time_dependence, "function",
     null.ok = TRUE,
@@ -211,69 +267,61 @@ model_vacamole_cpp <- function(population,
   # lapply on null returns an empty list
   invisible(
     lapply(time_dependence, checkmate::assert_function,
-      args = c("time", "x"),
-      ordered = TRUE
+      args = c("time", "x"), ordered = TRUE
+    )
+  )
+  time_dependence <- list(
+    .cross_check_timedep(
+      time_dependence,
+      c("transmissibility", "infectiousness_rate", "recovery_rate")
     )
   )
 
-  # combine parameters and composable elements into a list of lists of mod args
-  params <- .recycle_vectors(params)
-  params <- .transpose_base(params)
-  model_arguments <- lapply(
-    params, function(x) {
-      c(
-        list(
-          population = population,
-          intervention = intervention,
-          vaccination = vaccination,
-          time_dependence = time_dependence,
-          increment = increment
-        ),
-        x
-      )
-    }
+  # collect parameters and add a parameter set identifier
+  params <- data.table::as.data.table(params)
+  params[, "param_set" := .I]
+
+  # this nested data.table will be returned
+  model_output <- data.table::CJ(
+    population = population,
+    intervention = intervention,
+    vaccination = vaccination,
+    time_dependence = time_dependence,
+    increment = increment,
+    sorted = FALSE
   )
 
-  # cross-check model arguments
-  # NOTE: simplify to only check composable elements
-  model_arguments <- lapply(
-    model_arguments, function(l) {
-      .prepare_args_model_vacamole(
-        .check_args_model_vacamole(l)
-      )
-    }
-  )
+  # process the population, interventions, and vaccinations, after
+  # cross-checking them agains the relevant population
+  model_output[, args := apply(model_output, 1, function(x) {
+    .check_prepare_args_vacamole(c(x))
+  })]
+  model_output[, "scenario" := .I]
 
-  # get compartment names
-  compartments <- c(
-    "susceptible", "vaccinated_one_dose",
-    "vaccinated_two_dose", "exposed",
-    "exposed_vaccinated", "infectious",
-    "infectious_vaccinated", "hospitalised",
-    "hospitalised_vaccinated", "dead",
-    "recovered"
-  )
+  # combine infection parameters and scenarios
+  # NOTE: join X[Y] must have params as X as list cols not supported for X
+  model_output <- params[, as.list(model_output), by = names(params)]
 
-  # run model over arguments, prepare output, and return list
-  # assign run number as list index - this is the specific combination of
-  # parameters
-  output <- Map(
-    model_arguments, seq_along(model_arguments),
-    f = function(l, i) {
-      output_ <- .output_to_df(
-        do.call(.model_vacamole_cpp, l),
-        population = population,
-        compartments = compartments
-      )
-      output_$run <- i
-      output_
-    }
-  )
-  output <- data.table::rbindlist(output)
+  # collect model arguments in column data, then overwrite
+  model_output[, args := apply(model_output, 1, function(x) {
+    c(x[["args"]], x[param_names]) # avoid including col "param_set"
+  })]
+  model_output[, data := Map(population, args, f = function(p, l) {
+    .output_to_df(
+      do.call(.model_default_cpp, l),
+      population = p, # taken from local scope/env
+      compartments = compartments
+    )
+  })]
 
-  # convert to data.frame and return
-  # TODO: parameters need to be pulled along
-  data.table::setDF(output)[]
+  # check for single row output, i.e., scalar arguments, and return data.frame
+  # do not return the parameters in this case
+  if (nrow(model_output) == 1L) {
+    model_output <- model_output[["data"]][[1L]] # hardcoded for special case
+  }
+
+  # return data.table
+  model_output[]
 }
 
 #' Ordinary Differential Equations for the Vacamole Model

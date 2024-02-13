@@ -15,7 +15,7 @@
 }
 \value{
 Returns \code{x} after checking that it is suitable for \code{population}, or
-a dummy vaccination regime.
+a dummy vaccination regime with \code{doses} number of doses for each age group.
 }
 \description{
 Cross-check a \verb{<vaccination>}

@@ -240,7 +240,7 @@ model_vacamole_cpp <- function(population,
     "`vaccination` must be a <vaccination> or a list of <vaccination>s" =
       is_vaccination(vaccination) || checkmate::test_list(
         vaccination,
-        type = c("vaccination", "null")
+        type = c("vaccination", "null"), null.ok = TRUE
       )
   )
 
@@ -308,7 +308,7 @@ model_vacamole_cpp <- function(population,
   })]
   model_output[, data := Map(population, args, f = function(p, l) {
     .output_to_df(
-      do.call(.model_default_cpp, l),
+      do.call(.model_vacamole_cpp, l),
       population = p, # taken from local scope/env
       compartments = compartments
     )

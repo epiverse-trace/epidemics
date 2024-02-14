@@ -129,6 +129,10 @@ test_recyclable <- function(x) {
   if ("contacts" %in% names(x)) {
     assert_intervention(x[["contacts"]], "contacts", population)
   }
+  # check class of other intervention objects
+  invisible(
+    lapply(x[names(x) != "contacts"], assert_intervention, type = "rate")
+  )
 
   # replace dummy values with user values if avaialable, and return
   tmp_intervention[names(x)] <- x

@@ -127,57 +127,8 @@ test_that("Vacamole model: basic expectations, scalar arguments", {
   )
 })
 
-test_that("Vacamole model: two dose vaccination, scalar arguments", {
-  # repeat some basic checks from default case with no vaccination
-  # expect run with no conditions for default arguments
-  expect_no_condition(
-    model_vacamole_cpp(uk_population, vaccination = double_vaccination)
-  )
-
-  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_vacamole_cpp(uk_population, vaccination = double_vaccination)
-  expect_s3_class(data, "data.frame")
-  expect_identical(length(data), 4L)
-
-  # expect non-zero vaccinations towards simulation end
-  checkmate::expect_numeric(
-    tail(data[grepl("dose", data$compartment, fixed = TRUE), ]$value),
-    lower = 10
-  )
-})
-
-test_that("Vacamole model: contacts interventions", {
-  intervention <- intervention(
-    "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
-  )
-  # repeat some basic checks from default case with no intervention
-  # expect run with no conditions for default arguments
-  expect_no_condition(
-    model_vacamole_cpp(
-      uk_population,
-      intervention = list(contacts = intervention)
-    )
-  )
-
-  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_vacamole_cpp(
-    uk_population,
-    intervention = list(contacts = intervention)
-  )
-  expect_s3_class(data, "data.frame")
-  expect_identical(length(data), 4L)
-})
-
-test_that("Vacamole model: rate interventions", {
-  # TODO: ADD TESTS
-})
-
-test_that("Vacamole model: time dependence", {
-  # TODO: ADD TESTS
-})
-
 # NOTE: statistical correctness is not expected to change for vectorised input
-test_that("Vacamole model: statistical correctness", {
+test_that("Vacamole model: statistical correctness, parameters", {
   # expect final size increases with transmissibility
   size_beta_low <- epidemic_size(
     model_vacamole_cpp(uk_population, transmissibility = 1.3 / 7.0)
@@ -250,6 +201,125 @@ test_that("Vacamole model: statistical correctness", {
   )
 })
 
+# prepare baseline for comparison of against intervention scenarios
+data_baseline <- model_vacamole_cpp(uk_population)
+
+test_that("Vacamole model: contacts interventions and stats. correctness", {
+  intervention <- intervention(
+    "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
+  )
+  # repeat some basic checks from default case with no intervention
+  # expect run with no conditions for default arguments
+  expect_no_condition(
+    model_vacamole_cpp(
+      uk_population,
+      intervention = list(contacts = intervention)
+    )
+  )
+
+  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
+  data <- model_vacamole_cpp(
+    uk_population,
+    intervention = list(contacts = intervention)
+  )
+  expect_s3_class(data, "data.frame")
+  expect_identical(length(data), 4L)
+
+  # expect final size is lower with intervention
+  expect_true(
+    all(epidemic_size(data_baseline) > epidemic_size(data))
+  )
+})
+
+test_that("Vacamole model: rate interventions", {
+  intervention_01 <- intervention(
+    "mask_mandate", "rate", 0, time_end, 0.5
+  )
+  intervention_02 <- intervention(
+    "mask_mandate", "rate", time_end / 2, time_end, 0.1
+  )
+  intervention <- c(intervention_01, intervention_02)
+  # repeat some basic checks from default case with no intervention
+  # expect run with no conditions for default arguments
+  expect_no_condition(
+    model_vacamole_cpp(
+      uk_population,
+      intervention = list(transmissibility = intervention)
+    )
+  )
+
+  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
+  data <- model_vacamole_cpp(
+    uk_population,
+    intervention = list(transmissibility = intervention)
+  )
+  expect_s3_class(data, "data.frame")
+  expect_identical(length(data), 4L)
+
+  # expect final size is lower with intervention
+  expect_true(
+    all(epidemic_size(data_baseline) > epidemic_size(data))
+  )
+})
+
+test_that("Vacamole model: two dose vaccination and stats. correctness", {
+  # repeat some basic checks from default case with no vaccination
+  # expect run with no conditions for default arguments
+  expect_no_condition(
+    model_vacamole_cpp(uk_population, vaccination = double_vaccination)
+  )
+
+  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
+  data <- model_vacamole_cpp(uk_population, vaccination = double_vaccination)
+  expect_s3_class(data, "data.frame")
+  expect_identical(length(data), 4L)
+
+  # expect non-zero vaccinations towards simulation end
+  checkmate::expect_numeric(
+    tail(data[grepl("dose", data$compartment, fixed = TRUE), ]$value),
+    lower = 10
+  )
+
+  # expect final size is lower with intervention
+  expect_true(
+    all(epidemic_size(data_baseline) > epidemic_size(data))
+  )
+})
+
+test_that("Vacamole model: time dependence", {
+  # expect time dependence is correctly handled
+  time_dependence <- list(
+    transmissibility = function(time, x, t_change = time_end / 2) {
+      ifelse(time > t_change, x / 2, x)
+    },
+    recovery_rate = function(time, x, t_change = time_end / 2) {
+      ifelse(time > t_change, x + x / 2, x)
+    }
+  )
+
+  # repeat some basic checks from default case with no time_dependence
+  # expect run with no conditions for default arguments
+  expect_no_condition(
+    model_vacamole_cpp(
+      uk_population,
+      time_dependence = time_dependence
+    )
+  )
+
+  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
+  data <- model_vacamole_cpp(
+    uk_population,
+    time_dependence = time_dependence
+  )
+  expect_s3_class(data, "data.frame")
+  expect_identical(length(data), 4L)
+
+  # expect final size is lower with intervention
+  expect_true(
+    all(epidemic_size(data_baseline) > epidemic_size(data))
+  )
+})
+
 test_that("Vacamole model: errors and warnings, scalar arguments", {
   # expect errors on basic input checking
   expect_error(
@@ -285,7 +355,7 @@ test_that("Vacamole model: errors and warnings, scalar arguments", {
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_vacamole_cpp(uk_population, transmissibility = "0.19"),
+    model_vacamole_cpp(uk_population, transmissibility_vax = "0.19"),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
@@ -298,10 +368,6 @@ test_that("Vacamole model: errors and warnings, scalar arguments", {
   )
   expect_error(
     model_vacamole_cpp(uk_population, hospitalisation_rate_vax = "0.002"),
-    regexp = "Must be of type 'numeric'"
-  )
-  expect_error(
-    model_vacamole_cpp(uk_population, transmissibility = "0.002"),
     regexp = "Must be of type 'numeric'"
   )
 
@@ -345,7 +411,49 @@ test_that("Vacamole model: errors and warnings, scalar arguments", {
     regexp = "Must inherit from class 'rate_intervention'"
   )
 
-  # TODO: ADD TESTS ON TIME-DEPENDENCE
+  # expect error on poorly specified vaccination (needs 2 doses)
+  vax_single_dose <- vaccination(
+    nu = matrix(1e-3, nrow = 2),
+    time_begin = matrix(00, nrow = 2),
+    time_end = matrix(100, nrow = 2)
+  )
+  expect_error(
+    model_vacamole_cpp(
+      uk_population,
+      vaccination = vax_single_dose
+    ),
+    regexp = "Must have exactly 2 cols"
+  )
+
+  # expect error on poorly specified time-dependence function list
+  expect_error(
+    model_vacamole_cpp(
+      uk_population,
+      time_dependence = function(x) x
+    ),
+    regexp = "Must be of type 'list'"
+  )
+  expect_error(
+    model_vacamole_cpp(
+      uk_population,
+      time_dependence = list(function(x) x)
+    ),
+    regexp = "Must have names"
+  )
+  expect_error(
+    model_vacamole_cpp(
+      uk_population,
+      time_dependence = list(transmissibility = function(x) x)
+    ),
+    regexp = "Must have first formal arguments \\(ordered\\): time,x."
+  )
+  expect_error(
+    model_vacamole_cpp(
+      uk_population,
+      time_dependence = list(transmissibility = NULL)
+    ),
+    regexp = "Contains missing values"
+  )
 })
 
 # prepare vectors of parameters
@@ -377,17 +485,192 @@ test_that("Vacamole model: infection parameters as vectors", {
   expect_identical(output$param_set, seq_along(beta))
   expect_identical(unique(output$scenario), 1L)
 
-  # TODO: ADD TESTS for list column of interventions and vaccination
+  # expect list column of interventions and vaccination
+  checkmate::expect_list(
+    output$population,
+    types = "population", any.missing = FALSE
+  )
+  checkmate::expect_list(
+    output$intervention,
+    types = c("list", "null")
+  )
+  checkmate::expect_list(
+    output$vaccination,
+    types = c("vaccination", "null")
+  )
+  checkmate::expect_list(
+    output$time_dependence,
+    types = c("list", "null"), any.missing = FALSE
+  )
 })
 
-test_that("Vacamole model: composable elements as lists")
+test_that("Vacamole model: composable elements as lists", {
+  # expect no conditions when multiple interventions or vaccinations are passed
+  npi_list <- list(
+    scenario_baseline = NULL,
+    scenario_01 = list(
+      contacts = intervention(
+        "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
+      )
+    ),
+    scenario_02 = list(
+      contacts = intervention(
+        "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
+      ),
+      transmissibility = intervention(
+        "mask_mandate", "rate", 0, time_end, 0.5
+      )
+    )
+  )
 
-test_that("Vacamole model: multi-parameter, multi-composables")
+  expect_no_condition(
+    model_vacamole_cpp(uk_population, intervention = npi_list)
+  )
+
+  # expect output is a nested data.frame-like object
+  output <- model_vacamole_cpp(uk_population, intervention = npi_list)
+  expect_s3_class(output, c("data.frame", "data.table"))
+  expect_identical(nrow(output), length(npi_list))
+  checkmate::expect_list(output$data, types = "data.frame", any.missing = FALSE)
+
+  # expect `parameter_set` and `scenario` are correctly filled
+  expect_identical(output$scenario, seq_along(npi_list))
+  expect_identical(unique(output$param_set), 1L)
+
+  # expect list column of interventions and vaccination
+  checkmate::expect_list(
+    output$population,
+    types = "population", any.missing = FALSE
+  )
+  # some interventions may be missing
+  checkmate::expect_list(
+    output$intervention,
+    types = c("list", "null")
+  )
+  checkmate::expect_list(
+    output$vaccination,
+    types = c("vaccination", "null")
+  )
+  checkmate::expect_list(
+    output$time_dependence,
+    types = c("list", "null")
+  )
+})
+
+test_that("Vacamole model: multi-parameter, multi-composables", {
+  # expect no conditions when multiple interventions or vaccinations are passed
+  npi_list <- list(
+    scenario_baseline = NULL,
+    scenario_01 = list(
+      contacts = intervention(
+        "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
+      )
+    ),
+    scenario_02 = list(
+      contacts = intervention(
+        "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
+      ),
+      transmissibility = intervention(
+        "mask_mandate", "rate", 0, time_end, 0.5
+      )
+    )
+  )
+  # reuse parameter sets from earlier tests
+  expect_no_condition(
+    model_vacamole_cpp(
+      uk_population,
+      transmissibility = beta, recovery_rate = gamma,
+      intervention = npi_list
+    )
+  )
+
+  # expect output is a nested data.frame-like object
+  output <- model_vacamole_cpp(
+    uk_population,
+    transmissibility = beta, recovery_rate = gamma,
+    intervention = npi_list
+  )
+  expect_s3_class(output, c("data.frame", "data.table"))
+  expect_identical(nrow(output), length(npi_list) * length(beta))
+  checkmate::expect_list(output$data, types = "data.frame", any.missing = FALSE)
+
+  # expect `parameter_set` and `scenario` are correctly filled
+  expect_identical(
+    output$scenario, rep(seq_along(npi_list), length(beta))
+  )
+  expect_identical(unique(output$param_set), seq_along(beta))
+  expect_identical(
+    output$param_set, rep(seq_along(beta), each = length(npi_list))
+  )
+
+  # expect list column of interventions and vaccination
+  checkmate::expect_list(
+    output$population,
+    types = "population", any.missing = FALSE
+  )
+  # some interventions or vaccinations may be missing
+  checkmate::expect_list(
+    output$intervention,
+    types = c("list", "null"), any.missing = TRUE
+  )
+  checkmate::expect_list(
+    output$vaccination,
+    types = c("vaccination", "null"), any.missing = TRUE
+  )
+  checkmate::expect_list(
+    output$time_dependence,
+    types = c("list", "null"), any.missing = FALSE
+  )
+})
+
+test_that("Vacamole: errors on vectorised input", {
+  # expect errors on poorly specified vector inputs
+  expect_error(
+    model_vacamole_cpp(
+      uk_population,
+      transmissibility = beta[-1], recovery_rate = gamma
+    ),
+    regexp = "All parameters must be of the same length, or must have length 1"
+  )
+  expect_error(
+    model_vacamole_cpp(
+      uk_population,
+      intervention = list(
+        NULL,
+        list(dummy = intervention)
+      )
+    ),
+    regexp =
+      "`intervention` must be a list of <intervention>s or a list of such lists"
+  )
+  expect_error(
+    model_vacamole_cpp(
+      uk_population,
+      vaccination = list(
+        NULL,
+        list(vaccination) # this is a list with the function vaccination()
+      )
+    ),
+    regexp = "`vaccination` must be a <vaccination> or a list of <vaccination>s"
+  )
+
+  # expect time-dependence cannot be vectorised
+  expect_error(
+    model_vacamole_cpp(
+      uk_population,
+      time_dependence = list(
+        time_dep_01 = list(transmissibility = function(x) x),
+        time_dep_02 = list(transmissibility = function(x) x)
+      )
+    ),
+    regexp = "(May only contain the following types:)*(function)"
+  )
+})
 
 #### Tests for the R implementation of the Vacamole model ####
 # basic expectations
-skip("Vacamole: R-only models not updated")
 test_that("Output of the Vacamole epidemic model R", {
+  skip("Vacamole: R-only models not updated")
   # run epidemic model, expect no conditions
   expect_no_condition(
     model_vacamole_r(
@@ -450,8 +733,8 @@ test_that("Output of the Vacamole epidemic model R", {
 })
 
 # equivalence expectations
-skip("Vacamole: R-only implementation not updated")
 test_that("Equivalence of vacamole model R and Cpp", {
+  skip("Vacamole model: R-only implementation not checked against C++ version")
   # create an intervention and vaccination
   multi_intervention <- c(
     intervention(

@@ -240,7 +240,7 @@ model_vacamole_cpp <- function(population,
     "`vaccination` must be a <vaccination> or a list of <vaccination>s" =
       is_vaccination(vaccination) || checkmate::test_list(
         vaccination,
-        type = c("vaccination", "null"), null.ok = TRUE
+        types = c("vaccination", "null"), null.ok = TRUE
       )
   )
 

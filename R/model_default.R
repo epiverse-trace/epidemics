@@ -145,7 +145,7 @@ model_default_cpp <- function(population,
   checkmate::assert_numeric(transmissibility, lower = 0, finite = TRUE)
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
-  checkmate::assert_numeric(time_end, lower = 0, finite = TRUE)
+  checkmate::assert_integerish(time_end, lower = 0)
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
@@ -199,7 +199,7 @@ model_default_cpp <- function(population,
     "`vaccination` must be a <vaccination> or a list of <vaccination>s" =
       is_vaccination(vaccination) || checkmate::test_list(
         vaccination,
-        type = c("vaccination", "null"), null.ok = TRUE
+        types = c("vaccination", "null"), null.ok = TRUE
       )
   )
 

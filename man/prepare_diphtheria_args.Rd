@@ -43,11 +43,11 @@ is incremented.
 }
 \description{
 Prepare arguments to \code{\link[=model_diphtheria_cpp]{model_diphtheria_cpp()}} for
-\code{\link[=.model_default_cpp]{.model_default_cpp()}}.
+\code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}}.
 }
 \details{
 \code{.check_prepare_args_diphtheria()} prepares arguments for
-\code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}}, which is the C++ function that solves the default
+\code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}}, which is the C++ function that solves the
 ODE system using a Boost \emph{odeint} solver, by converting the arguments
 collected in \code{mod_args} into simpler structures such as lists and numeric or
 integer vectors that can be interpreted as C++ types such as \code{Rcpp::List},

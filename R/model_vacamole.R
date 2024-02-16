@@ -32,6 +32,10 @@
 #' epidemic, with a start and end time, and age-specific vaccination rates for
 #' each dose. See [vaccination()].
 #' @details
+#' `model_vacamole_cpp()` is a wrapper function for
+#' [.model_vacamole_cpp()], an internal C++ function that uses a Boost _odeint_
+#' solvers.
+#'
 #' The Vacamole model has the compartments "susceptible",
 #' "vaccinated_one_dose", "vaccinated_two_dose", "exposed", "infectious"
 #' "infectious_vaccinated", "hospitalised", "hospitalised_vaccinated",
@@ -45,14 +49,6 @@
 #' not prevent infection completely but allows for a reduction in the infection
 #' rate, as well as reduced rates of moving into states considered more serious,
 #' such as 'hospitalised' or 'dead'.
-#'
-#' ## R and Rcpp implementations
-#'
-#' `model_vacamole_cpp()` is a wrapper function for
-#' [.model_vacamole_cpp()], an internal C++ function that uses Boost _odeint_
-#' solvers, while `model_vacamole_r()` is a wrapper around [deSolve::lsoda()]
-#' which takes the the internal function ``.ode_model_vacamole()`.
-#' Both models return equivalent results, but the C++ implementation is faster.
 #'
 #' ## Model parameters
 #'
@@ -161,7 +157,7 @@ model_vacamole_cpp <- function(population,
                                time_dependence = NULL,
                                time_end = 100,
                                increment = 1) {
-  # check class on required inputs
+  # TODO: ensure population is properly vectorised
   checkmate::assert_class(population, "population")
   # get compartment names
   compartments <- c(
@@ -328,7 +324,7 @@ model_vacamole_cpp <- function(population,
 #'
 #' @description Provides the ODEs for the RIVM Vacamole model in a format that
 #' is suitable for passing to [deSolve::lsoda()].
-#' See [model_vacamole_r()] for a list of required parameters.
+#' See [model_vacamole_cpp()] for a list of required parameters.
 #'
 #' @param t A single number of the timestep at which to integrate.
 #' @param y The conditions of the epidemiological compartments.
@@ -339,7 +335,7 @@ model_vacamole_cpp <- function(population,
 #' value gives the change in the number of individuals in that compartment.
 #' @keywords internal
 .ode_model_vacamole <- function(t, y, params) {
-  # no input checking, fn is expected to be called only in model_vacamole_r()
+  # no input checking, fn is unsafe and not expected to be used
   n_age <- nrow(params[["contact_matrix"]])
 
   # create a matrix
@@ -457,123 +453,4 @@ model_vacamole_cpp <- function(population,
 
   # return a list
   list(c(dS, dV1, dV2, dE, dEv, dI, dIv, dH, dHv, dD, dR))
-}
-
-#' @title Model leaky, two-dose vaccination in an epidemic using Vacamole
-#'
-#' @name model_vacamole
-#' @rdname model_vacamole
-#'
-#' @export
-model_vacamole_r <- function(population,
-                             transmissibility = 1.3 / 7.0,
-                             infectiousness_rate = 1.0 / 2.0,
-                             hospitalisation_rate = 1.0 / 1000,
-                             mortality_rate = 1.0 / 1000,
-                             recovery_rate = 1.0 / 7.0,
-                             susc_reduction_vax = 0.2,
-                             hosp_reduction_vax = 0.2,
-                             mort_reduction_vax = 0.2,
-                             intervention = NULL,
-                             vaccination,
-                             time_dependence = NULL,
-                             time_end = 100,
-                             increment = 1) {
-  # check class on required inputs
-  checkmate::assert_class(population, "population")
-
-  # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
-  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
-  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(hospitalisation_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(mortality_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
-
-  # parameters for derived rates are bounded 0 - 1
-  checkmate::assert_number(susc_reduction_vax, lower = 0, upper = 1)
-  checkmate::assert_number(hosp_reduction_vax, lower = 0, upper = 1)
-  checkmate::assert_number(mort_reduction_vax, lower = 0, upper = 1)
-
-  # all intervention sub-classes pass check for intervention superclass
-  checkmate::assert_list(
-    intervention,
-    types = "intervention", null.ok = TRUE,
-    names = "unique", any.missing = FALSE
-  )
-  # specifics of vaccination doses are checked in dedicated function
-  checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
-
-  # check that time-dependence functions are passed as a list with at least the
-  # arguments `time` and `x`
-  # time must be before x, and they must be first two args
-  checkmate::assert_list(
-    time_dependence, "function",
-    null.ok = TRUE,
-    names = "unique", any.missing = FALSE
-  )
-  # lapply on null returns an empty list
-  invisible(
-    lapply(time_dependence, checkmate::assert_function,
-      args = c("time", "x"),
-      ordered = TRUE
-    )
-  )
-
-  # check the time end and increment
-  # restrict increment to lower limit of 1e-6
-  checkmate::assert_number(time_end, lower = 0, finite = TRUE)
-  checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
-
-  # collect model arguments
-  model_arguments <- list(
-    population = population,
-    transmissibility = transmissibility,
-    infectiousness_rate = infectiousness_rate,
-    hospitalisation_rate = hospitalisation_rate,
-    mortality_rate = mortality_rate,
-    recovery_rate = recovery_rate,
-    susc_reduction_vax = susc_reduction_vax,
-    hosp_reduction_vax = hosp_reduction_vax,
-    mort_reduction_vax = mort_reduction_vax,
-    intervention = intervention,
-    vaccination = vaccination,
-    time_dependence = time_dependence,
-    time_end = time_end, increment = increment
-  )
-
-  # prepare checked arguments for function
-  # this necessary as check_args adds intervention and vaccination
-  # if missing
-  model_arguments <- .prepare_args_model_vacamole(
-    .check_args_model_vacamole(model_arguments)
-  )
-
-  # get compartment names
-  compartments <- c(
-    "susceptible", "vaccinated_one_dose",
-    "vaccinated_two_dose", "exposed",
-    "exposed_vaccinated", "infectious",
-    "infectious_vaccinated", "hospitalised",
-    "hospitalised_vaccinated", "dead",
-    "recovered"
-  )
-
-  # get compartment states over timesteps
-  data <- deSolve::lsoda(
-    y = model_arguments[["initial_state"]],
-    times = seq(0, time_end, increment),
-    func = .ode_model_vacamole,
-    parms = model_arguments
-  )
-
-  # convert to long format using output_to_df() and return
-  data <- .output_to_df(
-    output = list(
-      x = data[, setdiff(colnames(data), "time")],
-      time = seq(0, time_end, increment)
-    ),
-    population = population,
-    compartments = compartments
-  )
-  data.table::setDF(data)[]
 }

@@ -52,7 +52,5 @@ reference:
   - title: Helper functions
     desc: Functions to help with handling package classes and outputs.
     contents:
-    - get_parameter
-    - no_time_dependence
     - epidemic_size
     - new_infections

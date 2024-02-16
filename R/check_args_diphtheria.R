@@ -1,18 +1,15 @@
-#' @title Check arguments to the diphtheria model function
-#' @name check_prepare_diphtheria_args
-#' @rdname check_prepare_diphtheria_args
+#' @title Prepare arguments to diphtheria model function
+#' @name prepare_diphtheria_args
+#' @rdname prepare_diphtheria_args
 #'
-#' @description Check and prepare the four main arguments to
-#' [model_diphtheria_cpp()] for use with [.model_diphtheria_cpp()].
+#' @description Prepare arguments to [model_diphtheria_cpp()] for
+#' [.model_default_cpp()].
+#'
+#' @param mod_args A named list of the population, and epidemic modifiers.
 #'
 #' @return
-#'
-#' `.check_args_model_diphtheria()` invisibly returns the model arguments
-#' passed in `mod_args`. Model functionalities, such as interventions,
-#' passed as `NULL` are replaced with dummy values for internal functions.
-#'
-#' `.prepare_args_model_diphtheria()` returns a list of model arguments
-#' suitable for [.model_diphtheria_cpp()]. This is a named list consisting of:
+#' A list of model arguments suitable for [.model_diphtheria_cpp()].
+#' This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
 #' rather than proportional values;
@@ -52,136 +49,48 @@
 #'
 #' @keywords internal
 #' @details
-#' `.prepare_args_model_diphtheria()` prepares arguments for
+#' `.check_prepare_args_diphtheria()` prepares arguments for
 #' [.model_diphtheria_cpp()], which is the C++ function that solves the default
-#' ODE system using a Boost _odeint_ solver.
-#'
-#' `.prepare_args_model_diphtheria()` converts the arguments collected in
-#' `mod_args` into simpler structures such as lists and numeric or integer
-#' vectors that can be interpreted as C++ types such as `Rcpp::List`,
+#' ODE system using a Boost _odeint_ solver, by converting the arguments
+#' collected in `mod_args` into simpler structures such as lists and numeric or
+#' integer vectors that can be interpreted as C++ types such as `Rcpp::List`,
 #' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
-.check_args_model_diphtheria <- function(mod_args) {
-  # check that arguments list has expected names
-  checkmate::assert_names(names(mod_args), type = "unique")
+.check_prepare_args_diphtheria <- function(mod_args) {
+  # prepare and use the initial state only;
+  # modify by reducing susceptibles by `prop_vaccinated`
+  cmat_init_state <- .prepare_population(mod_args[["population"]])
+  initial_state <- cmat_init_state[["initial_state"]]
 
-  # load number of compartments to check initial conditions matrix
-  compartments_diphtheria <- c(
-    "susceptible", "exposed", "infectious", "hospitalised", "recovered"
-  )
-
-  # input checking on population parameters
-  assert_population(
-    mod_args[["population"]],
-    compartments = compartments_diphtheria
-  )
-
-  # add null rate_intervention if this is missing
-  # if not missing, check that it conforms to expectations
-  if (is.null(mod_args[["intervention"]])) {
-    # no need to add contact intervention as this model does not support a
-    # contact matrix
-    mod_args[["intervention"]] <- list(
-      transmissibility = no_rate_intervention()
-    )
-  } else {
-    # length and type of intervention is checked at the top level
-    # check for any intervention list element names
-    # NOTE: reporting_rate is not allowed as it cannot be meaningfully modified
-    # i.e., cannot be increased in an intervention
-    checkmate::assert_names(
-      names(mod_args[["intervention"]]),
-      subset.of = c(
-        "transmissibility", "infectiousness_rate", "prop_hosp",
-        "hosp_entry_rate", "hosp_exit_rate", "recovery_rate"
-      )
-    )
-  }
-
-  # handle time dependence if present and check for allowed primary parameters
-  if (is.null(mod_args[["time_dependence"]])) {
-    mod_args[["time_dependence"]] <- no_time_dependence()
-  } else {
-    checkmate::assert_names(
-      names(mod_args[["time_dependence"]]),
-      subset.of = c(
-        "transmissibility", "infectiousness_rate", "prop_hosp",
-        "reporting_rate", "hosp_entry_rate", "hosp_exit_rate", "recovery_rate"
-      )
-    )
-  }
-
-  # handle population change mechanic, check for correct demography groups
-  # check for only times being NULL and expect values also NULL
-  if (is.null(mod_args[["pop_change_times"]])) {
-    mod_args[["pop_change_times"]] <- 0
-    mod_args[["pop_change_values"]] <- list(
-      rep(
-        0, length(get_parameter(
-          mod_args[["population"]], "demography_vector"
-        ))
-      )
-    )
-  } else {
-    checkmate::assert_numeric(
-      mod_args[["pop_change_times"]],
-      lower = 0, finite = TRUE,
-      min.len = 1
-    )
-    checkmate::assert_list(
-      mod_args[["pop_change_values"]],
-      any.missing = FALSE,
-      len = length(mod_args[["pop_change_times"]])
-    )
-    invisible(
-      lapply(
-        mod_args[["pop_change_values"]],
-        FUN = function(x) {
-          stopifnot(
-            "`population_change` `values` must be same length as demography" =
-              checkmate::test_numeric(
-                x,
-                len = length(
-                  get_parameter(
-                    mod_args[["population"]], "demography_vector"
-                  )
-                )
-              )
-          )
-        }
-      )
-    )
-  }
-
-  # return arguments invisibly
-  invisible(mod_args)
-}
-
-#' @title Prepare arguments for the diphtheria model
-#' @name check_prepare_diphtheria_args
-#' @rdname check_prepare_diphtheria_args
-#' @keywords internal
-.prepare_args_model_diphtheria <- function(mod_args) {
-  # prepare initial conditions by scaling with demography
-  initial_state <-
-    get_parameter(mod_args[["population"]], "initial_conditions") *
-      get_parameter(mod_args[["population"]], "demography_vector")
-
-  # modify initial state by proportion vaccinated
   # NOTE: this assumes that the first column is 'susceptible'
   # NOTE: there is no explicit vaccinated compartment
   initial_state[, 1] <- initial_state[, 1] * (1 - mod_args[["prop_vaccinated"]])
 
+  # assign initial state; note prop_vaccinated have been removed
+  mod_args[["initial_state"]] <- initial_state
+
+  # cross check population change and handle if NULL
+  pop_change_ <- .cross_check_popchange(
+    mod_args[["population_change"]], mod_args[["population"]]
+  )
+  # simplify population_change list
+  mod_args[["pop_change_times"]] <- pop_change_[["time"]]
+  mod_args[["pop_change_values"]] <- pop_change_[["values"]]
+
   # return mod args without population and prop_vaccinated
-  mod_args <- mod_args[!names(mod_args) %in% c("population", "prop_vaccinated")]
+  mod_args <- mod_args[!names(mod_args) %in% c(
+    "population", "prop_vaccinated", "population_change"
+  )]
+
+  mod_args[["intervention"]] <- .cross_check_intervention(
+    mod_args[["intervention"]], mod_args[["population"]],
+    c(
+      "transmissibility", "infectiousness_rate", "prop_hosp",
+      "hosp_entry_rate", "hosp_exit_rate", "recovery_rate"
+    )
+  )
 
   # rename interventions to rate_interventions
   names(mod_args)[names(mod_args) == "intervention"] <- "rate_interventions"
-
-  # combine with initial state
-  mod_args <- c(
-    list(initial_state = initial_state),
-    mod_args
-  )
 
   mod_args
 }

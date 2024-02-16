@@ -3,7 +3,7 @@
 \name{prepare_default_args}
 \alias{prepare_default_args}
 \alias{.check_prepare_args_default}
-\title{Prepare arguments to default epidemic function}
+\title{Prepare arguments to default model function}
 \usage{
 .check_prepare_args_default(mod_args)
 }
@@ -34,7 +34,8 @@ is incremented.
 }
 }
 \description{
-Prepare arguments to for \code{\link[=.model_default_cpp]{.model_default_cpp()}}.
+Prepare arguments to \code{\link[=model_default_cpp]{model_default_cpp()}} for
+\code{\link[=.model_default_cpp]{.model_default_cpp()}}.
 }
 \details{
 \code{.check_prepare_args_default()} prepares arguments for

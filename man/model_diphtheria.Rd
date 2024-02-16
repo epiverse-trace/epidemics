@@ -14,7 +14,7 @@ model_diphtheria_cpp(
   prop_hosp = 0.01,
   hosp_entry_rate = 0.2,
   hosp_exit_rate = 0.2,
-  prop_vaccinated = 0 * get_parameter(population, "demography_vector"),
+  prop_vaccinated = 0 * population[["demography_vector"]],
   intervention = NULL,
   time_dependence = NULL,
   population_change = NULL,
@@ -42,18 +42,18 @@ population.}
 from the infectious to the recovered compartment. Often denoted as
 \eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.}
 
-\item{reporting_rate}{A single number for the proportion of infectious cases
+\item{reporting_rate}{A numeric for the proportion of infectious cases
 that is reported; this is a precursor to hospitalisation as only reported
 cases are hospitalised.}
 
-\item{prop_hosp}{A single number for the proportion of reported cases that is
+\item{prop_hosp}{A numeric for the proportion of reported cases that is
 hospitalised.}
 
-\item{hosp_entry_rate}{A single number for the rate at which reported cases
+\item{hosp_entry_rate}{A numeric for the rate at which reported cases
 of infectious individuals are hospitalised.
 This is calculated as 1 / time to hospitalisation, denoted \eqn{\tau_1}.}
 
-\item{hosp_exit_rate}{A single number for the rate at which individuals are
+\item{hosp_exit_rate}{A numeric for the rate at which individuals are
 discharged from hospital to enter the 'recovered' compartment.
 This is calculated as 1 / time to discharge, denoted \eqn{\tau_2}.}
 

@@ -231,7 +231,7 @@ model_diphtheria_cpp <- function(population,
 
   stopifnot(
     "All parameters must be of the same length, or must have length 1" =
-      test_recyclable(params),
+      .test_recyclable(params),
     "`intervention` must be a list of <intervention>s or a list of such lists" =
       is_lofints || is_lofls
   )

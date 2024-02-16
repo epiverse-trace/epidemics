@@ -301,9 +301,8 @@ model_ebola_r <- function(population,
   }
 
   # get initial conditions
-  initial_state <- as.numeric(
-    get_parameter(population, "initial_conditions")
-  ) * get_parameter(population, "demography_vector")
+  initial_state <- as.numeric(population[["initial_conditions"]]) *
+    population[["demography_vector"]]
 
   # round to nearest integer
   initial_state <- round(initial_state)

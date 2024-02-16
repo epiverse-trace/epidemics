@@ -76,12 +76,15 @@ population <- function(name = NA_character_,
                        initial_conditions) {
   # check input
   checkmate::assert_string(name, na.ok = TRUE)
-  checkmate::assert_matrix(contact_matrix)
-  checkmate::assert_numeric(demography_vector)
-  checkmate::assert_matrix(initial_conditions)
-  stopifnot(
-    "Initial conditions must have same number of rows as contact_matrix" =
-      nrow(initial_conditions) == nrow(contact_matrix)
+  checkmate::assert_matrix(contact_matrix, mode = "numeric")
+  checkmate::assert_numeric(
+    demography_vector,
+    lower = 0, finite = TRUE, any.missing = FALSE,
+    len = nrow(contact_matrix)
+  )
+  checkmate::assert_matrix(
+    initial_conditions,
+    mode = "numeric", nrows = length(demography_vector)
   )
 
   # call population constructor

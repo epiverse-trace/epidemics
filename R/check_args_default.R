@@ -1,8 +1,9 @@
-#' @title Prepare arguments to default epidemic function
+#' @title Prepare arguments to default model function
 #' @name prepare_default_args
 #' @rdname prepare_default_args
 #'
-#' @description Prepare arguments to for [.model_default_cpp()].
+#' @description Prepare arguments to [model_default_cpp()] for
+#' [.model_default_cpp()].
 #'
 #' @param mod_args A named list of the population, and epidemic modifiers.
 #'

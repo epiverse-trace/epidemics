@@ -1,20 +1,3 @@
-#' Get parameters from \{epidemics\} classes
-#' @param x An object of one of the classes provided by _epidemics_:
-#' `<population>`, `<infection>`, `<intervention>`, or `<vaccination>`.
-#' @param parameter A string for the parameter to access from `x`.
-#'
-#' @return An object of the class of `parameter` from `x`.
-#' @export
-get_parameter <- function(x, parameter) {
-  checkmate::assert_multi_class(
-    x, c("population", "intervention", "vaccination")
-  )
-  checkmate::assert_string(parameter)
-
-  # return list element
-  x[[parameter]]
-}
-
 #' Return ODE model output as a data.table
 #' @param output The model output, which must be a two element list (for
 #' epidemic) models, with the names "x" and "time", where "x" represents the
@@ -48,7 +31,13 @@ get_parameter <- function(x, parameter) {
   assert_population(population, compartments)
 
   # get demographic group names if any
-  names_demo_groups <- rownames(population$contact_matrix)
+  groupnames_from_contacts <- rownames(population$contact_matrix)
+  groupnames_from_demography <- names(population$demography_vector)
+  names_demo_groups <- Find(
+    function(x) !is.null(x),
+    list(groupnames_from_contacts, groupnames_from_demography)
+  )
+
   if (is.null(names_demo_groups)) {
     names_demo_groups <- sprintf(
       "demo_group_%i",

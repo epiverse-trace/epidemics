@@ -183,7 +183,7 @@ model_default_cpp <- function(population,
 
   stopifnot(
     "All parameters must be of the same length, or must have length 1" =
-      test_recyclable(params),
+      .test_recyclable(params),
     "`population` must be a <population> or a list of <population>s" =
       is_population(population) || checkmate::test_list(
         population,

@@ -52,13 +52,8 @@
 #' default value of 1 day.
 #' @details
 #'
-#' ## R and Rcpp implementations
-#'
 #' `model_default_cpp()` is a wrapper function for the internal C++ function
-#' [.model_default_cpp()] that uses Boost _odeint_ solvers, while
-#' `model_default_r()` is a wrapper around [deSolve::lsoda()] which an R-only
-#' implementation of the ODE system in `.ode_model_default()`.
-#' Both models return equivalent results, but the C++ implementation is faster.
+#' [.model_default_cpp()] that uses a Boost _odeint_ solver.
 #'
 #' ## Model parameters
 #'
@@ -133,7 +128,7 @@ model_default_cpp <- function(population,
                               time_dependence = NULL,
                               time_end = 100,
                               increment = 1) {
-  # check class on required inputs
+  # TODO: ensure population is properly vectorised
   checkmate::assert_class(population, "population")
   # get compartment names
   compartments <- c(
@@ -287,7 +282,7 @@ model_default_cpp <- function(population,
 #'
 #' @description Provides the ODEs for the default SEIR-V model in a format that
 #' is suitable for passing to [deSolve::lsoda()].
-#' See [model_default_r()] for a list of required parameters.
+#' See [model_default_cpp()] for a list of required parameters.
 #'
 #' @param t A single number of the timestep at which to integrate.
 #' @param y The conditions of the epidemiological compartments.
@@ -298,7 +293,7 @@ model_default_cpp <- function(population,
 #' value gives the change in the number of individuals in that compartment.
 #' @keywords internal
 .ode_model_default <- function(t, y, params) {
-  # no input checking, fn is expected to be called only in model_default_r()
+  # no input checking, fn is unsafe and not expected to be used
   n_age <- nrow(params[["contact_matrix"]])
 
   # create a matrix
@@ -361,100 +356,4 @@ model_default_cpp <- function(population,
 
   # return a list
   list(c(dS, dE, dI, dR, dV))
-}
-
-#' @title Model an SEIR-V epidemic with interventions
-#'
-#' @name model_default
-#' @rdname model_default
-#'
-#' @export
-model_default_r <- function(population,
-                            transmissibility = 1.3 / 7.0,
-                            infectiousness_rate = 1.0 / 2.0,
-                            recovery_rate = 1.0 / 7.0,
-                            intervention = NULL,
-                            vaccination = NULL,
-                            time_dependence = NULL,
-                            time_end = 100,
-                            increment = 1) {
-  # check class on required inputs
-  checkmate::assert_class(population, "population")
-  # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
-  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
-  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(recovery_rate, lower = 0, finite = TRUE)
-
-  # all intervention sub-classes pass check for intervention superclass
-  checkmate::assert_list(
-    intervention,
-    types = "intervention", null.ok = TRUE,
-    names = "unique", any.missing = FALSE
-  )
-  # specifics of vaccination doses are checked in dedicated function
-  checkmate::assert_class(vaccination, "vaccination", null.ok = TRUE)
-
-  # check that time-dependence functions are passed as a list with at least the
-  # arguments `time` and `x`
-  # time must be before x, and they must be first two args
-  checkmate::assert_list(
-    time_dependence, "function",
-    null.ok = TRUE,
-    names = "unique", any.missing = FALSE
-  )
-  # lapply on null returns an empty list
-  invisible(
-    lapply(time_dependence, checkmate::assert_function,
-      args = c("time", "x"),
-      ordered = TRUE
-    )
-  )
-
-  # check the time end and increment
-  # restrict increment to lower limit of 1e-6
-  checkmate::assert_number(time_end, lower = 0, finite = TRUE)
-  checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
-
-  # collect all model arguments
-  model_arguments <- list(
-    population = population,
-    transmissibility = transmissibility,
-    infectiousness_rate = infectiousness_rate,
-    recovery_rate = recovery_rate,
-    intervention = intervention,
-    vaccination = vaccination,
-    time_dependence = time_dependence,
-    time_end = time_end, increment = increment
-  )
-
-  # prepare checked arguments for function
-  # this necessary as check_args adds intervention and vaccination
-  # if missing
-  model_arguments <- .prepare_args_model_default(
-    .check_args_model_default(model_arguments)
-  )
-
-  # get compartment names
-  compartments <- c(
-    "susceptible", "exposed", "infectious", "recovered", "vaccinated"
-  )
-
-  # get compartment states over timesteps
-  data <- deSolve::lsoda(
-    y = model_arguments[["initial_state"]],
-    times = seq(0, time_end, increment),
-    func = .ode_model_default,
-    parms = model_arguments
-  )
-
-  # convert to long format using output_to_df() and return
-  data <- .output_to_df(
-    output = list(
-      x = data[, setdiff(colnames(data), "time")],
-      time = seq(0, time_end, increment)
-    ),
-    population = population,
-    compartments = compartments
-  )
-  data.table::setDF(data)[]
 }

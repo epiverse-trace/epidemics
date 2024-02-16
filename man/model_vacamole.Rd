@@ -3,7 +3,6 @@
 \name{model_vacamole}
 \alias{model_vacamole}
 \alias{model_vacamole_cpp}
-\alias{model_vacamole_r}
 \title{Model leaky, two-dose vaccination in an epidemic using Vacamole}
 \usage{
 model_vacamole_cpp(
@@ -18,23 +17,6 @@ model_vacamole_cpp(
   recovery_rate = 1/7,
   intervention = NULL,
   vaccination = NULL,
-  time_dependence = NULL,
-  time_end = 100,
-  increment = 1
-)
-
-model_vacamole_r(
-  population,
-  transmissibility = 1.3/7,
-  infectiousness_rate = 1/2,
-  hospitalisation_rate = 1/1000,
-  mortality_rate = 1/1000,
-  recovery_rate = 1/7,
-  susc_reduction_vax = 0.2,
-  hosp_reduction_vax = 0.2,
-  mort_reduction_vax = 0.2,
-  intervention = NULL,
-  vaccination,
   time_dependence = NULL,
   time_end = 100,
   increment = 1
@@ -130,6 +112,10 @@ This model is aimed at estimating the impact of 'leaky' vaccination on an
 epidemic. See \strong{Details} and \strong{References} for more information.
 }
 \details{
+\code{model_vacamole_cpp()} is a wrapper function for
+\code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}, an internal C++ function that uses a Boost \emph{odeint}
+solvers.
+
 The Vacamole model has the compartments "susceptible",
 "vaccinated_one_dose", "vaccinated_two_dose", "exposed", "infectious"
 "infectious_vaccinated", "hospitalised", "hospitalised_vaccinated",
@@ -143,15 +129,6 @@ not prevent infection completely but allows for a reduction in the infection
 rate, as well as reduced rates of moving into states considered more serious,
 such as 'hospitalised' or 'dead'.
 }
-\subsection{R and Rcpp implementations}{
-
-\code{model_vacamole_cpp()} is a wrapper function for
-\code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}, an internal C++ function that uses Boost \emph{odeint}
-solvers, while \code{model_vacamole_r()} is a wrapper around \code{\link[deSolve:lsoda]{deSolve::lsoda()}}
-which takes the the internal function ``.ode_model_vacamole()`.
-Both models return equivalent results, but the C++ implementation is faster.
-}
-
 \subsection{Model parameters}{
 
 This model only allows for single, population-wide rates of

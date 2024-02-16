@@ -3,22 +3,9 @@
 \name{model_default}
 \alias{model_default}
 \alias{model_default_cpp}
-\alias{model_default_r}
 \title{Model an SEIR-V epidemic with interventions}
 \usage{
 model_default_cpp(
-  population,
-  transmissibility = 1.3/7,
-  infectiousness_rate = 1/2,
-  recovery_rate = 1/7,
-  intervention = NULL,
-  vaccination = NULL,
-  time_dependence = NULL,
-  time_end = 100,
-  increment = 1
-)
-
-model_default_r(
   population,
   transmissibility = 1.3/7,
   infectiousness_rate = 1/2,
@@ -104,15 +91,8 @@ responses or different levels of the same type of response.
 See \strong{Details} for more information.
 }
 \details{
-\subsection{R and Rcpp implementations}{
-
 \code{model_default_cpp()} is a wrapper function for the internal C++ function
-\code{\link[=.model_default_cpp]{.model_default_cpp()}} that uses Boost \emph{odeint} solvers, while
-\code{model_default_r()} is a wrapper around \code{\link[deSolve:lsoda]{deSolve::lsoda()}} which an R-only
-implementation of the ODE system in \code{.ode_model_default()}.
-Both models return equivalent results, but the C++ implementation is faster.
-}
-
+\code{\link[=.model_default_cpp]{.model_default_cpp()}} that uses a Boost \emph{odeint} solver.
 \subsection{Model parameters}{
 
 This model only allows for single, population-wide rates of

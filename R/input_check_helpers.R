@@ -24,14 +24,14 @@ assert_population <- function(x, compartments, demography_vector = NULL) {
 
   # check that population has a set number of demography groups
   checkmate::assert_numeric(
-    get_parameter(x, "demography_vector"),
+    x[["demography_vector"]],
     len = demography_vector # checked against NULL in most models
   )
 
   # check that population has as many compartments in initial conditions
   # matrix as the length of `compartments`
   checkmate::assert_matrix(
-    get_parameter(x, "initial_conditions"),
+    x[["initial_conditions"]],
     mode = "numeric", # this is also checked when initialising a population
     nrows = demography_vector, # this is NULL for most models
     ncols = length(compartments)
@@ -68,18 +68,16 @@ assert_vaccination <- function(x, doses, population = NULL) {
 
   # check that x has as many cols in `nu` as `doses`
   # all other elements are identical dims as `nu`
-  checkmate::assert_matrix(
-    get_parameter(x, "nu"),
-    ncols = doses
-  )
+  checkmate::assert_matrix(x[["nu"]], mode = "numeric", ncols = doses)
 
   # if a population is provided, check that the rows of `nu`
   # match the number of demography groups
   if (!is.null(population)) {
     checkmate::assert_class(population, "population")
     checkmate::assert_matrix(
-      get_parameter(x, "nu"),
-      nrows = length(get_parameter(population, "demography_vector"))
+      x[["nu"]],
+      mode = "numeric",
+      nrows = length(population[["demography_vector"]])
     )
   }
 
@@ -120,20 +118,19 @@ assert_intervention <- function(x, type = c("contacts", "rate"),
       # of demographic groups
       n_demo_groups <- NULL
       if (!is.null(population)) {
-        n_demo_groups <- length(get_parameter(population, "demography_vector"))
+        n_demo_groups <- length(population[["demography_vector"]])
       }
       checkmate::assert_matrix(
-        get_parameter(x, "reduction"),
-        mode = "numeric",
-        nrows = n_demo_groups
+        x[["reduction"]],
+        mode = "numeric", nrows = n_demo_groups
       )
     },
     rate = {
       checkmate::assert_class(x, "rate_intervention")
       checkmate::assert_numeric(
-        get_parameter(x, "reduction"),
+        x[["reduction"]],
         lower = 0.0, upper = 1.0,
-        len = length(get_parameter(x, "time_begin"))
+        len = length(x[["time_begin"]])
       )
     }
   )

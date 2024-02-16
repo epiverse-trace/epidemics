@@ -114,9 +114,12 @@ test_recyclable <- function(x) {
 .cross_check_intervention <- function(x, population, allowed_targets) {
   # create dummy intervention set
   tmp_intervention <- list(
-    contacts = no_contacts_intervention(population),
     transmissibility = no_rate_intervention()
   )
+  # Ebola and Diphtheria models do not allow contact interventions
+  if ("contacts" %in% allowed_targets) {
+    tmp_intervention[["contacts"]] <- no_contacts_intervention(population)
+  }
   if (is.null(x)) {
     return(tmp_intervention)
   }
@@ -177,6 +180,56 @@ test_recyclable <- function(x) {
   }
 }
 
+.no_population_change <- function(population) {
+  n_demo_groups <- length(population[["demography_vector"]])
+
+  # return named list with 0 population change
+  list(
+    time = 0,
+    values = list(rep(0, n_demo_groups))
+  )
+}
+
 .cross_check_popchange <- function(x, population) {
-  x
+  if (is.null(x)) {
+    .no_population_change(population)
+  } else {
+    checkmate::assert_list(
+      x,
+      any.missing = FALSE, names = "unique",
+      len = 2L, types = c("numeric", "list")
+    )
+    checkmate::assert_names(
+      names(x),
+      identical.to = c("time", "values")
+    )
+    # check that time vector and values list have identical lengths
+    checkmate::assert_numeric(
+      x[["time"]],
+      lower = 0, finite = TRUE, min.len = 1
+    )
+    checkmate::assert_list(
+      x[["values"]],
+      any.missing = FALSE, len = length(x[["time"]])
+    )
+    # check that values elements (vecs) are compatible with population
+    invisible(
+      lapply(
+        x[["values"]],
+        FUN = function(le) {
+          stopifnot(
+            "`population_change` `values` must be same length as demography" =
+              checkmate::test_numeric(
+                le,
+                len = length(population[["demography_vector"]]),
+                any.missing = FALSE, finite = TRUE
+              )
+          )
+        }
+      )
+    )
+
+    # return x
+    x
+  }
 }

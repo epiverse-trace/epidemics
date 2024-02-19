@@ -7,9 +7,7 @@ articles:
 - title: Modelling interventions
   navbar: Modelling interventions
   contents:
-  - modelling_interventions
-  - multiple_interventions
-  - rate_interventions
+  - contains("intervention")
 - title: Modelling vaccination
   navbar: Modelling vaccination
   contents:
@@ -17,23 +15,23 @@ articles:
 - title: Modelling seasonality
   navbar: Modelling seasonality
   contents:
-  - time_dependence
+  - modelling_time_dependence
 - title: Other modelling vignettes
   navbar: Other modelling vignettes
   contents:
-  - parameter_uncertainty
+  - modelling_parameter_uncertainty
   - finalsize_comparison
 - title: Guides to library models
   navbar: Guides to library models
   contents:
-  - vacamole
-  - ebola_model
-  - diphtheria
-  - benchmarking
+  - model_vacamole
+  - model_ebola
+  - model_diphtheria
 - title: Package design
   navbar: Package design and architecture
   contents:
   - design-principles
+  
 
 reference:
   - title: Model functions

@@ -63,6 +63,7 @@ SEIHFR
 SEIHR
 SEIR
 SEIRS
+SEIRV
 Shou
 Siddiqui
 Susceptibles
@@ -110,8 +111,10 @@ odin
 olds
 org
 packagename
+param
 pkg
 rmarkdown
+recyclability
 rollout
 socialmixr
 stochasticity

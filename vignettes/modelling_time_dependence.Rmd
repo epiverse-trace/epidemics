@@ -109,7 +109,7 @@ Next we run an epidemic model while including the time dependence of transmissib
 ```{r}
 # note transmissibility is the function/model parameter
 # the function that affects it may have any name
-data <- model_default_cpp(
+data <- model_default(
   population = uk_population,
   time_dependence = list(
     transmissibility = mod_beta
@@ -192,7 +192,7 @@ Then we run the model while specifying the time-dependence of the transmission r
 
 ```{r}
 # run the model with interventions and time-dependence
-data_npi <- model_default_cpp(
+data_npi <- model_default(
   population = uk_population,
   intervention = list(contacts = npis),
   time_dependence = list(
@@ -280,7 +280,7 @@ We model the effect of administering vaccine doses between the expected peaks of
 
 ```{r}
 # pass time dependence and vaccination. Note no interventions
-data_vax <- model_default_cpp(
+data_vax <- model_default(
   population = uk_population,
   vaccination = vax_regime,
   time_dependence = list(

@@ -92,11 +92,11 @@ uk_population <- population(
 
 We first examine the baseline scenario --- no interventions are implemented to slow the spread of the epidemic --- and visualise the outcomes in terms of daily new infections.
 
-We simulate an epidemic using `model_default_cpp()`, calling the default model outlined in the ["Get started vignette"](epidemics.html).
+We simulate an epidemic using `model_default()`, calling the default model outlined in the ["Get started vignette"](epidemics.html).
 
 ```{r}
 # no intervention baseline scenario
-data_baseline <- model_default_cpp(
+data_baseline <- model_default(
   population = uk_population,
   time_end = 400, increment = 1.0
 )
@@ -177,7 +177,7 @@ We simulate the epidemic for 600 days as we expect the intervention to spread di
 
 ```{r}
 # no intervention baseline scenario
-data_schools_closed <- model_default_cpp(
+data_schools_closed <- model_default(
   population = uk_population,
   intervention = list(contacts = close_schools),
   time_end = 600, increment = 1.0
@@ -270,7 +270,7 @@ close_workplaces
 ### Combining interventions
 
 We can use the `c()` function to combine two `intervention` objects into a single `intervention` that accommodates the effect of both interventions.
-This multiple intervention can then be passed --- as a single `intervention` object --- to  an epidemic model in `model_default_cpp()`.
+This multiple intervention can then be passed --- as a single `intervention` object --- to  an epidemic model in `model_default()`.
 
 When an `intervention` object is made up of multiple interventions the first intervention to be specified is treated as the baseline intervention, with an age-specific effect on reducing contacts during its duration of effect.
 
@@ -278,7 +278,7 @@ All further interventions are assumed to be **additional percentage point** incr
 :::
 
 We can use the `c()` function to combine two `intervention` objects into a single `intervention` that accommodates the effect of both interventions.
-This multiple intervention can then be passed --- as a single `intervention` object --- to  an epidemic model in `model_default_cpp()`.
+This multiple intervention can then be passed --- as a single `intervention` object --- to  an epidemic model in `model_default()`.
 
 ```{r}
 # combine interventions using `c()`
@@ -291,7 +291,7 @@ combined_interventions
 ```
 
 ::: {.alert .alert-primary}
-- We can combine any number of `intervention` objects into a single `intervention` object to be passed to `model_default_cpp()`.
+- We can combine any number of `intervention` objects into a single `intervention` object to be passed to `model_default()`.
 The cumulative effect of the interventions is handled automatically by the C++ code underlying _epidemics_.
 
 - Remember that two multiple interventions can also be combined using `c()`.
@@ -299,13 +299,13 @@ It is important to be careful when doing this and make sure that only the interv
 For example, `c(combined_interventions, combined_interventions)` is valid, and would effectively double the effect of school and workplace closures in the example.
 :::
 
-We simulate an epidemic using the `model_default_cpp()` function, calling the default model outlined in the ["Get started vignette"](epidemics.html).
+We simulate an epidemic using the `model_default()` function, calling the default model outlined in the ["Get started vignette"](epidemics.html).
 
 We simulate the epidemic for 600 days.
 
 ```{r}
 # get data from an epidemic model with both interventions
-data_combined <- model_default_cpp(
+data_combined <- model_default(
   population = uk_population,
   intervention = list(contacts = combined_interventions),
   time_end = 600, increment = 1.0
@@ -418,11 +418,11 @@ Combine the multiple interventions object with two interventions with the third 
 combined_interventions <- c(combined_interventions, workplace_closures_2)
 ```
 
-We simulate an epidemic using the `model_default_cpp()` function for 600 days as before.
+We simulate an epidemic using the `model_default()` function for 600 days as before.
 
 ```{r}
 # get data from an epidemic model with both interventions
-data_combined <- model_default_cpp(
+data_combined <- model_default(
   population = uk_population,
   intervention = list(contacts = combined_interventions),
   time_end = 600, increment = 1.0

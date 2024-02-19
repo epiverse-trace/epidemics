@@ -27,21 +27,9 @@ knitr::opts_chunk[["set"]](
 <!-- badges: end -->
 
 _{{ packagename }}_ is an R package that provides a convenient interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted respiratory infections such as influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus disease.
+
 The models in _{{ packagename }}_ implement methods outlined in @bjornstad2020a and @bjornstad2020.
 The models in _{{ packagename }}_ can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions.
-
-_{{ packagename }}_ currently provides three models:
-
-1. A deterministic SEIR-V model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates,
-
-2. The deterministic Vacamole model developed at [RIVM, the Dutch Public Health Institute](https://www.rivm.nl/) for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination [@ainslie2022],
-
-3. A stochastic, discrete-time, compartmental SEIR model suitable for modelling haemorrhagic fevers such as Ebola Virus Disease, including hospitalisation and hospital and funeral transmissions, adapted from @li2019 and @getz2018,
-
-4. An initial implementation of a compartmental model for diphtheria in the context of internally displaced persons camps, including a reporting rate, hospitalisation rate, and delays in entering and leaving hospital, taken from @finger2019.
-
-More models are planned to be added in the near future.
-Please get in touch if you would like to see your model added to the _{{ packagename }}_ model library --- we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.
 
 _{{ packagename }}_ relies on [Eigen](https://gitlab.com/libeigen/eigen) via [{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on [Boost Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html) via [{BH}](https://cran.r-project.org/package=BH), and is developed at the [Centre for the Mathematical Modelling of Infectious Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases) at the London School of Hygiene and Tropical Medicine as part of the [Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
 
@@ -136,13 +124,13 @@ close_schools <- intervention(
 close_schools
 ```
 
-Run the default epidemic model, using the function `model_default_cpp()`. 
+Run the default epidemic model, using the function `model_default()`. 
 We assume an $R_0$ of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.
 From these values we can calculate transmissibility $\beta$ `1.5 / 7.0`, infectiousness_rate $\alpha$ `1.0 / 3.0` and recovery_rate $\gamma$ `1.0 / 7.0`.
 
 ```{r message=FALSE}
 # run an epidemic model using `epidemic()`
-output <- model_default_cpp(
+output <- model_default(
   population = uk_population,
   transmissibility = 1.5 / 7.0,
   infectiousness_rate = 1.0 / 3.0,
@@ -195,6 +183,21 @@ filter(output, compartment == "infectious") %>%
 ## Package vignettes
 
 More details on how to use _{{ packagename }}_ can be found in the [online documentation as package vignettes](https://epiverse-trace.github.io/{{ packagename }}/), under "Articles".
+
+## Package models
+
+_{{ packagename }}_ currently provides three models:
+
+1. A deterministic SEIR-V model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates,
+
+2. The deterministic Vacamole model developed at [RIVM, the Dutch Public Health Institute](https://www.rivm.nl/) for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination [@ainslie2022],
+
+3. A stochastic, discrete-time, compartmental SEIR model suitable for modelling haemorrhagic fevers such as Ebola Virus Disease, including hospitalisation and hospital and funeral transmissions, adapted from @li2019 and @getz2018,
+
+4. An initial implementation of a compartmental model for diphtheria in the context of internally displaced persons camps, including a reporting rate, hospitalisation rate, and delays in entering and leaving hospital, taken from @finger2019.
+
+More models are planned to be added in the near future.
+Please get in touch if you would like to see your model added to the _{{ packagename }}_ model library --- we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.
 
 ## Related projects
 

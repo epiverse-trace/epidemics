@@ -225,23 +225,23 @@ prob_discrete_erlang <- function(shape, rate) {
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' data <- model_ebola_r(
+#' data <- model_ebola(
 #'   population = population
 #' )
 #'
 #' # view some data
 #' head(data)
 #' @export
-model_ebola_r <- function(population,
-                          erlang_subcompartments = 2,
-                          transmissibility = 1.5 / 12,
-                          infectiousness_rate = erlang_subcompartments / 5,
-                          removal_rate = erlang_subcompartments / 12,
-                          prop_community = 0.9,
-                          etu_risk = 0.7,
-                          funeral_risk = 0.5,
-                          intervention = NULL,
-                          time_dependence = NULL, time_end = 100) {
+model_ebola <- function(population,
+                        erlang_subcompartments = 2,
+                        transmissibility = 1.5 / 12,
+                        infectiousness_rate = erlang_subcompartments / 5,
+                        removal_rate = erlang_subcompartments / 12,
+                        prop_community = 0.9,
+                        etu_risk = 0.7,
+                        funeral_risk = 0.5,
+                        intervention = NULL,
+                        time_dependence = NULL, time_end = 100) {
   # input checking for the ebola R model - there is no dedicated checker fn
   # and input checking is performed here, making it different from other models
   # define compartment names

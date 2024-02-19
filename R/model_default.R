@@ -103,7 +103,7 @@
 #'
 #' # run epidemic simulation with no vaccination or intervention
 #' # and three discrete values of transmissibility
-#' data <- model_default_cpp(
+#' data <- model_default(
 #'   population = uk_population,
 #'   transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 #' )
@@ -113,22 +113,22 @@
 #'
 #' # run epidemic simulations with differences in the end time
 #' # may be useful when considering different start dates with a fixed end point
-#' data <- model_default_cpp(
+#' data <- model_default(
 #'   population = uk_population,
 #'   time_end = c(50, 100, 150)
 #' )
 #'
 #' data
 #' @export
-model_default_cpp <- function(population,
-                              transmissibility = 1.3 / 7.0,
-                              infectiousness_rate = 1.0 / 2.0,
-                              recovery_rate = 1.0 / 7.0,
-                              intervention = NULL,
-                              vaccination = NULL,
-                              time_dependence = NULL,
-                              time_end = 100,
-                              increment = 1) {
+model_default <- function(population,
+                          transmissibility = 1.3 / 7.0,
+                          infectiousness_rate = 1.0 / 2.0,
+                          recovery_rate = 1.0 / 7.0,
+                          intervention = NULL,
+                          vaccination = NULL,
+                          time_dependence = NULL,
+                          time_end = 100,
+                          increment = 1) {
   # TODO: ensure population is properly vectorised
   checkmate::assert_class(population, "population")
   # get compartment names
@@ -261,7 +261,7 @@ model_default_cpp <- function(population,
   model_output[, args := apply(model_output, 1, function(x) {
     c(x[["args"]], x[param_names]) # avoid including col "param_set"
   })]
-  model_output[, data := Map(population, args, f = function(p, l) {
+  model_output[, "data" := Map(population, args, f = function(p, l) {
     .output_to_df(
       do.call(.model_default_cpp, l),
       population = p, # taken from local scope/env
@@ -283,7 +283,7 @@ model_default_cpp <- function(population,
 #'
 #' @description Provides the ODEs for the default SEIR-V model in a format that
 #' is suitable for passing to [deSolve::lsoda()].
-#' See [model_default_cpp()] for a list of required parameters.
+#' See [model_default()] for a list of required parameters.
 #'
 #' @param t A single number of the timestep at which to integrate.
 #' @param y The conditions of the epidemiological compartments.

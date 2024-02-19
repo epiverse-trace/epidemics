@@ -9,36 +9,20 @@
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppEigen)]]
 
-//' @title Run the RIVM Vacamole model
+//' @title Run an age-structured SEIR-V epidemic ODE model using a Boost solver
 //'
-//' @description Vacamole is a deterministic, compartmental epidemic model built
-//' by Kylie Ainslie and others at RIVM, the Dutch Public Health Institute for
-//' the Covid-19 pandemic, with a focus on scenario modelling for
-//' hospitalisation and vaccination.
-//' Model code: https://github.com/kylieainslie/vacamole
-//' Manuscript describing the model and its application:
-//' https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090
+//' @description A compartmental model with an optional non-pharmaceutical
+//' intervention and an optional vaccination regime.
+//'
 //' This function is intended to only be called internally from
-//' [model_vacamole_cpp()].
+//' [model_default_cpp()].
 //'
 //' @param initial_state A matrix for the initial state of the compartments.
 //' @param transmissibility The transmission rate \eqn{\beta} at which
 //' unvaccinated and partially vaccinated individuals are infected by the
 //' disease.
-//' @param transmissibility_vax The transmission rate \eqn{\beta_V} at which
-//' individuals who have received two vaccine doses are infected by the disease.
 //' @param infectiousness_rate The rate of transition from exposed to infectious
 //' \eqn{\alpha}.
-//' This is common to fully susceptible, partially vaccinated, and fully
-//' vaccinated individuals (where fully vaccinated represents two doses).
-//' @param mortality_rate The mortality rate of fully susceptible and partially
-//' vaccinated and unprotected individuals.
-//' @param mortality_rate_vax The mortality rate of individuals who are
-//' protected by vaccination.
-//' @param hospitalisation_rate The hospitalisation rate of fully susceptible
-//' and partially vaccinated and unprotected individuals.
-//' @param hospitalisation_rate_vax The hospitalisation rate of individuals who
-//' are protected by vaccination.
 //' @param recovery_rate The recovery rate \eqn{\gamma}.
 //' @param contact_matrix The population contact matrix.
 //' @param npi_time_begin The start time of any non-pharmaceutical interventions
@@ -59,13 +43,11 @@
 //' as specified in the initial conditions matrix (see [population()]).
 //' The second list element is a vector of timesteps.
 //' @keywords internal
-// [[Rcpp::export(name=".model_vacamole_cpp")]]
-Rcpp::List model_vacamole_cpp_internal(
+// [[Rcpp::export(name=".model_default_cpp")]]
+Rcpp::List model_default_internal(
     const Eigen::MatrixXd &initial_state, const double &transmissibility,
-    const double &transmissibility_vax, const double &infectiousness_rate,
-    const double &mortality_rate, const double &mortality_rate_vax,
-    const double &hospitalisation_rate, const double &hospitalisation_rate_vax,
-    const double &recovery_rate, const Eigen::MatrixXd &contact_matrix,
+    const double &infectiousness_rate, const double &recovery_rate,
+    const Eigen::MatrixXd &contact_matrix,
     const Rcpp::NumericVector &npi_time_begin,
     const Rcpp::NumericVector &npi_time_end, const Rcpp::NumericMatrix &npi_cr,
     const Eigen::MatrixXd &vax_time_begin, const Eigen::MatrixXd &vax_time_end,
@@ -80,8 +62,6 @@ Rcpp::List model_vacamole_cpp_internal(
   std::unordered_map<std::string, double> model_params{
       {"transmissibility", transmissibility},
       {"infectiousness_rate", infectiousness_rate},
-      {"mortality_rate", mortality_rate},
-      {"hospitalisation_rate", hospitalisation_rate},
       {"recovery_rate", recovery_rate}};
 
   // create a map of the rate interventions
@@ -90,7 +70,7 @@ Rcpp::List model_vacamole_cpp_internal(
           intervention::rate_intervention_cpp(rate_interventions);
 
   // create a default epidemic with parameters
-  epidemics::epidemic_vacamole this_model(
+  epidemics::epidemic_default this_model(
       model_params, contact_matrix, npi_time_begin, npi_time_end, npi_cr,
       vax_time_begin, vax_time_end, vax_nu, rate_interventions_cpp,
       time_dependence);

@@ -44,7 +44,7 @@
 //' The second list element is a vector of timesteps.
 //' @keywords internal
 // [[Rcpp::export(name=".model_diphtheria_cpp")]]
-Rcpp::List model_diphtheria_cpp_internal(
+Rcpp::List model_diphtheria_internal(
     const Eigen::MatrixXd &initial_state, const double &transmissibility,
     const double &infectiousness_rate, const double &recovery_rate,
     const double &reporting_rate, const double &prop_hosp,

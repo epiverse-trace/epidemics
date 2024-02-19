@@ -120,7 +120,7 @@
 #' prop_vaccinated <- c(0.2, 0.10, 0.1)
 #'
 #' # run model for single, default parameter set
-#' data <- model_diphtheria_cpp(
+#' data <- model_diphtheria(
 #'   camp_pop,
 #'   prop_vaccinated = prop_vaccinated
 #' )
@@ -136,7 +136,7 @@
 #'   )
 #' )
 #'
-#' data <- model_diphtheria_cpp(
+#' data <- model_diphtheria(
 #'   camp_pop,
 #'   prop_vaccinated = prop_vaccinated,
 #'   population_change = p
@@ -144,21 +144,21 @@
 #' head(data)
 #' tail(data)
 #' @export
-model_diphtheria_cpp <- function(population,
-                                 transmissibility = 4.0 / 4.5,
-                                 infectiousness_rate = 1.0 / 3.0,
-                                 recovery_rate = 1.0 / 3.0,
-                                 reporting_rate = 0.03,
-                                 prop_hosp = 0.01,
-                                 hosp_entry_rate = 0.2,
-                                 hosp_exit_rate = 0.2,
-                                 prop_vaccinated = 0.0 *
-                                   population[["demography_vector"]],
-                                 intervention = NULL,
-                                 time_dependence = NULL,
-                                 population_change = NULL,
-                                 time_end = 100,
-                                 increment = 1) {
+model_diphtheria <- function(population,
+                             transmissibility = 4.0 / 4.5,
+                             infectiousness_rate = 1.0 / 3.0,
+                             recovery_rate = 1.0 / 3.0,
+                             reporting_rate = 0.03,
+                             prop_hosp = 0.01,
+                             hosp_entry_rate = 0.2,
+                             hosp_exit_rate = 0.2,
+                             prop_vaccinated = 0.0 *
+                               population[["demography_vector"]],
+                             intervention = NULL,
+                             time_dependence = NULL,
+                             population_change = NULL,
+                             time_end = 100,
+                             increment = 1) {
   # TODO: ensure population is properly vectorised
   checkmate::assert_class(population, "population")
   # get compartment names
@@ -302,7 +302,7 @@ model_diphtheria_cpp <- function(population,
   model_output[, args := apply(model_output, 1, function(x) {
     c(x[["args"]], x[param_names]) # avoid including col "param_set"
   })]
-  model_output[, data := Map(population, args, f = function(p, l) {
+  model_output[, "data" := Map(population, args, f = function(p, l) {
     .output_to_df(
       do.call(.model_diphtheria_cpp, l),
       population = p, # taken from local scope/env

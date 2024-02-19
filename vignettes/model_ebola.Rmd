@@ -110,7 +110,7 @@ This can also be interpreted as the proportion of funerals that are ebola-safe.
 
 ## Run epidemic model
 
-We run the model using the function `model_ebola_r()`.
+We run the model using the function `model_ebola()`.
 While there is a C++ equivalent of this model, it was not found to be much faster than the R-only version, and is not made available to users.
 
 The model is run for 100 days, with data reported on each day.
@@ -122,7 +122,7 @@ set.seed(0)
 
 # run the epidemic model using `epidemic`
 # we call the model "ebola" from the library
-data <- model_ebola_r(
+data <- model_ebola(
   population = guinea_population,
   time_end = 100
 )
@@ -181,7 +181,7 @@ set.seed(1)
 data <- lapply(
   X = seq(100),
   FUN = function(x) {
-    data <- model_ebola_r(
+    data <- model_ebola(
       population = guinea_population,
       time_end = 100
     )
@@ -294,7 +294,7 @@ We can pass the intervention to the model function's `intervention` argument.
 set.seed(0)
 
 # run the epidemic model and save data as the baseline
-data_baseline <- model_ebola_r(
+data_baseline <- model_ebola(
   population = guinea_population,
   time_end = 100
 )
@@ -302,7 +302,7 @@ data_baseline <- model_ebola_r(
 set.seed(0)
 # note that the intervention is passed within a list,
 # where it is named for the rate it is targeting
-data_intervention <- model_ebola_r(
+data_intervention <- model_ebola(
   population = guinea_population,
   intervention = list(
     transmissibility = reduce_transmission
@@ -349,7 +349,7 @@ We see that applying an intervention that reduces transmission can be effective 
 
 We can also model the rollout of vaccination against EVD, but because this model is structured differently from other models in _epidemics_, vaccination must be modelled differently too.
 
-`model_ebola_r()` does not accept a vaccination regime as a `<vaccination>` object, but we can still model the effect of vaccination as a gradual decrease in the transmission rate $\beta$ over time.
+`model_ebola()` does not accept a vaccination regime as a `<vaccination>` object, but we can still model the effect of vaccination as a gradual decrease in the transmission rate $\beta$ over time.
 
 This is done by using the _time dependence_ functionality of _epidemics_.
 
@@ -379,7 +379,7 @@ time_dep_vax <- function(
 set.seed(0)
 # note that the intervention is passed within a list,
 # where it is named for the rate it is targeting
-data_apply_vax <- model_ebola_r(
+data_apply_vax <- model_ebola(
   population = guinea_population,
   time_dependence = list(
     transmissibility = time_dep_vax
@@ -454,7 +454,7 @@ We can pass the interventions to the model function's `intervention` argument as
 set.seed(0)
 # note that the intervention is passed within a list,
 # where it is named for the rate it is targeting
-data_improve_hosp <- model_ebola_r(
+data_improve_hosp <- model_ebola(
   population = guinea_population,
   intervention = list(
     prop_community = improve_hospitalisation
@@ -511,7 +511,7 @@ improve_etu_safety <- intervention(
 set.seed(0)
 # note that the intervention is passed within a list,
 # where it is named for the rate it is targeting
-data_improve_etu <- model_ebola_r(
+data_improve_etu <- model_ebola(
   population = guinea_population,
   intervention = list(
     etu_risk = improve_etu_safety
@@ -571,7 +571,7 @@ reduce_funeral_risk <- intervention(
 set.seed(0)
 # note that the intervention is passed within a list,
 # where it is named for the rate it is targeting
-data_improve_funeral <- model_ebola_r(
+data_improve_funeral <- model_ebola(
   population = guinea_population,
   intervention = list(
     funeral_risk = reduce_funeral_risk
@@ -619,7 +619,7 @@ filter(data_scenarios, compartment == "removed") %>%
 set.seed(0)
 # note that the intervention is passed within a list,
 # where it is named for the rate it is targeting
-data_combined_interventions <- model_ebola_r(
+data_combined_interventions <- model_ebola(
   population = guinea_population,
   intervention = list(
     transmissibility = reduce_transmission,

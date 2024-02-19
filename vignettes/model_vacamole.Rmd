@@ -197,7 +197,7 @@ First, we run the model with no vaccination. The model's default parameters are:
  - Mortality reduction from vaccination (`mort_reduction_vax`): 0.2, assuming a 20% reduction in mortality for individuals who are doubly vaccinated.
 
 ```{r}
-data <- model_vacamole_cpp(
+data <- model_vacamole(
   population = uk_population,
   vaccination = no_vaccination, # note custom no_vaccination object
   time_end = epidemic_days
@@ -207,7 +207,7 @@ data <- model_vacamole_cpp(
 Next we run the model with a two dose vaccination regime.
 
 ```{r}
-data_vaccination <- model_vacamole_cpp(
+data_vaccination <- model_vacamole(
   population = uk_population,
   vaccination = double_vaccination, # note custom object for two doses
   time_end = epidemic_days

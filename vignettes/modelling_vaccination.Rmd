@@ -100,7 +100,7 @@ vaccinate_elders
 
 ```{r}
 # run an epidemic model using `epidemic`
-output <- model_default_cpp(
+output <- model_default(
   population = uk_population,
   vaccination = vaccinate_elders,
   time_end = 600, increment = 1.0

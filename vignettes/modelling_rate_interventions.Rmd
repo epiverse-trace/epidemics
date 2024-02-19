@@ -116,19 +116,19 @@ is_rate_intervention(mask_mandate)
 ```
 
 We first run a baseline scenario --- no interventions are implemented to slow the spread of the epidemic --- and visualise the outcomes in terms of daily new infections.
-We simulate an epidemic using `model_default_cpp()`, calling the default model outlined in the ["Get started vignette"](epidemics.html).
+We simulate an epidemic using `model_default()`, calling the default model outlined in the ["Get started vignette"](epidemics.html).
 
 To examine the effect of a mask mandate, we simulate the epidemic for 200 days as we expect the intervention to spread disease incidence out over a longer period.
 
 ```{r}
 # no intervention baseline scenario
-data <- model_default_cpp(
+data <- model_default(
   population = uk_population,
   time_end = 200, increment = 1.0
 )
 
 # with a mask mandate
-data_masks <- model_default_cpp(
+data_masks <- model_default(
   population = uk_population,
   intervention = list(transmissibility = mask_mandate),
   time_end = 200, increment = 1.0
@@ -160,8 +160,8 @@ ggplot(data_combined) +
   ) +
   annotate(
     geom = "rect",
-    xmin = get_parameter(mask_mandate, "time_begin"),
-    xmax = get_parameter(mask_mandate, "time_end"),
+    xmin = mask_mandate[["time_begin"]],
+    xmax = mask_mandate[["time_end"]],
     ymin = 0, ymax = 150e3,
     fill = alpha("red", alpha = 0.2),
     lty = "dashed"

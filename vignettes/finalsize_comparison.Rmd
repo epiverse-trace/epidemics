@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Comparing simulation-based and direct analytical methods for epidemic size estimation}
+  %\VignetteIndexEntry{Reducing parameters required for final size estimation}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -85,7 +85,7 @@ The two methods are comparable if we model vaccination in _epidemics_ as occurri
 
 ### Prepare population and model parameters
 
-We first prepare the population (modelled on the U.K.), initial conditions, and model parameters, before passing them to `epidemics::model_default_cpp()`.
+We first prepare the population (modelled on the U.K.), initial conditions, and model parameters, before passing them to `epidemics::model_default()`.
 This example does not include any interventions or vaccination regimes.
 
 Code to prepare model inputs is folded below for brevity. See the ["Get started"](epidemics.html) vignette for an explanation of how to prepare these inputs.
@@ -177,7 +177,7 @@ We obtain the 'final' epidemic size using `epidemics::epidemic_size()`.
 
 ```{r}
 # model epidemic with vaccination prior to the main epidemic wave
-output <- model_default_cpp(
+output <- model_default(
   population = uk_population,
   transmissibility = transmissibility,
   infectiousness_rate = infectiousness_rate,
@@ -310,7 +310,7 @@ epidemic_size(data = output, stage = 0.5)
 
 ## Consideration of computational speed
 
-An important reason to use _finalsize_ for final size calculations may be speed --- `finalsize::final_size()` is much faster than `epidemics::epidemic_size()` applied to `epidemics::model_default_cpp()`.
+An important reason to use _finalsize_ for final size calculations may be speed --- `finalsize::final_size()` is much faster than `epidemics::epidemic_size()` applied to `epidemics::model_default()`.
 This makes it much more suitable for high-performance applications such as fitting to data.
 
 The benchmarking shows that the total time taken for 1,000 runs using both methods is very low, and both methods could be used to scan across multiple values of the input parameters, such as when dealing with parameter uncertainty.
@@ -326,7 +326,7 @@ benchmark <- mark(
     p_susceptibility = p_susceptibility
   ),
   ode_model = epidemic_size(
-    model_default_cpp(
+    model_default(
       population = uk_population,
       transmissibility = transmissibility,
       infectiousness_rate = infectiousness_rate,

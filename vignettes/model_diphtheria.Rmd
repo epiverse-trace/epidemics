@@ -97,7 +97,7 @@ We also make several assumptions regarding clinical progression and reporting. S
 Finally, we assume there are no interventions or seasonal effects that affect the dynamics of transmission during the outbreak. We then run the model and plot the outcomes.
 
 ```{r diphtheria-basic}
-data <- model_diphtheria_cpp(
+data <- model_diphtheria(
   population = camp_pop,
   prop_vaccinated = prop_vaccinated
 )
@@ -152,7 +152,7 @@ pop_change <- list(
 Here, the population size of the camp increases by about 75% overall, which is similar to reported values in the Kutupalong camp scenario [@finger2019].
 
 ```{r}
-data <- model_diphtheria_cpp(
+data <- model_diphtheria(
   population = camp_pop,
   population_change = pop_change
 )

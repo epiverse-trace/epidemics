@@ -156,7 +156,7 @@ output_samples <- Map(
   seq_along(r_samples),
   f = function(x, i) {
     # run an epidemic model using `epidemic()`
-    output <- model_default_cpp(
+    output <- model_default(
       population = uk_population,
       transmissibility = x / infectious_period,
       recovery_rate = 1 / infectious_period,

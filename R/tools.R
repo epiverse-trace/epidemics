@@ -24,8 +24,8 @@
 .test_recyclable <- function(x) {
   # basic input checking only
   stopifnot(
-    "List elements must all be vectors or lists" =
-      all(vapply(x, is.vector, TRUE))
+    "`x` must be a list with vector elements" =
+      is.list(x) && all(vapply(x, is.vector, TRUE))
   )
   lens <- lengths(x)
   not_scalar <- lens != 1L
@@ -42,9 +42,10 @@
 #' @name vector_recycling
 #' @keywords internal
 .recycle_vectors <- function(x) {
+  # basic input checking only
   stopifnot(
-    "List elements must all be vectors" =
-      all(vapply(x, is.vector, TRUE))
+    "`x` must be a list with vector elements" =
+      is.list(x) && all(vapply(x, is.vector, TRUE))
   )
   # vector lengths not checked as this fn is expected to be used
   # after a call to `.test_recyclable()`

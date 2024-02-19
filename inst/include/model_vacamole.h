@@ -8,8 +8,8 @@
     and the model is described in Eurosurveillance at:
     https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090
 */
-#ifndef INST_INCLUDE_EPIDEMIC_VACAMOLE_H_
-#define INST_INCLUDE_EPIDEMIC_VACAMOLE_H_
+#ifndef INST_INCLUDE_MODEL_VACAMOLE_H_
+#define INST_INCLUDE_MODEL_VACAMOLE_H_
 
 // clang-format off
 #include <Rcpp.h>
@@ -218,4 +218,4 @@ struct epidemic_vacamole {
 
 }  // namespace epidemics
 
-#endif  // INST_INCLUDE_EPIDEMIC_VACAMOLE_H_
+#endif  // INST_INCLUDE_MODEL_VACAMOLE_H_

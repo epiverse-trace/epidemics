@@ -1,6 +1,6 @@
 // Copyright 2023 'epidemics' authors. See repository licence in LICENSE.md.
-#ifndef INST_INCLUDE_EPIDEMIC_DIPHTHERIA_H_
-#define INST_INCLUDE_EPIDEMIC_DIPHTHERIA_H_
+#ifndef INST_INCLUDE_MODEL_DIPHTHERIA_H_
+#define INST_INCLUDE_MODEL_DIPHTHERIA_H_
 
 // clang-format off
 #include <Rcpp.h>
@@ -130,4 +130,4 @@ struct epidemic_diphtheria {
 
 }  // namespace epidemics
 
-#endif  // INST_INCLUDE_EPIDEMIC_DIPHTHERIA_H_
+#endif  // INST_INCLUDE_MODEL_DIPHTHERIA_H_

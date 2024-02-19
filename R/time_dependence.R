@@ -8,7 +8,9 @@
 #' functions.
 #' @keywords internal
 .no_time_dependence <- function(func_target = "transmissibility") {
-  list(
-    func_target = function(time, x) x
+  l <- list(
+    function(time, x) x
   )
+  names(l) <- func_target
+  l
 }

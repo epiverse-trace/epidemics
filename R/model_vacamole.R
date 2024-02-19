@@ -32,9 +32,8 @@
 #' epidemic, with a start and end time, and age-specific vaccination rates for
 #' each dose. See [vaccination()].
 #' @details
-#' `model_vacamole_cpp()` is a wrapper function for
-#' [.model_vacamole_cpp()], an internal C++ function that uses a Boost _odeint_
-#' solvers.
+#'
+#' # Details: Vacamole Covid-19 model with leaky, two-dose vaccination
 #'
 #' The Vacamole model has the compartments "susceptible",
 #' "vaccinated_one_dose", "vaccinated_two_dose", "exposed", "infectious"

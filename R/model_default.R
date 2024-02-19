@@ -22,15 +22,17 @@
 #' @param transmissibility A numeric for the rate at which individuals
 #' move from the susceptible to the exposed compartment upon contact with an
 #' infectious individual. Often denoted as \eqn{\beta}, with
-#' \eqn{\beta = R_0 / \text{infectious period}}.
+#' \eqn{\beta = R_0 / \text{infectious period}}. See **Details** for default
+#' values.
 #' @param infectiousness_rate A numeric for the rate at which individuals
 #' move from the exposed to the infectious compartment. Often denoted as
 #' \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 #' This value does not depend upon the number of infectious individuals in the
-#' population.
+#' population. See **Details** for default values.
 #' @param recovery_rate A numeric for the rate at which individuals move
 #' from the infectious to the recovered compartment. Often denoted as
 #' \eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.
+#' See **Details** for default values.
 #' @param intervention A named list of `<intervention>`s representing optional
 #' non-pharmaceutical or pharmaceutical interventions applied during the
 #' epidemic. Only a single intervention on social contacts of the class
@@ -52,8 +54,7 @@
 #' default value of 1 day.
 #' @details
 #'
-#' `model_default_cpp()` is a wrapper function for the internal C++ function
-#' [.model_default_cpp()] that uses a Boost _odeint_ solver.
+#' # Details: SEIRV model suitable for directly transmitted infections
 #'
 #' ## Model parameters
 #'

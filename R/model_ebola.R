@@ -61,9 +61,19 @@ prob_discrete_erlang <- function(shape, rate) {
 #' contacts, which means that the `contact_matrix` is ignored. For consistency,
 #' the matrix must be square and have as many rows as demography groups, which
 #' is one.
+#' @param transmissibility A single number for the rate at which individuals
+#' move from the susceptible to the exposed compartment upon contact with an
+#' infectious individual. Often denoted as \eqn{\beta}, with
+#' \eqn{\beta = R_0 / \text{infectious period}}.
+#' See **Details** for default values.
+#' @param infectiousness_rate A single number for the rate at which individuals
+#' move from the exposed to the infectious compartment. Often denoted as
+#' \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
+#' This value does not depend upon the number of infectious individuals in the
+#' population.
+#' See **Details** for default values.
 #' @param erlang_subcompartments The number of Erlang subcompartments assumed
 #' for the exposed, infectious, and hospitalised compartments. Defaults to 2.
-#' @inheritParams model_default
 #' @param removal_rate The rate at which infectious individuals transition from
 #' the infectious or hospitalised compartments to the funeral or removed
 #' compartments. This model does not distinguish between recoveries and
@@ -101,7 +111,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #' from 1 to `time_end`).
 #' @details
 #'
-#' # Details: Discrete-time ebola virus disease model
+#' # Details: Discrete-time Ebola virus disease model
 #'
 #' This model has compartments adopted from the consensus model for Ebola virus
 #' disease presented in Li et al. (2019), and with transitions between

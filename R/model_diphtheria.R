@@ -8,9 +8,8 @@
 #' "susceptible", "exposed", "infectious", "hospitalised", and"recovered".
 #' The model is based on Finger et al. (2019) and is intended to be used in the
 #' context of internally displaced people (IDP) or refugee camps.
-#' This model accommodates age or demographic structure and allows for a
-#' proportion of each demographic group to be vaccinated at the start of the
-#' outbreak, and thus to not contribute to the outbreak.
+#' This model allows for a proportion of each demographic group to be vaccinated
+#' at the start of the outbreak, and thus to not contribute to the outbreak.
 #' The model also allows for changes to the number of susceptibles in each age
 #' group to model influxes or evacuations from camps.
 #'
@@ -40,10 +39,12 @@
 #' the number of demographic groups in `population`.
 #' @details
 #'
-#' ## Rcpp implementations
+#' # Details: Model an infection outbreak in a humanitarian camp setting
 #'
-#' `model_diphtheria_cpp()` is a wrapper function for [.model_diphtheria_cpp()],
-#' an internal C++ function that uses Boost _odeint_ solvers for an SEIHR model.
+#' This model has been developed for diphtheria outbreaks in settings where
+#' interventions on social contacts are difficult to implement. It it suitable
+#' for application to the outbreak of similar, directly transmitted infectious
+#' diseases as well.
 #'
 #' ## Model parameters
 #'

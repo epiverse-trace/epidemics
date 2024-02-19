@@ -17,8 +17,8 @@
 #include "intervention.h"
 #include "vaccination.h"
 #include "time_dependence.h"
-#include "epidemic_default.h"
-#include "epidemic_vacamole.h"
-#include "epidemic_diphtheria.h"
+#include "model_default.h"
+#include "model_vacamole.h"
+#include "model_diphtheria.h"
 
 #endif  // epidemics_epidemics_H_

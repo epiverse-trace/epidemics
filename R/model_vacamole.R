@@ -121,7 +121,7 @@
 #'
 #' # run epidemic simulation with vaccination but no intervention
 #' # with a single set of parameters
-#' data <- model_vacamole_cpp(
+#' data <- model_vacamole(
 #'   population = population,
 #'   vaccination = double_vax
 #' )
@@ -131,8 +131,8 @@
 #'
 #' # run epidemic simulation with no vaccination or intervention
 #' # and three discrete values of transmissibility
-#' data <- model_default_cpp(
-#'   population = uk_population,
+#' data <- model_vacamole(
+#'   population = population,
 #'   transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 #' )
 #'
@@ -141,21 +141,21 @@
 #' tail(data)
 #'
 #' @export
-model_vacamole_cpp <- function(population,
-                               transmissibility = 1.3 / 7.0,
-                               transmissibility_vax = 0.8 * transmissibility,
-                               infectiousness_rate = 1.0 / 2.0,
-                               hospitalisation_rate = 1.0 / 1000,
-                               hospitalisation_rate_vax = 0.8 *
-                                 hospitalisation_rate,
-                               mortality_rate = 1.0 / 1000,
-                               mortality_rate_vax = 0.8 * mortality_rate,
-                               recovery_rate = 1.0 / 7.0,
-                               intervention = NULL,
-                               vaccination = NULL,
-                               time_dependence = NULL,
-                               time_end = 100,
-                               increment = 1) {
+model_vacamole <- function(population,
+                           transmissibility = 1.3 / 7.0,
+                           transmissibility_vax = 0.8 * transmissibility,
+                           infectiousness_rate = 1.0 / 2.0,
+                           hospitalisation_rate = 1.0 / 1000,
+                           hospitalisation_rate_vax = 0.8 *
+                             hospitalisation_rate,
+                           mortality_rate = 1.0 / 1000,
+                           mortality_rate_vax = 0.8 * mortality_rate,
+                           recovery_rate = 1.0 / 7.0,
+                           intervention = NULL,
+                           vaccination = NULL,
+                           time_dependence = NULL,
+                           time_end = 100,
+                           increment = 1) {
   # TODO: ensure population is properly vectorised
   checkmate::assert_class(population, "population")
   # get compartment names
@@ -301,7 +301,7 @@ model_vacamole_cpp <- function(population,
   model_output[, args := apply(model_output, 1, function(x) {
     c(x[["args"]], x[param_names]) # avoid including col "param_set"
   })]
-  model_output[, data := Map(population, args, f = function(p, l) {
+  model_output[, "data" := Map(population, args, f = function(p, l) {
     .output_to_df(
       do.call(.model_vacamole_cpp, l),
       population = p, # taken from local scope/env
@@ -323,7 +323,7 @@ model_vacamole_cpp <- function(population,
 #'
 #' @description Provides the ODEs for the RIVM Vacamole model in a format that
 #' is suitable for passing to [deSolve::lsoda()].
-#' See [model_vacamole_cpp()] for a list of required parameters.
+#' See [model_vacamole()] for a list of required parameters.
 #'
 #' @param t A single number of the timestep at which to integrate.
 #' @param y The conditions of the epidemiological compartments.

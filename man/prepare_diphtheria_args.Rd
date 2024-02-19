@@ -42,7 +42,7 @@ is incremented.
 }
 }
 \description{
-Prepare arguments to \code{\link[=model_diphtheria_cpp]{model_diphtheria_cpp()}} for
+Prepare arguments to \code{\link[=model_diphtheria]{model_diphtheria()}} for
 \code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}}.
 }
 \details{

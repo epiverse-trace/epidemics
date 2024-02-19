@@ -2,7 +2,8 @@
 #' @name prepare_vacamole_args
 #' @rdname prepare_vacamole_args
 #'
-#' @description Prepare arguments to for [.model_default_cpp()].
+#' @description Prepare arguments to [model_vacamole()] for
+#' [.model_vacamole_cpp()].
 #'
 #' @return
 #' A list of model arguments suitable for [.model_vacamole_cpp()].

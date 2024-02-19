@@ -21,6 +21,6 @@ value gives the change in the number of individuals in that compartment.
 \description{
 Provides the ODEs for the default SEIR-V model in a format that
 is suitable for passing to \code{\link[deSolve:lsoda]{deSolve::lsoda()}}.
-See \code{\link[=model_default_cpp]{model_default_cpp()}} for a list of required parameters.
+See \code{\link[=model_default]{model_default()}} for a list of required parameters.
 }
 \keyword{internal}

@@ -71,7 +71,7 @@ using \code{c()} on two or more \verb{<vaccination>} objects.
 \details{
 Multi-dose vaccinations can be passed to all epidemic models, but not all
 models accommodate multi-dose vaccinations. For example, the default SEIR-V
-model provided by \code{\link[=model_default_cpp]{model_default_cpp()}} has only a single vaccinated
+model provided by \code{\link[=model_default]{model_default()}} has only a single vaccinated
 compartment, and will only use the first parameter set of a multi-dose regime
 to determine how individuals transition into the vaccinated compartment.
 

@@ -21,6 +21,6 @@ value gives the change in the number of individuals in that compartment.
 \description{
 Provides the ODEs for the RIVM Vacamole model in a format that
 is suitable for passing to \code{\link[deSolve:lsoda]{deSolve::lsoda()}}.
-See \code{\link[=model_vacamole_cpp]{model_vacamole_cpp()}} for a list of required parameters.
+See \code{\link[=model_vacamole]{model_vacamole()}} for a list of required parameters.
 }
 \keyword{internal}

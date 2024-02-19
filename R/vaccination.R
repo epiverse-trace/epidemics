@@ -66,7 +66,7 @@ new_vaccination <- function(name = NA_character_,
 #' @details
 #' Multi-dose vaccinations can be passed to all epidemic models, but not all
 #' models accommodate multi-dose vaccinations. For example, the default SEIR-V
-#' model provided by [model_default_cpp()] has only a single vaccinated
+#' model provided by [model_default()] has only a single vaccinated
 #' compartment, and will only use the first parameter set of a multi-dose regime
 #' to determine how individuals transition into the vaccinated compartment.
 #'

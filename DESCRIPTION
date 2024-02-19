@@ -3,19 +3,19 @@ Title: A Library of Compartmental Epidemic Scenario Models
 Version: 0.0.0.9000
 Authors@R: c(
     person("Pratik", "Gupte", , "pratik.gupte@lshtm.ac.uk", role = c("aut", "cre", "cph"),
-           comment = c(ORCID = "https://orcid.org/0000-0001-5294-7819")),
+           comment = c(ORCID = "0000-0001-5294-7819")),
     person("Rosalind", "Eggo", , "rosalind.eggo@lshtm.ac.uk", role = c("aut", "cph"),
-           comment = c(ORCID = "https://orcid.org/0000-0002-0362-6717")),
+           comment = c(ORCID = "0000-0002-0362-6717")),
     person("Edwin", "Van Leeuwen", , "edwin.vanleeuwen@ukhsa.gov.uk", role = c("aut", "cph"),
-           comment = c(ORCID = "https://orcid.org/0000-0002-2383-5305")),
+           comment = c(ORCID = "0000-0002-2383-5305")),
     person("Adam", "Kucharski", , "adam.kucharski@lshtm.ac.uk", role = c("ctb", "rev"),
-           comment = c(ORCID = "https://orcid.org/0000-0001-8814-9421")),
+           comment = c(ORCID = "0000-0001-8814-9421")),
     person("Tim", "Taylor", , "tim.taylor@hiddenelephants.co.uk", role = c("ctb", "rev"),
-           comment = c(ORCID = "https://orcid.org/0000-0002-8587-7113")),
+           comment = c(ORCID = "0000-0002-8587-7113")),
     person("Hugo", "Gruson", , "hugo.gruson@data.org", role = "rev",
-           comment = c(ORCID = "https://orcid.org/0000-0002-4094-1476")),
+           comment = c(ORCID = "0000-0002-4094-1476")),
     person("Joshua W.", "Lambert", , "joshua.lambert@lshtm.ac.uk", role = "rev",
-           comment = c(ORCID = "https://orcid.org/0000-0001-5218-3046"))
+           comment = c(ORCID = "0000-0001-5218-3046"))
   )
 Description: A library of compartmental epidemic models taken from the
     published literature, and classes to represent populations with

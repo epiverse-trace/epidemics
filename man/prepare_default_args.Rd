@@ -34,7 +34,7 @@ is incremented.
 }
 }
 \description{
-Prepare arguments to \code{\link[=model_default_cpp]{model_default_cpp()}} for
+Prepare arguments to \code{\link[=model_default]{model_default()}} for
 \code{\link[=.model_default_cpp]{.model_default_cpp()}}.
 }
 \details{

@@ -2,10 +2,9 @@
 % Please edit documentation in R/model_default.R
 \name{model_default}
 \alias{model_default}
-\alias{model_default_cpp}
 \title{Model an SEIR-V epidemic with interventions}
 \usage{
-model_default_cpp(
+model_default(
   population,
   transmissibility = 1.3/7,
   infectiousness_rate = 1/2,
@@ -25,17 +24,19 @@ of each demographic group. See \code{\link[=population]{population()}}.}
 \item{transmissibility}{A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
-\eqn{\beta = R_0 / \text{infectious period}}.}
+\eqn{\beta = R_0 / \text{infectious period}}. See \strong{Details} for default
+values.}
 
 \item{infectiousness_rate}{A numeric for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 This value does not depend upon the number of infectious individuals in the
-population.}
+population. See \strong{Details} for default values.}
 
 \item{recovery_rate}{A numeric for the rate at which individuals move
 from the infectious to the recovered compartment. Often denoted as
-\eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.}
+\eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.
+See \strong{Details} for default values.}
 
 \item{intervention}{A named list of \verb{<intervention>}s representing optional
 non-pharmaceutical or pharmaceutical interventions applied during the
@@ -90,9 +91,7 @@ are optional and can be used to simulate scenarios with different epidemic
 responses or different levels of the same type of response.
 See \strong{Details} for more information.
 }
-\details{
-\code{model_default_cpp()} is a wrapper function for the internal C++ function
-\code{\link[=.model_default_cpp]{.model_default_cpp()}} that uses a Boost \emph{odeint} solver.
+\section{Details: SEIRV model suitable for directly transmitted infections}{
 \subsection{Model parameters}{
 
 This model only allows for single, population-wide rates of
@@ -113,6 +112,7 @@ infectious period of 7 days.
 }
 }
 }
+
 \examples{
 # create a population
 uk_population <- population(
@@ -127,7 +127,7 @@ uk_population <- population(
 
 # run epidemic simulation with no vaccination or intervention
 # and three discrete values of transmissibility
-data <- model_default_cpp(
+data <- model_default(
   population = uk_population,
   transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 )
@@ -137,7 +137,7 @@ data
 
 # run epidemic simulations with differences in the end time
 # may be useful when considering different start dates with a fixed end point
-data <- model_default_cpp(
+data <- model_default(
   population = uk_population,
   time_end = c(50, 100, 150)
 )

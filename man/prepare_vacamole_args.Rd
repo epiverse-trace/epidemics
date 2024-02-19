@@ -42,7 +42,8 @@ is incremented.
 }
 }
 \description{
-Prepare arguments to for \code{\link[=.model_default_cpp]{.model_default_cpp()}}.
+Prepare arguments to \code{\link[=model_vacamole]{model_vacamole()}} for
+\code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}.
 }
 \details{
 \code{.check_prepare_args_vacamole()} prepares arguments for

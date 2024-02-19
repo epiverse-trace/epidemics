@@ -90,7 +90,7 @@
 #' group as well as the total epidemic size.
 #'
 #' @param data A `<data.frame>` of model output, typically
-#' the output of [model_default_cpp()] or similar functions.
+#' the output of [model_default()] or similar functions.
 #' @param stage The stage of the epidemic at which to return the epidemic size;
 #' here, 0.0 represents the initial conditions of the epidemic (0% of model time
 #' ), while 1.0 represents the end of the epidemic model (100% of model time).
@@ -123,7 +123,7 @@
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' data <- model_default_cpp(
+#' data <- model_default(
 #'   population = uk_population
 #' )
 #'
@@ -190,7 +190,7 @@ epidemic_size <- function(
 #' Get new infections over model time
 #'
 #' @param data A `<data.frame>` of model output, typically
-#' the output of [model_default_cpp()] or similar functions.
+#' the output of [model_default()] or similar functions.
 #' @param compartments_from_susceptible An optional argument, for a character
 #' vector of the names of model compartments into which individuals transition
 #' from the "susceptible" compartment, and which are not related to infection.
@@ -216,7 +216,7 @@ epidemic_size <- function(
 #'
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' data <- model_default_cpp(
+#' data <- model_default(
 #'   population = uk_population,
 #'   time_end = 200,
 #'   increment = 1

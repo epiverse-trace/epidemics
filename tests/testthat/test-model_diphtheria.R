@@ -31,11 +31,11 @@ compartments <- c(
 test_that("Diptheria model: basic expectations, scalar arguments", {
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_diphtheria_cpp(camp_population)
+    model_diphtheria(camp_population)
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_diphtheria_cpp(camp_population, time_end = time_end)
+  data <- model_diphtheria(camp_population, time_end = time_end)
   expect_s3_class(data, "data.frame")
   expect_identical(length(data), 4L)
   expect_named(
@@ -84,10 +84,10 @@ test_that("Diptheria model: basic expectations, scalar arguments", {
 test_that("Diptheria model: statistical correctness, parameters", {
   # expect final size increases with transmissibility
   size_beta_low <- epidemic_size(
-    model_diphtheria_cpp(camp_population, transmissibility = 4 / 4.5)
+    model_diphtheria(camp_population, transmissibility = 4 / 4.5)
   )
   size_beta_high <- epidemic_size(
-    model_diphtheria_cpp(camp_population, transmissibility = 4.5 / 4.5)
+    model_diphtheria(camp_population, transmissibility = 4.5 / 4.5)
   )
   expect_true(
     all(size_beta_high > size_beta_low)
@@ -95,10 +95,10 @@ test_that("Diptheria model: statistical correctness, parameters", {
 
   # expect final size increases with infectiousness rate (lower incubation time)
   size_sigma_low <- epidemic_size(
-    model_diphtheria_cpp(camp_population, infectiousness_rate = 1 / 5)
+    model_diphtheria(camp_population, infectiousness_rate = 1 / 5)
   )
   size_sigma_high <- epidemic_size(
-    model_diphtheria_cpp(camp_population, infectiousness_rate = 1 / 2)
+    model_diphtheria(camp_population, infectiousness_rate = 1 / 2)
   )
   expect_true(
     all(size_sigma_high > size_sigma_low)
@@ -114,9 +114,9 @@ test_that("Diptheria model: statistical correctness, parameters", {
     demography_vector = demography_vector,
     initial_conditions = initial_conditions_high / demography_vector
   )
-  size_infections_low <- epidemic_size(model_diphtheria_cpp(camp_population))
+  size_infections_low <- epidemic_size(model_diphtheria(camp_population))
   size_infections_high <- epidemic_size(
-    model_diphtheria_cpp(camp_population_high_infections)
+    model_diphtheria(camp_population_high_infections)
   )
   # NOTE: difference is very small, as >90% individuals are infected
   # even in the low initial infections scenario
@@ -125,21 +125,21 @@ test_that("Diptheria model: statistical correctness, parameters", {
   )
 
   # expect no hospitalisations when hospitalisation rate = 0
-  data <- model_diphtheria_cpp(camp_population, hosp_entry_rate = 0.0)
+  data <- model_diphtheria(camp_population, hosp_entry_rate = 0.0)
   expect_identical(
     unique(data[grepl("hospitalised", data$compartment, fixed = TRUE)]$value),
     0
   )
 
   # expect no hospitalisations when infection reporting rate = 0
-  data <- model_diphtheria_cpp(camp_population, reporting_rate = 0.0)
+  data <- model_diphtheria(camp_population, reporting_rate = 0.0)
   expect_identical(
     unique(data[grepl("hospitalised", data$compartment, fixed = TRUE)]$value),
     0
   )
 
   # expect no hospitalisations when proportion needing/given hospitalisation = 0
-  data <- model_diphtheria_cpp(camp_population, prop_hosp = 0.0)
+  data <- model_diphtheria(camp_population, prop_hosp = 0.0)
   expect_identical(
     unique(data[grepl("hospitalised", data$compartment, fixed = TRUE)]$value),
     0
@@ -147,15 +147,15 @@ test_that("Diptheria model: statistical correctness, parameters", {
 })
 
 # prepare baseline for comparison of against intervention scenarios
-data_baseline <- model_diphtheria_cpp(camp_population)
+data_baseline <- model_diphtheria(camp_population)
 
 test_that("Diphtheria model: pre-exisiting immunity and stats. correctness", {
   # expect no condition on pre-existing immunity user-supplied value
   expect_no_condition(
-    model_diphtheria_cpp(camp_population, prop_vaccinated = c(0.5, 0.5, 0.5))
+    model_diphtheria(camp_population, prop_vaccinated = c(0.5, 0.5, 0.5))
   )
   # exepct that pre-existing immunity reduces final size
-  data <- model_diphtheria_cpp(
+  data <- model_diphtheria(
     camp_population,
     prop_vaccinated = c(0.5, 0.5, 0.5)
   )
@@ -177,14 +177,14 @@ test_that("Diptheria model: rate interventions and stats. correctness", {
   # repeat some basic checks from default case with no intervention
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       intervention = list(transmissibility = intervention)
     )
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_diphtheria_cpp(
+  data <- model_diphtheria(
     camp_population,
     intervention = list(transmissibility = intervention)
   )
@@ -201,12 +201,12 @@ test_that("Diptheria model: rate interventions and stats. correctness", {
     "early_detection", "rate", time_end / 2, time_end,
     reduction = 0.5
   )
-  data_high_hosp <- model_diphtheria_cpp(
+  data_high_hosp <- model_diphtheria(
     camp_population,
     prop_hosp = 0.7,
     reporting_rate = 1.0
   )
-  data_hosp_intervention <- model_diphtheria_cpp(
+  data_hosp_intervention <- model_diphtheria(
     camp_population,
     prop_hosp = 0.7,
     reporting_rate = 1.0,
@@ -238,14 +238,14 @@ test_that("Diptheria model: time dependence", {
   # repeat some basic checks from default case with no time_dependence
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       time_dependence = time_dependence
     )
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_diphtheria_cpp(
+  data <- model_diphtheria(
     camp_population,
     time_dependence = time_dependence
   )
@@ -270,7 +270,7 @@ test_that("Diphtheria model: population size changes", {
 
   # expect no conditions
   expect_no_condition(
-    model_diphtheria_cpp(
+    model_diphtheria(
       population = camp_population,
       population_change = p
     )
@@ -278,7 +278,7 @@ test_that("Diphtheria model: population size changes", {
 
   # NOTE: expected final population size is larger than the initial
   # but identical to the original + added population
-  data <- model_diphtheria_cpp(
+  data <- model_diphtheria(
     population = camp_population,
     prop_hosp = 0.08,
     population_change = p,
@@ -305,7 +305,7 @@ test_that("Diphtheria model: population size changes", {
   )
   # expect no conditions when running
   expect_no_condition(
-    model_diphtheria_cpp(
+    model_diphtheria(
       population = camp_population,
       population_change = p
     )
@@ -313,7 +313,7 @@ test_that("Diphtheria model: population size changes", {
 
   # NOTE: expected final population size is larger than the initial
   # but identical to the original + net added population
-  data <- model_diphtheria_cpp(
+  data <- model_diphtheria(
     population = camp_population,
     prop_hosp = 0.08,
     population_change = p,
@@ -335,69 +335,69 @@ test_that("Diphtheria model: population size changes", {
 test_that("Diptheria model: errors and warnings, scalar arguments", {
   # expect errors on basic input checking
   expect_error(
-    model_diphtheria_cpp(population = "population"),
+    model_diphtheria(population = "population"),
     regexp = "(Assertion on 'population' failed)*(Must inherit)*(population)"
   )
   expect_error(
-    model_diphtheria_cpp(population = population),
+    model_diphtheria(population = population),
     regexp = "(Assertion on 'population' failed)*(Must inherit)*(population)"
   )
   pop_wrong_compartments <- camp_population
   pop_wrong_compartments$initial_conditions <- initial_conditions[, -1]
   expect_error(
-    model_diphtheria_cpp(pop_wrong_compartments),
+    model_diphtheria(pop_wrong_compartments),
     regexp = "(Assertion on)*(initial_conditions)*failed"
   )
 
   # expect errors for infection parameters
   expect_error(
-    model_diphtheria_cpp(camp_population, transmissibility = "0.19"),
+    model_diphtheria(camp_population, transmissibility = "0.19"),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, infectiousness_rate = list(0.2)),
+    model_diphtheria(camp_population, infectiousness_rate = list(0.2)),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, recovery_rate = "0.19"),
+    model_diphtheria(camp_population, recovery_rate = "0.19"),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, prop_hosp = list(0.002)),
+    model_diphtheria(camp_population, prop_hosp = list(0.002)),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, reporting_rate = "0.19"),
+    model_diphtheria(camp_population, reporting_rate = "0.19"),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, hosp_entry_rate = list(0.002)),
+    model_diphtheria(camp_population, hosp_entry_rate = list(0.002)),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, hosp_exit_rate = "0.002"),
+    model_diphtheria(camp_population, hosp_exit_rate = "0.002"),
     regexp = "Must be of type 'numeric'"
   )
 
   # expect error on time parameters
   expect_error(
-    model_diphtheria_cpp(camp_population, time_end = "100"),
+    model_diphtheria(camp_population, time_end = "100"),
     regexp = "Must be of type 'integerish'"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, time_end = 100.5),
+    model_diphtheria(camp_population, time_end = 100.5),
     regexp = "Must be of type 'integerish'"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, time_end = c(100, -100, 10)),
+    model_diphtheria(camp_population, time_end = c(100, -100, 10)),
     regexp = "(Element)*(is not >= 0)"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, increment = "0.1"),
+    model_diphtheria(camp_population, increment = "0.1"),
     regexp = "Must be of type 'number'"
   )
   expect_error(
-    model_diphtheria_cpp(camp_population, increment = c(0.1, 0.2)),
+    model_diphtheria(camp_population, increment = c(0.1, 0.2)),
     regexp = "Must have length 1"
   )
 
@@ -406,14 +406,14 @@ test_that("Diptheria model: errors and warnings, scalar arguments", {
     "school_closure", "contacts", 0, time_end, c(0.5, 0.2, 0.1)
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       intervention = list(contacts = intervention)
     ),
     regexp = "has additional elements \\{'contacts'\\}"
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       intervention = list(transmissibility = intervention)
     ),
@@ -427,7 +427,7 @@ test_that("Diptheria model: errors and warnings, scalar arguments", {
     time_end = matrix(100, nrow = 2)
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       vaccination = vax_single_dose
     ),
@@ -436,28 +436,28 @@ test_that("Diptheria model: errors and warnings, scalar arguments", {
 
   # expect error on poorly specified time-dependence function list
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       time_dependence = function(x) x
     ),
     regexp = "Must be of type 'list'"
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       time_dependence = list(function(x) x)
     ),
     regexp = "Must have names"
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       time_dependence = list(transmissibility = function(x) x)
     ),
     regexp = "Must have first formal arguments \\(ordered\\): time,x."
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       time_dependence = list(transmissibility = NULL)
     ),
@@ -475,7 +475,7 @@ test_that("Diptheria model: errors and warnings, scalar arguments", {
     )
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       population_change = p
     ),
@@ -490,7 +490,7 @@ test_that("Diptheria model: errors and warnings, scalar arguments", {
     )
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       population_change = p
     ),
@@ -505,7 +505,7 @@ test_that("Diptheria model: errors and warnings, scalar arguments", {
     )
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       population_change = p
     ),
@@ -521,14 +521,14 @@ gamma <- rnorm(10, 1 / 7, sd = 0.01)
 test_that("Diptheria model: infection parameters as vectors", {
   # expect no conditions when vectors are passed
   expect_no_condition(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       transmissibility = beta, infectiousness_rate = sigma,
       recovery_rate = gamma
     )
   )
   # expect output structure is a nested data.table
-  output <- model_diphtheria_cpp(
+  output <- model_diphtheria(
     camp_population,
     transmissibility = beta, infectiousness_rate = sigma,
     recovery_rate = gamma
@@ -573,14 +573,14 @@ test_that("Diptheria model: composable elements as lists", {
 
   # artificially high hospitalisation rate
   expect_no_condition(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       intervention = npi_list, prop_hosp = 1.0
     )
   )
 
   # expect output is a nested data.frame-like object
-  output <- model_diphtheria_cpp(camp_population, intervention = npi_list)
+  output <- model_diphtheria(camp_population, intervention = npi_list)
   expect_s3_class(output, c("data.frame", "data.table"))
   expect_identical(nrow(output), length(npi_list))
   checkmate::expect_list(output$data, types = "data.frame", any.missing = FALSE)
@@ -617,7 +617,7 @@ test_that("Diptheria model: multi-parameter, multi-composables", {
   )
   # reuse parameter sets from earlier tests
   expect_no_condition(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       transmissibility = beta, recovery_rate = gamma,
       intervention = npi_list
@@ -625,7 +625,7 @@ test_that("Diptheria model: multi-parameter, multi-composables", {
   )
 
   # expect output is a nested data.frame-like object
-  output <- model_diphtheria_cpp(
+  output <- model_diphtheria(
     camp_population,
     transmissibility = beta, recovery_rate = gamma,
     intervention = npi_list
@@ -662,14 +662,14 @@ test_that("Diptheria model: multi-parameter, multi-composables", {
 test_that("Vacamole: errors on vectorised input", {
   # expect errors on poorly specified vector inputs
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       transmissibility = beta[-1], recovery_rate = gamma
     ),
     regexp = "All parameters must be of the same length, or must have length 1"
   )
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       intervention = list(
         NULL,
@@ -682,7 +682,7 @@ test_that("Vacamole: errors on vectorised input", {
 
   # expect time-dependence cannot be vectorised
   expect_error(
-    model_diphtheria_cpp(
+    model_diphtheria(
       camp_population,
       time_dependence = list(
         time_dep_01 = list(transmissibility = function(x) x),

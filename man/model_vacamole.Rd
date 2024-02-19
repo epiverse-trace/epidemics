@@ -2,10 +2,9 @@
 % Please edit documentation in R/model_vacamole.R
 \name{model_vacamole}
 \alias{model_vacamole}
-\alias{model_vacamole_cpp}
 \title{Model leaky, two-dose vaccination in an epidemic using Vacamole}
 \usage{
-model_vacamole_cpp(
+model_vacamole(
   population,
   transmissibility = 1.3/7,
   transmissibility_vax = 0.8 * transmissibility,
@@ -30,7 +29,8 @@ of each demographic group. See \code{\link[=population]{population()}}.}
 \item{transmissibility}{A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
-\eqn{\beta = R_0 / \text{infectious period}}.}
+\eqn{\beta = R_0 / \text{infectious period}}. See \strong{Details} for default
+values.}
 
 \item{transmissibility_vax}{A numeric of values between 0.0 and 1.0
 giving the transmissibility of the infection to individuals who
@@ -42,7 +42,7 @@ vaccinated.}
 move from the exposed to the infectious compartment. Often denoted as
 \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 This value does not depend upon the number of infectious individuals in the
-population.}
+population. See \strong{Details} for default values.}
 
 \item{hospitalisation_rate}{A numeric for the hospitalisation rate of
 infectious individuals.}
@@ -62,7 +62,8 @@ mortality rate of individuals who are not doubly vaccinated.}
 
 \item{recovery_rate}{A numeric for the rate at which individuals move
 from the infectious to the recovered compartment. Often denoted as
-\eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.}
+\eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.
+See \strong{Details} for default values.}
 
 \item{intervention}{A named list of \verb{<intervention>}s representing optional
 non-pharmaceutical or pharmaceutical interventions applied during the
@@ -111,11 +112,7 @@ Environment in the Netherlands.
 This model is aimed at estimating the impact of 'leaky' vaccination on an
 epidemic. See \strong{Details} and \strong{References} for more information.
 }
-\details{
-\code{model_vacamole_cpp()} is a wrapper function for
-\code{\link[=.model_vacamole_cpp]{.model_vacamole_cpp()}}, an internal C++ function that uses a Boost \emph{odeint}
-solvers.
-
+\section{Details: Vacamole Covid-19 model with leaky, two-dose vaccination}{
 The Vacamole model has the compartments "susceptible",
 "vaccinated_one_dose", "vaccinated_two_dose", "exposed", "infectious"
 "infectious_vaccinated", "hospitalised", "hospitalised_vaccinated",
@@ -157,6 +154,7 @@ infectious period of 7 days.
 }
 }
 }
+
 \examples{
 # create a population, note eleven columns for compartments
 population <- population(
@@ -177,7 +175,7 @@ double_vax <- vaccination(
 
 # run epidemic simulation with vaccination but no intervention
 # with a single set of parameters
-data <- model_vacamole_cpp(
+data <- model_vacamole(
   population = population,
   vaccination = double_vax
 )
@@ -187,8 +185,8 @@ head(data)
 
 # run epidemic simulation with no vaccination or intervention
 # and three discrete values of transmissibility
-data <- model_default_cpp(
-  population = uk_population,
+data <- model_vacamole(
+  population = population,
   transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 )
 

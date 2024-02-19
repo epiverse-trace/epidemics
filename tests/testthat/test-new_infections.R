@@ -28,7 +28,7 @@ vaccination <- vaccination(
 # run epidemic simulation with vaccination
 time_end <- 200
 increment <- 1
-data <- model_default_cpp(
+data <- model_default(
   population = uk_population,
   vaccination = vaccination,
   time_end = time_end,

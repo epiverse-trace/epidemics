@@ -20,7 +20,7 @@ uk_population <- population(
 )
 
 # run epidemic simulation with no vaccination or intervention
-data <- model_default_cpp(
+data <- model_default(
   population = uk_population,
   time_end = 200,
   increment = 1
@@ -86,7 +86,7 @@ uk_population <- population(
 )
 
 test_that("Epidemic size with no deaths is correct", {
-  data <- model_vacamole_cpp(
+  data <- model_vacamole(
     population = uk_population,
     mortality_rate = 0,
     vaccination = no_vaccination(uk_population, doses = 2L),

@@ -36,7 +36,7 @@
 #' The second list element is a vector of timesteps.
 #' @keywords internal
 .model_default_cpp <- function(initial_state, transmissibility, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_default_cpp_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
+    .Call(`_epidemics_model_default_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 
 #' @title Run an SEIHR ODE model for diphtheria using a Boost solver
@@ -74,7 +74,7 @@
 #' The second list element is a vector of timesteps.
 #' @keywords internal
 .model_diphtheria_cpp <- function(initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_diphtheria_cpp_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end, increment)
+    .Call(`_epidemics_model_diphtheria_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end, increment)
 }
 
 #' @title Run the RIVM Vacamole model
@@ -128,6 +128,6 @@
 #' The second list element is a vector of timesteps.
 #' @keywords internal
 .model_vacamole_cpp <- function(initial_state, transmissibility, transmissibility_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_vacamole_cpp_internal`, initial_state, transmissibility, transmissibility_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
+    .Call(`_epidemics_model_vacamole_internal`, initial_state, transmissibility, transmissibility_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 

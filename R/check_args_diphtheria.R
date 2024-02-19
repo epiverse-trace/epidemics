@@ -2,7 +2,7 @@
 #' @name prepare_diphtheria_args
 #' @rdname prepare_diphtheria_args
 #'
-#' @description Prepare arguments to [model_diphtheria_cpp()] for
+#' @description Prepare arguments to [model_diphtheria()] for
 #' [.model_diphtheria_cpp()].
 #'
 #' @param mod_args A named list of the population, and epidemic modifiers.

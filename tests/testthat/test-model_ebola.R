@@ -16,7 +16,7 @@ pop <- population(
 test_that("Ebola model: basic expectations", {
   # runs without issues
   expect_no_condition(
-    model_ebola_r(
+    model_ebola(
       population = pop,
       time_end = 100
     )
@@ -24,7 +24,7 @@ test_that("Ebola model: basic expectations", {
 
   set.seed(1)
   # returns a data.table
-  data <- model_ebola_r(
+  data <- model_ebola(
     population = pop,
     time_end = 200
   )
@@ -90,7 +90,7 @@ test_that("Higher transmissibility leads to larger final size, ebola model", {
     transmissibility_vec,
     function(beta) {
       # run model on data
-      data <- model_ebola_r(
+      data <- model_ebola(
         population = pop,
         transmissibility = beta,
         time_end = 100
@@ -135,7 +135,7 @@ test_that("Ebola model works with rate interventions", {
   )
 
   # ideally no conditions are triggered
-  data <- model_ebola_r(
+  data <- model_ebola(
     population = population,
     intervention = intervention,
     time_end = 100
@@ -168,7 +168,7 @@ test_that("Ebola model works with rate interventions", {
 
 # test that hospitalisations work
 test_that("Ebola model with hospitalisation", {
-  data <- model_ebola_r(
+  data <- model_ebola(
     population = population,
     prop_community = 1.0,
     time_end = 100
@@ -193,7 +193,7 @@ test_that("Ebola model with hospitalisation", {
   )
 
   # expect that the final size is the same as `total_cases` (20)
-  data <- model_ebola_r(
+  data <- model_ebola(
     population = population,
     prop_community = 0, etu_risk = 0,
     time_end = 100
@@ -221,7 +221,7 @@ test_that("Ebola model with funeral safety", {
   )
 
   # expect that the final size is the same as `total_cases` (20)
-  data <- model_ebola_r(
+  data <- model_ebola(
     population = population,
     prop_community = 1, funeral_risk = 0,
     time_end = 100

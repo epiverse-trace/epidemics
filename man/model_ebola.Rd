@@ -2,10 +2,9 @@
 % Please edit documentation in R/model_ebola.R
 \name{model_ebola}
 \alias{model_ebola}
-\alias{model_ebola_r}
 \title{Model an Ebola virus disease epidemic}
 \usage{
-model_ebola_r(
+model_ebola(
   population,
   erlang_subcompartments = 2,
   transmissibility = 1.5/12,
@@ -37,13 +36,15 @@ for the exposed, infectious, and hospitalised compartments. Defaults to 2.}
 \item{transmissibility}{A single number for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
-\eqn{\beta = R_0 / \text{infectious period}}.}
+\eqn{\beta = R_0 / \text{infectious period}}.
+See \strong{Details} for default values.}
 
 \item{infectiousness_rate}{A single number for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 This value does not depend upon the number of infectious individuals in the
-population.}
+population.
+See \strong{Details} for default values.}
 
 \item{removal_rate}{The rate at which infectious individuals transition from
 the infectious or hospitalised compartments to the funeral or removed
@@ -99,7 +100,7 @@ See \strong{Details} for more information.
 \code{model_ebola_cpp()} is an Rcpp implementation of this model that currently
 lags behind the R implementation, and is likely to be removed.
 }
-\section{Details: Discrete-time ebola virus disease model}{
+\section{Details: Discrete-time Ebola virus disease model}{
 This model has compartments adopted from the consensus model for Ebola virus
 disease presented in Li et al. (2019), and with transitions between
 epidemiological compartments modelled using Erlang sub-compartments adapted
@@ -203,7 +204,7 @@ population <- population(
 )
 
 # run epidemic simulation with no vaccination or intervention
-data <- model_ebola_r(
+data <- model_ebola(
   population = population
 )
 

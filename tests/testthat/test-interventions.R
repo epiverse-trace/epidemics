@@ -70,7 +70,7 @@ test_that("Contacts intervention is correctly initialised", {
 
 test_that("Contacts intervention reduces final size", {
   # run model with intervention
-  data_intervention <- model_default_cpp(
+  data_intervention <- model_default(
     population = uk_population,
     intervention = list(
       contacts = close_schools
@@ -79,7 +79,7 @@ test_that("Contacts intervention reduces final size", {
   )
 
   # run model without intervention
-  data <- model_default_cpp(
+  data <- model_default(
     population = uk_population,
     time_end = 200, increment = 1.0
   )
@@ -107,7 +107,7 @@ badly_formed_intervention <- intervention(
 test_that("Error on poorly specified contacts intervention", {
   # expect failure for poorly specified intervention
   expect_error(
-    model_default_cpp(
+    model_default(
       population = uk_population,
       intervention = badly_formed_intervention,
       time_end = 200, increment = 1.0

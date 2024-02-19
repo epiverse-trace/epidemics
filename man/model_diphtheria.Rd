@@ -2,10 +2,9 @@
 % Please edit documentation in R/model_diphtheria.R
 \name{model_diphtheria}
 \alias{model_diphtheria}
-\alias{model_diphtheria_cpp}
 \title{Model a diphtheria outbreak using a compartmental ODE model}
 \usage{
-model_diphtheria_cpp(
+model_diphtheria(
   population,
   transmissibility = 4/4.5,
   infectiousness_rate = 1/3,
@@ -30,17 +29,19 @@ of each demographic group. See \code{\link[=population]{population()}}.}
 \item{transmissibility}{A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
-\eqn{\beta = R_0 / \text{infectious period}}.}
+\eqn{\beta = R_0 / \text{infectious period}}. See \strong{Details} for default
+values.}
 
 \item{infectiousness_rate}{A numeric for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 This value does not depend upon the number of infectious individuals in the
-population.}
+population. See \strong{Details} for default values.}
 
 \item{recovery_rate}{A numeric for the rate at which individuals move
 from the infectious to the recovered compartment. Often denoted as
-\eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.}
+\eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.
+See \strong{Details} for default values.}
 
 \item{reporting_rate}{A numeric for the proportion of infectious cases
 that is reported; this is a precursor to hospitalisation as only reported
@@ -97,19 +98,16 @@ compartmental ordinary differential equation model with the compartments
 "susceptible", "exposed", "infectious", "hospitalised", and"recovered".
 The model is based on Finger et al. (2019) and is intended to be used in the
 context of internally displaced people (IDP) or refugee camps.
-This model accommodates age or demographic structure and allows for a
-proportion of each demographic group to be vaccinated at the start of the
-outbreak, and thus to not contribute to the outbreak.
+This model allows for a proportion of each demographic group to be vaccinated
+at the start of the outbreak, and thus to not contribute to the outbreak.
 The model also allows for changes to the number of susceptibles in each age
 group to model influxes or evacuations from camps.
 }
-\details{
-\subsection{Rcpp implementations}{
-
-\code{model_diphtheria_cpp()} is a wrapper function for \code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}},
-an internal C++ function that uses Boost \emph{odeint} solvers for an SEIHR model.
-}
-
+\section{Details: Model an infection outbreak in a humanitarian camp setting}{
+This model has been developed for diphtheria outbreaks in settings where
+interventions on social contacts are difficult to implement. It it suitable
+for application to the outbreak of similar, directly transmitted infectious
+diseases as well.
 \subsection{Model parameters}{
 
 This model only allows for single, population-wide rates transitions between
@@ -148,6 +146,7 @@ changes using the \code{population_changes} argument, to examine the effect on
 outbreak dynamics.
 }
 }
+
 \examples{
 # create a dummy camp population with three age groups
 # diphtheria model is SEIHR
@@ -172,7 +171,7 @@ camp_pop <- population(
 prop_vaccinated <- c(0.2, 0.10, 0.1)
 
 # run model for single, default parameter set
-data <- model_diphtheria_cpp(
+data <- model_diphtheria(
   camp_pop,
   prop_vaccinated = prop_vaccinated
 )
@@ -188,7 +187,7 @@ p <- list(
   )
 )
 
-data <- model_diphtheria_cpp(
+data <- model_diphtheria(
   camp_pop,
   prop_vaccinated = prop_vaccinated,
   population_change = p

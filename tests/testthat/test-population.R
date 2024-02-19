@@ -71,12 +71,12 @@ test_that("Population is correctly initialised", {
 })
 
 # run model with different populations
-data_full_pop <- model_default_cpp(
+data_full_pop <- model_default(
   population = uk_population,
   time_end = 200, increment = 1.0
 )
 
-data_half_pop <- model_default_cpp(
+data_half_pop <- model_default(
   population = half_population,
   time_end = 200, increment = 1.0
 )

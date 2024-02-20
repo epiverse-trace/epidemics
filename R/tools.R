@@ -84,22 +84,55 @@
   list(contact_matrix = contact_matrix, initial_state = initial_state)
 }
 
-#' Cross-check an intervention list
+#' Cross-check model elements
 #'
-#' @param x A named list of `<intervention>` objects.
-#' @param population A `<population>` to which any `<contact_intervention>` in
-#' `x` applies, and with which it must be compatible.
-#' @param allowed_targets A character vector of targets allowed for the
-#' `<intervention>`s in `x`. May contain "contacts", and the names of any
-#' infection parameters.
+#' @name cross_checking_inputs
+#' @rdname cross_checking_inputs
 #'
-#' @return A named list with at least the elements "contacts" describing a
-#' `<contacts_intervention>` on `population`, and a `<rate_intervention>` on
-#' the transmissibility parameter. If these are present in `x`, they are
-#' returned as is, or substituted if missing such that the function output is
-#' suitable for processing for a C++ model function. Any other interventions
-#' are also returned. If `x` is `NULL`, dummy
-#' contact and rate interventions are returned in a list.
+#' @description
+#' Check model elements for compatibility with the population in an epidemic
+#' model, returning compatible dummy values when model elements are not applied,
+#' and erroring appropriately when model elements are not compatible with the
+#' population characteristics.
+#'
+#' @inheritParams model_default
+#' @param x Model input to be checked. The expected value of `x` depends on the
+#' function:
+#'
+#' - `.cross_check_intervention()`: A named list of `<intervention>` objects;
+#'
+#' - `.cross_check_vaccination()`: A `<vaccination>` object;
+#'
+#' - `.cross_check_timedep()`: A named list of functions with two arguments,
+#' `time` and `x`, typically returning `x` as a function of `time`;
+#'
+#' - `.cross_check_popchange()`: A named list with two elements, `time` and
+#' `values`, describing the times and values by which the number of susceptibles
+#' changes in an epidemic model.
+#' @param allowed_targets The model components, or infection parameters, that
+#' the model input `x` affects.
+#' @param doses The expected number of vaccination doses.
+#'
+#' @return
+#' - `.cross_check_intervention()` returns a named list with at least the
+#' elements "contacts" describing a `<contacts_intervention>` on `population`
+#' (if this is among the allowed targets), and a `<rate_intervention>` on the
+#' transmissibility parameter. If these are present in `x`, they are
+#' returned as is, or substituted if missing. Any other interventions
+#' are also returned. If `x` is `NULL`, dummy contact and rate interventions
+#' are returned in a list.
+#'
+#' - `.cross_check_vaccination()` returns `x` after checking that it is suitable
+#' for `population`, or a dummy vaccination regime with `doses` number of doses
+#' for each age group.
+#'
+#' - `.cross_check_timedep()` returns `x` if `x` is not `NULL`, otherwise
+#' returns a dummy function operating on the transmissibility parameter by
+#' default; see [.no_time_dependence()];
+#'
+#' - `.cross_check_popchange()` returns `x` after checks against `population` if
+#' `x` is not `NULL`, otherwise returns a dummy list with no population change;
+#' see [.no_population_change()].
 #' @keywords internal
 .cross_check_intervention <- function(x, population, allowed_targets) {
   # create dummy intervention set
@@ -133,13 +166,8 @@
 }
 
 #' Cross-check a `<vaccination>`
-#'
-#' @param x A `<vaccination>`
-#' @param population A `<population>`
-#' @param doses A single number for the expected number of doses.
-#'
-#' @return Returns `x` after checking that it is suitable for `population`, or
-#' a dummy vaccination regime with `doses` number of doses for each age group.
+#' @name cross_checking_inputs
+#' @rdname cross_checking_inputs
 #' @keywords internal
 .cross_check_vaccination <- function(x, population, doses) {
   # no input checking as this is an internal function
@@ -152,14 +180,8 @@
 }
 
 #' Cross-check time-dependence
-#'
-#' @param x A named list of functions that describe how an infection parameter
-#' changes with time.
-#' @param allowed_targets A character vector of targets for `x`; these are
-#' typically infection parameters.
-#'
-#' @return If `x` is not `NULL`, returns `x`; otherwise a dummy function is
-#' returned.
+#' @name cross_checking_inputs
+#' @rdname cross_checking_inputs
 #' @keywords internal
 .cross_check_timedep <- function(x, allowed_targets) {
   if (is.null(x)) {
@@ -170,16 +192,10 @@
   }
 }
 
-.no_population_change <- function(population) {
-  n_demo_groups <- length(population[["demography_vector"]])
-
-  # return named list with 0 population change
-  list(
-    time = 0,
-    values = list(rep(0, n_demo_groups))
-  )
-}
-
+#' Cross-check population change
+#' @name cross_checking_inputs
+#' @rdname cross_checking_inputs
+#' @keywords internal
 .cross_check_popchange <- function(x, population) {
   if (is.null(x)) {
     .no_population_change(population)

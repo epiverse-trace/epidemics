@@ -115,8 +115,8 @@ packagename
 pak
 param
 pkg
-rmarkdown
 recyclability
+rmarkdown
 rollout
 socialmixr
 stochasticity
@@ -130,6 +130,7 @@ tidyr
 timepoint
 timesteps
 uBLAS
+unnesting
 vacamole
 withr
 www

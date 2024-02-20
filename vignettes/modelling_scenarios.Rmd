@@ -1,0 +1,472 @@
+---
+title: "Modelling parameter uncertainty and epidemic scenarios"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+bibliography: references.json
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Modelling parameter uncertainty and epidemic scenarios}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 6,
+  fig.height = 4,
+  dpi = 150
+)
+```
+
+::: {.alert .alert-warning}
+**New to _epidemics_?** It may help to read the ["Get started"](epidemics.html) vignette first!
+:::
+
+This vignette shows how _epidemics_ can conveniently be used to:
+
+1. Include parameter uncertainty in an epidemic model;
+2. Run multiple scenarios of epidemic response measures;
+3. Include parameter uncertainty when running multiple scenarios.
+
+::: {.alert .alert-warning}
+**NOTE:** This vignette applies only to the deterministic ODE models --- the default, Vacamole, and diphtheria models.
+The Ebola virus disease model included in the package is expected to receive this functionality in the near future.
+:::
+
+```{r setup}
+# epi modelling
+library(epidemics)
+library(EpiEstim)
+
+# data manipulation packages
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# for reproducibility
+library(withr)
+```
+
+## Modelling parameter uncertainty
+
+Uncertainty in the characteristics of an epidemic is a key element and roadblock in epidemic response [@shea2020].
+
+_epidemics_ model functions can accept numeric vectors for all infection parameters; the model is run for each parameter combination using the same population and other model components (interventions, vaccinations) etc.
+
+The code to set up a population is hidden here, but is similar to that found in the ["Getting started with epidemic scenario modelling components"](epidemics.html) vignette, and models the U.K. population with three age groups, and social contacts stratified by age.
+
+```{r class.source = 'fold-hide'}
+# load contact and population data from socialmixr::polymod
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+
+# prepare contact matrix
+contact_matrix <- t(contact_data$matrix)
+
+# prepare the demography vector
+demography_vector <- contact_data$demography$population
+names(demography_vector) <- rownames(contact_matrix)
+
+# initial conditions
+initial_i <- 1e-6
+initial_conditions <- c(
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
+)
+
+# build for all age groups
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+# assign rownames for clarity
+rownames(initial_conditions) <- rownames(contact_matrix)
+```
+
+```{r}
+# UK population created from hidden code
+uk_population <- population(
+  name = "UK",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+```
+
+### Obtaining and passing a vector of infection parameters
+
+For this example, we consider influenza with pandemic potential [@ghani2010], and prepare multiple samples of the estimated $R$.
+
+We obtain the probability distribution function (PDF) from the distribution of the serial intervals; this is a Gamma distribution with shape $k$ = 2.622 and scale $\theta$ = 0.957 [@ghani2010].
+
+::: {.alert .alert-info}
+The [forthcoming Epiverse package _epiparameter_](https://epiverse-trace.github.io/epiparameter/) is expected to make it substantially easier to access and use epidemiological parameters, such as the serial interval, reported in the literature, making it easier to model scenarios differing in the intrinsic characteristics of the pathogen causing the outbreak.
+:::
+
+We use this PDF to estimate the $R$ of the 2009 influenza pandemic in the U.K., using [the _EpiEstim_ package](https://cran.r-project.org/package=EpiEstim).
+We use the $R$ estimate (the mean and standard deviation) from _EpiEstim_ to generate 100 samples of $R$, assuming that it is normally distributed.
+
+```{r fig.width=6, fig.height=3}
+# Get 2009 influenza data for school in Pennsylvania
+data(Flu2009)
+flu_early_data <- filter(Flu2009$incidence, dates < "2009-05-10")
+
+# get the PDF of the distribution of serial intervals
+serial_pdf <- dgamma(seq(0, 25), shape = 2.622, scale = 0.957)
+serial_pdf <- serial_pdf / sum(serial_pdf) # check sum to 1
+
+# Use EpiEstim to estimate R with uncertainty
+# Uses Gamma distribution by default
+output_R <- estimate_R(
+  incid = flu_early_data,
+  method = "non_parametric_si",
+  config = make_config(list(si_distr = serial_pdf))
+)
+
+# Plot output to visualise
+plot(output_R, "R")
+```
+
+Generate 100 samples of $R$, and convert to the transmissibility parameter (often denoted $\beta$) by dividing by the infectious period of 7 days.
+
+```{r}
+# Generate 100 R samples
+r_samples <- with_seed(
+  seed = 1,
+  rnorm(
+    n = 100, mean = output_R$R$`Mean(R)`, sd = output_R$R$`Std(R)`
+  )
+)
+
+infectious_period <- 7
+beta <- r_samples / infectious_period
+```
+
+```{r}
+# pass the vector of transmissibilities to the argument `transmissibility`
+output <- model_default(
+  population = uk_population,
+  transmissibility = beta,
+  time_end = 600
+)
+
+# view the output
+head(output)
+```
+
+The output is a nested `<data.table>`, with the output of each run of the model for each unique `transmissibility` contained as a `<data.frame>` in the list column `"data"`.
+
+::: {.alert .alert-info}
+### Output type for vector parameter inputs
+
+The output of `model_*()` when an infection parameter is passed as a vector is a nested `<data.table>`. This is similar to a nested `<tibble>`, and can be handled by popular data science packages, such as from the Tidyverse.
+
+More on handling nested data can be found in this [section on list-columns in R for Data Science](https://r4ds.hadley.nz/rectangling.html#list-columns) and in the [documentation for nested data in the _tidyr_ package](https://tidyr.tidyverse.org/articles/nest.html). Equivalent operations are possible on `<data.table>`s directly; see [this R Bloggers post on unnesting data](https://www.r-bloggers.com/2019/10/much-faster-unnesting-with-data-table/).
+:::
+
+```{r}
+# select the parameter set and data columns with dplyr::select()
+# use tidyr to unnest the data column
+data <- select(output, param_set, transmissibility, data) %>%
+  unnest(data)
+```
+
+```{r class.source = 'fold-hide', fig.cap="Epidemic curves for the number of infectious individuals on each day of the epidemic; shaded region indicates uncertainty in the form of standard error."}
+# plot the data
+filter(data, compartment == "infectious") %>%
+  ggplot() +
+  stat_summary(
+    geom = "ribbon",
+    aes(time, value),
+    fill = alpha("grey", 0.5)
+  ) +
+  stat_summary(
+    geom = "line",
+    aes(time, value)
+  ) +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  labs(
+    x = "Time", y = "Individuals infectious"
+  ) +
+  facet_wrap(~demography_group) +
+  theme_classic()
+```
+
+::: {.alert .alert-info}
+### Passing parameter sets
+
+_epidemics_ model functions can accept multiple infection parameters as vectors, so long as one of the following rules is respected:
+
+1. All infection parameter vectors must be of the same length;
+
+  ```r
+  beta <- rnorm(n = 100, mean, sd)
+  gamma <- rnorm(n = 100, mean, sd) # the recovery rate
+  
+  model_default(
+    population,
+    transmissibility = beta,
+    recovery_rate = gamma
+  )
+  ```
+
+2. All but one infection parameter must be scalar values (single numbers). This is the worked-out example shown above.
+:::
+
+### Passing vectors of epidemic duration
+
+_epidemics_ allows the duration of an model run to be varied, as this may be useful when examining how variation in the start time of an epidemic affects outcomes by a fixed end point.
+
+```{r}
+# draw samples of time_end
+max_time <- 600
+duration <- max_time - with_seed(seed = 1, {
+  rnbinom(100, 1, 0.02)
+})
+```
+
+```{r}
+# pass the vector of durations to `time_end`
+output <- model_default(
+  population = uk_population,
+  time_end = duration
+)
+
+# view the output
+head(output)
+```
+
+::: {.alert .alert-warning}
+**NOTE:** When the duration of the model runs is varied, each model output will have a potentially distinct number of rows.
+:::
+
+```{r message=FALSE, warning=FALSE}
+# calculate the epidemic size to plot a distribution of sizes
+epidemic_size_estimates <- select(output, param_set, data) %>%
+  mutate(
+    size = vapply(data, epidemic_size, by_group = FALSE, FUN.VALUE = 1)
+  ) %>%
+  select(-data)
+```
+
+```{r}
+# view the range of epidemic sizes
+range(epidemic_size_estimates$size)
+```
+
+## Modelling scenarios of epidemic response
+
+Users may wish to model epidemic trajectories and outcomes under multiple scenarios of response measures.
+
+_epidemics_ model functions can accept lists of intervention sets and vaccination regimes, allowing multiple intervention, vaccination, and combined intervention-and-vaccination sets to be modelled on the same population.
+
+::: {.alert .alert-warning}
+It may help to read the ["Modelling a non-pharmaceutical intervention targeting social contacts"](modelling_interventions.html) and the ["Modelling the effect of a vaccination campaign"](modelling_vaccination.html) vignettes first!
+:::
+
+::: {.alert .alert-info}
+### Which model components can be passed as lists
+
+_epidemics_ currently offers the ability to pass **intervention sets** and **vaccination regimes** as lists.
+
+It is not possible to pass lists of _populations_, _seasonality_, or _population changes_ (for the diphtheria model).
+
+In future, it may be possible to pass multiple populations as a list, to rapidly and conveniently model an epidemic on different populations, or to examine the effect of assumptions about the population's social contacts or demographic structure.
+:::
+
+### Creating a list of intervention sets
+
+We shall create a list of 'intervention sets', each set representing a scenario of epidemic response measures.
+
+**Note that** each intervention set is simply a list of `<intervention>` objects; typically, a single `<contacts_intervention>` and any `<rate_interventions>` on infection parameters.
+
+```{r}
+# create three distinct contact interventions
+# prepare an intervention that models school closures for 180 days
+close_schools <- intervention(
+  name = "School closure",
+  type = "contacts",
+  time_begin = 60,
+  time_end = 60 + 180,
+  reduction = matrix(c(0.3, 0.01, 0.01))
+)
+
+# prepare an intervention which mostly affects adults 20 -- 65
+intervention_duration <- 200
+close_workplaces <- intervention(
+  name = "Workplace closure",
+  type = "contacts",
+  time_begin = 80,
+  time_end = 80 + intervention_duration,
+  reduction = matrix(c(0.01, 0.3, 0.01))
+)
+
+# prepare a combined intervention
+combined_intervention <- c(close_schools, close_workplaces)
+```
+
+```{r}
+# create a mask-mandate rate intervention
+# prepare an intervention that models mask mandates for 300 days
+mask_mandate <- intervention(
+  name = "mask mandate",
+  type = "rate",
+  time_begin = 60,
+  time_end = 60 + 300,
+  reduction = 0.1
+)
+```
+
+Having prepared the interventions, we create intervention sets, and pass them to a model function.
+
+```{r}
+# create intervention sets, which are combinations of contacts and rate
+# interventions
+intervention_scenarios <- list(
+  baseline = NULL,
+  scenario_01 = list(
+    contacts = close_schools
+  ),
+  scenario_02 = list(
+    contacts = close_workplaces
+  ),
+  scenario_03 = list(
+    contacts = combined_intervention
+  ),
+  scenario_04 = list(
+    transmissibility = mask_mandate
+  ),
+  scenario_05 = list(
+    contacts = close_schools,
+    transmissibility = mask_mandate
+  ),
+  scenario_06 = list(
+    contacts = close_workplaces,
+    transmissibility = mask_mandate
+  ),
+  scenario_07 = list(
+    contacts = combined_intervention,
+    transmissibility = mask_mandate
+  )
+)
+```
+
+**Note that** there is no parameter uncertainty included here.
+
+The output is a nested `<data.table>` as before.
+
+```{r}
+# pass the list of intervention sets to the model function
+output <- model_default(
+  uk_population,
+  intervention = intervention_scenarios,
+  time_end = 600
+)
+
+# examine the output
+head(output)
+```
+
+::: {.alert .alert-info}
+### Output type for list intervention inputs
+
+The output of `model_*()` when either `intervention` or `vaccination` is passed a list, is a nested `<data.table>`.
+This is similar to the output type when parameters are passed as vectors, but with the `"scenario"` column indicating each intervention set as a distinct scenario, which helps with grouping the model outputs in `"data"`.
+:::
+
+::: {.alert .alert-info}
+### Combinations of intervention and vaccination scenarios
+
+When either or both `intervention` and `vaccination` are passed lists (of intervention sets, or of vaccination regimes, respectively), the model is run for each combination of elements.
+Thus for $M$ intervention sets and $N$ vaccination regimes, the model runs $M \times N$ times, and each combination is treated as a unique scenario.
+
+**Note that** 'no intervention' and 'no vaccination' scenarios are not automatically created, and must be passed explicitly as `NULL` in the respective lists.
+
+While the number of intervention and vaccination combinations are not expected to be very many, the addition of parameter uncertainty for each scenario (next section) may rapidly multiply the number of times the model is run.
+**Users are advised** to be mindful of the number of scenario combinations they create.
+:::
+
+The unnesting of the output follows the same procedure as before, and is not shown here.
+
+## Modelling epidemic response scenarios with parameter uncertainty
+
+_epidemics_ allows parameter uncertainty to be combined with scenario models of multiple intervention sets or vaccination campaigns.
+
+```{r}
+# this example includes 100 samples of transmissibility for each intervention
+# including the baseline
+output <- model_default(
+  uk_population,
+  transmissibility = beta,
+  intervention = intervention_scenarios,
+  time_end = 600
+)
+```
+
+The output is a nested `<data.table>` as before, and can be handled in the same way.
+
+::: {.alert .alert-info}
+### Output type for intervention and parameter set combinations
+
+The output of `model_*()` when either `intervention` or `vaccination` is passed a list, and when any of the infection parameters is passed as a vector is a nested `<data.table>`.
+The `"scenario"` column indicates each intervention set as a distinct scenario, while the `"param_set"` column indicates the parameter set used for the model run.
+
+The **same parameters** are used for each scenario, allowing for comparability between scenarios at the aggregate level.
+
+The output has $M \times N \times S$ rows (and nested model outputs), for $M$ intervention sets, $N$ vaccination regimes, and $S$ infection parameter sets.
+:::
+
+### Visualising outcomes across scenarios
+
+Here, we show one way of visualising the epidemic size across scenarios, accounting for parameter uncertainty.
+
+```{r message=FALSE}
+# select the data, the parameter set, and the scenario
+epidemic_size_estimates <- select(output, param_set, scenario, data) %>%
+  mutate(
+    size = vapply(data, epidemic_size, by_group = FALSE, FUN.VALUE = 1)
+  ) %>%
+  select(-data)
+```
+
+```{r class.source = 'fold-hide', fig.cap="The epidemic final size for multiple scenarios with parameter uncertainty in the transmissibility paramater."}
+# set intervention labels
+labels <- c(
+  "No response", "Close schools", "Close workplaces", "Close both",
+  "Mask mandate", "Masks + close schools", "Masks + close workplaces",
+  "Masks + close both"
+)
+
+ggplot(epidemic_size_estimates) +
+  geom_boxplot(
+    aes(as.factor(scenario), size),
+    fill = "grey"
+  ) +
+  scale_x_discrete(
+    name = NULL,
+    labels = labels,
+    guide = guide_axis(n.dodge = 2)
+  ) +
+  scale_y_continuous(
+    labels = scales::comma,
+    name = "Epidemic final size"
+  ) +
+  theme_classic()
+```

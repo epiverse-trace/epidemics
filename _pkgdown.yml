@@ -19,7 +19,7 @@ articles:
 - title: Other modelling vignettes
   navbar: Other modelling vignettes
   contents:
-  - modelling_parameter_uncertainty
+  - modelling_scenarios
   - finalsize_comparison
 - title: Guides to library models
   navbar: Guides to library models

@@ -53,7 +53,8 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     tibble,
-    tidyr
+    tidyr,
+    withr
 LinkingTo: 
     BH,
     Rcpp,

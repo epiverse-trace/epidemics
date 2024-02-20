@@ -309,6 +309,9 @@ model_vacamole <- function(population,
     )
   })]
 
+  # remove temporary arguments
+  model_output$args <- NULL
+
   # check for single row output, i.e., scalar arguments, and return data.frame
   # do not return the parameters in this case
   if (nrow(model_output) == 1L) {

@@ -19,42 +19,13 @@ status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.
 library of compartmental models that can help to model epidemic
 scenarios for directly transmitted respiratory infections such as
 influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus
-disease. The models in *epidemics* implement methods outlined in
-Bjørnstad et al. ([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
+disease.
+
+The models in *epidemics* implement methods outlined in Bjørnstad et al.
+([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
 ([2020b](#ref-bjornstad2020)). The models in *epidemics* can help
 provide rough estimates of the course of epidemics, and the
 effectiveness of pharmaceutical and non-pharmaceutical interventions.
-
-*epidemics* currently provides three models:
-
-1.  A deterministic SEIR-V model with susceptible, exposed, infectious,
-    recovered, and vaccinated compartments (SEIR-V), allowing for
-    heterogeneity in social contacts, the implementation of a
-    group-specific non-pharmaceutical intervention that reduces social
-    contacts, and a vaccination regime with group-specific start and end
-    dates,
-
-2.  The deterministic Vacamole model developed at [RIVM, the Dutch
-    Public Health Institute](https://www.rivm.nl/) for the Covid-19
-    pandemic, with a focus on scenario modelling for hospitalisation and
-    vaccination ([Ainslie et al. 2022](#ref-ainslie2022)),
-
-3.  A stochastic, discrete-time, compartmental SEIR model suitable for
-    modelling haemorrhagic fevers such as Ebola Virus Disease, including
-    hospitalisation and hospital and funeral transmissions, adapted from
-    Li et al. ([2019](#ref-li2019)) and Getz and Dougherty
-    ([2018](#ref-getz2018)),
-
-4.  An initial implementation of a compartmental model for diphtheria in
-    the context of internally displaced persons camps, including a
-    reporting rate, hospitalisation rate, and delays in entering and
-    leaving hospital, taken from Finger et al.
-    ([2019](#ref-finger2019)).
-
-More models are planned to be added in the near future. Please get in
-touch if you would like to see your model added to the *epidemics* model
-library — we are happy to help with translating it into our framework,
-with a special focus on making the model applicable to LMIC settings.
 
 *epidemics* relies on [Eigen](https://gitlab.com/libeigen/eigen) via
 [{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on
@@ -69,7 +40,7 @@ at the London School of Hygiene and Tropical Medicine as part of the
 ## Installation
 
 The current development version of *epidemics* can be installed from
-[GitHub](https://github.com/) using the `pak` package.
+[GitHub](https://github.com/) using the *pak* package.
 
 ``` r
 if(!require("pak")) install.packages("pak")
@@ -193,16 +164,16 @@ close_schools
 #> Demo. grp. 3      0.01
 ```
 
-Run the default epidemic model, using the function
-`model_default_cpp()`. We assume an $R_0$ of 1.5 which is similar to
-pandemic influenza, an infectious period of 7 days, and a pre-infectious
-period of 3 days. From these values we can calculate transmissibility
-$\beta$ `1.5 / 7.0`, infectiousness_rate $\alpha$ `1.0 / 3.0` and
-recovery_rate $\gamma$ `1.0 / 7.0`.
+Run the default epidemic model, using the function `model_default()`. We
+assume an $R_0$ of 1.5 which is similar to pandemic influenza, an
+infectious period of 7 days, and a pre-infectious period of 3 days. From
+these values we can calculate transmissibility $\beta$ `1.5 / 7.0`,
+infectiousness_rate $\alpha$ `1.0 / 3.0` and recovery_rate $\gamma$
+`1.0 / 7.0`.
 
 ``` r
 # run an epidemic model using `epidemic()`
-output <- model_default_cpp(
+output <- model_default(
   population = uk_population,
   transmissibility = 1.5 / 7.0,
   infectiousness_rate = 1.0 / 3.0,
@@ -225,6 +196,39 @@ More details on how to use *epidemics* can be found in the [online
 documentation as package
 vignettes](https://epiverse-trace.github.io/epidemics/), under
 “Articles”.
+
+## Package models
+
+*epidemics* currently provides three models:
+
+1.  A deterministic SEIR-V model with susceptible, exposed, infectious,
+    recovered, and vaccinated compartments (SEIR-V), allowing for
+    heterogeneity in social contacts, the implementation of a
+    group-specific non-pharmaceutical intervention that reduces social
+    contacts, and a vaccination regime with group-specific start and end
+    dates,
+
+2.  The deterministic Vacamole model developed at [RIVM, the Dutch
+    Public Health Institute](https://www.rivm.nl/) for the Covid-19
+    pandemic, with a focus on scenario modelling for hospitalisation and
+    vaccination ([Ainslie et al. 2022](#ref-ainslie2022)),
+
+3.  A stochastic, discrete-time, compartmental SEIR model suitable for
+    modelling haemorrhagic fevers such as Ebola Virus Disease, including
+    hospitalisation and hospital and funeral transmissions, adapted from
+    Li et al. ([2019](#ref-li2019)) and Getz and Dougherty
+    ([2018](#ref-getz2018)),
+
+4.  An initial implementation of a compartmental model for diphtheria in
+    the context of internally displaced persons camps, including a
+    reporting rate, hospitalisation rate, and delays in entering and
+    leaving hospital, taken from Finger et al.
+    ([2019](#ref-finger2019)).
+
+More models are planned to be added in the near future. Please get in
+touch if you would like to see your model added to the *epidemics* model
+library — we are happy to help with translating it into our framework,
+with a special focus on making the model applicable to LMIC settings.
 
 ## Related projects
 

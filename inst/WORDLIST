@@ -9,6 +9,7 @@ Bjørnstad
 CMD
 COVID
 Codecov
+Composable
 Covid
 ECDC
 ETU
@@ -23,6 +24,7 @@ Flavio
 Fonnesbeck
 Fuminari
 Getz
+HRD
 Hoek
 IDP
 Jacco
@@ -52,6 +54,8 @@ RTools
 Rcpp
 RcppEigen
 Runge
+SEI
+SEIHFR
 SEIHR
 SEIR
 SEIRS
@@ -67,6 +71,7 @@ analogs
 cmdstanr
 codecov
 com
+composable
 dD
 dE
 dH
@@ -74,6 +79,7 @@ dI
 dR
 dS
 dV
+deSolve
 dfrac
 doi
 ebola
@@ -101,6 +107,7 @@ subcompartments
 susceptibles
 svg
 th
+timepoint
 timesteps
 vacamole
 www

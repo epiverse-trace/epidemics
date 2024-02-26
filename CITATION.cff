@@ -8,7 +8,7 @@ message: 'To cite package "epidemics" in publications use:'
 type: software
 license: MIT
 title: 'epidemics: A Library of Compartmental Epidemic Scenario Models'
-version: 0.0.0.9000
+version: 0.1.0
 abstract: A library of compartmental epidemic models taken from the published literature,
   and classes to represent populations with heterogeneous characteristics, public
   health response measures including non-pharmaceutical interventions on social contacts,
@@ -353,6 +353,9 @@ references:
   - family-names: Dunnington
     given-names: Dewey
     orcid: https://orcid.org/0000-0002-9415-4582
+  - family-names: van den Brand
+    given-names: Teun
+    orcid: https://orcid.org/0000-0002-9335-7468
   year: '2024'
 - type: software
   title: knitr

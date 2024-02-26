@@ -1,6 +1,6 @@
 Package: epidemics
 Title: A Library of Compartmental Epidemic Scenario Models
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Pratik", "Gupte", , "pratik.gupte@lshtm.ac.uk", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-5294-7819")),

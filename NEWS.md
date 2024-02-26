@@ -21,7 +21,7 @@ This release of _epidemics_ includes four model structures supporting a range of
 
 _epidemics_ uses Boost's _odeint_ <https://www.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/overview.html> to treat the deterministic models' ordinary differential equations (ODEs) as initial value problems and solve them.
 
-Model ODEs are defined as structs in the package headers, and exposed to R as internal Rcpp functions. The 'default', 'Vacamole', and 'diphtheria' models are ODE models defined in this way. This is intended to help reduce overheads associated with passing ODE systems written in R back and forth from a solver (such as those provided by {deSolve}), and is an easier way to define feature-rich models than writing C code for solvers provided by {deSolve} that accept compiled code.
+Model ODEs are defined as `structs` with operators in the package headers, and exposed to R as internal Rcpp functions. The 'default', 'Vacamole', and 'diphtheria' models are ODE models defined in this way. This is intended to help reduce overheads associated with passing ODE systems written in R back and forth from a solver (such as those provided by {deSolve}), and is an easier way to define feature-rich models than writing C code for solvers provided by {deSolve} that accept compiled code.
 
 _epidemics_ headers include tools for handling the C++ representations of R objects used in the package (see below), and can be imported by other Rcpp packages.
 
@@ -45,7 +45,7 @@ _epidemics_ provides classes that help to organise the components of an epidemic
 
 _epidemics_ allows models to include elements that affect an epidemic trajectory, but which are not custom classes.
 
-1. Time-depedence: All models can be passed a list of functions with two arguments, `time` and `x` which are expected to return `x` as a function of `time`, and which may be used to model the effect of seasonality in model parameters;
+1. Time-dependence: All models can be passed a list of functions with two arguments, `time` and `x` which are expected to return `x` as a function of `time`, and which may be used to model the effect of seasonality in model parameters;
 
 2. Population changes: Applicable only to the diphtheria model, a two element list of `time` and `values`, which allow the definition of changes to the number of susceptible individuals in the model, and which may be used to model influxes and evacuations of individuals from humanitarian camps.
 
@@ -77,7 +77,7 @@ _epidemics_ includes a range of usage vignettes that demonstrate how to:
 
 10. Use the 'Ebola' model for scenarios of responses to an Ebola virus disease outbreak;
 
-11. Use the 'diptheria' model for scenarios of outbreaks in a humanitarian camp setting.
+11. Use the 'diphtheria' model for scenarios of outbreaks in a humanitarian camp setting.
 
 ## Miscellaneous
 

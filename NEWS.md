@@ -2,7 +2,7 @@
 
 This is an initial GitHub release of _epidemics_, an R package that ships a library of compartmental epidemic model structures that can be used, along with supplied classes that help define population characteristics and epidemic response interventions including vaccinations, to compose and model epidemic scenarios.
 
-_epidemics_ is still being actively developed, with major changes planned for the near future. This release is aimed at supporting reproducibility projects that used _epidemics_ which would be subject to breaking changes due to planned package development.
+_epidemics_ is still being actively developed, with major changes planned for the near future. This release is aimed at supporting the reproducibility of projects that used _epidemics_ which would be subject to breaking changes due to planned package development.
 The sections below describe the contents of this release.
 
 ## Model structures

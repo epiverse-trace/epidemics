@@ -1,3 +1,54 @@
+# epidemics (development version)
+
+The development version of _epidemics_ makes substantial additions to the functionality in v0.1.0, and introduces significant breaking changes in #176.
+
+## Breaking changes
+
+1. The "Vacamole" model has been refactored with the arguments `*_reduction_vax` for the effect of double vaccination on compartmental transition rates renamed to `*_vax`, where `*` may be one of susceptibility, hospitalisation, and mortality. Previously, these parameters were implemented in the internal C++ code, but presented as inverse values to users (i.e., `susceptibility_vax = susceptibility * (1 - (susceptibility_reduction_vax)))`). This change brings the user-facing representation in line with the internal implementation, and allows these parameters to be targeted by rate interventions and time-dependence, which was not possible earlier.
+
+2. All model function have been renamed to `model_<NAME>()`, removing the language suffix.
+
+3. The wrappers around R-only implementations of the 'default' and 'Vacamole' models have been removed, but the ODE system functions have been retained.
+
+4. The function `get_parameter()` has been removed.
+
+## Model structures
+
+There is no change to the model structures.
+
+## Classes
+
+No substantial changes to classes; small additions of input checking to `<population>` class.
+
+## Helper functions
+
+1. Internal helper functions `.check_args_model_*()` and `.prepare_args_model_*()` have been combined into single functions `.check_prepare_args_*()` that are called both for their output and for input checking side effects.
+
+2. The new internal functions `.prepare_population()`, `.cross_check_intervention()`, `.cross_check_vaccination()`, `.cross_check_timedep()`, and `.cross_check_popchange()` check and prepare a model population and check other inputs for compatibility with it. These are used in `.check_prepare_args_*()`.
+
+3. New internal functions have been added to check and recycle lists of vectors; original implementations by @TimTaylor.
+
+4. `output_to_df()` is renamed to `.output_to_df()`.
+
+## Documentation
+
+1. The benchmarking vignette has been removed as the R-only model implementations are no longer provided to users.
+
+2. The vignette on parameter uncertainty has been rewritten to show how to pass vectors of infection parameters and model composable elements to model functions, and renamed to "Modelling parameter uncertainty and epidemic scenarios".
+
+3. All function documentation has been updated to reflect name changes and other minor improvements.
+
+## Package
+
+1. All ODE model functions have received a more extensive and more standardised (as much as possible) test suite.
+
+2. Filenames have been standardised to show which files are related, e.g. `R/model_default.R`, `src/model_default.cpp`, and `inst/include/model_default.h`; references to filenames such as in the package header have been updated.
+
+3. Removed {deSolve} from dependencies.
+
+4. Updated NEWS.md file to track changes to the package.
+
+
 # epidemics 0.1.0
 
 This is an initial GitHub release of _epidemics_, an R package that ships a library of compartmental epidemic model structures that can be used, along with supplied classes that help define population characteristics and epidemic response interventions including vaccinations, to compose and model epidemic scenarios.

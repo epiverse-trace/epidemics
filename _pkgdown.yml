@@ -1,9 +1,10 @@
 url: https://epiverse.github.io/epidemics
 template:
   bslib:
-    font_weight_base : 300
+    font_weight_base: 300
   package: epiversetheme
 articles:
+
 - title: Modelling interventions
   navbar: Modelling interventions
   contents:
@@ -34,21 +35,23 @@ articles:
 reference:
   - title: Model functions
     contents:
-    - starts_with("model_")
+      - starts_with("model_")
   - title: Classes and related functions
   - subtitle: Intervention
     contents:
-    - contains("intervention")
+      - contains("intervention")
   - subtitle: Population
     contents:
-    - contains("population")
+      - contains("population")
   - subtitle: Vaccination
     contents:
-    - contains("vaccination")
+      - contains("vaccination")
   - title: Helper functions
     desc: Functions to help with handling package classes and outputs.
     contents:
-    - get_parameter
-    - no_time_dependence
-    - epidemic_size
-    - new_infections
+      - get_parameter
+      - no_time_dependence
+      - epidemic_size
+      - new_infections
+      - epidemic_peak
+      - vaccinated

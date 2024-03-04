@@ -1,0 +1,154 @@
+---
+title: "Design Principles for epidemics"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+vignette: >
+  %\VignetteIndexEntry{Design Principles for epidemics}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette outlines the design decisions that have been taken during the development of the _epidemics_ R package, and provides some of the reasoning, and possible pros and cons of each decision.
+
+This document is primarily intended to be read by those interested in understanding the code within the package and for potential package contributors.
+
+## Scope
+
+_epidemics_ aims to help public health practitioners - rather than research-focussed modellers - to rapidly simulate disease outbreak scenarios, and aims to **balance flexibility, performance, user-friendliness, and maintainability**.
+
+ - _epidemics_ trades away some flexibility in defining model structures for a gain in the ease of defining epidemic scenario components such as affected populations and model events.
+
+ - _epidemics_ attempts to balance performance and maintainability through minimum sufficient use of C++, and not attempting to write a domain-specific language (such as [_odin_](https://cran.r-project.org/package=odin)).
+
+ - To be more broadly applicable, _epidemics_ provides a 'library' of compartmental models which are adapted from the published literature. These models focus on broad types of diseases or settings, rather than specific diseases or scenarios. Thus all models are intended to be applicable to a range of diseases.
+
+## Output
+
+All function outputs are expected to return a structure that inherits from `<data.frame>`, to make further processing easier for users.
+The exact structure of the output - whether a list of `<data.frame>`s, a `<data.table>` or `<tibble>`, or a nested table - is yet to be fixed.
+The eventual stable output type must allow users to conveniently access the epidemic trajectory data, identify and filter intervention scenarios for comparisons among them, and allow interoperability with data science tools such as the [Tidyverse](https://www.tidyverse.org/).
+
+## Package architecture
+
+<img src="../man/figures/epidemics_design.png" width="700" />
+
+**Fig. 1:** _epidemics_ is designed to allow easy combination of composable elements with a model structure taken from a library of published models, with sensible default parameters, to allow public health practitioners to conveniently model epidemic scenarios and the efficacy of response strategies.
+ 
+## Design decisions
+
+### Epidemic modelling
+
+The notes here refer to broad decisions and not to individual models -- see individual model vignettes and published sources for modelling decisions.
+
+- There are two broad types of models:
+
+  - Deterministic models implemented as solutions to systems of ordinary different equations (ODEs),
+ 
+  - Stochastic models with discrete timesteps where individuals move between compartments probabilistically.
+
+- _epidemics_ models' compartmental transitions are fixed. Users cannot create new links between compartments, although links between compartments can be disallowed by modifying model parameters.
+
+- The models' epidemiological parameter sets are unique, although some parameters are shared among models. These can be changed by users although reasonable default values are provided.
+
+- The model components - such as the population affected by the epidemic, or any policy responses in the form of interventions - are called **composable elements**. Composable elements can be and are expected to be modified by users to match their situation. All model components except the 'population' are optional.
+
+- Each model allows a unique sets of composable elements considered suitable for the expected use case. E.g. the Ebola model does not allow modelling a vaccination regime, as this is considered unlikely for most Ebola outbreaks. The allowed set of composable elements is subject to change, and is open to user requests.
+
+- The **effect of interventions is modelled as being additive, not multiplicative**.
+
+### ODE systems and models
+
+- A common method for defining and solving ODEs in R is to write the ODE system in R and pass it to solvers such as `deSolve::lsoda()` from the [_deSolve_ package](https://cran.r-project.org/package=deSolve). We have opted against this approach (referred to as 'R-deSolve').
+
+- It is possible to write ODE compartmental transitions in C++, and expose the C++ code to R, eventually passing this ODE system to deSolve solvers (referred to as 'Rcpp-deSolve'). We have also opted against this approach, as it involves substantial interconversion of more complex objects such as structured lists (the model composable elements) from R to C++ in each solver timestep, reducing performance.
+
+- ODE systems are written in C++, and solved using the [Boost _odeint_ solvers](https://www.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/index.html) with *fixed step sizes*. This means that within each call to `model_*()`, R objects are converted for use by C++ only once (in the scalar arguments case), and are not passed back and forth multiple times.
+
+- _odeint_ is provided by the package [BH (Boost Headers)](https://cran.r-project.org/package=BH), making it convenient to use in Rcpp packages. The [_r2sundials_ package](https://cran.r-project.org/package=r2sundials) provides an Rcpp-friendly interface to the [SUNDIALS ODE solvers](https://computing.llnl.gov/projects/sundials), but the documentation is less clear overall, and seems to recommend the use of [_RcppArmadillo_](https://cran.r-project.org/package=RcppArmadillo) and [_RcppXPtrUtils_](https://cran.r-project.org/package=RcppXPtrUtils); these have not been evaluated for use.
+
+- _odeint_ imposes certain constraints on ODE systems. There is no functionality to easily define 'events' (also called 'callbacks') and combine them with the ODE system. This means that the ODE systems have to encapsulate information on the timing of events (such as interventions) and the effect.
+
+- Equations describing **the right-hand side of model ODE systems** $x' = f(x)$ are thus written as [`structs`](https://cplusplus.com/doc/tutorial/structures/) with an [overloaded function call operator](https://en.cppreference.com/w/cpp/language/operators) that makes them [`FunctionObject` types](https://en.cppreference.com/w/cpp/named_req/FunctionObject). The `struct` thus holds epidemiological parameters and composable elements, which are passed by reference in any operations, reducing copies. [See this simple example from the Boost documentation.](https://live.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/short_example.html) It can be passed as a function to a solver, and the epidemiological parameters are calculated in each solver timestep as **some function of time and the composable elements** (as applicable). 
+
+- _epidemics_ relies on the Eigen C++ library provided by RcppEigen to represent matrices of initial conditions. Eigen matrices are among the types accepted as initial states by _odeint_ solvers. Alternatives include Boost Basic Linear Algebra Library (uBLAS) and standard library arrays and vectors; [a partial list - which does not include Eigen - is provided by Boost](https://live.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/overview.html), and Armadillo matrices may also be supported. We use Eigen matrices as Eigen offers broad and well documented support for matrix operations, easy conversion between Rcpp types, and also conforms to previous use of Eigen in [_finalsize_](https://cran.r-project.org/package=finalsize).
+
+- The model's C++ code is in two levels that underlie the R source code - the C++ source code and the C++ headers. This is to make the header code (the model ODEs and helper functions) shareable so that they can be re-used in other Rcpp packages and [this is explored more in this blog post.](https://epiverse-trace.github.io/posts/share-cpp/)
+
+### Stochastic models
+
+_epidemics_ only includes a single stochastic model adapted from earlier implementations, and hence common design decisions for stochastic models are likely to be worked out only as more models are added. The input and output types correspond to the ODE model types. This model is written in R [although this may change in future](https://github.com/epiverse-trace/epidemics/issues/179).
+
+### Classes
+
+- The major composable elements are bundled into custom S3 classes that inherit from lists, and which are expected to be understandable elements of epidemic response: `<population>`, the `<intervention>` superclass, and `<vaccination>`. All other composable elements take the form of named, structured lists. These are not defined as classes because they are expected to be less used, or used by more advanced modellers who are comfortable working with lists directly.
+
+- A key element of composable elements being or inheriting from lists is that they can be easily handled within the C++ code as **they are interpreted as Rcpp lists**.
+
+- All matrix objects referring to demography-group coefficients follow the 'demography-in-rows' pattern from _finalsize_, where rows represent demography groups, and columns represent coefficients. This includes the initial conditions matrix in `<population>`s, where columns are epidemiological compartments, but also vaccination rates in `<vaccination>`, and contacts reductions in `<contacts_intervention>`s.
+
+- Interventions may be of the `<contacts_intervention>` or `<rate_intervention>` class, which inherit from the abstract super-class `<intervention>`. This inheritance structure was chosen to maintain coherence between the intervention types, and to keep the option open of unifying these classes into a single concrete type in the future.
+
+- All composable elements except the `population` are optional. Model functions internally generate dummy values for the other composable elements allowed for each model, as these are required for the C++ code.
+
+- `<intervention>` and `<vaccination>` objects may be combined with objects of the same (sub)-class using the `c()` method for each (sub)-class, and resulting in an object of the same (sub)-class. The interpretation for each class is however slightly different:
+
+  - `<intervention>`: Combining two interventions of the same sub-class is understood to represent the combined application of multiple epidemic response strategies, e.g. closing schools and also closing workplaces, or introducing mask mandates over different intervals.
+
+  - `<vaccination>`: Combining two vaccination objects results in a two-dose vaccination regime, rather than two separate vaccination campaigns (each delivering a single dose). This is because _epidemics_ focuses on the initial pandemic response phase where vaccination is not expected to be available at scale, rather than long-term vaccination campaigns against endemic infections.
+
+### Function vectorisation
+
+_epidemics_ is moving towards allowing vectors or lists to be passed as model function arguments, to easily allow the incorporation of parameter uncertainty and comparisons of multiple scenarios (while maintaining comparability across scenarios in each function call). Consequently, each function call may consist of many 1000s of model runs ([see PR #176](https://github.com/epiverse-trace/epidemics/pull/176) and the [vignette on scenario modelling](modelling_scenarios.html)).
+
+- All model epidemiological parameters are allowed to be passed as numeric vectors (currently only ODE models). This includes `time_end`, which allows runs of different durations within a single function call. This [use case was taken from this report](https://gaza-projections.org/) which aimed to calculate the epidemic size over a given period with uncertainty in the start time (and hence the duration). _epidemics_ [follows the Tidyverse rules on vector recycling](https://vctrs.r-lib.org/reference/theory-faq-recycling.html) for epidemiological parameters.
+
+- Arguments `intervention` and `vaccination` accepting composable elements are allowed to be passed as lists of inputs. In the case of `intervention`, this is a list of lists, with each element a list of `<intervention>` objects (typically one `<contacts_intervention>` and a variable number of `<rate_intervention>`s): this is **referred to as an intervention set**. All other composable elements may currently only be scalar values, but this may change in future ([see issue #181 for passing lists of populations](https://github.com/epiverse-trace/epidemics/issues/181)).
+
+- Model functions internally create combinations of composable elements, and each such combination is referred to as a **scenario**, and also combine each scenario with each set of epidemiological parameters. This is to ensure comparability across scenarios.
+
+## Miscellaneous decisions
+
+- _epidemics_ follows the _finalsize_ example in following [Google's C++ code style](https://google.github.io/styleguide/cppguide.html), and in using [Cpplint](https://github.com/cpplint/cpplint) and [Cppcheck](https://cppcheck.sourceforge.io/) for static code analysis as options such as Clang-tidy do not work well with Rcpp code; [see this blog post](https://epiverse-trace.github.io/posts/lint-rcpp/) for more.
+
+---
+
+## Dependencies
+
+The aim is to restrict the number of hard dependencies while maintaining user-friendliness.
+
+- [_checkmate_](https://CRAN.R-project.org/package=checkmate): a useful input-checking package used across Epiverse packages;
+- [_cli_](https://CRAN.R-project.org/package=cli) and [_glue_](https://CRAN.R-project.org/package=glue): convenience packages for pretty printing methods; these could be reconsidered to lighten package dependencies;
+- [_data.table_](https://CRAN.R-project.org/package=data.table): a lightweight dependency to handle data from model outputs, and especially used for nested list column functionality.
+- [_Rcpp_](https://CRAN.R-project.org/package=Rcpp): provides linking between C++ and R;
+- [_RcppEigen_](https://CRAN.R-project.org/package=RcppEigen): provides matrix classes suitable for use with Boost _odeint_;
+- [_BH_](https://CRAN.R-project.org/package=BH): provides the Boost _odeint_ ODE solvers;
+- _stats_ and _utils_: already installed with R, and used only in the Ebola model, and hence liable to be removed in the future.
+
+A wider range of packages are taken on as soft dependencies to make the vignettes more user-friendly.
+
+- [_bench_](https://CRAN.R-project.org/package=bench): to benchmark _epidemics_ against _finalsize_;
+- [_bookdown_](https://CRAN.R-project.org/package=bookdown), [_knitr_](https://CRAN.R-project.org/package=knitr), [_rmarkdown_](https://CRAN.R-project.org/package=rmarkdown): packages to generate vignettes and format them;
+- [_dplyr_](https://CRAN.R-project.org/package=dplyr), [_tibble_](https://CRAN.R-project.org/package=tibble), [_tidyr_](https://CRAN.R-project.org/package=tidyr): to show the processing of model outputs;
+- [_EpiEstim_](https://CRAN.R-project.org/package=EpiEstim): to show links with upstream packages that estimate R in a vignette;
+- [_finalsize_](https://CRAN.R-project.org/package=finalsize): for comparison against _epidemics_ in a vignette;
+- [_ggplot2_](https://CRAN.R-project.org/package=ggplot2), [_scales_](https://CRAN.R-project.org/package=scales), [_colorspace_](https://CRAN.R-project.org/package=colorspace): packages for plotting;
+- [_socialmixr_](https://CRAN.R-project.org/package=socialmixr): to obtain social contacts matrices;
+- [_spelling_](https://CRAN.R-project.org/package=spelling): for spell-checking;
+- [_testthat_](https://CRAN.R-project.org/package=testthat) (>= 3.0.0): for unit tests;
+- [_withr_](https://CRAN.R-project.org/package=withr): for seed management.
+
+## Contribute
+
+There are no special requirements to contributing to _epidemics_, but contributions of new models should be clearly motivated, fall within the scope of the package, target a disease type or situation that is not already covered by existing models, and ideally should already be peer-reviewed.
+In general, please follow the [package contributing guide](https://github.com/epiverse-trace/.github/blob/main/CONTRIBUTING.md).

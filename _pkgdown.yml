@@ -30,6 +30,10 @@ articles:
   - ebola_model
   - diphtheria
   - benchmarking
+- title: Package design
+  navbar: Package design and architecture
+  contents:
+  - design-principles
 
 reference:
   - title: Model functions

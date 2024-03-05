@@ -229,6 +229,28 @@ test_that("Vacamole model: contacts interventions and stats. correctness", {
   expect_true(
     all(epidemic_size(data_baseline) > epidemic_size(data))
   )
+
+  # expect model runs with multiple contacts interventions
+  # expect that effect of multiple interventions is greater than single
+  intervention_02 <- intervention(
+    "work_closure", "contacts", 0, time_end, c(0.1, 0.5)
+  )
+  combined_interventions <- c(intervention, intervention_02)
+
+  expect_no_condition(
+    model_vacamole(
+      uk_population,
+      intervention = list(contacts = combined_interventions)
+    )
+  )
+  data_combined <- model_vacamole(
+    uk_population,
+    intervention = list(contacts = combined_interventions)
+  )
+  # expect epidemic size is lower for combined intervention
+  expect_true(
+    all(epidemic_size(data_combined) < epidemic_size(data))
+  )
 })
 
 test_that("Vacamole model: rate interventions", {

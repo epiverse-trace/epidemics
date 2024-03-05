@@ -59,7 +59,7 @@ library(withr)
 
 ## Modelling parameter uncertainty
 
-Uncertainty in the characteristics of an epidemic is a key element and roadblock in epidemic response [@shea2020].
+Uncertainty in the characteristics of an epidemic is a key element and roadblock in epidemic response [@shea2020]. Epidemic dynamics can be influenced by two main sources of uncertainty: intrinsic randomness in the transmission process, and uncertain knowledge of the parameters underlying the transmission process. Here we focus on the latter, i.e. uncertainty in the input parameters of an epidemic model.
 
 _epidemics_ model functions can accept numeric vectors for all infection parameters; the model is run for each parameter combination using the same population and other model components (interventions, vaccinations) etc.
 

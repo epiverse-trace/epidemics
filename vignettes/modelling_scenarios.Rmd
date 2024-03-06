@@ -51,7 +51,10 @@ library(EpiEstim)
 # data manipulation packages
 library(dplyr)
 library(tidyr)
+library(purrr)
 library(ggplot2)
+library(colorspace)
+library(ggdist)
 
 # for reproducibility
 library(withr)
@@ -108,7 +111,7 @@ uk_population <- population(
 )
 ```
 
-### Obtaining and passing a vector of infection parameters
+### Obtaining estimates of disease transmissibility
 
 For this example, we consider influenza with pandemic potential [@ghani2010], and prepare multiple samples of the estimated $R$.
 
@@ -142,14 +145,22 @@ output_R <- estimate_R(
 plot(output_R, "R")
 ```
 
+### Passing a vector of transmissibility
+
 Generate 100 samples of $R$, and convert to the transmissibility parameter (often denoted $\beta$) by dividing by the infectious period of 7 days.
 
+Since _EpiEstim_ estimates $Rt$, the real-time $R$, we shall use the mean of the estimates over the time period, and the mean of the standard deviation, as parameters for a distribution from which to draw $R$ samples for the model.
+
 ```{r}
+# get mean mean and sd over time
+r_estimate_mean <- mean(output_R$R$`Mean(R)`)
+r_estimate_sd <- mean(output_R$R$`Std(R)`)
+
 # Generate 100 R samples
 r_samples <- with_seed(
   seed = 1,
   rnorm(
-    n = 100, mean = output_R$R$`Mean(R)`, sd = output_R$R$`Std(R)`
+    n = 100, mean = r_estimate_mean, sd = r_estimate_sd
   )
 )
 
@@ -181,32 +192,47 @@ More on handling nested data can be found in this [section on list-columns in R 
 
 ```{r}
 # select the parameter set and data columns with dplyr::select()
-# use tidyr to unnest the data column
+# add the R value for visualisation
+# calculate new infections, and use tidyr to unnest the data column
 data <- select(output, param_set, transmissibility, data) %>%
-  unnest(data)
+  mutate(
+    r_value = r_samples,
+    new_infections = map(data, new_infections)
+  ) %>%
+  select(-data) %>%
+  unnest(new_infections)
 ```
 
-```{r class.source = 'fold-hide', fig.cap="Epidemic curves for the number of infectious individuals on each day of the epidemic; shaded region indicates uncertainty in the form of standard error."}
+```{r class.source = 'fold-hide', fig.cap="Incidence curves for the number of new infections on each day of the epidemic given uncertainty in the R estimate; colours indicate R bins. Larger R values lead to shorter epidemics with higher peaks, while lower R values lead to more spread out epidemics with lower peaks. Epidemics with R < 1.0 do not 'take off' and are not clearly visible."}
 # plot the data
-filter(data, compartment == "infectious") %>%
+filter(data) %>%
   ggplot() +
-  stat_summary(
-    geom = "ribbon",
-    aes(time, value),
-    fill = alpha("grey", 0.5)
+  geom_line(
+    aes(time, new_infections, col = r_value, group = param_set),
+    alpha = 0.3
   ) +
-  stat_summary(
-    geom = "line",
-    aes(time, value)
+  # use qualitative scale to emphasize differences
+  scale_colour_fermenter(
+    palette = "Dark2",
+    name = "R",
+    breaks = c(0, 1, 1.5, 2.0, 3.0),
+    limits = c(0, 3)
   ) +
   scale_y_continuous(
-    labels = scales::comma
+    name = "New infections",
+    labels = scales::label_comma(scale = 1e-3, suffix = "K")
   ) +
   labs(
-    x = "Time", y = "Individuals infectious"
+    x = "Time (days since start of epidemic)"
   ) +
-  facet_wrap(~demography_group) +
-  theme_classic()
+  facet_grid(
+    cols = vars(demography_group)
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top",
+    legend.key.height = unit(2, "mm")
+  )
 ```
 
 ::: {.alert .alert-info}
@@ -232,7 +258,7 @@ _epidemics_ model functions can accept multiple infection parameters as vectors,
 
 ### Passing vectors of epidemic duration
 
-_epidemics_ allows the duration of an model run to be varied, as this may be useful when examining how variation in the start time of an epidemic affects outcomes by a fixed end point.
+_epidemics_ allows the duration of an model run to be varied, as this may be useful when examining how variation in the start time of an epidemic affects outcomes by a fixed end point. This example shows how to estimate potential variation in the final epidemic size over a range of epidemic start times (and hence durations, assuming a fixed end).
 
 ```{r}
 # draw samples of time_end
@@ -261,7 +287,7 @@ head(output)
 # calculate the epidemic size to plot a distribution of sizes
 epidemic_size_estimates <- select(output, param_set, data) %>%
   mutate(
-    size = vapply(data, epidemic_size, by_group = FALSE, FUN.VALUE = 1)
+    size = map_dbl(data, epidemic_size, by_group = FALSE)
   ) %>%
   select(-data)
 ```
@@ -298,23 +324,27 @@ We shall create a list of 'intervention sets', each set representing a scenario 
 **Note that** each intervention set is simply a list of `<intervention>` objects; typically, a single `<contacts_intervention>` and any `<rate_interventions>` on infection parameters.
 
 ```{r}
+# prepare durations as starting at 25% of the way through an epidemic
+# and ending halfway through
+time_begin <- max_time / 4
+time_end <- max_time / 2
+
 # create three distinct contact interventions
 # prepare an intervention that models school closures for 180 days
 close_schools <- intervention(
   name = "School closure",
   type = "contacts",
-  time_begin = 60,
-  time_end = 60 + 180,
+  time_begin = time_begin,
+  time_end = time_end,
   reduction = matrix(c(0.3, 0.01, 0.01))
 )
 
 # prepare an intervention which mostly affects adults 20 -- 65
-intervention_duration <- 200
 close_workplaces <- intervention(
   name = "Workplace closure",
   type = "contacts",
-  time_begin = 80,
-  time_end = 80 + intervention_duration,
+  time_begin = time_begin,
+  time_end = time_end,
   reduction = matrix(c(0.01, 0.3, 0.01))
 )
 
@@ -328,8 +358,8 @@ combined_intervention <- c(close_schools, close_workplaces)
 mask_mandate <- intervention(
   name = "mask mandate",
   type = "rate",
-  time_begin = 60,
-  time_end = 60 + 300,
+  time_begin = time_begin,
+  time_end = time_end,
   reduction = 0.1
 )
 ```
@@ -368,9 +398,13 @@ intervention_scenarios <- list(
 )
 ```
 
-**Note that** there is no parameter uncertainty included here.
+**Note that** there is no parameter uncertainty included here. We can visualise the effect of each intervention set in the form of the epidemic's final size, aggregating over age groups.
 
-The output is a nested `<data.table>` as before.
+The output is a nested `<data.table>` as before --- we can quickly get a table of the final epidemic sizes for each scenarios --- this is a key initial indicator of the effectiveness of interventions.
+
+::: {.alert .alert-info}
+**Note that** in this example, we use the model's default $R$ estimate of 1.3. This is because at higher values of $R$, we get counter-intuitive results for the effects of interventions that reduce transmission. This is explored in more detail later in this vignette.
+:::
 
 ```{r}
 # pass the list of intervention sets to the model function
@@ -391,6 +425,31 @@ The output of `model_*()` when either `intervention` or `vaccination` is passed 
 This is similar to the output type when parameters are passed as vectors, but with the `"scenario"` column indicating each intervention set as a distinct scenario, which helps with grouping the model outputs in `"data"`.
 :::
 
+The function `epidemic_size()` can be applied to the nested data column `data` to get the final size for each scenario.
+
+```{r}
+# set intervention labels
+labels <- c(
+  "No response", "Close schools", "Close workplaces", "Close both",
+  "Mask mandate", "Masks + close schools", "Masks + close workplaces",
+  "Masks + close both"
+)
+
+epidemic_size_estimates <- mutate(
+  output,
+  scenario = labels,
+  size = scales::comma(
+    map_dbl(data, epidemic_size, by_group = FALSE, include_deaths = FALSE)
+  )
+) %>%
+  select(scenario, size)
+
+# view the final epidemic sizes
+epidemic_size_estimates
+```
+
+This example shows how implementing interventions that reduce transmission can reduce the final size of an epidemic.
+
 ::: {.alert .alert-info}
 ### Combinations of intervention and vaccination scenarios
 
@@ -408,6 +467,17 @@ The unnesting of the output follows the same procedure as before, and is not sho
 ## Modelling epidemic response scenarios with parameter uncertainty
 
 _epidemics_ allows parameter uncertainty to be combined with scenario models of multiple intervention sets or vaccination campaigns.
+
+Here, we shall draw 100 samples of the transmission rate with a mean of `r round(1.3 / 7)` and a low standard deviation of 0.005.
+
+```{r}
+beta <- with_seed(
+  seed = 1,
+  code = {
+    rnorm(100, 1.3 / 7, 0.005)
+  }
+)
+```
 
 ```{r}
 # this example includes 100 samples of transmissibility for each intervention
@@ -433,7 +503,7 @@ The **same parameters** are used for each scenario, allowing for comparability b
 The output has $M \times N \times S$ rows (and nested model outputs), for $M$ intervention sets, $N$ vaccination regimes, and $S$ infection parameter sets.
 :::
 
-### Visualising outcomes across scenarios
+### Visualising parameter uncertainty in intervention scenarios
 
 Here, we show one way of visualising the epidemic size across scenarios, accounting for parameter uncertainty.
 
@@ -441,32 +511,164 @@ Here, we show one way of visualising the epidemic size across scenarios, account
 # select the data, the parameter set, and the scenario
 epidemic_size_estimates <- select(output, param_set, scenario, data) %>%
   mutate(
-    size = vapply(data, epidemic_size, by_group = FALSE, FUN.VALUE = 1)
+    size = map_dbl(
+      data, epidemic_size,
+      by_group = FALSE, include_deaths = FALSE
+    )
   ) %>%
   select(-data)
+
+# Extract baseline and alternative scenarios
+df_scenario1 <- epidemic_size_estimates %>% filter(scenario == 1)
+df_scenarios_rest <- epidemic_size_estimates %>% filter(scenario != 1)
+
+# Calculate differences as infections averted
+df_differences <- df_scenarios_rest %>%
+  left_join(df_scenario1, by = "param_set", suffix = c("_other", "_1")) %>%
+  mutate(difference = size_1 - size_other) %>%
+  select(param_set, scenario = scenario_other, difference)
 ```
 
-```{r class.source = 'fold-hide', fig.cap="The epidemic final size for multiple scenarios with parameter uncertainty in the transmissibility paramater."}
-# set intervention labels
-labels <- c(
-  "No response", "Close schools", "Close workplaces", "Close both",
-  "Mask mandate", "Masks + close schools", "Masks + close workplaces",
-  "Masks + close both"
+```{r class.source = 'fold-hide', fig.cap="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmissibility paramater."}
+# Plot distribution of differences
+ggplot(
+  df_differences,
+  aes(x = difference, y = factor(scenario), fill = factor(scenario))
+) +
+  stat_histinterval(
+    normalize = "xy", breaks = 11,
+    show.legend = FALSE
+  ) +
+  labs(
+    title = "Scenario comparison",
+    x = "Infections averted"
+  ) +
+  scale_x_continuous(
+    labels = scales::comma
+  ) +
+  scale_y_discrete(
+    name = NULL,
+    labels = labels[-1]
+  ) +
+  scale_fill_discrete_qualitative(
+    palette = "Dynamic"
+  ) +
+  theme_bw()
+```
+
+## Counter-intuitive effects of time-limited interventions
+
+The intervention scenarios modelled above suggest that:
+
+- interventions on disease transmissibility reduce infections and hence epidemic final sizes;
+
+- multiple interventions reduce epidemic final sizes more than single interventions.
+
+In this simple example we show how this need not always be the case, and that counter-intuitively, implementing more interventions can lead to a larger epidemic final size than implementing fewer interventions.
+
+This phenomenon depends on the baseline transmissibility of the infection, so we select a relatively low $R$ of 1.30 (corresponding to pandemic influenza), and a higher $R$ of `r round(r_estimate_mean, 2)` from the $R$ estimation step at the start of the vignette.
+
+```{r}
+# run each scenario for two values of R
+# no parameter uncertainty
+r_values <- c(1.3, round(r_estimate_mean, 2))
+
+output <- model_default(
+  uk_population,
+  transmissibility = r_values / 7,
+  intervention = intervention_scenarios,
+  time_end = 600
 )
 
+# obtain epidemic sizes
+epidemic_size_estimates <- mutate(
+  output,
+  size = map_dbl(
+    data, epidemic_size,
+    by_group = FALSE, include_deaths = FALSE
+  ),
+  r_value = rep(r_values, each = length(intervention_scenarios)),
+  scenario = rep(factor(labels, labels), 2)
+) %>%
+  select(r_value, scenario, size)
+```
+
+```{r class.source = 'fold-hide', fig.cap="Counter-intuitive effects of time-limited interventions on transmissibility at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario."}
+# plot the epidemic final size for each scenario for each R
 ggplot(epidemic_size_estimates) +
-  geom_boxplot(
-    aes(as.factor(scenario), size),
-    fill = "grey"
+  geom_col(
+    aes(scenario, size, fill = scenario),
+    show.legend = FALSE
   ) +
   scale_x_discrete(
     name = NULL,
-    labels = labels,
     guide = guide_axis(n.dodge = 2)
   ) +
   scale_y_continuous(
     labels = scales::comma,
-    name = "Epidemic final size"
+    name = "Epidemic size"
   ) +
-  theme_classic()
+  scale_fill_discrete_qualitative(
+    palette = "Dynamic"
+  ) +
+  facet_grid(
+    cols = vars(r_value),
+    labeller = labeller(
+      r_value = function(x) sprintf("R = %s", x)
+    )
+  ) +
+  theme_bw()
 ```
+
+Plotting the epidemic trajectories for each scenario for each value of $R$ gives a fuller picture of why we see this unexpected effect.
+
+```{r}
+# get new infections per day
+daily_incidence <- mutate(
+  output,
+  r_value = rep(r_values, each = length(intervention_scenarios)),
+  scenario = rep(factor(labels, labels), 2),
+  incidence_data = map(data, new_infections, by_group = FALSE)
+) %>%
+  select(scenario, r_value, incidence_data) %>%
+  unnest(incidence_data)
+```
+
+```{r class.source = 'fold-hide', fig.cap="New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the 'No response' scenario."}
+ggplot(daily_incidence) +
+  annotate(
+    geom = "rect",
+    xmin = time_begin, xmax = time_end,
+    ymin = -Inf, ymax = Inf,
+    fill = "grey90", colour = "grey"
+  ) +
+  geom_line(
+    aes(time, new_infections, col = as.factor(r_value)),
+    show.legend = TRUE, linewidth = 1
+  ) +
+  scale_y_continuous(
+    labels = scales::label_comma(scale = 1e-3, suffix = "K")
+  ) +
+  scale_colour_discrete_qualitative(
+    palette = "Dynamic",
+    name = "R"
+  ) +
+  facet_wrap(facets = vars(scenario), nrow = 2) +
+  theme_bw() +
+  theme(legend.position = "top") +
+  labs(
+    x = "Time since epidemic start",
+    y = "New infections"
+  )
+```
+
+Implementing interventions on disease transmissibility leads to a 'flattening of the curve' (reduced daily incidence in comparison with no response) while the interventions are active.
+
+However, these cases are deferred rather than prevented entirely, and in both scenarios this is seen as a shifting of the incidence curve to the right (towards the end of the simulation period).
+
+When $R$ is low, the incidence curve begins to rise later than when $R$ is high (interventions applied to these epidemics actually miss the projected peak of the epidemic, but still shift cases to the right).
+Thus low $R$ epidemics do not run their course by the time the simulation ends, making is appear as though interventions have succeeded in averting infections.
+
+At higher $R$, the peak of the projected incidence curve without interventions falls within the intervention period, and thus all interventions reduce new infections.
+In scenarios with multiple active interventions, a large number of susceptibles remain uninfected, compared to scenarios with fewer interventions.
+The former thus see higher incidence peaks, leading to counter-intuitively larger final epidemic sizes.

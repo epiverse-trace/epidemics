@@ -44,6 +44,10 @@ The eventual stable output type must allow users to conveniently access the epid
 <img src="../man/figures/epidemics_design.png" width="700" />
 
 **Fig. 1:** _epidemics_ is designed to allow easy combination of composable elements with a model structure taken from a library of published models, with sensible default parameters, to allow public health practitioners to conveniently model epidemic scenarios and the efficacy of response strategies.
+
+<img src="../man/figures/epidemics_architecture.png" width="700" />
+
+**Fig. 2:** _epidemics_ package architecture, and the ODE model stack. _epidemics_ includes multiple internal functions in both R and C++ which check that inputs are suitable for each model, and to cross-check that inputs are compatible with each other. Function names indicate their behaviour (e.g. `assert_*()`), but not all similarly named functions are called at similar places in model function bodies. Partly, this reflects the privileged positions of some model components (such as the `population`, against which other components are checked), but also that some composable elements (such as time-dependence) may not be vectorised.
  
 ## Design decisions
 
@@ -83,7 +87,9 @@ The notes here refer to broad decisions and not to individual models -- see indi
 
 - _epidemics_ relies on the Eigen C++ library provided by RcppEigen to represent matrices of initial conditions. Eigen matrices are among the types accepted as initial states by _odeint_ solvers. Alternatives include Boost Basic Linear Algebra Library (uBLAS) and standard library arrays and vectors; [a partial list - which does not include Eigen - is provided by Boost](https://live.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/overview.html), and Armadillo matrices may also be supported. We use Eigen matrices as Eigen offers broad and well documented support for matrix operations, easy conversion between Rcpp types, and also conforms to previous use of Eigen in [_finalsize_](https://cran.r-project.org/package=finalsize).
 
-- The model's C++ code is in two levels that underlie the R source code - the C++ source code and the C++ headers. This is to make the header code (the model ODEs and helper functions) shareable so that they can be re-used in other Rcpp packages and [this is explored more in this blog post.](https://epiverse-trace.github.io/posts/share-cpp/)
+- The models' C++ code is in two levels that underlie the R source code - the C++ source code and the C++ headers. This is to make the header code (the model ODEs and helper functions) shareable so that they can be re-used in other Rcpp packages and [this is explored more in this blog post.](https://epiverse-trace.github.io/posts/share-cpp/)
+
+- _epidemics_ defines C++ namespaces in the package headers to more clearly indicate where certain functionalities sit. All model structures are in the namespace `epidemics`, while the namespaces `vaccination`, `intervention`, and `time_dependence` contain C++ code to handle these composable elements (such as calculating the effect of cumulative interventions). The namespace `odetools` defines the initial state type, which is an `Eigen::MatrixXd`.
 
 ### Stochastic models
 
@@ -120,6 +126,10 @@ _epidemics_ is moving towards allowing vectors or lists to be passed as model fu
 ## Miscellaneous decisions
 
 - _epidemics_ follows the _finalsize_ example in following [Google's C++ code style](https://google.github.io/styleguide/cppguide.html), and in using [Cpplint](https://github.com/cpplint/cpplint) and [Cppcheck](https://cppcheck.sourceforge.io/) for static code analysis as options such as Clang-tidy do not work well with Rcpp code; [see this blog post](https://epiverse-trace.github.io/posts/lint-rcpp/) for more.
+
+- Function naming: Function names aim to contain verbs that indicate the function behaviour. Internal input checking functions follow the _checkmate_ naming style (e.g. `assert_*()`).
+
+- Function naming: Internal functions aim to begin with a `.` (e.g. `.model_default_cpp()`) to more clearly indicate that they are not for direct use.
 
 ---
 

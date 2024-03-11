@@ -116,10 +116,10 @@ test_that("Error on poorly specified contacts intervention", {
 })
 
 test_that("Null contacts intervention is correctly initialised", {
-  null_intervention <- no_contacts_intervention(uk_population)
+  null_intervention <- .no_contacts_intervention(uk_population)
   # expect no message using helper function no_contacts_intervention()
   expect_no_condition(
-    no_contacts_intervention(uk_population)
+    .no_contacts_intervention(uk_population)
   )
   expect_identical(
     null_intervention$time_begin, null_intervention$time_end

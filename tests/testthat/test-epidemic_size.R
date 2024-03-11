@@ -89,7 +89,6 @@ test_that("Epidemic size with no deaths is correct", {
   data <- model_vacamole(
     population = uk_population,
     mortality_rate = 0,
-    vaccination = no_vaccination(uk_population, doses = 2L),
     time_end = 400, increment = 1
   )
   expect_identical(

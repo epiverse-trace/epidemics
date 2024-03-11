@@ -160,7 +160,7 @@ test_that("Epidemic model with vaccination", {
 
 #### Test two dose no vaccination ####
 doses <- 2L
-no_vax_two_dose <- no_vaccination(uk_population, doses = doses)
+no_vax_two_dose <- .no_vaccination(uk_population, doses = doses)
 
 test_that("No vaccination with two dose regime", {
   expect_identical(

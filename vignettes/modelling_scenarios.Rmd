@@ -46,7 +46,7 @@ The Ebola virus disease model included in the package is expected to receive thi
 ```{r setup}
 # epi modelling
 library(epidemics)
-library(EpiEstim)
+library(EpiEstim) # for Rt estimation
 
 # data manipulation packages
 library(dplyr)
@@ -149,7 +149,7 @@ plot(output_R, "R")
 
 Generate 100 samples of $R$, and convert to the transmissibility parameter (often denoted $\beta$) by dividing by the infectious period of 7 days.
 
-Since _EpiEstim_ estimates $Rt$, the real-time $R$, we shall use the mean of the estimates over the time period, and the mean of the standard deviation, as parameters for a distribution from which to draw $R$ samples for the model.
+Since _EpiEstim_ estimates $Rt$, the instantaneous $R$, we shall use the mean of the estimates over the time period, and the mean of the standard deviation, as parameters for a distribution from which to draw $R$ samples for the model.
 
 ```{r}
 # get mean mean and sd over time

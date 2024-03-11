@@ -114,10 +114,6 @@ struct epidemic_default {
 
     // NB: Casting initial conditions matrix columns to arrays is necessary
     // for vectorised operations
-	
-	// Define death rate
-    double total_population = x.col(0).sum() + x.col(1).sum() + x.col(2).sum() + x.col(3).sum() + x.col(4).sum();
-	double births = model_params_temp["birth_rate"] * total_population;
 
     // compartmental transitions without accounting for contacts
     Eigen::ArrayXd sToE = model_params_temp["transmissibility"] *
@@ -135,21 +131,6 @@ struct epidemic_default {
     dxdt.col(2) = eToI - iToR;   // σ*E - γ*I
     dxdt.col(3) = iToR;          // γ*I
     dxdt.col(4) = sToV;          // ν*S
-	
-  	// Add births to the youngest age group's susceptible compartment
-    dxdt(0, 0) += births;
-	
-    // Calculate deaths only for the oldest age group, applying the death rate to each compartment
-    // Assume deaths are subtracted from the last row of each column, representing the oldest age group
-    int last_age_group_index = x.rows() - 1;
-    Eigen::ArrayXd deaths = model_params_temp["death_rate"] * x.row(last_age_group_index).array();
-
-    // Subtract deaths from the oldest age group's compartments
-    dxdt(last_age_group_index, 0) -= deaths(0);
-    dxdt(last_age_group_index, 1) -= deaths(1);
-    dxdt(last_age_group_index, 2) -= deaths(2);
-    dxdt(last_age_group_index, 3) -= deaths(3);
-    dxdt(last_age_group_index, 4) -= deaths(4);
   }
 };
 

@@ -59,10 +59,6 @@ new_vaccination <- function(name = NA_character_,
 #' @param ... Vaccination objects to combine with `x` to create a multi-dose
 #' `<vaccination>` object.
 #'
-#' @param population A `population` object with a `contact_matrix` member.
-#' @param doses A number, defaulting to 1, to indicate the number of doses in
-#' the vaccination regime.
-#'
 #' @details
 #' Multi-dose vaccinations can be passed to all epidemic models, but not all
 #' models accommodate multi-dose vaccinations. For example, the default SEIR-V

@@ -31,11 +31,6 @@ demographic group \eqn{i}.}
 
 \item{...}{Vaccination objects to combine with \code{x} to create a multi-dose
 \verb{<vaccination>} object.}
-
-\item{population}{A \code{population} object with a \code{contact_matrix} member.}
-
-\item{doses}{A number, defaulting to 1, to indicate the number of doses in
-the vaccination regime.}
 }
 \value{
 An object of the \verb{<vaccination>} S3 class.

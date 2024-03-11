@@ -318,7 +318,7 @@ model_ebola <- function(population,
   initial_state <- round(initial_state)
   names(initial_state) <- compartments
 
-  # prepare output data.frame
+  # prepare output table
   population_size <- sum(initial_state)
   sim_data <- matrix(NA_integer_, nrow = time_end, ncol = length(compartments))
   colnames(sim_data) <- compartments

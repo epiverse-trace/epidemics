@@ -65,7 +65,7 @@
   # NOTE: there is no explicit vaccinated compartment
   initial_state[, 1] <- initial_state[, 1] * (1 - mod_args[["prop_vaccinated"]])
 
-  # assign initial state; note prop_vaccinated have been removed
+  # assign initial state; note prop_vaccinated have been subtracted above
   mod_args[["initial_state"]] <- initial_state
 
   # cross check population change and handle if NULL

@@ -129,8 +129,6 @@ model_default <- function(population,
                           time_dependence = NULL,
                           time_end = 100,
                           increment = 1) {
-  # TODO: ensure population is properly vectorised
-  checkmate::assert_class(population, "population")
   # get compartment names
   compartments <- c(
     "susceptible", "exposed", "infectious", "recovered", "vaccinated"
@@ -158,10 +156,7 @@ model_default <- function(population,
   # take parameter names here as names(DT) updates by reference!
   param_names <- names(params)
 
-  # Check if parameters can be recycled;
-  # Check if `population` is a single population or a list of such
-  # and convert to list for a data.table list column;
-  # also check if `intervention` is a list of interventions or a list-of-lists
+  # Check if `intervention` is a list of interventions or a list-of-lists
   # and convert to a list for a data.table list column. NULL is allowed;
   # Check if `vaccination` is a single vaccination or a list
   # and convert to a list for a data.table list column
@@ -182,14 +177,10 @@ model_default <- function(population,
     )
   )
 
+  # Check if parameters can be recycled;
   stopifnot(
     "All parameters must be of the same length, or must have length 1" =
       .test_recyclable(params),
-    "`population` must be a <population> or a list of <population>s" =
-      is_population(population) || checkmate::test_list(
-        population,
-        types = "population"
-      ),
     "`intervention` must be a list of <intervention>s or a list of such lists" =
       is_lofints || is_lofls,
     "`vaccination` must be a <vaccination> or a list of <vaccination>s" =
@@ -272,7 +263,7 @@ model_default <- function(population,
   # remove temporary arguments
   model_output$args <- NULL
 
-  # check for single row output, i.e., scalar arguments, and return data.frame
+  # check for single row output, i.e., scalar arguments, and return data.table
   # do not return the parameters in this case
   if (nrow(model_output) == 1L) {
     model_output <- model_output[["data"]][[1L]] # hardcoded for special case

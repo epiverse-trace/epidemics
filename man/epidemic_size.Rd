@@ -7,7 +7,7 @@
 epidemic_size(data, stage = 1, by_group = TRUE, include_deaths = TRUE)
 }
 \arguments{
-\item{data}{A \verb{<data.frame>} of model output, typically
+\item{data}{A table of model output, typically
 the output of \code{\link[=model_default]{model_default()}} or similar functions.}
 
 \item{stage}{The stage of the epidemic at which to return the epidemic size;

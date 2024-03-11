@@ -92,7 +92,7 @@
 #' Kucharski, A. J. (2019). Real-time analysis of the diphtheria outbreak in
 #' forcibly displaced Myanmar nationals in Bangladesh. BMC Medicine, 17, 58.
 #' \doi{10.1186/s12916-019-1288-7}.
-#' @return A `data.frame` with the columns "time", "compartment", "age_group",
+#' @return A `data.table` with the columns "time", "compartment", "age_group",
 #' "value", and "run", giving the number of individuals per demographic group
 #' in each compartment at each timestep in long (or "tidy") format, with "run"
 #' indicating the unique parameter combination.
@@ -159,8 +159,6 @@ model_diphtheria <- function(population,
                              population_change = NULL,
                              time_end = 100,
                              increment = 1) {
-  # TODO: ensure population is properly vectorised
-  checkmate::assert_class(population, "population")
   # get compartment names
   compartments <- c(
     "susceptible", "exposed", "infectious", "hospitalised", "recovered"
@@ -208,10 +206,7 @@ model_diphtheria <- function(population,
   # convert to list for data.table
   prop_vaccinated <- list(prop_vaccinated)
 
-  # Check if parameters can be recycled;
-  # Check if `population` is a single population or a list of such
-  # and convert to list for a data.table list column;
-  # also check if `intervention` is a list of interventions or a list-of-lists
+  # Check if `intervention` is a list of interventions or a list-of-lists
   # and convert to a list for a data.table list column. NULL is allowed;
   is_lofints <- checkmate::test_list(
     intervention, "intervention",
@@ -230,6 +225,7 @@ model_diphtheria <- function(population,
     )
   )
 
+  # Check if parameters can be recycled;
   stopifnot(
     "All parameters must be of the same length, or must have length 1" =
       .test_recyclable(params),
@@ -313,7 +309,7 @@ model_diphtheria <- function(population,
   # remove temporary arguments
   model_output$args <- NULL
 
-  # check for single row output, i.e., scalar arguments, and return data.frame
+  # check for single row output, i.e., scalar arguments, and return data.table
   # do not return the parameters in this case
   if (nrow(model_output) == 1L) {
     model_output <- model_output[["data"]][[1L]] # hardcoded for special case

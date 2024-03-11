@@ -19,7 +19,7 @@ groups, if these are named.}
 \item{compartments}{A vector for the model compartment names.}
 }
 \value{
-A \verb{<data.frame>} with the columns "compartment", "demography_group",
+A \verb{<data.table>} with the columns "compartment", "demography_group",
 "value", and "time"; these specify the epidemiological compartment, the
 name of the demography group, the number of individuals of that group in the
 compartment, and the model timestep, respectively.

@@ -87,7 +87,7 @@ Taken as days, with a default value of 100 days. May be a numeric vector.}
 default value of 1 day.}
 }
 \value{
-A \code{data.frame} with the columns "time", "compartment", "age_group",
+A \code{data.table} with the columns "time", "compartment", "age_group",
 "value", and "run", giving the number of individuals per demographic group
 in each compartment at each timestep in long (or "tidy") format, with "run"
 indicating the unique parameter combination.

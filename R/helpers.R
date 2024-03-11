@@ -8,7 +8,7 @@
 #' groups, if these are named.
 #' @param compartments A vector for the model compartment names.
 #' @keywords internal
-#' @return A `<data.frame>` with the columns "compartment", "demography_group",
+#' @return A `<data.table>` with the columns "compartment", "demography_group",
 #' "value", and "time"; these specify the epidemiological compartment, the
 #' name of the demography group, the number of individuals of that group in the
 #' compartment, and the model timestep, respectively.
@@ -89,7 +89,7 @@
 #' The function allows for the calculation of epidemic sizes by demographic
 #' group as well as the total epidemic size.
 #'
-#' @param data A `<data.frame>` of model output, typically
+#' @param data A table of model output, typically
 #' the output of [model_default()] or similar functions.
 #' @param stage The stage of the epidemic at which to return the epidemic size;
 #' here, 0.0 represents the initial conditions of the epidemic (0% of model time
@@ -171,7 +171,7 @@ epidemic_size <- function(
     size_compartments <- c(size_compartments, "include_deaths")
   }
 
-  # get final numbers recovered - operate on data.table as though data.frame
+  # get final numbers recovered - operate on data.table as though data.table
   epidemic_size_ <- data[data$compartment %in% size_compartments &
     data$time == round(max(data$time) * stage, 2), ]
 
@@ -189,7 +189,7 @@ epidemic_size <- function(
 
 #' Get new infections over model time
 #'
-#' @param data A `<data.frame>` of model output, typically
+#' @param data A table of model output, typically
 #' the output of [model_default()] or similar functions.
 #' @param compartments_from_susceptible An optional argument, for a character
 #' vector of the names of model compartments into which individuals transition
@@ -199,7 +199,7 @@ epidemic_size <- function(
 #' @param by_group A logical representing whether the epidemic size should be
 #' returned by demographic group, or whether a single population-wide value is
 #' returned.
-#' @return A `<data.frame>` with the same columns as `data`, but with the
+#' @return A table with the same columns as `data`, but with the
 #' additional variable under `compartment`, "new_infections", resulting in
 #' additional rows.
 #' @export

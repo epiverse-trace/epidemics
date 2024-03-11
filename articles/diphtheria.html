@@ -78,6 +78,9 @@
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
     <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
+    <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
   </div>
 </li>
 <li class="nav-item">
@@ -122,7 +125,7 @@ In such situations, implementing large-scale public health measures such contact
 <div class="alert alert-info">
 <p>The <a href="modelling_vaccination.html">vignette on modelling a vaccination campaign</a> shows how to model the introduction of a mass vaccination campaign for a fixed, stable population.</p>
 </div>
-<p><em>epidemics</em> provides a simple SEIHR compartmental model based on <span class="citation">Finger et al. (<a href="#ref-finger2019" role="doc-biblioref">2019</a>)</span>, in which it is possible to vary the population of each demographic group throughout the model’s simulation time and explore the resulting epidemic dynamics.
+<p><em>epidemics</em> provides a simple SEIHR compartmental model based on <span class="citation">Finger et al. (<a href="#ref-finger2019">2019</a>)</span>, in which it is possible to vary the population of each demographic group throughout the model’s simulation time and explore the resulting epidemic dynamics.
 This baseline model only tracks infections by demographic groups, and does not include variation in contacts between demographic groups (e.g. by age or occupation), as contacts are likely to be less clearly stratified in a camp setting.
 The baseline model also does not allow interventions that target social contacts (such as social distancing or quarantine), and does not include a ‘vaccinated’ compartment. It is therefore suited to analysis of a rapidly spreading infection prior to the introduction of any reactive vaccine campaign.</p>
 <p>However, the model does allow for seasonality in model parameters and interventions on model parameters.
@@ -134,7 +137,7 @@ Similarly, the model allows for a proportion of the initial camp population to b
 </details><div class="section level2">
 <h2 id="modelling-an-outbreak-with-pre-existing-immunity">Modelling an outbreak with pre-existing immunity<a class="anchor" aria-label="anchor" href="#modelling-an-outbreak-with-pre-existing-immunity"></a>
 </h2>
-<p>We create a population object corresponding to the Kutupalong camp in Cox’s Bazar, Bangladesh in 2017-18, rounded to the nearest 100, as described in Additional file 1 provided with <span class="citation">Finger et al. (<a href="#ref-finger2019" role="doc-biblioref">2019</a>)</span>.
+<p>We create a population object corresponding to the Kutupalong camp in Cox’s Bazar, Bangladesh in 2017-18, rounded to the nearest 100, as described in Additional file 1 provided with <span class="citation">Finger et al. (<a href="#ref-finger2019">2019</a>)</span>.
 This population has three age groups, &lt; 5 years, 5 – 14 years, <span class="math inline">\(\geq\)</span> 15 years.
 We assume that only one individual is infectious in each age group.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -168,7 +171,7 @@ We assume that only one individual is infectious in each age group.</p>
 <span><span class="co">#&gt; Dem. grp. 1:            1            1            1</span></span>
 <span><span class="co">#&gt; Dem. grp. 2:            1            1            1</span></span>
 <span><span class="co">#&gt; Dem. grp. 3:            1            1            1</span></span></code></pre></div>
-</details><p>We assume, following <span class="citation">Finger et al. (<a href="#ref-finger2019" role="doc-biblioref">2019</a>)</span>, that 20% of the 5 – 14 year-olds were vaccinated against (and immune to) diphtheria prior to the start of the outbreak, but that coverage is much lower among other age groups.</p>
+</details><p>We assume, following <span class="citation">Finger et al. (<a href="#ref-finger2019">2019</a>)</span>, that 20% of the 5 – 14 year-olds were vaccinated against (and immune to) diphtheria prior to the start of the outbreak, but that coverage is much lower among other age groups.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 20% of 5-14 year-olds are vaccinated</span></span>
 <span><span class="va">prop_vaccinated</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.2</span>, <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
@@ -232,7 +235,7 @@ In this example, we do not assume any prior immunity among new arrivals into the
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1e4</span>, <span class="fl">1e5</span>, <span class="fl">2e5</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><p>Here, the population size of the camp increases by about 75% overall, which is similar to reported values in the Kutupalong camp scenario <span class="citation">(<a href="#ref-finger2019" role="doc-biblioref">Finger et al. 2019</a>)</span>.</p>
+</details><p>Here, the population size of the camp increases by about 75% overall, which is similar to reported values in the Kutupalong camp scenario <span class="citation">(<a href="#ref-finger2019">Finger et al. 2019</a>)</span>.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_diphtheria.html">model_diphtheria_cpp</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">camp_pop</span>,</span>
@@ -305,7 +308,7 @@ Figure 2: Model results from a single run showing the number of individuals infe
 <div class="section level2 unnumbered">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-finger2019" class="csl-entry">
 Finger, Flavio, Sebastian Funk, Kate White, M. Ruby Siddiqui, W. John Edmunds, and Adam J. Kucharski. 2019. <span>“Real-Time Analysis of the Diphtheria Outbreak in Forcibly Displaced Myanmar Nationals in Bangladesh.”</span> <em>BMC Medicine</em> 17 (March): 58. <a href="https://doi.org/10.1186/s12916-019-1288-7" class="external-link">https://doi.org/10.1186/s12916-019-1288-7</a>.
 </div>

@@ -78,6 +78,9 @@
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
     <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
+    <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
   </div>
 </li>
 <li class="nav-item">
@@ -194,8 +197,8 @@
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression                min  median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic default R    0.057<span style="text-decoration: underline;">9</span>  0.059<span style="text-decoration: underline;">3</span>       16.8     2.2MB    26.1 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic default Rcpp 0.002<span style="text-decoration: underline;">25</span> 0.002<span style="text-decoration: underline;">31</span>     431.    151.4KB     7.89</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic default R    0.054<span style="text-decoration: underline;">1</span>  0.057<span style="text-decoration: underline;">1</span>       17.5     2.2MB    27.2 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic default Rcpp 0.002<span style="text-decoration: underline;">04</span> 0.002<span style="text-decoration: underline;">24</span>     450.    151.4KB     8.25</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">
@@ -296,8 +299,8 @@
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">#&gt;   expression                 min  median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic Vacamole R    0.116   0.119        8.31    2.27MB    10.2 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic Vacamole Rcpp 0.002<span style="text-decoration: underline;">99</span> 0.003<span style="text-decoration: underline;">06</span>    316.    309.01KB     6.00</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> epidemic Vacamole R    0.109   0.115        8.63    2.25MB    10.6 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> epidemic Vacamole Rcpp 0.002<span style="text-decoration: underline;">73</span> 0.002<span style="text-decoration: underline;">99</span>    328.    309.01KB     6.23</span></span></code></pre></div>
 </details>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

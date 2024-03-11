@@ -1,8 +1,9 @@
-pandoc: 2.19.2
+pandoc: 3.1.11
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   benchmarking: benchmarking.html
+  design-principles: design-principles.html
   diphtheria: diphtheria.html
   ebola_model: ebola_model.html
   epidemics: epidemics.html
@@ -14,7 +15,7 @@ articles:
   rate_interventions: rate_interventions.html
   time_dependence: time_dependence.html
   vacamole: vacamole.html
-last_built: 2024-02-27T11:38Z
+last_built: 2024-03-11T11:17Z
 urls:
   reference: https://epiverse.github.io/epidemics/reference
   article: https://epiverse.github.io/epidemics/articles

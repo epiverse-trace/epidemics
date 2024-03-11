@@ -78,6 +78,9 @@
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
     <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
+    <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
   </div>
 </li>
 <li class="nav-item">
@@ -119,8 +122,8 @@
 </div>
 <p>This vignette shows how to model an epidemic in which <strong>stochasticity is expected to play an important role.</strong>
 This is often the case with outbreaks of infections such as Ebola virus disease (EVD, or simply, ebola).</p>
-<p><em>epidemics</em> includes a discrete time, stochastic compartmental model of ebola based on a consensus model presented in <span class="citation">Li et al. (<a href="#ref-li2019" role="doc-biblioref">2019</a>)</span>, with six compartments — susceptible, exposed, infectious, hospitalised, funeral, and removed.
-The transitions between compartments are based on an Erlang model developed by <span class="citation">Getz and Dougherty (<a href="#ref-getz2018" role="doc-biblioref">2018</a>)</span> for the 2014 West African EVD outbreak, with the code adapted from <a href="http://epirecip.es/epicookbook/chapters/erlang/r" class="external-link">Epirecipes</a>.</p>
+<p><em>epidemics</em> includes a discrete time, stochastic compartmental model of ebola based on a consensus model presented in <span class="citation">Li et al. (<a href="#ref-li2019">2019</a>)</span>, with six compartments — susceptible, exposed, infectious, hospitalised, funeral, and removed.
+The transitions between compartments are based on an Erlang model developed by <span class="citation">Getz and Dougherty (<a href="#ref-getz2018">2018</a>)</span> for the 2014 West African EVD outbreak, with the code adapted from <a href="http://epirecip.es/epicookbook/chapters/erlang/r" class="external-link">Epirecipes</a>.</p>
 <p>The model does not include demographic variation in contacts, as ebola spreads primarily among contacts caring for infected individuals, making age or demographic structure less important.</p>
 <p>This model can currently accommodate interventions on model rates only (as there are no demographic groups for contacts interventions).</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -168,13 +171,13 @@ The transitions between compartments are based on an Erlang model developed by <
 <div class="section level2">
 <h2 id="prepare-model-parameters">Prepare model parameters<a class="anchor" aria-label="anchor" href="#prepare-model-parameters"></a>
 </h2>
-<p>We use the default model parameters, beginning with an <span class="math inline">\(R_0\)</span> taken from the value estimated for ebola in Guinea <span class="citation">(<a href="#ref-althaus2014" role="doc-biblioref">Althaus 2014</a>)</span>.
+<p>We use the default model parameters, beginning with an <span class="math inline">\(R_0\)</span> taken from the value estimated for ebola in Guinea <span class="citation">(<a href="#ref-althaus2014">Althaus 2014</a>)</span>.
 We assume that ebola has a mean infectious period of 12 days, and that the time between exposure and symptom onset — the pre-infectious period — is 5 days.</p>
 <p>Together, these give the following values:</p>
 <ul>
 <li><p>Transmissibility (<span class="math inline">\(\beta\)</span>): 0.125,</p></li>
-<li><p>Infectiousness rate (<span class="math inline">\(\gamma^E\)</span> in <span class="citation">Getz and Dougherty (<a href="#ref-getz2018" role="doc-biblioref">2018</a>)</span>): 0.4,</p></li>
-<li><p>Removal rate (<span class="math inline">\(\gamma^I\)</span> in <span class="citation">Getz and Dougherty (<a href="#ref-getz2018" role="doc-biblioref">2018</a>)</span>): 0.1667</p></li>
+<li><p>Infectiousness rate (<span class="math inline">\(\gamma^E\)</span> in <span class="citation">Getz and Dougherty (<a href="#ref-getz2018">2018</a>)</span>): 0.4,</p></li>
+<li><p>Removal rate (<span class="math inline">\(\gamma^I\)</span> in <span class="citation">Getz and Dougherty (<a href="#ref-getz2018">2018</a>)</span>): 0.1667</p></li>
 </ul>
 <p>This model does not yet have an explicit “deaths” compartment, but rather, the “removed” compartment holds all individuals who have recovered and who have died and been buried safely.
 Functionally, they are similar as they are not part of the model dynamics.</p>
@@ -761,7 +764,7 @@ Figure 9: Effect of implementing multiple simultaneous interventions to reduce t
 <div class="section level3">
 <h3 id="hospitalisation-funerals-and-removal">Hospitalisation, funerals, and removal<a class="anchor" aria-label="anchor" href="#hospitalisation-funerals-and-removal"></a>
 </h3>
-<p><span class="citation">Li et al. (<a href="#ref-li2019" role="doc-biblioref">2019</a>)</span> present a consensus model for EVD in which individuals can follow multiple pathways from the infectious compartment — to hospitalisation, funeral transmission, and safe burial or recovery (removed), with the possibility of skipping some compartments in this sequence (e.g. directly from infectious to removed, infectious to hospitalisation to removed etc.).
+<p><span class="citation">Li et al. (<a href="#ref-li2019">2019</a>)</span> present a consensus model for EVD in which individuals can follow multiple pathways from the infectious compartment — to hospitalisation, funeral transmission, and safe burial or recovery (removed), with the possibility of skipping some compartments in this sequence (e.g. directly from infectious to removed, infectious to hospitalisation to removed etc.).
 This model simplifies these transitions to only two pathways:</p>
 <ol style="list-style-type: decimal">
 <li><p>Infectious → funeral → removed (safe burial)</p></li>
@@ -781,7 +784,7 @@ Values closer to 0.0 indicate that there is low to no risk of Ebola transmission
 <div class="section level2 unnumbered">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-althaus2014" class="csl-entry">
 Althaus, Christian L. 2014. <span>“Estimating the Reproduction Number of Ebola Virus (EBOV) During the 2014 Outbreak in West Africa.”</span> <em>PLoS Currents</em> 6 (September): ecurrents.outbreaks.91afb5e0f279e7f29e7056095255b288. <a href="https://doi.org/10.1371/currents.outbreaks.91afb5e0f279e7f29e7056095255b288" class="external-link">https://doi.org/10.1371/currents.outbreaks.91afb5e0f279e7f29e7056095255b288</a>.
 </div>

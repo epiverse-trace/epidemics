@@ -78,6 +78,9 @@
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
     <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
+    <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
   </div>
 </li>
 <li class="nav-item">
@@ -114,7 +117,7 @@
 
     
     
-<p>Uncertainty in the characteristics of an epidemic is a key element and roadblock in epidemic response <span class="citation">(<a href="#ref-shea2020" role="doc-biblioref">Shea et al. 2020</a>)</span>.
+<p>Uncertainty in the characteristics of an epidemic is a key element and roadblock in epidemic response <span class="citation">(<a href="#ref-shea2020">Shea et al. 2020</a>)</span>.
 This vignette aims to show how to model parameter uncertainty using <em>epidemics</em>, as well as how it might affect conclusions regarding the implementation of response measures such as non-pharmaceutical interventions.</p>
 <div class="alert alert-warning">
 <p><strong>New to <em>epidemics</em>?</strong> It may help to read the <a href="epidemics.html">“Get started”</a> vignette first!</p>
@@ -130,8 +133,8 @@ This vignette aims to show how to model parameter uncertainty using <em>epidemic
 </details><div class="section level2">
 <h2 id="prepare-r-estimates">Prepare <span class="math inline">\(R\)</span> estimates<a class="anchor" aria-label="anchor" href="#prepare-r-estimates"></a>
 </h2>
-<p>For this example, we consider influenza with pandemic potential <span class="citation">(<a href="#ref-ghani2010" role="doc-biblioref">Ghani et al. 2010</a>)</span>, and prepare multiple samples of the estimated <span class="math inline">\(R\)</span>.</p>
-<p>We obtain the probability distribution function (PDF) from the distribution of the serial intervals; this is a Gamma distribution with shape <span class="math inline">\(k\)</span> = 2.622 and scale <span class="math inline">\(\theta\)</span> = 0.957 <span class="citation">(<a href="#ref-ghani2010" role="doc-biblioref">Ghani et al. 2010</a>)</span>.</p>
+<p>For this example, we consider influenza with pandemic potential <span class="citation">(<a href="#ref-ghani2010">Ghani et al. 2010</a>)</span>, and prepare multiple samples of the estimated <span class="math inline">\(R\)</span>.</p>
+<p>We obtain the probability distribution function (PDF) from the distribution of the serial intervals; this is a Gamma distribution with shape <span class="math inline">\(k\)</span> = 2.622 and scale <span class="math inline">\(\theta\)</span> = 0.957 <span class="citation">(<a href="#ref-ghani2010">Ghani et al. 2010</a>)</span>.</p>
 <div class="alert alert-info">
 <p>The <a href="https://epiverse-trace.github.io/epiparameter/" class="external-link">forthcoming Epiverse package <em>epiparameter</em></a> is expected to make it substantially easier to access and use epidemiological parameters, such as the serial interval, reported in the literature, making it easier to model scenarios differing in the intrinsic characteristics of the pathogen causing the outbreak.</p>
 </div>
@@ -334,7 +337,7 @@ Figure 1: Modelling scenarios of the spread of influenza with pandemic potential
 <div class="section level2 unnumbered">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-ghani2010" class="csl-entry">
 Ghani, Azra, Marc Baguelin, Jamie Griffin, Stefan Flasche, Albert Jan Van Hoek, Simon Cauchemez, Christl Donnelly, et al. 2010. <span>“The Early Transmission Dynamics of H1N1pdm Influenza in the United Kingdom.”</span> <em>PLoS Currents</em> 1 (June): RRN1130. <a href="https://doi.org/10.1371/currents.RRN1130" class="external-link">https://doi.org/10.1371/currents.RRN1130</a>.
 </div>

@@ -78,6 +78,9 @@
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
     <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
+    <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
   </div>
 </li>
 <li class="nav-item">
@@ -118,8 +121,8 @@
 <p><strong>New to <em>epidemics</em>?</strong> It may help to read the <a href="epidemics.html">“Get started”</a> vignette first!</p>
 <p>Additionally, read how to quickly <a href="https://epiverse-trace.github.io/finalsize/" class="external-link">calculate the final size of an epidemic</a> - with fewer epidemiological inputs than <em>epidemics</em> required - the <em>finalsize</em> package, which uses an analytical solution to avoid simulating the full epidemic dynamics.</p>
 </div>
-<p>The total number of individuals expected to have been infected over an epidemic is called the epidemic final size <span class="citation">(<a href="#ref-miller2012" role="doc-biblioref">Miller 2012</a>)</span>.
-The R package <a href="https://cran.r-project.org/package=finalsize" class="external-link"><em>finalsize</em></a> can help to calculate the epidemic final sizes using the final size equation <span class="citation">(<a href="#ref-miller2012" role="doc-biblioref">Miller 2012</a>)</span>, while accounting for heterogeneity in population contacts as well as susceptibility to infection, such as due to vaccination.</p>
+<p>The total number of individuals expected to have been infected over an epidemic is called the epidemic final size <span class="citation">(<a href="#ref-miller2012">Miller 2012</a>)</span>.
+The R package <a href="https://cran.r-project.org/package=finalsize" class="external-link"><em>finalsize</em></a> can help to calculate the epidemic final sizes using the final size equation <span class="citation">(<a href="#ref-miller2012">Miller 2012</a>)</span>, while accounting for heterogeneity in population contacts as well as susceptibility to infection, such as due to vaccination.</p>
 <p><em>epidemics</em> can also be used to calculate the final size of an outbreak while accounting for heterogeneity in contacts and the rollout of vaccination campaigns.</p>
 <p>This vignette lays out which of the two is more suitable for specific tasks, and how to convert between when seeking more insight into the effect of policy decisions made during epidemic response.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -412,8 +415,8 @@ This makes it much more suitable for high-performance applications such as fitti
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">#&gt;   expression        total_time</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.466</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model              8.18</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.447</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model              8.10</span></span></code></pre></div>
 </details><p><strong>Note</strong> that some model runs using <em>epidemics</em> that implement more complex compartmental structure, or multiple interventions and vaccination regimes are likely to be slower than the example shown here.</p>
 <p>However, users should choose <em>finalsize</em> only when the assumptions underlying a final size calculation are met.
 For example, in cases where vaccinations are concurrent with a large number of infections, or when interventions are applied to reduce transmission, the final size assumptions are not met.
@@ -422,7 +425,7 @@ In these cases, users are advised to use a dynamical model such as those in <em>
 <div class="section level2 unnumbered">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-miller2012" class="csl-entry">
 Miller, Joel C. 2012. <span>“A Note on the Derivation of Epidemic Final Sizes.”</span> <em>Bulletin of Mathematical Biology</em> 74 (9): 2125–41. <a href="https://doi.org/10.1007/s11538-012-9749-6" class="external-link">https://doi.org/10.1007/s11538-012-9749-6</a>.
 </div>

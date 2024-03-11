@@ -78,6 +78,9 @@
     <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
     <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
+    <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
   </div>
 </li>
 <li class="nav-item">
@@ -117,7 +120,7 @@
 <div class="alert alert-warning">
 <p><strong>New to <em>epidemics</em>?</strong> It may help to read the <a href="epidemics.html">“Get started”</a> and <a href="modelling_vaccination.html">“Modelling a vaccination campaign”</a> vignettes first!</p>
 </div>
-<p>Vacamole is a deterministic, compartmental epidemic model built by Kylie Ainslie and others at <a href="https://www.rivm.nl/" class="external-link">RIVM, the Dutch Public Health Institute</a> for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination <span class="citation">(<a href="#ref-ainslie2022" role="doc-biblioref">Ainslie et al. 2022</a>)</span>.</p>
+<p>Vacamole is a deterministic, compartmental epidemic model built by Kylie Ainslie and others at <a href="https://www.rivm.nl/" class="external-link">RIVM, the Dutch Public Health Institute</a> for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination <span class="citation">(<a href="#ref-ainslie2022">Ainslie et al. 2022</a>)</span>.</p>
 <p>Vacamole was implemented as an R package, and the <a href="https://github.com/kylieainslie/vacamole" class="external-link">source code can be found on GitHub</a>. Some versions have been used to generate scenarios for the ECDC Covid-19 Scenario Hub.</p>
 <p>The original model has 8 conceptual compartments - four epidemiological compartments: susceptible, exposed, infectious, and recovered (S, E, I, R respectively), three hospitalisation compartments: hospitalised, in intensive care, and returning from intensive care to regular hospital care (H, ICU, ICU2H), and death - see the <a href="doi.org/10.2807/1560-7917.ES.2022.27.44.2101090">manuscript describing them here</a>. Only infected individuals can enter the hospitalisation or death compartments.</p>
 <p>Individuals from the susceptible compartment may be vaccinated partially (<span class="math inline">\(V_1\)</span>) or fully (<span class="math inline">\(V_2\)</span>; assuming a two dose regimen), with each dose reducing their probability of being infected, and of being hospitalised or dying.</p>
@@ -442,7 +445,7 @@
 <div class="section level2 unnumbered">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-ainslie2022" class="csl-entry">
 Ainslie, Kylie E. C., Jantien A. Backer, Pieter T. de Boer, Albert Jan van Hoek, Don Klinkenberg, Hester Korthals Altes, Ka Yin Leung, Hester de Melker, Fuminari Miura, and Jacco Wallinga. 2022. <span>“A Scenario Modelling Analysis to Anticipate the Impact of COVID-19 Vaccination in Adolescents and Children on Disease Outcomes in the Netherlands, Summer 2021.”</span> <em>Eurosurveillance</em> 27 (44): 2101090. <a href="https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090" class="external-link">https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090</a>.
 </div>

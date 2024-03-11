@@ -137,11 +137,11 @@
 .cross_check_intervention <- function(x, population, allowed_targets) {
   # create dummy intervention set
   tmp_intervention <- list(
-    transmissibility = no_rate_intervention()
+    transmissibility = .no_rate_intervention()
   )
   # Ebola and Diphtheria models do not allow contact interventions
   if ("contacts" %in% allowed_targets) {
-    tmp_intervention[["contacts"]] <- no_contacts_intervention(population)
+    tmp_intervention[["contacts"]] <- .no_contacts_intervention(population)
   }
   if (is.null(x)) {
     return(tmp_intervention)
@@ -172,7 +172,7 @@
 .cross_check_vaccination <- function(x, population, doses) {
   # no input checking as this is an internal function
   if (is.null(x)) {
-    no_vaccination(population, doses = doses)
+    .no_vaccination(population, doses = doses)
   } else {
     assert_vaccination(x, doses = doses, population)
     x

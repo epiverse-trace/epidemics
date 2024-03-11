@@ -5,10 +5,8 @@
 \alias{is_intervention}
 \alias{is_contacts_intervention}
 \alias{is_rate_intervention}
-\alias{no_contacts_intervention}
 \alias{c.contacts_intervention}
 \alias{c.rate_intervention}
-\alias{no_rate_intervention}
 \title{Create an intervention for an epidemic model}
 \usage{
 intervention(name = NA_character_, type, time_begin, time_end, reduction)
@@ -19,13 +17,9 @@ is_contacts_intervention(x)
 
 is_rate_intervention(x)
 
-no_contacts_intervention(population)
-
 \method{c}{contacts_intervention}(x, ...)
 
 \method{c}{rate_intervention}(x, ...)
-
-no_rate_intervention()
 }
 \arguments{
 \item{name}{String for the name of the intervention.}
@@ -51,10 +45,10 @@ sub-class.}
 \item{x}{An \verb{<intervention>} object, or an object to be checked as an
 \verb{<intervention>} object.}
 
-\item{population}{A \verb{<population>} object with a \code{contact_matrix} member.}
-
 \item{...}{intervention objects to combine with \code{x} to create a multi-dose
 \verb{<intervention>} object.}
+
+\item{population}{A \verb{<population>} object with a \code{contact_matrix} member.}
 }
 \value{
 An object of the \verb{<intervention>} S3 super-class, with possible
@@ -69,8 +63,8 @@ demographic group if an intervention on contacts).
 The combined effect of these actions on the population is handled internally
 by epidemic model functions.
 
-A "null" intervention generated using \code{no_contacts_intervention(population)}
-or \code{no_rate_intervention()} returns a \verb{<intervention>} of the appropriate
+A "null" intervention generated using \code{.no_contacts_intervention(population)}
+or \code{.no_rate_intervention()} returns a \verb{<intervention>} of the appropriate
 sub-class that has its start and end times, and its effect all
 set to 0.0.
 
@@ -166,12 +160,4 @@ npi_2 <- intervention(
 )
 
 c(npi_1, npi_2)
-
-# A null intervention for scenarios without interventions
-pop <- population(
-  demography_vector = 1e6, contact_matrix = matrix(1),
-  initial_conditions = matrix(c(0.99, 0.01, 0.0), nrow = 1)
-)
-
-no_contacts_intervention(pop)
 }

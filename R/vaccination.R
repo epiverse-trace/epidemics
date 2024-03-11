@@ -86,7 +86,7 @@ new_vaccination <- function(name = NA_character_,
 #' times, and group-specific vaccination rates specified by all the constituent
 #' vaccination regimes.
 #'
-#' `no_vaccination()` returns a `<vaccination>` that has no effect on the
+#' `.no_vaccination()` returns a `<vaccination>` that has no effect on the
 #' population, with start and end times set to 0.0, and the rate of
 #' vaccination \eqn{nu} also set to 0.0.
 #'
@@ -214,7 +214,7 @@ validate_vaccination <- function(object) {
 
   # message if any vaccinations' intervals are badly formed
   # tackles the case of mistakenly setting all values the same
-  # this is explicitly used in no_vaccination(), with message suppressed
+  # this is explicitly used in .no_vaccination(), with message suppressed
   if (any(object$time_end <= object$time_begin)) {
     message(
       "Vaccination: some `time_end`s are not greater than `time_begin`s"
@@ -235,11 +235,16 @@ is_vaccination <- function(x) {
 }
 
 #' Generate a null vaccination
-#' @name vaccination
-#' @rdname vaccination
-#' @export
-no_vaccination <- function(population, doses = 1L) {
-  checkmate::assert_class(population, "population")
+#'
+#' @param population A `<population>` for which the dummy return `<vaccination>`
+#' is to be appropriate.
+#' @param doses A single number for the number of doses to generate.
+#' @return A `<vaccination>` object specifying no vaccination regime.
+#' @noRd
+#' @keywords internal
+.no_vaccination <- function(population, doses = 1L) {
+  # no input checking on internal function
+
   # message on identical value of time_begin and time_end (0) suppressed
   # as this is a valid use case
   suppressMessages(

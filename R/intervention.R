@@ -166,8 +166,8 @@ new_rate_intervention <- function(name, time_begin, time_end,
 #' The combined effect of these actions on the population is handled internally
 #' by epidemic model functions.
 #'
-#' A "null" intervention generated using `no_contacts_intervention(population)`
-#' or `no_rate_intervention()` returns a `<intervention>` of the appropriate
+#' A "null" intervention generated using `.no_contacts_intervention(population)`
+#' or `.no_rate_intervention()` returns a `<intervention>` of the appropriate
 #' sub-class that has its start and end times, and its effect all
 #' set to 0.0.
 #'
@@ -210,14 +210,6 @@ new_rate_intervention <- function(name, time_begin, time_end,
 #' )
 #'
 #' c(npi_1, npi_2)
-#'
-#' # A null intervention for scenarios without interventions
-#' pop <- population(
-#'   demography_vector = 1e6, contact_matrix = matrix(1),
-#'   initial_conditions = matrix(c(0.99, 0.01, 0.0), nrow = 1)
-#' )
-#'
-#' no_contacts_intervention(pop)
 intervention <- function(name = NA_character_,
                          type,
                          time_begin,
@@ -315,7 +307,7 @@ validate_contacts_intervention <- function(x) {
 
   # message if any intervention intervals are badly formed
   # tackles the case of mistakenly setting all values the same
-  # this is explicitly used in no_contacts_intervention(), with message
+  # this is explicitly used in .no_contacts_intervention(), with message
   # suppressed
   # also accounts for eventual extension to group-specific start and end times
   if (any(x$time_end <= x$time_begin)) {
@@ -375,7 +367,7 @@ validate_rate_intervention <- function(x) {
 
   # message if any intervention intervals are badly formed
   # tackles the case of mistakenly setting all values the same
-  # this is explicitly used in no_contacts_intervention(), with message
+  # this is explicitly used in .no_contacts_intervention(), with message
   # suppressed
   # also accounts for eventual extension to group-specific start and end times
   if (any(x$time_end <= x$time_begin)) {
@@ -417,10 +409,12 @@ is_rate_intervention <- function(x) {
 
 #' Generate a null intervention on contacts
 #'
-#' @name intervention
-#' @rdname intervention
-#' @export
-no_contacts_intervention <- function(population) {
+#' @param population A `<population>` for which the dummy contacts intervention
+#' is suitable.
+#' @return A dummy `<contacts_intervention>` object.
+#' @noRd
+#' @keywords internal
+.no_contacts_intervention <- function(population) {
   checkmate::assert_class(population, "population")
   # message on identical value of time_begin and time_end suppressed
   # as this is a valid use case.
@@ -848,10 +842,10 @@ intervention_on_rates <- function(t, interventions, parameters) {
 
 #' Generate a null intervention on rates
 #'
-#' @name intervention
-#' @rdname intervention
-#' @export
-no_rate_intervention <- function() {
+#' @return A dummy `<rate_intervention>`.
+#' @noRd
+#' @keywords internal
+.no_rate_intervention <- function() {
   suppressMessages(
     intervention(
       type = "rate",

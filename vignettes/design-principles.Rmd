@@ -69,7 +69,7 @@ The notes here refer to broad decisions and not to individual models -- see indi
 
 - Each model allows a unique sets of composable elements considered suitable for the expected use case. E.g. the Ebola model does not allow modelling a vaccination regime, as this is considered unlikely for most Ebola outbreaks. The allowed set of composable elements is subject to change, and is open to user requests.
 
-- The **effect of interventions is modelled as being additive, not multiplicative**.
+- The **effect of interventions is modelled as being additive, not multiplicative**. When an intervention with an X% reduction in contacts overlaps with an intervention with a Y% reduction, the cumulative effect on contacts $C$ is $C \times 1 - (X + Y)$, rather than $C \times (1 - X)(1 - Y)$. Additive effects were considered easier for users to understand than multiplicative effects.
 
 ### ODE systems and models
 

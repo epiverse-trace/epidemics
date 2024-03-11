@@ -47,8 +47,6 @@ sub-class.}
 
 \item{...}{intervention objects to combine with \code{x} to create a multi-dose
 \verb{<intervention>} object.}
-
-\item{population}{A \verb{<population>} object with a \code{contact_matrix} member.}
 }
 \value{
 An object of the \verb{<intervention>} S3 super-class, with possible

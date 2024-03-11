@@ -119,7 +119,6 @@ new_rate_intervention <- function(name, time_begin, time_end,
 #' @param ... intervention objects to combine with `x` to create a multi-dose
 #' `<intervention>` object.
 #'
-#' @param population A `<population>` object with a `contact_matrix` member.
 #'
 #' @details
 #' Epidemic models that can accommodate interventions on contacts are able to

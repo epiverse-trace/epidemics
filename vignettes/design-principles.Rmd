@@ -36,7 +36,7 @@ _epidemics_ aims to help public health practitioners - rather than research-focu
 ## Output
 
 All function outputs are expected to return a structure that inherits from `<data.frame>`, to make further processing easier for users.
-The exact structure of the output - whether a list of `<data.frame>`s, a `<data.table>` or `<tibble>`, or a nested table - is yet to be fixed.
+The exact structure of the output - whether a list of `<data.frame>`s, a `<data.table>` or `<tibble>`, or a nested version of these tabular data classes - is yet to be fixed.
 The eventual stable output type must allow users to conveniently access the epidemic trajectory data, identify and filter intervention scenarios for comparisons among them, and allow interoperability with data science tools such as the [Tidyverse](https://www.tidyverse.org/).
 
 ## Package architecture
@@ -45,7 +45,7 @@ The eventual stable output type must allow users to conveniently access the epid
 
 **Fig. 1:** _epidemics_ is designed to allow easy combination of composable elements with a model structure taken from a library of published models, with sensible default parameters, to allow public health practitioners to conveniently model epidemic scenarios and the efficacy of response strategies.
 
-<img src="../man/figures/epidemics_architecture.png" width="700" />
+<img src="../man/figures/epidemics_architecture.png" width="900" />
 
 **Fig. 2:** _epidemics_ package architecture, and the ODE model stack. _epidemics_ includes multiple internal functions in both R and C++ which check that inputs are suitable for each model, and to cross-check that inputs are compatible with each other. Function names indicate their behaviour (e.g. `assert_*()`), but not all similarly named functions are called at similar places in model function bodies. Partly, this reflects the privileged positions of some model components (such as the `population`, against which other components are checked), but also that some composable elements (such as time-dependence) may not be vectorised.
  
@@ -65,7 +65,7 @@ The notes here refer to broad decisions and not to individual models -- see indi
 
 - The models' epidemiological parameter sets are unique, although some parameters are shared among models. These can be changed by users although reasonable default values are provided.
 
-- The model components - such as the population affected by the epidemic, or any policy responses in the form of interventions - are called **composable elements**. Composable elements can be and are expected to be modified by users to match their situation. All model components except the 'population' are optional.
+- The model components - such as the population affected by the epidemic, or any policy responses in the form of interventions - are called **composable elements**. Composable elements can be and are expected to be modified by users to match their situation. All model components except the `population` are optional.
 
 - Each model allows a unique sets of composable elements considered suitable for the expected use case. E.g. the Ebola model does not allow modelling a vaccination regime, as this is considered unlikely for most Ebola outbreaks. The allowed set of composable elements is subject to change, and is open to user requests.
 

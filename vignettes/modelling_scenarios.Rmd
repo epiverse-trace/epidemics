@@ -238,22 +238,19 @@ filter(data) %>%
 ::: {.alert .alert-info}
 ### Passing parameter sets
 
-_epidemics_ model functions can accept multiple infection parameters as vectors, so long as one of the following rules is respected:
+_epidemics_ model functions can accept multiple infection parameters as vectors, so long as any vectors are all of the same length, or of length 1 (scalar values) as shown below.
 
-1. All infection parameter vectors must be of the same length;
+```r
+beta <- rnorm(n = 100, mean, sd)
+gamma <- rnorm(n = 100, mean, sd) # the recovery rate
 
-  ```r
-  beta <- rnorm(n = 100, mean, sd)
-  gamma <- rnorm(n = 100, mean, sd) # the recovery rate
-  
-  model_default(
-    population,
-    transmissibility = beta,
-    recovery_rate = gamma
-  )
-  ```
-
-2. All but one infection parameter must be scalar values (single numbers). This is the worked-out example shown above.
+model_default(
+  population,
+  transmissibility = beta, # same length as gamma
+  infectiousness_rate = 0.5, # length 1
+  recovery_rate = gamma
+)
+```
 :::
 
 ### Passing vectors of epidemic duration
@@ -266,6 +263,17 @@ max_time <- 600
 duration <- max_time - with_seed(seed = 1, {
   rnbinom(100, 1, 0.02)
 })
+```
+
+```{r class.source = 'fold-hide'}
+# view durations
+ggplot() +
+  geom_histogram(aes(duration)) +
+  theme_bw() +
+  labs(
+    x = "Epidemic duration",
+    y = "Count"
+  )
 ```
 
 ```{r}
@@ -284,12 +292,22 @@ head(output)
 :::
 
 ```{r message=FALSE, warning=FALSE}
-# calculate the epidemic size to plot a distribution of sizes
+# calculate the epidemic size to view the mean and SD of sizes
 epidemic_size_estimates <- select(output, param_set, data) %>%
   mutate(
-    size = map_dbl(data, epidemic_size, by_group = FALSE)
+    size = map(data, function(x) {
+      tibble(
+        demography_group = unique(x$demography_group),
+        size = epidemic_size(x)
+      )
+    })
   ) %>%
-  select(-data)
+  select(size) %>%
+  unnest(size) %>%
+  summarise(
+    across(size, .fns = c(mean = mean, sd = sd)),
+    .by = "demography_group"
+  )
 ```
 
 ```{r}

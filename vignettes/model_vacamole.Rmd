@@ -168,17 +168,9 @@ double_vaccination <- c(dose_1, dose_2)
 double_vaccination
 ```
 
-We prepare a dummy vaccination regime of no vaccination against which to compare the two-dose vaccination campaign. This is done by using the `no_vaccination()` function and specifying the number of doses (here, 2 doses).
-
-```{r}
-# prepare a null vaccination regime with two doses
-# use the convenience function `no_vaccination()`
-no_vaccination <- no_vaccination(population = uk_population, doses = 2)
-```
-
 ## Model epidemic using Vacamole
 
-First, we run the model with no vaccination. The model's default parameters are:
+First, we run the model with no vaccination. This is the default behaviour, and a vaccination regime only need be specified if it is to be included. The model's default parameters are:
 
  - Transmissibility ($\beta$, `transmissibility`): 0.186, resulting from an $R_0$ = 1.3 and an infectious period of 7 days, given that $\beta = R_0 / \text{infectious period}$.
 
@@ -197,9 +189,9 @@ First, we run the model with no vaccination. The model's default parameters are:
  - Mortality reduction from vaccination (`mort_reduction_vax`): 0.2, assuming a 20% reduction in mortality for individuals who are doubly vaccinated.
 
 ```{r}
+# note model will automatically account for no vaccination
 data <- model_vacamole(
   population = uk_population,
-  vaccination = no_vaccination, # note custom no_vaccination object
   time_end = epidemic_days
 )
 ```
@@ -209,7 +201,7 @@ Next we run the model with a two dose vaccination regime.
 ```{r}
 data_vaccination <- model_vacamole(
   population = uk_population,
-  vaccination = double_vaccination, # note custom object for two doses
+  vaccination = double_vaccination, # note vaccination object for two doses
   time_end = epidemic_days
 )
 ```

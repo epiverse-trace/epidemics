@@ -124,6 +124,8 @@ model_default <- function(population,
                           transmissibility = 1.3 / 7.0,
                           infectiousness_rate = 1.0 / 2.0,
                           recovery_rate = 1.0 / 7.0,
+                          birth_rate = 0.0001, # Default value as an example
+                          death_rate = 0.0001, # Default value as an example
                           intervention = NULL,
                           vaccination = NULL,
                           time_dependence = NULL,
@@ -140,6 +142,9 @@ model_default <- function(population,
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
   checkmate::assert_integerish(time_end, lower = 0)
+  
+  checkmate::assert_numeric(birth_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(death_rate, lower = 0, finite = TRUE)
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6

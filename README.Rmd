@@ -135,6 +135,8 @@ output <- model_default(
   transmissibility = 1.5 / 7.0,
   infectiousness_rate = 1.0 / 3.0,
   recovery_rate = 1.0 / 7.0,
+  birth_rate = 0.005, # Birth rate
+  death_rate = 0.005*length(demography_vector), # Death rate
   intervention = list(contacts = close_schools),
   time_end = 600, increment = 1.0
 )

@@ -3,15 +3,12 @@
 \name{vaccination}
 \alias{vaccination}
 \alias{is_vaccination}
-\alias{no_vaccination}
 \alias{c.vaccination}
 \title{Construct a new vaccination regime for an epidemic model}
 \usage{
 vaccination(name = NA_character_, nu, time_begin, time_end)
 
 is_vaccination(x)
-
-no_vaccination(population, doses = 1L)
 
 \method{c}{vaccination}(x, ...)
 }
@@ -32,13 +29,13 @@ demographic group \eqn{i}.}
 \item{x}{A \verb{<vaccination>} object, or an object to be checked as being a
 \verb{<vaccination>}.}
 
+\item{...}{Vaccination objects to combine with \code{x} to create a multi-dose
+\verb{<vaccination>} object.}
+
 \item{population}{A \code{population} object with a \code{contact_matrix} member.}
 
 \item{doses}{A number, defaulting to 1, to indicate the number of doses in
 the vaccination regime.}
-
-\item{...}{Vaccination objects to combine with \code{x} to create a multi-dose
-\verb{<vaccination>} object.}
 }
 \value{
 An object of the \verb{<vaccination>} S3 class.
@@ -51,7 +48,7 @@ Concatenating two or more \verb{<vaccination>} objects using \code{c()} also ret
 times, and group-specific vaccination rates specified by all the constituent
 vaccination regimes.
 
-\code{no_vaccination()} returns a \verb{<vaccination>} that has no effect on the
+\code{.no_vaccination()} returns a \verb{<vaccination>} that has no effect on the
 population, with start and end times set to 0.0, and the rate of
 vaccination \eqn{nu} also set to 0.0.
 

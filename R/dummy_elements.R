@@ -6,6 +6,7 @@
 #' function that returns its second argument. This matches the specification for
 #' functions to be passed as the `time_dependence` argument of epidemic
 #' functions.
+#' @noRd
 #' @keywords internal
 .no_time_dependence <- function(func_target = "transmissibility") {
   l <- list(
@@ -17,7 +18,9 @@
 
 #' Specify no population change during an epidemic
 #'
-#' @inheritParams model_default
+#' @param population A `<population>` for which the population change list
+#' should be suitable.
+#' @noRd
 #' @keywords internal
 .no_population_change <- function(population) {
   n_demo_groups <- length(population[["demography_vector"]])

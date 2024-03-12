@@ -130,6 +130,7 @@ tidyr
 timepoint
 timesteps
 uBLAS
+unnest
 unnesting
 vacamole
 withr

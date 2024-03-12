@@ -156,10 +156,8 @@ model_default <- function(population,
   # take parameter names here as names(DT) updates by reference!
   param_names <- names(params)
 
-  # Check if `intervention` is a list of interventions or a list-of-lists
-  # and convert to a list for a data.table list column. NULL is allowed;
-  # Check if `vaccination` is a single vaccination or a list
-  # and convert to a list for a data.table list column
+  # Check if `intervention` is a single intervention set or a list of such sets
+  # NULL is allowed;
   is_lofints <- checkmate::test_list(
     intervention, "intervention",
     all.missing = FALSE, null.ok = TRUE
@@ -168,14 +166,17 @@ model_default <- function(population,
   is_lofls <- checkmate::test_list(
     intervention,
     types = c("list", "null"), all.missing = FALSE
-  ) && all(
-    vapply(
-      unlist(intervention, recursive = FALSE),
-      FUN = function(x) {
-        is_intervention(x) || is.null(x)
-      }, TRUE
+  ) &&
+    # Check that all elements of intervention sets are either `<intervention>`
+    # or NULL
+    all(
+      vapply(
+        unlist(intervention, recursive = FALSE),
+        FUN = function(x) {
+          is_intervention(x) || is.null(x)
+        }, TRUE
+      )
     )
-  )
 
   # Check if parameters can be recycled;
   stopifnot(
@@ -183,6 +184,7 @@ model_default <- function(population,
       .test_recyclable(params),
     "`intervention` must be a list of <intervention>s or a list of such lists" =
       is_lofints || is_lofls,
+    # Check if `vaccination` is a single vaccination, NULL, or a list
     "`vaccination` must be a <vaccination> or a list of <vaccination>s" =
       is_vaccination(vaccination) || checkmate::test_list(
         vaccination,

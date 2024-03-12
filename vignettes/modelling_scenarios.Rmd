@@ -65,8 +65,19 @@ library(withr)
 Uncertainty in the characteristics of an epidemic is a key element and roadblock in epidemic response [@shea2020]. Epidemic dynamics can be influenced by two main sources of uncertainty: intrinsic randomness in the transmission process, and uncertain knowledge of the parameters underlying the transmission process. Here we focus on the latter, i.e. uncertainty in the input parameters of an epidemic model.
 
 _epidemics_ model functions can accept numeric vectors for all infection parameters; the model is run for each parameter combination using the same population and other model components (interventions, vaccinations) etc.
+This allows users to quickly obtain results for a range of parameter values without having to repeatedly call `model_*()` in a loop or similar; this iteration is performed internally.
 
-The code to set up a population is hidden here, but is similar to that found in the ["Getting started with epidemic scenario modelling components"](epidemics.html) vignette, and models the U.K. population with three age groups, and social contacts stratified by age.
+Some benefits of vectorising inputs:
+
+ - Inputs are checked all at once, rather than $N$ times for each element of the parameter vector --- this improves performance over manual iteration;
+
+ - Model output is organised to make filtering by parameter values and scenarios easier (more on this below).
+
+::: {.alert .alert-info}
+**Note that** it is always possible to pass a single value of any infection parameter. Single values may be referred to as "scalar" values or "scalars". Passing scalar infection parameters will yield a simple table of the model "time", "demography group", "compartment", and "value", for the number of individuals in each demographic group in each compartment at each model time point.
+:::
+
+Click on "Code" below to see the hidden code used to set up a population in this vignette. For more details on how to define populations and initial model conditions please see the ["Getting started with epidemic scenario modelling components"](epidemics.html) vignette. In brief, we model the U.K. population with three age groups, 0 -- 19, 20 -- 39, > 40, and social contacts stratified by age.
 
 ```{r class.source = 'fold-hide'}
 # load contact and population data from socialmixr::polymod
@@ -113,7 +124,7 @@ uk_population <- population(
 
 ### Obtaining estimates of disease transmissibility
 
-For this example, we consider influenza with pandemic potential [@ghani2010], and prepare multiple samples of the estimated $R$.
+For this example, we consider influenza with pandemic potential [@ghani2010], and prepare multiple samples of the estimated $R$. This reflects pandemic response scenarios in which $R$ estimates always come with some uncertainty (due to limitations in the data and estimation methods). Sampling from a distribution that $R$ is expected to follow allows us to better understand the extent of variance in possible epidemic outcomes.
 
 We obtain the probability distribution function (PDF) from the distribution of the serial intervals; this is a Gamma distribution with shape $k$ = 2.622 and scale $\theta$ = 0.957 [@ghani2010].
 
@@ -123,6 +134,7 @@ The [forthcoming Epiverse package _epiparameter_](https://epiverse-trace.github.
 
 We use this PDF to estimate the $R$ of the 2009 influenza pandemic in the U.K., using [the _EpiEstim_ package](https://cran.r-project.org/package=EpiEstim).
 We use the $R$ estimate (the mean and standard deviation) from _EpiEstim_ to generate 100 samples of $R$, assuming that it is normally distributed.
+Users who are drawing parameters with greater variance may wish to draw a larger number of samples.
 
 ```{r fig.width=6, fig.height=3}
 # Get 2009 influenza data for school in Pennsylvania
@@ -131,7 +143,8 @@ flu_early_data <- filter(Flu2009$incidence, dates < "2009-05-10")
 
 # get the PDF of the distribution of serial intervals
 serial_pdf <- dgamma(seq(0, 25), shape = 2.622, scale = 0.957)
-serial_pdf <- serial_pdf / sum(serial_pdf) # check sum to 1
+# ensure probabilities add up to 1 by normalising them by the sum
+serial_pdf <- serial_pdf / sum(serial_pdf)
 
 # Use EpiEstim to estimate R with uncertainty
 # Uses Gamma distribution by default
@@ -147,7 +160,7 @@ plot(output_R, "R")
 
 ### Passing a vector of transmissibility
 
-Generate 100 samples of $R$, and convert to the transmissibility parameter (often denoted $\beta$) by dividing by the infectious period of 7 days.
+Here, we generate 100 samples of $R$, and convert to the transmissibility parameter (often denoted $\beta$) by dividing by the infectious period of 7 days.
 
 Since _EpiEstim_ estimates $Rt$, the instantaneous $R$, we shall use the mean of the estimates over the time period, and the mean of the standard deviation, as parameters for a distribution from which to draw $R$ samples for the model.
 
@@ -190,6 +203,8 @@ The output of `model_*()` when an infection parameter is passed as a vector is a
 More on handling nested data can be found in this [section on list-columns in R for Data Science](https://r4ds.hadley.nz/rectangling.html#list-columns) and in the [documentation for nested data in the _tidyr_ package](https://tidyr.tidyverse.org/articles/nest.html). Equivalent operations are possible on `<data.table>`s directly; see [this R Bloggers post on unnesting data](https://www.r-bloggers.com/2019/10/much-faster-unnesting-with-data-table/).
 :::
 
+We unnest the output's "data" column in order to plot incidence curves for each transmissibility value.
+
 ```{r}
 # select the parameter set and data columns with dplyr::select()
 # add the R value for visualisation
@@ -203,7 +218,7 @@ data <- select(output, param_set, transmissibility, data) %>%
   unnest(new_infections)
 ```
 
-```{r class.source = 'fold-hide', fig.cap="Incidence curves for the number of new infections on each day of the epidemic given uncertainty in the R estimate; colours indicate R bins. Larger R values lead to shorter epidemics with higher peaks, while lower R values lead to more spread out epidemics with lower peaks. Epidemics with R < 1.0 do not 'take off' and are not clearly visible."}
+```{r class.source = 'fold-hide', fig.cap="Incidence curves for the number of new infections on each day of the epidemic given uncertainty in the R estimate; colours indicate $R$ bins. Larger $R$ values lead to shorter epidemics with higher peaks, while lower R values lead to more spread out epidemics with lower peaks. Epidemics with $R$ < 1.0 do not 'take off' and are not clearly visible. Linking incidence curves to their $R$ values in a plot allows a quick visual assessment of the potential outcomes of an epidemic whose $R$ is uncertain."}
 # plot the data
 filter(data) %>%
   ggplot() +
@@ -321,6 +336,14 @@ Users may wish to model epidemic trajectories and outcomes under multiple scenar
 
 _epidemics_ model functions can accept lists of intervention sets and vaccination regimes, allowing multiple intervention, vaccination, and combined intervention-and-vaccination sets to be modelled on the same population.
 
+Some benefits of passing lists of composable elements:
+
+ - Combinations of intervention and vaccination scenarios can be conveniently created, as model functions will automatically create all possible combinations of the arguments to `intervention` and `vaccination`;
+
+ - Input-checking and cross-checking is reduced by checking each element of the `intervention` and `vaccination` list independently before the combination is created (and against the `population`, for cross-checking); hence for $N$ intervention sets and $M$ vaccination regimes there are only $N+M$ cross-checks, rather than $N \time M$ cross-checks;
+
+ - Model output is organised to provide a scenario identifier, making subsetting easier (more on this below).
+
 ::: {.alert .alert-warning}
 It may help to read the ["Modelling a non-pharmaceutical intervention targeting social contacts"](modelling_interventions.html) and the ["Modelling the effect of a vaccination campaign"](modelling_vaccination.html) vignettes first!
 :::
@@ -330,7 +353,7 @@ It may help to read the ["Modelling a non-pharmaceutical intervention targeting 
 
 _epidemics_ currently offers the ability to pass **intervention sets** and **vaccination regimes** as lists.
 
-It is not possible to pass lists of _populations_, _seasonality_, or _population changes_ (for the diphtheria model).
+It is not currently possible to pass lists of _populations_, _seasonality_, or _population changes_ to any models.
 
 In future, it may be possible to pass multiple populations as a list, to rapidly and conveniently model an epidemic on different populations, or to examine the effect of assumptions about the population's social contacts or demographic structure.
 :::

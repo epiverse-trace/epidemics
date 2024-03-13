@@ -494,7 +494,7 @@ This example shows how implementing interventions that reduce transmission can r
 ::: {.alert .alert-info}
 ### Combinations of intervention and vaccination scenarios
 
-When either or both `intervention` and `vaccination` are passed lists (of intervention sets, or of vaccination regimes, respectively), the model is run for each combination of elements.
+When either or both `intervention` and `vaccination` are passed as lists (of intervention sets, or of vaccination regimes, respectively), the model is run for each combination of elements.
 Thus for $M$ intervention sets and $N$ vaccination regimes, the model runs $M \times N$ times, and each combination is treated as a unique scenario.
 
 **Note that** 'no intervention' and 'no vaccination' scenarios are not automatically created, and must be passed explicitly as `NULL` in the respective lists.

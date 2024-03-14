@@ -10,16 +10,7 @@
     <loc>https://epiverse.github.io/epidemics/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/articles/benchmarking.html</loc>
-  </url>
-  <url>
     <loc>https://epiverse.github.io/epidemics/articles/design-principles.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/articles/diphtheria.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/articles/ebola_model.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/articles/epidemics.html</loc>
@@ -31,25 +22,31 @@
     <loc>https://epiverse.github.io/epidemics/articles/index.html</loc>
   </url>
   <url>
+    <loc>https://epiverse.github.io/epidemics/articles/model_diphtheria.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/articles/model_ebola.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/articles/model_vacamole.html</loc>
+  </url>
+  <url>
     <loc>https://epiverse.github.io/epidemics/articles/modelling_interventions.html</loc>
   </url>
   <url>
+    <loc>https://epiverse.github.io/epidemics/articles/modelling_multiple_interventions.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/articles/modelling_rate_interventions.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/articles/modelling_scenarios.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/articles/modelling_time_dependence.html</loc>
+  </url>
+  <url>
     <loc>https://epiverse.github.io/epidemics/articles/modelling_vaccination.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/articles/multiple_interventions.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/articles/parameter_uncertainty.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/articles/rate_interventions.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/articles/time_dependence.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/articles/vacamole.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/authors.html</loc>
@@ -76,13 +73,7 @@
     <loc>https://epiverse.github.io/epidemics/reference/assert_vaccination.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/reference/check_prepare_default_args.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/reference/check_prepare_diphtheria_args.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/reference/check_prepare_vacamole_args.html</loc>
+    <loc>https://epiverse.github.io/epidemics/reference/cross_checking_inputs.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/cumulative_contacts_intervention.html</loc>
@@ -106,13 +97,16 @@
     <loc>https://epiverse.github.io/epidemics/reference/dot-ode_model_vacamole.html</loc>
   </url>
   <url>
+    <loc>https://epiverse.github.io/epidemics/reference/dot-output_to_df.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/reference/dot-prepare_population.html</loc>
+  </url>
+  <url>
     <loc>https://epiverse.github.io/epidemics/reference/epidemic_size.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/epidemics-package.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/reference/get_parameter.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/index.html</loc>
@@ -142,13 +136,16 @@
     <loc>https://epiverse.github.io/epidemics/reference/new_infections.html</loc>
   </url>
   <url>
-    <loc>https://epiverse.github.io/epidemics/reference/no_time_dependence.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse.github.io/epidemics/reference/output_to_df.html</loc>
-  </url>
-  <url>
     <loc>https://epiverse.github.io/epidemics/reference/population.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/reference/prepare_default_args.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/reference/prepare_diphtheria_args.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/reference/prepare_vacamole_args.html</loc>
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/print.population.html</loc>
@@ -164,5 +161,8 @@
   </url>
   <url>
     <loc>https://epiverse.github.io/epidemics/reference/validate_intervention.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse.github.io/epidemics/reference/vector_recycling.html</loc>
   </url>
 </urlset>

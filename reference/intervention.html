@@ -43,7 +43,7 @@ overlapping intervention regimes using c() on two or more
     <a href="https://epiverse-trace.github.io/" class="external-link"><img src="../logo_white.svg" id="logo" alt="Epiverse-TRACE"></a>
     <a class="navbar-brand me-2" href="../index.html">epidemics</a>
 
-    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,24 +62,23 @@ overlapping intervention regimes using c() on two or more
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
-    <a class="dropdown-item" href="../articles/time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
+    <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/parameter_uncertainty.html">Generating and modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
-    <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
-    <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
-    <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
-    <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <a class="dropdown-item" href="../articles/model_vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
+    <a class="dropdown-item" href="../articles/model_ebola.html">Modelling responses to a stochastic Ebola virus epidemic</a>
+    <a class="dropdown-item" href="../articles/model_diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
     <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
@@ -136,15 +135,11 @@ overlapping intervention regimes using <code><a href="https://rdrr.io/r/base/c.h
 <span></span>
 <span><span class="fu">is_rate_intervention</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">no_contacts_intervention</span><span class="op">(</span><span class="va">population</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># S3 method for contacts_intervention</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for rate_intervention</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">no_rate_intervention</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -182,10 +177,6 @@ sub-class.</p></dd>
 <code>&lt;intervention&gt;</code> object.</p></dd>
 
 
-<dt>population</dt>
-<dd><p>A <code>&lt;population&gt;</code> object with a <code>contact_matrix</code> member.</p></dd>
-
-
 <dt>...</dt>
 <dd><p>intervention objects to combine with <code>x</code> to create a multi-dose
 <code>&lt;intervention&gt;</code> object.</p></dd>
@@ -212,10 +203,10 @@ demographic group if an intervention on contacts).</p>
 by epidemic model functions.</p>
 
 
-<p>A "null" intervention generated using <code>no_contacts_intervention(population)</code></p>
+<p>A "null" intervention generated using <code>.no_contacts_intervention(population)</code></p>
 
 
-<p>or <code>no_rate_intervention()</code> returns a <code>&lt;intervention&gt;</code> of the appropriate
+<p>or <code>.no_rate_intervention()</code> returns a <code>&lt;intervention&gt;</code> of the appropriate
 sub-class that has its start and end times, and its effect all
 set to 0.0.</p>
 
@@ -238,7 +229,7 @@ in contacts is stacked column wise to form a matrix \([i, j]\).</p>
 <p>When multiple rate interventions are combined using <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>, the reduction
 in the rate is concatenated into a vector of the same length as the number of
 interventions.</p>
-<p>Models such as <code><a href="model_default.html">model_default_cpp()</a></code> are set up to treat interventions
+<p>Models such as <code>model_default_cpp()</code> are set up to treat interventions
 with overlapping periods (i.e., overlap between the time when they are active
 ) as having an <em>additive effect</em> on contact or rate reductions.</p>
 <p>For contact reductions, the group-specific effect of \(J\) overlapping
@@ -321,28 +312,6 @@ particular rate is also considered to be additive.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #BB00BB;">Reduction:</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Interv. 1 Interv. 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Demo. grp. 1       0.1       0.1</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># A null intervention for scenarios without interventions</span></span></span>
-<span class="r-in"><span><span class="va">pop</span> <span class="op">&lt;-</span> <span class="fu"><a href="population.html">population</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  demography_vector <span class="op">=</span> <span class="fl">1e6</span>, contact_matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  initial_conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.99</span>, <span class="fl">0.01</span>, <span class="fl">0.0</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">no_contacts_intervention</span><span class="op">(</span><span class="va">pop</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">&lt;contacts_intervention&gt;</span> object</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #BB00BB;">Intervention name: </span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> "no_contacts_intervention"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #BB00BB;">Begins at:</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #BB00BB;">Ends at:</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #BB00BB;">Reduction:</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              Interv. 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Demo. grp. 1         0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

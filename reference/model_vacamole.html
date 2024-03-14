@@ -25,7 +25,7 @@ epidemic. See Details and References for more information."><meta property="og:i
     <a href="https://epiverse-trace.github.io/" class="external-link"><img src="../logo_white.svg" id="logo" alt="Epiverse-TRACE"></a>
     <a class="navbar-brand me-2" href="../index.html">epidemics</a>
 
-    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,24 +44,23 @@ epidemic. See Details and References for more information."><meta property="og:i
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
-    <a class="dropdown-item" href="../articles/time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
+    <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/parameter_uncertainty.html">Generating and modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
-    <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
-    <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
-    <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
-    <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <a class="dropdown-item" href="../articles/model_vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
+    <a class="dropdown-item" href="../articles/model_ebola.html">Modelling responses to a stochastic Ebola virus epidemic</a>
+    <a class="dropdown-item" href="../articles/model_diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
     <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
@@ -101,35 +100,18 @@ epidemic. See <strong>Details</strong> and <strong>References</strong> for more 
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_vacamole_cpp</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_vacamole</span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
 <span>  transmissibility <span class="op">=</span> <span class="fl">1.3</span><span class="op">/</span><span class="fl">7</span>,</span>
+<span>  transmissibility_vax <span class="op">=</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">transmissibility</span>,</span>
 <span>  infectiousness_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  hospitalisation_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">1000</span>,</span>
+<span>  hospitalisation_rate_vax <span class="op">=</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">hospitalisation_rate</span>,</span>
 <span>  mortality_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">1000</span>,</span>
+<span>  mortality_rate_vax <span class="op">=</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">mortality_rate</span>,</span>
 <span>  recovery_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">7</span>,</span>
-<span>  susc_reduction_vax <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  hosp_reduction_vax <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  mort_reduction_vax <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">vaccination</span>,</span>
-<span>  time_dependence <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>  increment <span class="op">=</span> <span class="fl">1</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">model_vacamole_r</span><span class="op">(</span></span>
-<span>  <span class="va">population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="fl">1.3</span><span class="op">/</span><span class="fl">7</span>,</span>
-<span>  infectiousness_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">2</span>,</span>
-<span>  hospitalisation_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">1000</span>,</span>
-<span>  mortality_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">1000</span>,</span>
-<span>  recovery_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">7</span>,</span>
-<span>  susc_reduction_vax <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  hosp_reduction_vax <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  mort_reduction_vax <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  intervention <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">vaccination</span>,</span>
+<span>  vaccination <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  time_dependence <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  increment <span class="op">=</span> <span class="fl">1</span></span>
@@ -145,52 +127,58 @@ of each demographic group. See <code><a href="population.html">population()</a><
 
 
 <dt>transmissibility</dt>
-<dd><p>A single number for the rate at which individuals
+<dd><p>A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \(\beta\), with
-\(\beta = R_0 / \text{infectious period}\).</p></dd>
+\(\beta = R_0 / \text{infectious period}\). See <strong>Details</strong> for default
+values.</p></dd>
+
+
+<dt>transmissibility_vax</dt>
+<dd><p>A numeric of values between 0.0 and 1.0
+giving the transmissibility of the infection to individuals who
+have received two doses of the vaccine. The default values is 80% of the
+transmissibility of the infection to individuals who are not doubly
+vaccinated.</p></dd>
 
 
 <dt>infectiousness_rate</dt>
-<dd><p>A single number for the rate at which individuals
+<dd><p>A numeric for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \(\sigma\), with \(\sigma = 1.0 / \text{pre-infectious period}\).
 This value does not depend upon the number of infectious individuals in the
-population.</p></dd>
+population. See <strong>Details</strong> for default values.</p></dd>
 
 
 <dt>hospitalisation_rate</dt>
-<dd><p>A single number for the hospitalisation rate of
+<dd><p>A numeric for the hospitalisation rate of
 infectious individuals.</p></dd>
 
 
+<dt>hospitalisation_rate_vax</dt>
+<dd><p>A numeric of values between 0.0 and 1.0
+giving the hospitalisation rate of infectious individuals who
+have received two doses of the vaccine. The default value is 80% of the
+hospitalisation rate of individuals who are not doubly vaccinated.</p></dd>
+
+
 <dt>mortality_rate</dt>
-<dd><p>A single parameter for the mortality rate of
+<dd><p>A numeric for the mortality rate of
 infectious or hospitalised individuals.</p></dd>
 
 
+<dt>mortality_rate_vax</dt>
+<dd><p>A numeric of values between 0.0 and 1.0
+giving the mortality of infectious and hospitalised individuals
+who have received two doses of the vaccine. The default value is 80% of the
+mortality rate of individuals who are not doubly vaccinated.</p></dd>
+
+
 <dt>recovery_rate</dt>
-<dd><p>A single number for the rate at which individuals move
+<dd><p>A numeric for the rate at which individuals move
 from the infectious to the recovered compartment. Often denoted as
-\(\gamma\), with \(\gamma = 1.0 / \text{infectious period}\).</p></dd>
-
-
-<dt>susc_reduction_vax</dt>
-<dd><p>A single value between 0.0 and 1.0
-giving the reduction in susceptibility of infectious individuals who
-have received two doses of the vaccine.</p></dd>
-
-
-<dt>hosp_reduction_vax</dt>
-<dd><p>A single value between 0.0 and 1.0
-giving the reduction in hospitalisation rate of infectious individuals who
-have received two doses of the vaccine.</p></dd>
-
-
-<dt>mort_reduction_vax</dt>
-<dd><p>A single value between 0.0 and 1.0
-giving the reduction in mortality of infectious and hospitalised individuals
-who have received two doses of the vaccine.</p></dd>
+\(\gamma\), with \(\gamma = 1.0 / \text{infectious period}\).
+See <strong>Details</strong> for default values.</p></dd>
 
 
 <dt>intervention</dt>
@@ -203,23 +191,24 @@ Multiple <code>&lt;rate_interventions&gt;</code> on the model parameters are all
 
 
 <dt>vaccination</dt>
-<dd><p>A <code>&lt;vaccination&gt;</code> object representing a
+<dd><p>An optional <code>&lt;vaccination&gt;</code> object representing a
 vaccination regime with <strong>two doses</strong> followed during the course of the
 epidemic, with a start and end time, and age-specific vaccination rates for
 each dose. See <code><a href="vaccination.html">vaccination()</a></code>.</p></dd>
 
 
 <dt>time_dependence</dt>
-<dd><p>A named list of functions that modify model parameters
-as a function of model time. List element names must correspond to model
-parameter names. List elements must be functions of the form
-<code>function(time, x, ...)</code>, where <code>time</code> is the simulation <code>time</code> and <code>x</code>
-represents a model parameter. The order of function arguments is important.</p></dd>
+<dd><p>A named list where each name
+is a model parameter, and each element is a function with
+the first two arguments being the current simulation <code>time</code>, and <code>x</code>, a value
+that is dependent on <code>time</code> (<code>x</code> represents a model parameter).
+See <strong>Details</strong> for more information, as well as the vignette on time-
+dependence <code><a href="https://epiverse.github.io/epidemics/articles/time_dependence.html">vignette("time_dependence", package = "epidemics")</a></code>.</p></dd>
 
 
 <dt>time_end</dt>
 <dd><p>The maximum number of timesteps over which to run the model.
-Taken as days, with a default value of 200 days.</p></dd>
+Taken as days, with a default value of 100 days. May be a numeric vector.</p></dd>
 
 
 <dt>increment</dt>
@@ -231,57 +220,56 @@ default value of 1 day.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A <code>data.frame</code> with the columns "time", "compartment", "age_group",
-"value". The compartments correspond to the compartments of the model
-chosen with <code>model</code>.
-The current default model has the compartments "susceptible",
-"vaccinated_one_dose", "vaccinated_two_dose", "exposed",
-"infectious", "infectious_vaccinated", "hospitalised",
-"hospitalised_vaccinated", "recovered",  and "dead".</p>
+<p>A <code>&lt;data.table&gt;</code>.
+If the model parameters and composable elements are all scalars, a single
+<code>&lt;data.table&gt;</code> with the columns "time", "compartment", "age_group", and
+"value", giving the number of individuals per demographic group
+in each compartment at each timestep in long (or "tidy") format is returned.</p>
+
+
+<p>If the model parameters or composable elements are lists or list-like,
+a nested <code>&lt;data.table&gt;</code> is returned with a list column "data", which holds
+the compartmental values described above.
+Other columns hold parameters and composable elements relating to the model
+run. Columns "scenario" and "param_set" identify combinations of composable
+elements (population, interventions, vaccination regimes), and infection
+parameters, respectively.</p>
     </div>
     <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This model allows for:</p><ol><li><p>A 'hospitalised' compartment along with a hospitalisation rates;</p></li>
+    <h2 id="details-vacamole-covid-model-with-leaky-two-dose-vaccination">Details: Vacamole Covid-19 model with leaky, two-dose vaccination<a class="anchor" aria-label="anchor" href="#details-vacamole-covid-model-with-leaky-two-dose-vaccination"></a></h2>
+    <p>The Vacamole model has the compartments "susceptible",
+"vaccinated_one_dose", "vaccinated_two_dose", "exposed", "infectious"
+"infectious_vaccinated", "hospitalised", "hospitalised_vaccinated",
+"recovered",  and "dead".</p>
+<p>This model allows for:</p><ol><li><p>A 'hospitalised' compartment along with a hospitalisation rate;</p></li>
 <li><p>Two doses of vaccination, with 'leaky' protection, i.e., vaccination does
 not prevent infection completely but allows for a reduction in the infection
 rate, as well as reduced rates of moving into states considered more serious,
 such as 'hospitalised' or 'dead'.</p></li>
 </ol><div class="section">
-<h3 id="r-and-rcpp-implementations">R and Rcpp implementations<a class="anchor" aria-label="anchor" href="#r-and-rcpp-implementations"></a></h3>
-
-
-<p><code>model_vacamole_cpp()</code> is a wrapper function for
-<code><a href="dot-model_vacamole_cpp.html">.model_vacamole_cpp()</a></code>, an internal C++ function that uses Boost <em>odeint</em>
-solvers, while <code>model_vacamole_r()</code> is a wrapper around <code><a href="https://rdrr.io/pkg/deSolve/man/lsoda.html" class="external-link">deSolve::lsoda()</a></code>
-which takes the the internal function ``.ode_model_vacamole()`.
-Both models return equivalent results, but the C++ implementation is faster.</p>
-</div>
-
-<div class="section">
 <h3 id="model-parameters">Model parameters<a class="anchor" aria-label="anchor" href="#model-parameters"></a></h3>
 
 
 <p>This model only allows for single, population-wide rates of
-transitions between compartments. The default values are:</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.186, resulting from
-an \(R_0\) = 1.3 and an infectious period of 7 days.</p></li>
+transitions between compartments per model run.</p>
+<p>However, model parameters may be passed as numeric vectors. These vectors
+must follow Tidyverse recycling rules: all vectors must have the same length,
+or, vectors of length 1 will be recycled to the length of any other vector.</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.186, resulting from
+an \(R_0\) = 1.3 and an infectious period of 7 days. The transmissibility
+for doubly vaccinated individuals (\(\beta_v\)) is 80% of \(\beta\),
+0.1488.</p></li>
 <li><p>Infectiousness rate (\(\sigma\), <code>infectiousness_rate</code>): 0.5, assuming
 a pre-infectious period of 2 days.</p></li>
 <li><p>Hospitalisation rate (\(\eta\), <code>hospitalistion_rate</code>): 1.0 / 1000,
-assuming that one in every thousand infectious individuals is hospitalised.</p></li>
+assuming that one in every thousand infectious individuals is hospitalised.
+The hospitalisation rate of doubly vaccinated individuals (\(\eta_v\)) is
+80% of \(\eta\), 0.8 / 1000.</p></li>
 <li><p>Mortality rate (\(\omega\), <code>mortality_rate</code>): 1.0 / 1000,
 assuming that one in every thousand infectious and hospitalised
-individuals dies.</p></li>
+individuals dies. The mortality rate of the doubly vaccinated
+(\(\omega_v\)) is 80% of \(\omega\), 0.8 / 1000.</p></li>
 <li><p>Recovery rate (\(\gamma\), <code>recovery_rate</code>): 0.143, assuming an
 infectious period of 7 days.</p></li>
-<li><p>Susceptibility reduction from vaccination (<code>susc_reduction_vax</code>): 0.2,
-assuming a 20% reduction in susceptibility for individuals who are doubly
-vaccinated.</p></li>
-<li><p>Hospitalisation reduction from vaccination (<code>hosp_reduction_vax</code>): 0.2,
-assuming a 20% reduction in hospitalisation for individuals who are doubly
-vaccinated.</p></li>
-<li><p>Mortality reduction from vaccination (<code>mort_reduction_vax</code>): 0.2,
-assuming a 20% reduction in mortality for individuals who are doubly
-vaccinated.</p></li>
 </ul></div>
 
     </div>
@@ -314,21 +302,75 @@ the Netherlands, summer 2021. Eurosurveillance, 27(44), 2101090.
 <span class="r-in"><span>  time_end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">80</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># run epidemic simulation with no vaccination or intervention</span></span></span>
-<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">model_vacamole_cpp</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="co"># run epidemic simulation with vaccination but no intervention</span></span></span>
+<span class="r-in"><span><span class="co"># with a single set of parameters</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">model_vacamole</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  population <span class="op">=</span> <span class="va">population</span>,</span></span>
 <span class="r-in"><span>  vaccination <span class="op">=</span> <span class="va">double_vax</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># view some data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   time demography_group         compartment    value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0     demo_group_1         susceptible 66993300</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0     demo_group_1 vaccinated_one_dose        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0     demo_group_1 vaccinated_two_dose        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0     demo_group_1             exposed        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0     demo_group_1  exposed_vaccinated        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0     demo_group_1          infectious     6700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     time demography_group         compartment    value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;num&gt;           &lt;char&gt;              &lt;char&gt;    &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0     demo_group_1         susceptible 66993300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0     demo_group_1 vaccinated_one_dose        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:     0     demo_group_1 vaccinated_two_dose        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:     0     demo_group_1             exposed        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5:     0     demo_group_1  exposed_vaccinated        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6:     0     demo_group_1          infectious     6700</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># run epidemic simulation with no vaccination or intervention</span></span></span>
+<span class="r-in"><span><span class="co"># and three discrete values of transmissibility</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">model_vacamole</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  population <span class="op">=</span> <span class="va">population</span>,</span></span>
+<span class="r-in"><span>  transmissibility <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.3</span>, <span class="fl">1.4</span>, <span class="fl">1.5</span><span class="op">)</span> <span class="op">/</span> <span class="fl">7.0</span>, <span class="co"># uncertainty in R0</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># view some data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transmissibility infectiousness_rate hospitalisation_rate mortality_rate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;num&gt;               &lt;num&gt;                &lt;num&gt;          &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:        0.1857143                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:        0.2000000                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:        0.2142857                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    recovery_rate transmissibility_vax hospitalisation_rate_vax</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;num&gt;                &lt;num&gt;                    &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0.1428571            0.1485714                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0.1428571            0.1600000                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:     0.1428571            0.1714286                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mortality_rate_vax time_end param_set      population intervention</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 &lt;num&gt;    &lt;num&gt;     &lt;int&gt;          &lt;list&gt;       &lt;list&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:              8e-04      100         1 &lt;population[4]&gt;             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:              8e-04      100         2 &lt;population[4]&gt;             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:              8e-04      100         3 &lt;population[4]&gt;             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    vaccination time_dependence increment scenario                 data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;               &lt;list&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                   &lt;list[1]&gt;         1        1 &lt;data.table[1111x4]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                   &lt;list[1]&gt;         1        1 &lt;data.table[1111x4]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:                   &lt;list[1]&gt;         1        1 &lt;data.table[1111x4]&gt;</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transmissibility infectiousness_rate hospitalisation_rate mortality_rate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;num&gt;               &lt;num&gt;                &lt;num&gt;          &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:        0.1857143                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:        0.2000000                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:        0.2142857                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    recovery_rate transmissibility_vax hospitalisation_rate_vax</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;num&gt;                &lt;num&gt;                    &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0.1428571            0.1485714                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0.1428571            0.1600000                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:     0.1428571            0.1714286                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mortality_rate_vax time_end param_set      population intervention</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 &lt;num&gt;    &lt;num&gt;     &lt;int&gt;          &lt;list&gt;       &lt;list&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:              8e-04      100         1 &lt;population[4]&gt;             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:              8e-04      100         2 &lt;population[4]&gt;             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:              8e-04      100         3 &lt;population[4]&gt;             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    vaccination time_dependence increment scenario                 data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;               &lt;list&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                   &lt;list[1]&gt;         1        1 &lt;data.table[1111x4]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                   &lt;list[1]&gt;         1        1 &lt;data.table[1111x4]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:                   &lt;list[1]&gt;         1        1 &lt;data.table[1111x4]&gt;</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

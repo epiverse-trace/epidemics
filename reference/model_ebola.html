@@ -31,7 +31,7 @@ lags behind the R implementation, and is likely to be removed."><meta property="
     <a href="https://epiverse-trace.github.io/" class="external-link"><img src="../logo_white.svg" id="logo" alt="Epiverse-TRACE"></a>
     <a class="navbar-brand me-2" href="../index.html">epidemics</a>
 
-    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,24 +50,23 @@ lags behind the R implementation, and is likely to be removed."><meta property="
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
-    <a class="dropdown-item" href="../articles/time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
+    <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/parameter_uncertainty.html">Generating and modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
-    <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
-    <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
-    <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
-    <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <a class="dropdown-item" href="../articles/model_vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
+    <a class="dropdown-item" href="../articles/model_ebola.html">Modelling responses to a stochastic Ebola virus epidemic</a>
+    <a class="dropdown-item" href="../articles/model_diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
     <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
@@ -110,7 +109,7 @@ lags behind the R implementation, and is likely to be removed.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_ebola_r</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_ebola</span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
 <span>  erlang_subcompartments <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  transmissibility <span class="op">=</span> <span class="fl">1.5</span><span class="op">/</span><span class="fl">12</span>,</span>
@@ -147,7 +146,8 @@ for the exposed, infectious, and hospitalised compartments. Defaults to 2.</p></
 <dd><p>A single number for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \(\beta\), with
-\(\beta = R_0 / \text{infectious period}\).</p></dd>
+\(\beta = R_0 / \text{infectious period}\).
+See <strong>Details</strong> for default values.</p></dd>
 
 
 <dt>infectiousness_rate</dt>
@@ -155,7 +155,8 @@ infectious individual. Often denoted as \(\beta\), with
 move from the exposed to the infectious compartment. Often denoted as
 \(\sigma\), with \(\sigma = 1.0 / \text{pre-infectious period}\).
 This value does not depend upon the number of infectious individuals in the
-population.</p></dd>
+population.
+See <strong>Details</strong> for default values.</p></dd>
 
 
 <dt>removal_rate</dt>
@@ -201,7 +202,7 @@ is a model parameter, and each element is a function with
 the first two arguments being the current simulation <code>time</code>, and <code>x</code>, a value
 that is dependent on <code>time</code> (<code>x</code> represents a model parameter).
 See <strong>Details</strong> for more information, as well as the vignette on time-
-dependence <code><a href="../articles/time_dependence.html">vignette("time_dependence", package = "epidemics")</a></code>.</p></dd>
+dependence <code><a href="https://epiverse.github.io/epidemics/articles/time_dependence.html">vignette("time_dependence", package = "epidemics")</a></code>.</p></dd>
 
 
 <dt>time_end</dt>
@@ -219,7 +220,7 @@ that gives the number of individuals in each model compartment over time (
 from 1 to <code>time_end</code>).</p>
     </div>
     <div class="section level2">
-    <h2 id="details-discrete-time-ebola-virus-disease-model">Details: Discrete-time ebola virus disease model<a class="anchor" aria-label="anchor" href="#details-discrete-time-ebola-virus-disease-model"></a></h2>
+    <h2 id="details-discrete-time-ebola-virus-disease-model">Details: Discrete-time Ebola virus disease model<a class="anchor" aria-label="anchor" href="#details-discrete-time-ebola-virus-disease-model"></a></h2>
     <p>This model has compartments adopted from the consensus model for Ebola virus
 disease presented in Li et al. (2019), and with transitions between
 epidemiological compartments modelled using Erlang sub-compartments adapted
@@ -297,7 +298,7 @@ a "vaccinated" epidemiological compartment. This prevents the use of a
 modifies model parameters --- specifically, the transmission rate --- in a
 way that is consistent with the effect of vaccination.
 An example is shown in the vignette about this model; run this code to open
-the vignette: <code><a href="../articles/ebola_model.html">vignette("ebola_model", package = "epidemics")</a></code></p>
+the vignette: <code><a href="https://epiverse.github.io/epidemics/articles/ebola_model.html">vignette("ebola_model", package = "epidemics")</a></code></p>
 </div>
 
     </div>
@@ -326,7 +327,7 @@ epidemic models. Journal of Biological Dynamics, 12(1), 16–38.
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># run epidemic simulation with no vaccination or intervention</span></span></span>
-<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">model_ebola_r</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">model_ebola</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  population <span class="op">=</span> <span class="va">population</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

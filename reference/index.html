@@ -17,7 +17,7 @@
     <a href="https://epiverse-trace.github.io/" class="external-link"><img src="../logo_white.svg" id="logo" alt="Epiverse-TRACE"></a>
     <a class="navbar-brand me-2" href="../index.html">epidemics</a>
 
-    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,24 +36,23 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
-    <a class="dropdown-item" href="../articles/time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
+    <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/parameter_uncertainty.html">Generating and modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
-    <a class="dropdown-item" href="../articles/vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
-    <a class="dropdown-item" href="../articles/ebola_model.html">Modelling responses to a stochastic Ebola virus epidemic</a>
-    <a class="dropdown-item" href="../articles/diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
-    <a class="dropdown-item" href="../articles/benchmarking.html">Benchmarking R and Rcpp implementations of epidemic models</a>
+    <a class="dropdown-item" href="../articles/model_vacamole.html">Modelling leaky vaccination and hospitalisation outcomes with Vacamole</a>
+    <a class="dropdown-item" href="../articles/model_ebola.html">Modelling responses to a stochastic Ebola virus epidemic</a>
+    <a class="dropdown-item" href="../articles/model_diphtheria.html">Modelling a diphtheria outbreak in a humanitarian camp setting</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Package design and architecture</h6>
     <a class="dropdown-item" href="../articles/design-principles.html">Design Principles for epidemics</a>
@@ -94,22 +93,22 @@
 
       <dl><dt>
           
-          <code><a href="model_default.html">model_default_cpp()</a></code> <code><a href="model_default.html">model_default_r()</a></code> 
+          <code><a href="model_default.html">model_default()</a></code> 
         </dt>
         <dd>Model an SEIR-V epidemic with interventions</dd>
       </dl><dl><dt>
           
-          <code><a href="model_diphtheria.html">model_diphtheria_cpp()</a></code> 
+          <code><a href="model_diphtheria.html">model_diphtheria()</a></code> 
         </dt>
         <dd>Model a diphtheria outbreak using a compartmental ODE model</dd>
       </dl><dl><dt>
           
-          <code><a href="model_ebola.html">model_ebola_r()</a></code> 
+          <code><a href="model_ebola.html">model_ebola()</a></code> 
         </dt>
         <dd>Model an Ebola virus disease epidemic</dd>
       </dl><dl><dt>
           
-          <code><a href="model_vacamole.html">model_vacamole_cpp()</a></code> <code><a href="model_vacamole.html">model_vacamole_r()</a></code> 
+          <code><a href="model_vacamole.html">model_vacamole()</a></code> 
         </dt>
         <dd>Model leaky, two-dose vaccination in an epidemic using Vacamole</dd>
       </dl></div><div class="section level2">
@@ -136,7 +135,7 @@
         <dd>Convert a list to a intervention object</dd>
       </dl><dl><dt>
           
-          <code><a href="intervention.html">intervention()</a></code> <code><a href="intervention.html">is_intervention()</a></code> <code><a href="intervention.html">is_contacts_intervention()</a></code> <code><a href="intervention.html">is_rate_intervention()</a></code> <code><a href="intervention.html">no_contacts_intervention()</a></code> <code><a href="intervention.html">c(<i>&lt;contacts_intervention&gt;</i>)</a></code> <code><a href="intervention.html">c(<i>&lt;rate_intervention&gt;</i>)</a></code> <code><a href="intervention.html">no_rate_intervention()</a></code> 
+          <code><a href="intervention.html">intervention()</a></code> <code><a href="intervention.html">is_intervention()</a></code> <code><a href="intervention.html">is_contacts_intervention()</a></code> <code><a href="intervention.html">is_rate_intervention()</a></code> <code><a href="intervention.html">c(<i>&lt;contacts_intervention&gt;</i>)</a></code> <code><a href="intervention.html">c(<i>&lt;rate_intervention&gt;</i>)</a></code> 
         </dt>
         <dd>Create an intervention for an epidemic model</dd>
       </dl><dl><dt>
@@ -193,7 +192,7 @@
         <dd>Print a <code>&lt;vaccination&gt;</code> object</dd>
       </dl><dl><dt>
           
-          <code><a href="vaccination.html">vaccination()</a></code> <code><a href="vaccination.html">is_vaccination()</a></code> <code><a href="vaccination.html">no_vaccination()</a></code> <code><a href="vaccination.html">c(<i>&lt;vaccination&gt;</i>)</a></code> 
+          <code><a href="vaccination.html">vaccination()</a></code> <code><a href="vaccination.html">is_vaccination()</a></code> <code><a href="vaccination.html">c(<i>&lt;vaccination&gt;</i>)</a></code> 
         </dt>
         <dd>Construct a new vaccination regime for an epidemic model</dd>
       </dl></div><div class="section level2">
@@ -208,16 +207,6 @@
       
 
       <dl><dt>
-          
-          <code><a href="get_parameter.html">get_parameter()</a></code> 
-        </dt>
-        <dd>Get parameters from {epidemics} classes</dd>
-      </dl><dl><dt>
-          
-          <code><a href="no_time_dependence.html">no_time_dependence()</a></code> 
-        </dt>
-        <dd>Specify no time dependence of model rates</dd>
-      </dl><dl><dt>
           
           <code><a href="epidemic_size.html">epidemic_size()</a></code> 
         </dt>

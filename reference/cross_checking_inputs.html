@@ -142,7 +142,7 @@ the model input <code>x</code> affects.</p></dd>
 <ul><li><p><code>.cross_check_intervention()</code> returns a named list with at least the
 elements "contacts" describing a <code>&lt;contacts_intervention&gt;</code> on <code>population</code>
 (if this is among the allowed targets), and a <code>&lt;rate_intervention&gt;</code> on the
-transmissibility parameter. If these are present in <code>x</code>, they are
+transmission rate parameter. If these are present in <code>x</code>, they are
 returned as is, or substituted if missing. Any other interventions
 are also returned. If <code>x</code> is <code>NULL</code>, dummy contact and rate interventions
 are returned in a list.</p></li>
@@ -150,7 +150,7 @@ are returned in a list.</p></li>
 for <code>population</code>, or a dummy vaccination regime with <code>doses</code> number of doses
 for each age group.</p></li>
 <li><p><code>.cross_check_timedep()</code> returns <code>x</code> if <code>x</code> is not <code>NULL</code>, otherwise
-returns a dummy function operating on the transmissibility parameter by
+returns a dummy function operating on the transmission rate parameter by
 default; see <code>.no_time_dependence()</code>;</p></li>
 <li><p><code>.cross_check_popchange()</code> returns <code>x</code> after checks against <code>population</code> if
 <code>x</code> is not <code>NULL</code>, otherwise returns a dummy list with no population change;

@@ -217,12 +217,12 @@
 <span><span class="co">#&gt; Demo. grp. 1      0.50</span></span>
 <span><span class="co">#&gt; Demo. grp. 2      0.01</span></span>
 <span><span class="co">#&gt; Demo. grp. 3      0.01</span></span></code></pre></div>
-<p>Run the default epidemic model, using the function <code><a href="reference/model_default.html">model_default()</a></code>. We assume an <span class="math inline"><em>R</em><sub>0</sub></span> of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days. From these values we can calculate transmissibility <span class="math inline"><em>β</em></span> <code>1.5 / 7.0</code>, infectiousness_rate <span class="math inline"><em>α</em></span> <code>1.0 / 3.0</code> and recovery_rate <span class="math inline"><em>γ</em></span> <code>1.0 / 7.0</code>.</p>
+<p>Run the default epidemic model, using the function <code><a href="reference/model_default.html">model_default()</a></code>. We assume an <span class="math inline"><em>R</em><sub>0</sub></span> of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days. From these values we can calculate transmission rate <span class="math inline"><em>β</em></span> <code>1.5 / 7.0</code>, infectiousness_rate <span class="math inline"><em>α</em></span> <code>1.0 / 3.0</code> and recovery_rate <span class="math inline"><em>γ</em></span> <code>1.0 / 7.0</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run an epidemic model using `epidemic()`</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="fl">1.5</span> <span class="op">/</span> <span class="fl">7.0</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="fl">1.5</span> <span class="op">/</span> <span class="fl">7.0</span>,</span>
 <span>  infectiousness_rate <span class="op">=</span> <span class="fl">1.0</span> <span class="op">/</span> <span class="fl">3.0</span>,</span>
 <span>  recovery_rate <span class="op">=</span> <span class="fl">1.0</span> <span class="op">/</span> <span class="fl">7.0</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>contacts <span class="op">=</span> <span class="va">close_schools</span><span class="op">)</span>,</span>

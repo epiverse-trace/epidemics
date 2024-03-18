@@ -174,7 +174,7 @@ The transitions between compartments are based on an Erlang model developed by <
 We assume that ebola has a mean infectious period of 12 days, and that the time between exposure and symptom onset — the pre-infectious period — is 5 days.</p>
 <p>Together, these give the following values:</p>
 <ul>
-<li><p>Transmissibility (<span class="math inline">\(\beta\)</span>): 0.125,</p></li>
+<li><p>Transmission rate (<span class="math inline">\(\beta\)</span>): 0.125,</p></li>
 <li><p>Infectiousness rate (<span class="math inline">\(\gamma^E\)</span> in <span class="citation">Getz and Dougherty (<a href="#ref-getz2018">2018</a>)</span>): 0.4,</p></li>
 <li><p>Removal rate (<span class="math inline">\(\gamma^I\)</span> in <span class="citation">Getz and Dougherty (<a href="#ref-getz2018">2018</a>)</span>): 0.1667</p></li>
 </ul>
@@ -391,7 +391,7 @@ Figure 3: Histogram of the final outbreak sizes of 100 ebola outbreaks. These ar
 <span><span class="va">data_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    transmissibility <span class="op">=</span> <span class="va">reduce_transmission</span></span>
+<span>    transmission_rate <span class="op">=</span> <span class="va">reduce_transmission</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
@@ -464,7 +464,7 @@ This function assumes that the baseline transmission rate of ebola decreases ove
 <span><span class="va">data_apply_vax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
 <span>  time_dependence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    transmissibility <span class="op">=</span> <span class="va">time_dep_vax</span></span>
+<span>    transmission_rate <span class="op">=</span> <span class="va">time_dep_vax</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
@@ -705,7 +705,7 @@ Figure 8: Effect of implementing an intervention that reduces the risk of ebola 
 <span><span class="va">data_combined_interventions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    transmissibility <span class="op">=</span> <span class="va">reduce_transmission</span>,</span>
+<span>    transmission_rate <span class="op">=</span> <span class="va">reduce_transmission</span>,</span>
 <span>    prop_community <span class="op">=</span> <span class="va">improve_hospitalisation</span>,</span>
 <span>    etu_risk <span class="op">=</span> <span class="va">improve_etu_safety</span>,</span>
 <span>    funeral_risk <span class="op">=</span> <span class="va">reduce_funeral_risk</span></span>

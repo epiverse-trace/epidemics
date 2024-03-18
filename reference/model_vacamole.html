@@ -102,8 +102,8 @@ epidemic. See <strong>Details</strong> and <strong>References</strong> for more 
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_vacamole</span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="fl">1.3</span><span class="op">/</span><span class="fl">7</span>,</span>
-<span>  transmissibility_vax <span class="op">=</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">transmissibility</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="fl">1.3</span><span class="op">/</span><span class="fl">7</span>,</span>
+<span>  transmission_rate_vax <span class="op">=</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">transmission_rate</span>,</span>
 <span>  infectiousness_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  hospitalisation_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">1000</span>,</span>
 <span>  hospitalisation_rate_vax <span class="op">=</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">hospitalisation_rate</span>,</span>
@@ -126,7 +126,7 @@ population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See <code><a href="population.html">population()</a></code>.</p></dd>
 
 
-<dt>transmissibility</dt>
+<dt>transmission_rate</dt>
 <dd><p>A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \(\beta\), with
@@ -134,11 +134,11 @@ infectious individual. Often denoted as \(\beta\), with
 values.</p></dd>
 
 
-<dt>transmissibility_vax</dt>
+<dt>transmission_rate_vax</dt>
 <dd><p>A numeric of values between 0.0 and 1.0
-giving the transmissibility of the infection to individuals who
+giving the transmission_rate of the infection to individuals who
 have received two doses of the vaccine. The default values is 80% of the
-transmissibility of the infection to individuals who are not doubly
+transmission_rate of the infection to individuals who are not doubly
 vaccinated.</p></dd>
 
 
@@ -254,8 +254,8 @@ such as 'hospitalised' or 'dead'.</p></li>
 transitions between compartments per model run.</p>
 <p>However, model parameters may be passed as numeric vectors. These vectors
 must follow Tidyverse recycling rules: all vectors must have the same length,
-or, vectors of length 1 will be recycled to the length of any other vector.</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.186, resulting from
-an \(R_0\) = 1.3 and an infectious period of 7 days. The transmissibility
+or, vectors of length 1 will be recycled to the length of any other vector.</p><ul><li><p>Transmission rate (\(\beta\), <code>transmission_rate</code>): 0.186, resulting from
+an \(R_0\) = 1.3 and an infectious period of 7 days. The transmission rate
 for doubly vaccinated individuals (\(\beta_v\)) is 80% of \(\beta\),
 0.1488.</p></li>
 <li><p>Infectiousness rate (\(\sigma\), <code>infectiousness_rate</code>): 0.5, assuming
@@ -321,24 +321,24 @@ the Netherlands, summer 2021. Eurosurveillance, 27(44), 2101090.
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6:     0     demo_group_1          infectious     6700</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># run epidemic simulation with no vaccination or intervention</span></span></span>
-<span class="r-in"><span><span class="co"># and three discrete values of transmissibility</span></span></span>
+<span class="r-in"><span><span class="co"># and three discrete values of transmission_rate</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">model_vacamole</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  population <span class="op">=</span> <span class="va">population</span>,</span></span>
-<span class="r-in"><span>  transmissibility <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.3</span>, <span class="fl">1.4</span>, <span class="fl">1.5</span><span class="op">)</span> <span class="op">/</span> <span class="fl">7.0</span>, <span class="co"># uncertainty in R0</span></span></span>
+<span class="r-in"><span>  transmission_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.3</span>, <span class="fl">1.4</span>, <span class="fl">1.5</span><span class="op">)</span> <span class="op">/</span> <span class="fl">7.0</span>, <span class="co"># uncertainty in R0</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># view some data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    transmissibility infectiousness_rate hospitalisation_rate mortality_rate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;num&gt;               &lt;num&gt;                &lt;num&gt;          &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:        0.1857143                 0.5                0.001          0.001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:        0.2000000                 0.5                0.001          0.001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:        0.2142857                 0.5                0.001          0.001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    recovery_rate transmissibility_vax hospitalisation_rate_vax</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;num&gt;                &lt;num&gt;                    &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0.1428571            0.1485714                    8e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0.1428571            0.1600000                    8e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:     0.1428571            0.1714286                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transmission_rate infectiousness_rate hospitalisation_rate mortality_rate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                &lt;num&gt;               &lt;num&gt;                &lt;num&gt;          &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:         0.1857143                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:         0.2000000                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:         0.2142857                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    recovery_rate transmission_rate_vax hospitalisation_rate_vax</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;num&gt;                 &lt;num&gt;                    &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0.1428571             0.1485714                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0.1428571             0.1600000                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:     0.1428571             0.1714286                    8e-04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    mortality_rate_vax time_end param_set      population intervention</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 &lt;num&gt;    &lt;num&gt;     &lt;int&gt;          &lt;list&gt;       &lt;list&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:              8e-04      100         1 &lt;population[4]&gt;             </span>
@@ -350,16 +350,16 @@ the Netherlands, summer 2021. Eurosurveillance, 27(44), 2101090.
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2:                   &lt;list[1]&gt;         1        1 &lt;data.table[1111x4]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3:                   &lt;list[1]&gt;         1        1 &lt;data.table[1111x4]&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    transmissibility infectiousness_rate hospitalisation_rate mortality_rate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;num&gt;               &lt;num&gt;                &lt;num&gt;          &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:        0.1857143                 0.5                0.001          0.001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:        0.2000000                 0.5                0.001          0.001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:        0.2142857                 0.5                0.001          0.001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    recovery_rate transmissibility_vax hospitalisation_rate_vax</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;num&gt;                &lt;num&gt;                    &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0.1428571            0.1485714                    8e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0.1428571            0.1600000                    8e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:     0.1428571            0.1714286                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transmission_rate infectiousness_rate hospitalisation_rate mortality_rate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                &lt;num&gt;               &lt;num&gt;                &lt;num&gt;          &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:         0.1857143                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:         0.2000000                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:         0.2142857                 0.5                0.001          0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    recovery_rate transmission_rate_vax hospitalisation_rate_vax</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;num&gt;                 &lt;num&gt;                    &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0.1428571             0.1485714                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0.1428571             0.1600000                    8e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:     0.1428571             0.1714286                    8e-04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    mortality_rate_vax time_end param_set      population intervention</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 &lt;num&gt;    &lt;num&gt;     &lt;int&gt;          &lt;list&gt;       &lt;list&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:              8e-04      100         1 &lt;population[4]&gt;             </span>

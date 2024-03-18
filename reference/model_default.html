@@ -4,7 +4,7 @@ epidemic model with the compartments
 "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
 This model can accommodate heterogeneity in social contacts among demographic
 groups, as well as differences in the sizes of demographic groups.
-The population, transmissibility, infectiousness_rate, and
+The population, transmission_rate, infectiousness_rate, and
 recovery_rate
 arguments are mandatory, while passing an intervention and vaccination
 are optional and can be used to simulate scenarios with different epidemic
@@ -14,7 +14,7 @@ epidemic model with the compartments
 "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
 This model can accommodate heterogeneity in social contacts among demographic
 groups, as well as differences in the sizes of demographic groups.
-The population, transmissibility, infectiousness_rate, and
+The population, transmission_rate, infectiousness_rate, and
 recovery_rate
 arguments are mandatory, while passing an intervention and vaccination
 are optional and can be used to simulate scenarios with different epidemic
@@ -108,7 +108,7 @@ epidemic model with the compartments
 "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
 This model can accommodate heterogeneity in social contacts among demographic
 groups, as well as differences in the sizes of demographic groups.</p>
-<p>The <code>population</code>, <code>transmissibility</code>, <code>infectiousness_rate</code>, and
+<p>The <code>population</code>, <code>transmission_rate</code>, <code>infectiousness_rate</code>, and
 <code>recovery_rate</code>
 arguments are mandatory, while passing an <code>intervention</code> and <code>vaccination</code>
 are optional and can be used to simulate scenarios with different epidemic
@@ -120,7 +120,7 @@ See <strong>Details</strong> for more information.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_default</span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="fl">1.3</span><span class="op">/</span><span class="fl">7</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="fl">1.3</span><span class="op">/</span><span class="fl">7</span>,</span>
 <span>  infectiousness_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  recovery_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">7</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -139,7 +139,7 @@ population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See <code><a href="population.html">population()</a></code>.</p></dd>
 
 
-<dt>transmissibility</dt>
+<dt>transmission_rate</dt>
 <dd><p>A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \(\beta\), with
@@ -227,7 +227,7 @@ transitions between compartments per model run.</p>
 <p>However, model parameters may be passed as numeric vectors. These vectors
 must follow Tidyverse recycling rules: all vectors must have the same length,
 or, vectors of length 1 will be recycled to the length of any other vector.</p>
-<p>The default values are:</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.186, assuming an
+<p>The default values are:</p><ul><li><p>Transmission rate (\(\beta\), <code>transmission_rate</code>): 0.186, assuming an
 \(R_0\) = 1.3 and an infectious period of 7 days.</p></li>
 <li><p>Infectiousness rate (\(\sigma\), <code>infectiousness_rate</code>): 0.5, assuming
 a pre-infectious period of 2 days.</p></li>
@@ -251,19 +251,19 @@ infectious period of 7 days.</p></li>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># run epidemic simulation with no vaccination or intervention</span></span></span>
-<span class="r-in"><span><span class="co"># and three discrete values of transmissibility</span></span></span>
+<span class="r-in"><span><span class="co"># and three discrete values of transmission rate</span></span></span>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">model_default</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span></span>
-<span class="r-in"><span>  transmissibility <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.3</span>, <span class="fl">1.4</span>, <span class="fl">1.5</span><span class="op">)</span> <span class="op">/</span> <span class="fl">7.0</span>, <span class="co"># uncertainty in R0</span></span></span>
+<span class="r-in"><span>  transmission_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.3</span>, <span class="fl">1.4</span>, <span class="fl">1.5</span><span class="op">)</span> <span class="op">/</span> <span class="fl">7.0</span>, <span class="co"># uncertainty in R0</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># view some data</span></span></span>
 <span class="r-in"><span><span class="va">data</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    transmissibility infectiousness_rate recovery_rate time_end param_set</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:        0.1857143                 0.5     0.1428571      100         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:        0.2000000                 0.5     0.1428571      100         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:        0.2142857                 0.5     0.1428571      100         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transmission_rate infectiousness_rate recovery_rate time_end param_set</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:         0.1857143                 0.5     0.1428571      100         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:         0.2000000                 0.5     0.1428571      100         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:         0.2142857                 0.5     0.1428571      100         3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         population intervention vaccination time_dependence increment scenario</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;list&gt;       &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span>
@@ -283,11 +283,11 @@ infectious period of 7 days.</p></li>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">data</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    transmissibility infectiousness_rate recovery_rate time_end param_set</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:        0.1857143                 0.5     0.1428571       50         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:        0.1857143                 0.5     0.1428571      100         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:        0.1857143                 0.5     0.1428571      150         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    transmission_rate infectiousness_rate recovery_rate time_end param_set</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:         0.1857143                 0.5     0.1428571       50         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:         0.1857143                 0.5     0.1428571      100         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:         0.1857143                 0.5     0.1428571      150         3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         population intervention vaccination time_dependence increment scenario</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;list&gt;       &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span>

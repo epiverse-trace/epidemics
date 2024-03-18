@@ -171,9 +171,9 @@
 </details>
 </div>
 <div class="section level2">
-<h2 id="modelling-an-intervention-on-transmissibility">Modelling an intervention on transmissibility<a class="anchor" aria-label="anchor" href="#modelling-an-intervention-on-transmissibility"></a>
+<h2 id="modelling-an-intervention-on-the-transmission-rate">Modelling an intervention on the transmission rate<a class="anchor" aria-label="anchor" href="#modelling-an-intervention-on-the-transmission-rate"></a>
 </h2>
-<p>We model an intervention on the transmissibility <span class="math inline">\(\beta\)</span> that reduces it by 10%.
+<p>We model an intervention on the transmission rate <span class="math inline">\(\beta\)</span> that reduces it by 10%.
 This could represent interventions such as requiring people to wear masks that reduce transmission.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># prepare an intervention that models mask mandates for ~3 months (100 days)</span></span>
@@ -223,7 +223,7 @@ We simulate an epidemic using <code><a href="../reference/model_default.html">mo
 <span><span class="co"># with a mask mandate</span></span>
 <span><span class="va">data_masks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>transmissibility <span class="op">=</span> <span class="va">mask_mandate</span><span class="op">)</span>,</span>
+<span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>transmission_rate <span class="op">=</span> <span class="va">mask_mandate</span><span class="op">)</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">200</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">

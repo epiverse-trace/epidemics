@@ -199,7 +199,7 @@ This allows users to quickly obtain results for a range of parameter values with
 <span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><div class="section level3">
-<h3 id="obtaining-estimates-of-disease-transmissibility">Obtaining estimates of disease transmissibility<a class="anchor" aria-label="anchor" href="#obtaining-estimates-of-disease-transmissibility"></a>
+<h3 id="obtaining-estimates-of-disease-transmission-rate">Obtaining estimates of disease transmission rate<a class="anchor" aria-label="anchor" href="#obtaining-estimates-of-disease-transmission-rate"></a>
 </h3>
 <p>For this example, we consider influenza with pandemic potential <span class="citation">(<a href="#ref-ghani2010">Ghani et al. 2010</a>)</span>, and prepare multiple samples of the estimated <span class="math inline">\(R\)</span>. This reflects pandemic response scenarios in which <span class="math inline">\(R\)</span> estimates always come with some uncertainty (due to limitations in the data and estimation methods). Sampling from a distribution that <span class="math inline">\(R\)</span> is expected to follow allows us to better understand the extent of variance in possible epidemic outcomes.</p>
 <p>We obtain the probability distribution function (PDF) from the distribution of the serial intervals; this is a Gamma distribution with shape <span class="math inline">\(k\)</span> = 2.622 and scale <span class="math inline">\(\theta\)</span> = 0.957 <span class="citation">(<a href="#ref-ghani2010">Ghani et al. 2010</a>)</span>.</p>
@@ -232,9 +232,9 @@ Users who are drawing parameters with greater variance may wish to draw a larger
 </details><p><img src="modelling_scenarios_files/figure-html/unnamed-chunk-4-1.png"><!-- --></p>
 </div>
 <div class="section level3">
-<h3 id="passing-a-vector-of-transmissibility">Passing a vector of transmissibility<a class="anchor" aria-label="anchor" href="#passing-a-vector-of-transmissibility"></a>
+<h3 id="passing-a-vector-of-transmission-rates">Passing a vector of transmission rates<a class="anchor" aria-label="anchor" href="#passing-a-vector-of-transmission-rates"></a>
 </h3>
-<p>Here, we generate 100 samples of <span class="math inline">\(R\)</span>, and convert to the transmissibility parameter (often denoted <span class="math inline">\(\beta\)</span>) by dividing by the infectious period of 7 days.</p>
+<p>Here, we generate 100 samples of <span class="math inline">\(R\)</span>, and convert to the transmission rate (often denoted <span class="math inline">\(\beta\)</span>) by dividing by the infectious period of 7 days.</p>
 <p>Since <em>EpiEstim</em> estimates <span class="math inline">\(Rt\)</span>, the instantaneous <span class="math inline">\(R\)</span>, we shall use the mean of the estimates over the time period, and the mean of the standard deviation, as parameters for a distribution from which to draw <span class="math inline">\(R\)</span> samples for the model.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get mean mean and sd over time</span></span>
@@ -252,23 +252,23 @@ Users who are drawing parameters with greater variance may wish to draw a larger
 <span><span class="va">infectious_period</span> <span class="op">&lt;-</span> <span class="fl">7</span></span>
 <span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="va">r_samples</span> <span class="op">/</span> <span class="va">infectious_period</span></span></code></pre></div>
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># pass the vector of transmissibilities to the argument `transmissibility`</span></span>
+<code class="sourceCode R"><span><span class="co"># pass the vector of transmissibilities to the argument `transmission_rate`</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="va">beta</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="va">beta</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># view the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">output</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    transmissibility infectiousness_rate recovery_rate time_end param_set</span></span>
-<span><span class="co">#&gt;               &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:        0.1977482                 0.5     0.1428571      600         1</span></span>
-<span><span class="co">#&gt; 2:        0.2333557                 0.5     0.1428571      600         2</span></span>
-<span><span class="co">#&gt; 3:        0.1885540                 0.5     0.1428571      600         3</span></span>
-<span><span class="co">#&gt; 4:        0.2954036                 0.5     0.1428571      600         4</span></span>
-<span><span class="co">#&gt; 5:        0.2397671                 0.5     0.1428571      600         5</span></span>
-<span><span class="co">#&gt; 6:        0.1892204                 0.5     0.1428571      600         6</span></span>
+<span><span class="co">#&gt;    transmission_rate infectiousness_rate recovery_rate time_end param_set</span></span>
+<span><span class="co">#&gt;                &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:         0.1977482                 0.5     0.1428571      600         1</span></span>
+<span><span class="co">#&gt; 2:         0.2333557                 0.5     0.1428571      600         2</span></span>
+<span><span class="co">#&gt; 3:         0.1885540                 0.5     0.1428571      600         3</span></span>
+<span><span class="co">#&gt; 4:         0.2954036                 0.5     0.1428571      600         4</span></span>
+<span><span class="co">#&gt; 5:         0.2397671                 0.5     0.1428571      600         5</span></span>
+<span><span class="co">#&gt; 6:         0.1892204                 0.5     0.1428571      600         6</span></span>
 <span><span class="co">#&gt;         population intervention vaccination time_dependence increment scenario</span></span>
 <span><span class="co">#&gt;             &lt;list&gt;       &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;</span></span>
 <span><span class="co">#&gt; 1: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
@@ -285,7 +285,7 @@ Users who are drawing parameters with greater variance may wish to draw a larger
 <span><span class="co">#&gt; 4: &lt;data.table[9015x4]&gt;</span></span>
 <span><span class="co">#&gt; 5: &lt;data.table[9015x4]&gt;</span></span>
 <span><span class="co">#&gt; 6: &lt;data.table[9015x4]&gt;</span></span></code></pre></div>
-</details><p>The output is a nested <code>&lt;data.table&gt;</code>, with the output of each run of the model for each unique <code>transmissibility</code> contained as a <code>&lt;data.frame&gt;</code> in the list column <code>"data"</code>.</p>
+</details><p>The output is a nested <code>&lt;data.table&gt;</code>, with the output of each run of the model for each unique <code>transmission_rate</code> contained as a <code>&lt;data.frame&gt;</code> in the list column <code>"data"</code>.</p>
 </div>
 <div class="section level3 alert alert-info">
 <h3 id="output-type-for-vector-parameter-inputs">Output type for vector parameter inputs<a class="anchor" aria-label="anchor" href="#output-type-for-vector-parameter-inputs"></a>
@@ -293,12 +293,12 @@ Users who are drawing parameters with greater variance may wish to draw a larger
 <p>The output of <code>model_*()</code> when an infection parameter is passed as a vector is a nested <code>&lt;data.table&gt;</code>. This is similar to a nested <code>&lt;tibble&gt;</code>, and can be handled by popular data science packages, such as from the Tidyverse.</p>
 <p>More on handling nested data can be found in this <a href="https://r4ds.hadley.nz/rectangling.html#list-columns" class="external-link">section on list-columns in R for Data Science</a> and in the <a href="https://tidyr.tidyverse.org/articles/nest.html" class="external-link">documentation for nested data in the <em>tidyr</em> package</a>. Equivalent operations are possible on <code>&lt;data.table&gt;</code>s directly; see <a href="https://www.r-bloggers.com/2019/10/much-faster-unnesting-with-data-table/" class="external-link">this R Bloggers post on unnesting data</a>.</p>
 </div>
-<p>We unnest the output’s “data” column in order to plot incidence curves for each transmissibility value.</p>
+<p>We unnest the output’s “data” column in order to plot incidence curves for each transmission rate value.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># select the parameter set and data columns with dplyr::select()</span></span>
 <span><span class="co"># add the R value for visualisation</span></span>
 <span><span class="co"># calculate new infections, and use tidyr to unnest the data column</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">param_set</span>, <span class="va">transmissibility</span>, <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">param_set</span>, <span class="va">transmission_rate</span>, <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    r_value <span class="op">=</span> <span class="va">r_samples</span>,</span>
 <span>    new_infections <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">new_infections</span><span class="op">)</span></span>
@@ -351,7 +351,7 @@ Figure 1: Incidence curves for the number of new infections on each day of the e
 <span></span>
 <span><span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="va">beta</span>, <span class="co"># same length as gamma</span></span>
+<span>  transmission_rate <span class="op">=</span> <span class="va">beta</span>, <span class="co"># same length as gamma</span></span>
 <span>  infectiousness_rate <span class="op">=</span> <span class="fl">0.5</span>, <span class="co"># length 1</span></span>
 <span>  recovery_rate <span class="op">=</span> <span class="va">gamma</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -386,14 +386,14 @@ Figure 1: Incidence curves for the number of new infections on each day of the e
 <span></span>
 <span><span class="co"># view the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">output</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    transmissibility infectiousness_rate recovery_rate time_end param_set</span></span>
-<span><span class="co">#&gt;               &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:        0.1857143                 0.5     0.1428571      589         1</span></span>
-<span><span class="co">#&gt; 2:        0.1857143                 0.5     0.1428571      595         2</span></span>
-<span><span class="co">#&gt; 3:        0.1857143                 0.5     0.1428571      568         3</span></span>
-<span><span class="co">#&gt; 4:        0.1857143                 0.5     0.1428571      583         4</span></span>
-<span><span class="co">#&gt; 5:        0.1857143                 0.5     0.1428571      589         5</span></span>
-<span><span class="co">#&gt; 6:        0.1857143                 0.5     0.1428571      593         6</span></span>
+<span><span class="co">#&gt;    transmission_rate infectiousness_rate recovery_rate time_end param_set</span></span>
+<span><span class="co">#&gt;                &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:         0.1857143                 0.5     0.1428571      589         1</span></span>
+<span><span class="co">#&gt; 2:         0.1857143                 0.5     0.1428571      595         2</span></span>
+<span><span class="co">#&gt; 3:         0.1857143                 0.5     0.1428571      568         3</span></span>
+<span><span class="co">#&gt; 4:         0.1857143                 0.5     0.1428571      583         4</span></span>
+<span><span class="co">#&gt; 5:         0.1857143                 0.5     0.1428571      589         5</span></span>
+<span><span class="co">#&gt; 6:         0.1857143                 0.5     0.1428571      593         6</span></span>
 <span><span class="co">#&gt;         population intervention vaccination time_dependence increment scenario</span></span>
 <span><span class="co">#&gt;             &lt;list&gt;       &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;</span></span>
 <span><span class="co">#&gt; 1: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
@@ -516,19 +516,19 @@ Figure 1: Incidence curves for the number of new infections on each day of the e
 <span>    contacts <span class="op">=</span> <span class="va">combined_intervention</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  scenario_04 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    transmissibility <span class="op">=</span> <span class="va">mask_mandate</span></span>
+<span>    transmission_rate <span class="op">=</span> <span class="va">mask_mandate</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  scenario_05 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    contacts <span class="op">=</span> <span class="va">close_schools</span>,</span>
-<span>    transmissibility <span class="op">=</span> <span class="va">mask_mandate</span></span>
+<span>    transmission_rate <span class="op">=</span> <span class="va">mask_mandate</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  scenario_06 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    contacts <span class="op">=</span> <span class="va">close_workplaces</span>,</span>
-<span>    transmissibility <span class="op">=</span> <span class="va">mask_mandate</span></span>
+<span>    transmission_rate <span class="op">=</span> <span class="va">mask_mandate</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  scenario_07 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    contacts <span class="op">=</span> <span class="va">combined_intervention</span>,</span>
-<span>    transmissibility <span class="op">=</span> <span class="va">mask_mandate</span></span>
+<span>    transmission_rate <span class="op">=</span> <span class="va">mask_mandate</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><p><strong>Note that</strong> there is no parameter uncertainty included here. We can visualise the effect of each intervention set in the form of the epidemic’s final size, aggregating over age groups.</p>
@@ -546,14 +546,14 @@ Figure 1: Incidence curves for the number of new infections on each day of the e
 <span></span>
 <span><span class="co"># examine the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">output</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    transmissibility infectiousness_rate recovery_rate time_end param_set</span></span>
-<span><span class="co">#&gt;               &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:        0.1857143                 0.5     0.1428571      600         1</span></span>
-<span><span class="co">#&gt; 2:        0.1857143                 0.5     0.1428571      600         1</span></span>
-<span><span class="co">#&gt; 3:        0.1857143                 0.5     0.1428571      600         1</span></span>
-<span><span class="co">#&gt; 4:        0.1857143                 0.5     0.1428571      600         1</span></span>
-<span><span class="co">#&gt; 5:        0.1857143                 0.5     0.1428571      600         1</span></span>
-<span><span class="co">#&gt; 6:        0.1857143                 0.5     0.1428571      600         1</span></span>
+<span><span class="co">#&gt;    transmission_rate infectiousness_rate recovery_rate time_end param_set</span></span>
+<span><span class="co">#&gt;                &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:         0.1857143                 0.5     0.1428571      600         1</span></span>
+<span><span class="co">#&gt; 2:         0.1857143                 0.5     0.1428571      600         1</span></span>
+<span><span class="co">#&gt; 3:         0.1857143                 0.5     0.1428571      600         1</span></span>
+<span><span class="co">#&gt; 4:         0.1857143                 0.5     0.1428571      600         1</span></span>
+<span><span class="co">#&gt; 5:         0.1857143                 0.5     0.1428571      600         1</span></span>
+<span><span class="co">#&gt; 6:         0.1857143                 0.5     0.1428571      600         1</span></span>
 <span><span class="co">#&gt;         population intervention vaccination time_dependence increment scenario</span></span>
 <span><span class="co">#&gt;             &lt;list&gt;       &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;</span></span>
 <span><span class="co">#&gt; 1: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
@@ -633,11 +633,11 @@ Thus for <span class="math inline">\(M\)</span> intervention sets and <span clas
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># this example includes 100 samples of transmissibility for each intervention</span></span>
+<code class="sourceCode R"><span><span class="co"># this example includes 100 samples of transmission rates for each intervention</span></span>
 <span><span class="co"># including the baseline</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  <span class="va">uk_population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="va">beta</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="va">beta</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="va">intervention_scenarios</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -701,8 +701,8 @@ The <code>"scenario"</code> column indicates each intervention set as a distinct
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
 <span style="display:block;" id="fig:unnamed-chunk-22"></span>
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-22-1.png" alt="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmissibility paramater."><p class="caption">
-Figure 2: Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmissibility paramater.
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-22-1.png" alt="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates."><p class="caption">
+Figure 2: Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates.
 </p>
 </div>
 </div>
@@ -712,11 +712,11 @@ Figure 2: Infections averted relative to no epidemic response by implementing ea
 </h2>
 <p>The intervention scenarios modelled above suggest that:</p>
 <ul>
-<li><p>interventions on disease transmissibility reduce infections and hence epidemic final sizes;</p></li>
+<li><p>interventions on disease transmission rates reduce infections and hence epidemic final sizes;</p></li>
 <li><p>multiple interventions reduce epidemic final sizes more than single interventions.</p></li>
 </ul>
 <p>In this simple example we show how this need not always be the case, and that counter-intuitively, implementing more interventions can lead to a larger epidemic final size than implementing fewer interventions.</p>
-<p>This phenomenon depends on the baseline transmissibility of the infection, so we select a relatively low <span class="math inline">\(R\)</span> of 1.30 (corresponding to pandemic influenza), and a higher <span class="math inline">\(R\)</span> of 1.58 from the <span class="math inline">\(R\)</span> estimation step at the start of the vignette.</p>
+<p>This phenomenon depends on the baseline transmission rate of the infection, so we select a relatively low <span class="math inline">\(R\)</span> of 1.30 (corresponding to pandemic influenza), and a higher <span class="math inline">\(R\)</span> of 1.58 from the <span class="math inline">\(R\)</span> estimation step at the start of the vignette.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run each scenario for two values of R</span></span>
 <span><span class="co"># no parameter uncertainty</span></span>
@@ -724,7 +724,7 @@ Figure 2: Infections averted relative to no epidemic response by implementing ea
 <span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  <span class="va">uk_population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="va">r_values</span> <span class="op">/</span> <span class="fl">7</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="va">r_values</span> <span class="op">/</span> <span class="fl">7</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="va">intervention_scenarios</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span></span>
 <span><span class="op">)</span></span>
@@ -767,8 +767,8 @@ Figure 2: Infections averted relative to no epidemic response by implementing ea
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
 <span style="display:block;" id="fig:unnamed-chunk-24"></span>
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-24-1.png" alt="Counter-intuitive effects of time-limited interventions on transmissibility at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario."><p class="caption">
-Figure 3: Counter-intuitive effects of time-limited interventions on transmissibility at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the ‘Close both workplaces and schools’ scenario.
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-24-1.png" alt="Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario."><p class="caption">
+Figure 3: Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the ‘Close both workplaces and schools’ scenario.
 </p>
 </div>
 <p>Plotting the epidemic trajectories for each scenario for each value of <span class="math inline">\(R\)</span> gives a fuller picture of why we see this unexpected effect.</p>
@@ -814,7 +814,7 @@ Figure 3: Counter-intuitive effects of time-limited interventions on transmissib
 Figure 4: New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the ‘No response’ scenario.
 </p>
 </div>
-<p>Implementing interventions on disease transmissibility leads to a ‘flattening of the curve’ (reduced daily incidence in comparison with no response) while the interventions are active.</p>
+<p>Implementing interventions on the disease transmission rate leads to a ‘flattening of the curve’ (reduced daily incidence in comparison with no response) while the interventions are active.</p>
 <p>However, these cases are deferred rather than prevented entirely, and in both scenarios this is seen as a shifting of the incidence curve to the right (towards the end of the simulation period).</p>
 <p>When <span class="math inline">\(R\)</span> is low, the incidence curve begins to rise later than when <span class="math inline">\(R\)</span> is high (interventions applied to these epidemics actually miss the projected peak of the epidemic, but still shift cases to the right).
 Thus low <span class="math inline">\(R\)</span> epidemics do not run their course by the time the simulation ends, making is appear as though interventions have succeeded in averting infections.</p>

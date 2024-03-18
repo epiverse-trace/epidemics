@@ -112,7 +112,7 @@ lags behind the R implementation, and is likely to be removed.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_ebola</span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
 <span>  erlang_subcompartments <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="fl">1.5</span><span class="op">/</span><span class="fl">12</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="fl">1.5</span><span class="op">/</span><span class="fl">12</span>,</span>
 <span>  infectiousness_rate <span class="op">=</span> <span class="va">erlang_subcompartments</span><span class="op">/</span><span class="fl">5</span>,</span>
 <span>  removal_rate <span class="op">=</span> <span class="va">erlang_subcompartments</span><span class="op">/</span><span class="fl">12</span>,</span>
 <span>  prop_community <span class="op">=</span> <span class="fl">0.9</span>,</span>
@@ -142,7 +142,7 @@ is one.</p></dd>
 for the exposed, infectious, and hospitalised compartments. Defaults to 2.</p></dd>
 
 
-<dt>transmissibility</dt>
+<dt>transmission_rate</dt>
 <dd><p>A single number for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \(\beta\), with
@@ -176,8 +176,8 @@ the community and are not hospitalised for treatment. Defaults to 0.5</p></dd>
 hospitalised individuals. Must be a single value between 0.0 and 1.0, where
 0.0 indicates that hospitalisation completely prevents onward transmission,
 and 1.0 indicates that hospitalisation does not prevent onward transmission
-at all. <code>etu_risk</code> is used to scale the value of transmissibility for the
-transmissibility \(\beta\). Defaults to 0.2.</p></dd>
+at all. <code>etu_risk</code> is used to scale the value of transmission_rate for the
+transmission_rate \(\beta\). Defaults to 0.2.</p></dd>
 
 
 <dt>funeral_risk</dt>
@@ -186,8 +186,8 @@ funerals of individuals who died with EVD.
 Must be a single value between 0.0 and 1.0, where
 0.0 indicates that there is no onward transmission, and 1.0 indicates that
 funeral transmission is equivalent to transmission in the community.
-<code>funeral_risk</code> is used to scale the value of transmissibility for the
-transmissibility \(\beta\). Defaults to 0.5.</p></dd>
+<code>funeral_risk</code> is used to scale the value of transmission_rate for the
+transmission_rate \(\beta\). Defaults to 0.5.</p></dd>
 
 
 <dt>intervention</dt>
@@ -279,7 +279,7 @@ transmission compartment, before they move into the 'removed' compartment.</p>
 <h3 id="model-parameters">Model parameters<a class="anchor" aria-label="anchor" href="#model-parameters"></a></h3>
 
 
-<p>The default values are:</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.125, resulting from
+<p>The default values are:</p><ul><li><p>Transmission rate (\(\beta\), <code>transmission_rate</code>): 0.125, resulting from
 an \(R_0\) = 1.5 and an infectious period of 12 days.</p></li>
 <li><p>Infectiousness rate (\(\gamma^E\), <code>infectiousness_rate</code>): 0.4, assuming
 a pre-infectious period of 5 days and two Erlang subcompartments.</p></li>

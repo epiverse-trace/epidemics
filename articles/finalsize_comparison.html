@@ -139,7 +139,7 @@ The R package <a href="https://cran.r-project.org/package=finalsize" class="exte
 <p>While both <em>finalsize</em> and <em>epidemics</em> can be used to calculate the epidemic final size, they are aimed at different use cases.</p>
 <p><strong><em>finalsize</em></strong> assumes that both infection and population characteristics are fixed to their initial conditions.
 For the infection, this includes properties such as the transmission rate, while for the population, it includes social contacts between demographic groups, and the proportion of demographic groups that have specific levels of susceptibility to infection.</p>
-<p>An advantage is that <em>finalsize</em> only requires that we define the initial transmissibility of the infection and susceptibility of the population, rather than all the time-dependent processes that drive the epidemic shape, such as the duration of infectiousness or latent period of the infection. For questions relating to epidemic shape, rather than shape, this results in a much simpler set of inputs.</p>
+<p>An advantage is that <em>finalsize</em> only requires that we define the initial transmission rate of the infection and susceptibility of the population, rather than all the time-dependent processes that drive the epidemic shape, such as the duration of infectiousness or latent period of the infection. For questions relating to epidemic shape, rather than shape, this results in a much simpler set of inputs.</p>
 <p>However, it also means that <em>finalsize</em> cannot be used to model temporal dynamics of epidemic response, or be used to answer policy questions with a temporal component, such as when to implement interventions.</p>
 <p><strong><em>epidemics</em></strong> includes a number of scenario models, each with its own assumptions. Most models allow for some modification of the initial characteristics of the outbreak due to a range of events. For the infection, this includes interventions (such as masking or treatments) that reduce the number of forward transmissions or deaths, but also seasonal effects which may increase or decrease the transmission rate.
 For the population, initial conditions of social contacts can be influenced by interventions as well.</p>
@@ -219,10 +219,10 @@ This example does not include any interventions or vaccination regimes.</p>
 <span><span class="co">#&gt;           [20,40) 3.120220 4.854839 2.624868</span></span>
 <span><span class="co">#&gt;           40+     3.063895 4.599893 5.005571</span></span></code></pre></div>
 </details><p>We model the spread of influenza with pandemic potential, assuming $R_0 = $ 1.5, a pre-infectious period of 3 days, and an infectious period of 7 days.</p>
-<p>This leads to the following model parameters for transmissibility <span class="math inline">\(\beta\)</span>, the rate of transition from exposed to infectious <span class="math inline">\(\sigma\)</span>, and the recovery rate <span class="math inline">\(\gamma\)</span>.</p>
+<p>This leads to the following model parameters for transmission rate <span class="math inline">\(\beta\)</span>, the rate of transition from exposed to infectious <span class="math inline">\(\sigma\)</span>, and the recovery rate <span class="math inline">\(\gamma\)</span>.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># simulate pandemic parameters</span></span>
-<span><span class="va">transmissibility</span> <span class="op">&lt;-</span> <span class="fl">1.5</span> <span class="op">/</span> <span class="fl">7</span></span>
+<span><span class="va">transmission_rate</span> <span class="op">&lt;-</span> <span class="fl">1.5</span> <span class="op">/</span> <span class="fl">7</span></span>
 <span><span class="va">infectiousness_rate</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span></span>
 <span><span class="va">recovery_rate</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">7</span></span></code></pre></div>
 </details>
@@ -251,7 +251,7 @@ We obtain the ‘final’ epidemic size using <code><a href="../reference/epidem
 <code class="sourceCode R"><span><span class="co"># model epidemic with vaccination prior to the main epidemic wave</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="va">transmissibility</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="va">transmission_rate</span>,</span>
 <span>  infectiousness_rate <span class="op">=</span> <span class="va">infectiousness_rate</span>,</span>
 <span>  recovery_rate <span class="op">=</span> <span class="va">recovery_rate</span>,</span>
 <span>  vaccination <span class="op">=</span> <span class="va">vaccinate_elders</span>,</span>
@@ -397,7 +397,7 @@ This makes it much more suitable for high-performance applications such as fitti
 <span>  ode_model <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_size.html">epidemic_size</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>      population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>      transmissibility <span class="op">=</span> <span class="va">transmissibility</span>,</span>
+<span>      transmission_rate <span class="op">=</span> <span class="va">transmission_rate</span>,</span>
 <span>      infectiousness_rate <span class="op">=</span> <span class="va">infectiousness_rate</span>,</span>
 <span>      recovery_rate <span class="op">=</span> <span class="va">recovery_rate</span>,</span>
 <span>      vaccination <span class="op">=</span> <span class="va">vaccinate_elders</span>,</span>
@@ -414,8 +414,8 @@ This makes it much more suitable for high-performance applications such as fitti
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">#&gt;   expression        total_time</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.637</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model             13.9</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.514</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model             10.4</span></span></code></pre></div>
 </details><p><strong>Note</strong> that some model runs using <em>epidemics</em> that implement more complex compartmental structure, or multiple interventions and vaccination regimes are likely to be slower than the example shown here.</p>
 <p>However, users should choose <em>finalsize</em> only when the assumptions underlying a final size calculation are met.
 For example, in cases where vaccinations are concurrent with a large number of infections, or when interventions are applied to reduce transmission, the final size assumptions are not met.

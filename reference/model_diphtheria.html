@@ -114,7 +114,7 @@ group to model influxes or evacuations from camps.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_diphtheria</span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
-<span>  transmissibility <span class="op">=</span> <span class="fl">4</span><span class="op">/</span><span class="fl">4.5</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="fl">4</span><span class="op">/</span><span class="fl">4.5</span>,</span>
 <span>  infectiousness_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span>,</span>
 <span>  recovery_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span>,</span>
 <span>  reporting_rate <span class="op">=</span> <span class="fl">0.03</span>,</span>
@@ -138,7 +138,7 @@ population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See <code><a href="population.html">population()</a></code>.</p></dd>
 
 
-<dt>transmissibility</dt>
+<dt>transmission_rate</dt>
 <dd><p>A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \(\beta\), with
@@ -247,8 +247,8 @@ compartments per model run.</p>
 <p>However, model parameters may be passed as numeric vectors. These vectors
 must follow Tidyverse recycling rules: all vectors must have the same length,
 or, vectors of length 1 will be recycled to the length of any other vector.</p>
-<p>The default values are taken from Finger et al. (2019) where possible:</p><ul><li><p>Transmissibility (\(\beta\), <code>transmissibility</code>): 0.8888889, assuming an
-\(R_0\) of 4.0 and a total infectious period of 4.5 days.</p></li>
+<p>The default values are taken from Finger et al. (2019) where possible:</p><ul><li><p>Transmission rate (\(\beta\), <code>transmission_rate</code>): 0.8888889, assuming
+an \(R_0\) of 4.0 and a total infectious period of 4.5 days.</p></li>
 <li><p>Infectiousness rate (\(\sigma\), <code>infectiousness_rate</code>): 0.333, assuming
 a pre-infectious period of 3 days.</p></li>
 <li><p>Reporting rate (\(r\), <code>reporting_rate</code>): 0.03, assuming that 3% of

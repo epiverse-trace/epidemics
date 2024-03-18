@@ -114,8 +114,8 @@ This function is intended to only be called internally from
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.model_vacamole_cpp</span><span class="op">(</span></span>
 <span>  <span class="va">initial_state</span>,</span>
-<span>  <span class="va">transmissibility</span>,</span>
-<span>  <span class="va">transmissibility_vax</span>,</span>
+<span>  <span class="va">transmission_rate</span>,</span>
+<span>  <span class="va">transmission_rate_vax</span>,</span>
 <span>  <span class="va">infectiousness_rate</span>,</span>
 <span>  <span class="va">mortality_rate</span>,</span>
 <span>  <span class="va">mortality_rate_vax</span>,</span>
@@ -142,13 +142,13 @@ This function is intended to only be called internally from
 <dd><p>A matrix for the initial state of the compartments.</p></dd>
 
 
-<dt>transmissibility</dt>
+<dt>transmission_rate</dt>
 <dd><p>The transmission rate \(\beta\) at which
 unvaccinated and partially vaccinated individuals are infected by the
 disease.</p></dd>
 
 
-<dt>transmissibility_vax</dt>
+<dt>transmission_rate_vax</dt>
 <dd><p>The transmission rate \(\beta_V\) at which
 individuals who have received two vaccine doses are infected by the disease.</p></dd>
 

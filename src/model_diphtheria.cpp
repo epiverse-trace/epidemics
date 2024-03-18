@@ -19,7 +19,7 @@
 //' [model_diphtheria_cpp()].
 //'
 //' @param initial_state A matrix for the initial state of the compartments.
-//' @param transmissibility The transmission rate \eqn{\beta}.
+//' @param transmission_rate The transmission rate \eqn{\beta}.
 //' @param infectiousness_rate The rate of transition from exposed to infectious
 //' \eqn{\alpha}.
 //' @param recovery_rate The recovery rate \eqn{\gamma}.
@@ -45,7 +45,7 @@
 //' @keywords internal
 // [[Rcpp::export(name=".model_diphtheria_cpp")]]
 Rcpp::List model_diphtheria_internal(
-    const Eigen::MatrixXd &initial_state, const double &transmissibility,
+    const Eigen::MatrixXd &initial_state, const double &transmission_rate,
     const double &infectiousness_rate, const double &recovery_rate,
     const double &reporting_rate, const double &prop_hosp,
     const double &hosp_entry_rate, const double &hosp_exit_rate,
@@ -59,7 +59,7 @@ Rcpp::List model_diphtheria_internal(
 
   // create a map of the model parameters
   std::unordered_map<std::string, double> model_params{
-      {"transmissibility", transmissibility},
+      {"transmission_rate", transmission_rate},
       {"infectiousness_rate", infectiousness_rate},
       {"recovery_rate", recovery_rate},
       {"reporting_rate", reporting_rate},

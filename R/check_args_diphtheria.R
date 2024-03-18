@@ -14,7 +14,7 @@
 #'  - `initial_state`: the initial conditions modified to represent absolute
 #' rather than proportional values;
 #'
-#'  - `transmissibility`, `transmissibility_vax`: two numbers representing the
+#'  - `transmission_rate`, `transmission_rate_vax`: two numbers representing the
 #' transmission rate
 #' of the infection for unvaccinated or single-dose vaccinated, and two-dose
 #' vaccinated individuals, respectively;
@@ -84,7 +84,7 @@
   mod_args[["intervention"]] <- .cross_check_intervention(
     mod_args[["intervention"]], mod_args[["population"]],
     c(
-      "transmissibility", "infectiousness_rate", "prop_hosp",
+      "transmission_rate", "infectiousness_rate", "prop_hosp",
       "hosp_entry_rate", "hosp_exit_rate", "recovery_rate"
     )
   )

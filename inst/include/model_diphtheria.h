@@ -38,7 +38,7 @@ struct epidemic_diphtheria {
   /// @param model_params An unordered map of string-double pairs, with the
   /// model parameters as keys, and parameter values as values. The
   /// model parameters are:
-  /// - transmissibility The transmission rate
+  /// - transmission_rate The transmission rate
   /// - infectiousness_rate The rate at which individuals become infectious
   /// - recovery_rate The recovery rate
   /// - reporting_rate
@@ -100,7 +100,7 @@ struct epidemic_diphtheria {
     // compartmental transitions without accounting for stratified contacts
     // NOTE: division by population size - this is typically included in the
     // contact matrix scaling in other models
-    Eigen::ArrayXd sToE = model_params_temp["transmissibility"] *
+    Eigen::ArrayXd sToE = model_params_temp["transmission_rate"] *
                           total_infections * x.col(0) / x.sum();
     Eigen::ArrayXd eToI =
         model_params_temp["infectiousness_rate"] * x.col(1).array();
@@ -117,7 +117,7 @@ struct epidemic_diphtheria {
         model_params_temp["hosp_exit_rate"] * x.col(3).array();
 
     // compartmental changes; note that there are no contacts
-    // β: transmissibility; σ: infectiousness rate; γ: recovery rate
+    // β: transmission_rate; σ: infectiousness rate; γ: recovery rate
     // ν: reporting rate; τ1: 1 / time to hospitalisation;
     // τ2: 1 / time to discharge from hospital; η: prop. hospitalised
     dxdt.col(0) = -sToE + current_pop_change;  // -β*S*I + pop movements

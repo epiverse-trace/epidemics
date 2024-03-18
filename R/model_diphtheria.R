@@ -57,8 +57,8 @@
 #'
 #' The default values are taken from Finger et al. (2019) where possible:
 #'
-#' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.8888889, assuming an
-#' \eqn{R_0} of 4.0 and a total infectious period of 4.5 days.
+#' - Transmission rate (\eqn{\beta}, `transmission_rate`): 0.8888889, assuming
+#' an \eqn{R_0} of 4.0 and a total infectious period of 4.5 days.
 #'
 #' - Infectiousness rate (\eqn{\sigma}, `infectiousness_rate`): 0.333, assuming
 #' a pre-infectious period of 3 days.
@@ -145,7 +145,7 @@
 #' tail(data)
 #' @export
 model_diphtheria <- function(population,
-                             transmissibility = 4.0 / 4.5,
+                             transmission_rate = 4.0 / 4.5,
                              infectiousness_rate = 1.0 / 3.0,
                              recovery_rate = 1.0 / 3.0,
                              reporting_rate = 0.03,
@@ -166,7 +166,7 @@ model_diphtheria <- function(population,
   assert_population(population, compartments)
 
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
-  checkmate::assert_numeric(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
   # reporting rate and prop_hosp are expected to be proportions bounded 0 - 1
@@ -184,7 +184,7 @@ model_diphtheria <- function(population,
 
   # check all vector lengths are equal or 1L
   params <- list(
-    transmissibility = transmissibility,
+    transmission_rate = transmission_rate,
     infectiousness_rate = infectiousness_rate,
     recovery_rate = recovery_rate,
     reporting_rate = reporting_rate,
@@ -258,7 +258,7 @@ model_diphtheria <- function(population,
     .cross_check_timedep(
       time_dependence,
       c(
-        "transmissibility", "infectiousness_rate", "prop_hosp",
+        "transmission_rate", "infectiousness_rate", "prop_hosp",
         "reporting_rate", "hosp_entry_rate", "hosp_exit_rate", "recovery_rate"
       )
     )

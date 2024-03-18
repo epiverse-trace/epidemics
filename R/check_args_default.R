@@ -14,7 +14,7 @@
 #'  - `initial_state`: the initial conditions modified to represent absolute
 #' rather than proportional values;
 #'
-#'  - `transmissibility`, `infectiousness_rate`, `recovery_rate`: three numbers
+#'  - `transmission_rate`, `infectiousness_rate`, `recovery_rate`: three numbers
 #' representing the transmission rate of the infection, the rate of transition
 #' from exposed to infectious, and the recovery rate, respectively;
 #'
@@ -50,7 +50,7 @@
   # check the interventions list against the population
   mod_args[["intervention"]] <- .cross_check_intervention(
     mod_args[["intervention"]], mod_args[["population"]],
-    c("contacts", "transmissibility", "infectiousness_rate", "recovery_rate")
+    c("contacts", "transmission_rate", "infectiousness_rate", "recovery_rate")
   )
   # check the vaccination against the population
   mod_args[["vaccination"]] <- .cross_check_vaccination(

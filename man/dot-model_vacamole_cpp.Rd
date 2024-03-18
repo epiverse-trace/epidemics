@@ -6,8 +6,8 @@
 \usage{
 .model_vacamole_cpp(
   initial_state,
-  transmissibility,
-  transmissibility_vax,
+  transmission_rate,
+  transmission_rate_vax,
   infectiousness_rate,
   mortality_rate,
   mortality_rate_vax,
@@ -30,11 +30,11 @@
 \arguments{
 \item{initial_state}{A matrix for the initial state of the compartments.}
 
-\item{transmissibility}{The transmission rate \eqn{\beta} at which
+\item{transmission_rate}{The transmission rate \eqn{\beta} at which
 unvaccinated and partially vaccinated individuals are infected by the
 disease.}
 
-\item{transmissibility_vax}{The transmission rate \eqn{\beta_V} at which
+\item{transmission_rate_vax}{The transmission rate \eqn{\beta_V} at which
 individuals who have received two vaccine doses are infected by the disease.}
 
 \item{infectiousness_rate}{The rate of transition from exposed to infectious

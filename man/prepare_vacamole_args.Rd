@@ -13,7 +13,7 @@ This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
 rather than proportional values;
-\item \code{transmissibility}, \code{transmissibility_vax}: two numbers representing the
+\item \code{transmission_rate}, \code{transmission_rate_vax}: two numbers representing the
 transmission rate
 of the infection for unvaccinated or single-dose vaccinated, and two-dose
 vaccinated individuals, respectively;

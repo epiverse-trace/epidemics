@@ -74,7 +74,7 @@ uk_population <- population(
 
 ## Defining a time-dependent function
 
-Next we prepare a function that affects the transmissibility (often denoted $\beta$) in such a way that there are two peaks and two troughs in the transmissibility rate over the course of a year.
+Next we prepare a function that affects the transmission rate (often denoted $\beta$) in such a way that there are two peaks and two troughs in the transmission rate over the course of a year.
 
 Note that this example uses an arbitrary function, and that we might want to choose a more realistic function in a model.
 Nonetheless, as the figures later will show, this can still generate realistic looking epidemic curves and is a good starting point for understanding how this feature works.
@@ -104,15 +104,15 @@ ggplot() +
 
 ## Model with time-dependent transmission
 
-Next we run an epidemic model while including the time dependence of transmissibility.
+Next we run an epidemic model while including the time dependence of the transmission rate.
 
 ```{r}
-# note transmissibility is the function/model parameter
+# note transmission_rate is the function/model parameter
 # the function that affects it may have any name
 data <- model_default(
   population = uk_population,
   time_dependence = list(
-    transmissibility = mod_beta
+    transmission_rate = mod_beta
   ),
   time_end = 365, increment = 1
 )
@@ -196,7 +196,7 @@ data_npi <- model_default(
   population = uk_population,
   intervention = list(contacts = npis),
   time_dependence = list(
-    transmissibility = mod_beta
+    transmission_rate = mod_beta
   ),
   time_end = 365, increment = 1
 )
@@ -284,7 +284,7 @@ data_vax <- model_default(
   population = uk_population,
   vaccination = vax_regime,
   time_dependence = list(
-    transmissibility = mod_beta
+    transmission_rate = mod_beta
   ),
   time_end = 365, increment = 1
 )

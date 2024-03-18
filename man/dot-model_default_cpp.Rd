@@ -6,7 +6,7 @@
 \usage{
 .model_default_cpp(
   initial_state,
-  transmissibility,
+  transmission_rate,
   infectiousness_rate,
   recovery_rate,
   contact_matrix,
@@ -25,7 +25,7 @@
 \arguments{
 \item{initial_state}{A matrix for the initial state of the compartments.}
 
-\item{transmissibility}{The transmission rate \eqn{\beta} at which
+\item{transmission_rate}{The transmission rate \eqn{\beta} at which
 unvaccinated and partially vaccinated individuals are infected by the
 disease.}
 

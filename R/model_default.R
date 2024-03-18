@@ -9,7 +9,7 @@
 #' This model can accommodate heterogeneity in social contacts among demographic
 #' groups, as well as differences in the sizes of demographic groups.
 #'
-#' The `population`, `transmissibility`, `infectiousness_rate`, and
+#' The `population`, `transmission_rate`, `infectiousness_rate`, and
 #' `recovery_rate`
 #' arguments are mandatory, while passing an `intervention` and `vaccination`
 #' are optional and can be used to simulate scenarios with different epidemic
@@ -19,7 +19,7 @@
 #' @param population An object of the `population` class, which holds a
 #' population contact matrix, a demography vector, and the initial conditions
 #' of each demographic group. See [population()].
-#' @param transmissibility A numeric for the rate at which individuals
+#' @param transmission_rate A numeric for the rate at which individuals
 #' move from the susceptible to the exposed compartment upon contact with an
 #' infectious individual. Often denoted as \eqn{\beta}, with
 #' \eqn{\beta = R_0 / \text{infectious period}}. See **Details** for default
@@ -67,7 +67,7 @@
 #'
 #' The default values are:
 #'
-#' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.186, assuming an
+#' - Transmission rate (\eqn{\beta}, `transmission_rate`): 0.186, assuming an
 #' \eqn{R_0} = 1.3 and an infectious period of 7 days.
 #'
 #' - Infectiousness rate (\eqn{\sigma}, `infectiousness_rate`): 0.5, assuming
@@ -102,10 +102,10 @@
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' # and three discrete values of transmissibility
+#' # and three discrete values of transmission rate
 #' data <- model_default(
 #'   population = uk_population,
-#'   transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
+#'   transmission_rate = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 #' )
 #'
 #' # view some data
@@ -121,7 +121,7 @@
 #' data
 #' @export
 model_default <- function(population,
-                          transmissibility = 1.3 / 7.0,
+                          transmission_rate = 1.3 / 7.0,
                           infectiousness_rate = 1.0 / 2.0,
                           recovery_rate = 1.0 / 7.0,
                           intervention = NULL,
@@ -136,7 +136,7 @@ model_default <- function(population,
   assert_population(population, compartments)
 
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
-  checkmate::assert_numeric(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
   checkmate::assert_integerish(time_end, lower = 0)
@@ -148,7 +148,7 @@ model_default <- function(population,
 
   # check all vector lengths are equal or 1L
   params <- list(
-    transmissibility = transmissibility,
+    transmission_rate = transmission_rate,
     infectiousness_rate = infectiousness_rate,
     recovery_rate = recovery_rate,
     time_end = time_end
@@ -221,7 +221,7 @@ model_default <- function(population,
   time_dependence <- list(
     .cross_check_timedep(
       time_dependence,
-      c("transmissibility", "infectiousness_rate", "recovery_rate")
+      c("transmission_rate", "infectiousness_rate", "recovery_rate")
     )
   )
 
@@ -310,7 +310,7 @@ model_default <- function(population,
   # `params` refers to the list passed as a function argument.
   # e.g. contact matrix, or interventions, are not included in `model_params`
   model_params <- params[c(
-    "transmissibility", "infectiousness_rate", "recovery_rate"
+    "transmission_rate", "infectiousness_rate", "recovery_rate"
   )]
 
   # apply time dependence before interventions
@@ -338,7 +338,7 @@ model_default <- function(population,
       (params[["vax_time_end"]] > t))
 
   # calculate transitions
-  sToE <- (model_params[["transmissibility"]] * y[, 1] *
+  sToE <- (model_params[["transmission_rate"]] * y[, 1] *
     contact_matrix_ %*% y[, 3])
   eToI <- model_params[["infectiousness_rate"]] * y[, 2]
   iToR <- model_params[["recovery_rate"]] * y[, 3]

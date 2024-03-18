@@ -22,10 +22,10 @@
 //' [model_vacamole_cpp()].
 //'
 //' @param initial_state A matrix for the initial state of the compartments.
-//' @param transmissibility The transmission rate \eqn{\beta} at which
+//' @param transmission_rate The transmission rate \eqn{\beta} at which
 //' unvaccinated and partially vaccinated individuals are infected by the
 //' disease.
-//' @param transmissibility_vax The transmission rate \eqn{\beta_V} at which
+//' @param transmission_rate_vax The transmission rate \eqn{\beta_V} at which
 //' individuals who have received two vaccine doses are infected by the disease.
 //' @param infectiousness_rate The rate of transition from exposed to infectious
 //' \eqn{\alpha}.
@@ -61,8 +61,8 @@
 //' @keywords internal
 // [[Rcpp::export(name=".model_vacamole_cpp")]]
 Rcpp::List model_vacamole_internal(
-    const Eigen::MatrixXd &initial_state, const double &transmissibility,
-    const double &transmissibility_vax, const double &infectiousness_rate,
+    const Eigen::MatrixXd &initial_state, const double &transmission_rate,
+    const double &transmission_rate_vax, const double &infectiousness_rate,
     const double &mortality_rate, const double &mortality_rate_vax,
     const double &hospitalisation_rate, const double &hospitalisation_rate_vax,
     const double &recovery_rate, const Eigen::MatrixXd &contact_matrix,
@@ -78,7 +78,7 @@ Rcpp::List model_vacamole_internal(
 
   // create a map of the model parameters
   std::unordered_map<std::string, double> model_params{
-      {"transmissibility", transmissibility},
+      {"transmission_rate", transmission_rate},
       {"infectiousness_rate", infectiousness_rate},
       {"mortality_rate", mortality_rate},
       {"hospitalisation_rate", hospitalisation_rate},

@@ -89,9 +89,9 @@ uk_population <- population(
 )
 ```
 
-## Modelling an intervention on transmissibility
+## Modelling an intervention on the transmission rate
 
-We model an intervention on the transmissibility $\beta$ that reduces it by 10%.
+We model an intervention on the transmission rate $\beta$ that reduces it by 10%.
 This could represent interventions such as requiring people to wear masks that reduce transmission.
 
 ```{r}
@@ -130,7 +130,7 @@ data <- model_default(
 # with a mask mandate
 data_masks <- model_default(
   population = uk_population,
-  intervention = list(transmissibility = mask_mandate),
+  intervention = list(transmission_rate = mask_mandate),
   time_end = 200, increment = 1.0
 )
 ```

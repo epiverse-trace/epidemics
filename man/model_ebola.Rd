@@ -7,7 +7,7 @@
 model_ebola(
   population,
   erlang_subcompartments = 2,
-  transmissibility = 1.5/12,
+  transmission_rate = 1.5/12,
   infectiousness_rate = erlang_subcompartments/5,
   removal_rate = erlang_subcompartments/12,
   prop_community = 0.9,
@@ -33,7 +33,7 @@ is one.}
 \item{erlang_subcompartments}{The number of Erlang subcompartments assumed
 for the exposed, infectious, and hospitalised compartments. Defaults to 2.}
 
-\item{transmissibility}{A single number for the rate at which individuals
+\item{transmission_rate}{A single number for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
 \eqn{\beta = R_0 / \text{infectious period}}.
@@ -58,16 +58,16 @@ the community and are not hospitalised for treatment. Defaults to 0.5}
 hospitalised individuals. Must be a single value between 0.0 and 1.0, where
 0.0 indicates that hospitalisation completely prevents onward transmission,
 and 1.0 indicates that hospitalisation does not prevent onward transmission
-at all. \code{etu_risk} is used to scale the value of transmissibility for the
-transmissibility \eqn{\beta}. Defaults to 0.2.}
+at all. \code{etu_risk} is used to scale the value of transmission_rate for the
+transmission_rate \eqn{\beta}. Defaults to 0.2.}
 
 \item{funeral_risk}{The relative risk of onward transmission of EVD from
 funerals of individuals who died with EVD.
 Must be a single value between 0.0 and 1.0, where
 0.0 indicates that there is no onward transmission, and 1.0 indicates that
 funeral transmission is equivalent to transmission in the community.
-\code{funeral_risk} is used to scale the value of transmissibility for the
-transmissibility \eqn{\beta}. Defaults to 0.5.}
+\code{funeral_risk} is used to scale the value of transmission_rate for the
+transmission_rate \eqn{\beta}. Defaults to 0.5.}
 
 \item{intervention}{A named list of \verb{<rate_intervention>} objects
 representing optional pharmaceutical or non-pharmaceutical interventions
@@ -169,7 +169,7 @@ Individuals in the 'removed' compartment do no affect model dynamics.
 
 The default values are:
 \itemize{
-\item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.125, resulting from
+\item Transmission rate (\eqn{\beta}, \code{transmission_rate}): 0.125, resulting from
 an \eqn{R_0} = 1.5 and an infectious period of 12 days.
 \item Infectiousness rate (\eqn{\gamma^E}, \code{infectiousness_rate}): 0.4, assuming
 a pre-infectious period of 5 days and two Erlang subcompartments.

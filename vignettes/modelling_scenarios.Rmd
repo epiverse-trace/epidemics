@@ -122,7 +122,7 @@ uk_population <- population(
 )
 ```
 
-### Obtaining estimates of disease transmissibility
+### Obtaining estimates of disease transmission rate
 
 For this example, we consider influenza with pandemic potential [@ghani2010], and prepare multiple samples of the estimated $R$. This reflects pandemic response scenarios in which $R$ estimates always come with some uncertainty (due to limitations in the data and estimation methods). Sampling from a distribution that $R$ is expected to follow allows us to better understand the extent of variance in possible epidemic outcomes.
 
@@ -158,9 +158,9 @@ output_R <- estimate_R(
 plot(output_R, "R")
 ```
 
-### Passing a vector of transmissibility
+### Passing a vector of transmission rates
 
-Here, we generate 100 samples of $R$, and convert to the transmissibility parameter (often denoted $\beta$) by dividing by the infectious period of 7 days.
+Here, we generate 100 samples of $R$, and convert to the transmission rate (often denoted $\beta$) by dividing by the infectious period of 7 days.
 
 Since _EpiEstim_ estimates $Rt$, the instantaneous $R$, we shall use the mean of the estimates over the time period, and the mean of the standard deviation, as parameters for a distribution from which to draw $R$ samples for the model.
 
@@ -182,10 +182,10 @@ beta <- r_samples / infectious_period
 ```
 
 ```{r}
-# pass the vector of transmissibilities to the argument `transmissibility`
+# pass the vector of transmissibilities to the argument `transmission_rate`
 output <- model_default(
   population = uk_population,
-  transmissibility = beta,
+  transmission_rate = beta,
   time_end = 600
 )
 
@@ -193,7 +193,7 @@ output <- model_default(
 head(output)
 ```
 
-The output is a nested `<data.table>`, with the output of each run of the model for each unique `transmissibility` contained as a `<data.frame>` in the list column `"data"`.
+The output is a nested `<data.table>`, with the output of each run of the model for each unique `transmission_rate` contained as a `<data.frame>` in the list column `"data"`.
 
 ::: {.alert .alert-info}
 ### Output type for vector parameter inputs
@@ -203,13 +203,13 @@ The output of `model_*()` when an infection parameter is passed as a vector is a
 More on handling nested data can be found in this [section on list-columns in R for Data Science](https://r4ds.hadley.nz/rectangling.html#list-columns) and in the [documentation for nested data in the _tidyr_ package](https://tidyr.tidyverse.org/articles/nest.html). Equivalent operations are possible on `<data.table>`s directly; see [this R Bloggers post on unnesting data](https://www.r-bloggers.com/2019/10/much-faster-unnesting-with-data-table/).
 :::
 
-We unnest the output's "data" column in order to plot incidence curves for each transmissibility value.
+We unnest the output's "data" column in order to plot incidence curves for each transmission rate value.
 
 ```{r}
 # select the parameter set and data columns with dplyr::select()
 # add the R value for visualisation
 # calculate new infections, and use tidyr to unnest the data column
-data <- select(output, param_set, transmissibility, data) %>%
+data <- select(output, param_set, transmission_rate, data) %>%
   mutate(
     r_value = r_samples,
     new_infections = map(data, new_infections)
@@ -261,7 +261,7 @@ gamma <- rnorm(n = 100, mean, sd) # the recovery rate
 
 model_default(
   population,
-  transmissibility = beta, # same length as gamma
+  transmission_rate = beta, # same length as gamma
   infectiousness_rate = 0.5, # length 1
   recovery_rate = gamma
 )
@@ -422,19 +422,19 @@ intervention_scenarios <- list(
     contacts = combined_intervention
   ),
   scenario_04 = list(
-    transmissibility = mask_mandate
+    transmission_rate = mask_mandate
   ),
   scenario_05 = list(
     contacts = close_schools,
-    transmissibility = mask_mandate
+    transmission_rate = mask_mandate
   ),
   scenario_06 = list(
     contacts = close_workplaces,
-    transmissibility = mask_mandate
+    transmission_rate = mask_mandate
   ),
   scenario_07 = list(
     contacts = combined_intervention,
-    transmissibility = mask_mandate
+    transmission_rate = mask_mandate
   )
 )
 ```
@@ -521,11 +521,11 @@ beta <- with_seed(
 ```
 
 ```{r}
-# this example includes 100 samples of transmissibility for each intervention
+# this example includes 100 samples of transmission rates for each intervention
 # including the baseline
 output <- model_default(
   uk_population,
-  transmissibility = beta,
+  transmission_rate = beta,
   intervention = intervention_scenarios,
   time_end = 600
 )
@@ -570,7 +570,7 @@ df_differences <- df_scenarios_rest %>%
   select(param_set, scenario = scenario_other, difference)
 ```
 
-```{r class.source = 'fold-hide', fig.cap="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmissibility paramater."}
+```{r class.source = 'fold-hide', fig.cap="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates."}
 # Plot distribution of differences
 ggplot(
   df_differences,
@@ -601,13 +601,13 @@ ggplot(
 
 The intervention scenarios modelled above suggest that:
 
-- interventions on disease transmissibility reduce infections and hence epidemic final sizes;
+- interventions on disease transmission rates reduce infections and hence epidemic final sizes;
 
 - multiple interventions reduce epidemic final sizes more than single interventions.
 
 In this simple example we show how this need not always be the case, and that counter-intuitively, implementing more interventions can lead to a larger epidemic final size than implementing fewer interventions.
 
-This phenomenon depends on the baseline transmissibility of the infection, so we select a relatively low $R$ of 1.30 (corresponding to pandemic influenza), and a higher $R$ of `r round(r_estimate_mean, 2)` from the $R$ estimation step at the start of the vignette.
+This phenomenon depends on the baseline transmission rate of the infection, so we select a relatively low $R$ of 1.30 (corresponding to pandemic influenza), and a higher $R$ of `r round(r_estimate_mean, 2)` from the $R$ estimation step at the start of the vignette.
 
 ```{r}
 # run each scenario for two values of R
@@ -616,7 +616,7 @@ r_values <- c(1.3, round(r_estimate_mean, 2))
 
 output <- model_default(
   uk_population,
-  transmissibility = r_values / 7,
+  transmission_rate = r_values / 7,
   intervention = intervention_scenarios,
   time_end = 600
 )
@@ -634,7 +634,7 @@ epidemic_size_estimates <- mutate(
   select(r_value, scenario, size)
 ```
 
-```{r class.source = 'fold-hide', fig.cap="Counter-intuitive effects of time-limited interventions on transmissibility at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario."}
+```{r class.source = 'fold-hide', fig.cap="Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario."}
 # plot the epidemic final size for each scenario for each R
 ggplot(epidemic_size_estimates) +
   geom_col(
@@ -703,7 +703,7 @@ ggplot(daily_incidence) +
   )
 ```
 
-Implementing interventions on disease transmissibility leads to a 'flattening of the curve' (reduced daily incidence in comparison with no response) while the interventions are active.
+Implementing interventions on the disease transmission rate leads to a 'flattening of the curve' (reduced daily incidence in comparison with no response) while the interventions are active.
 
 However, these cases are deferred rather than prevented entirely, and in both scenarios this is seen as a shifting of the incidence curve to the right (towards the end of the simulation period).
 

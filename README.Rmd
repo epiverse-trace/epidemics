@@ -126,13 +126,13 @@ close_schools
 
 Run the default epidemic model, using the function `model_default()`. 
 We assume an $R_0$ of 1.5 which is similar to pandemic influenza, an infectious period of 7 days, and a pre-infectious period of 3 days.
-From these values we can calculate transmissibility $\beta$ `1.5 / 7.0`, infectiousness_rate $\alpha$ `1.0 / 3.0` and recovery_rate $\gamma$ `1.0 / 7.0`.
+From these values we can calculate transmission rate $\beta$ `1.5 / 7.0`, infectiousness_rate $\alpha$ `1.0 / 3.0` and recovery_rate $\gamma$ `1.0 / 7.0`.
 
 ```{r message=FALSE}
 # run an epidemic model using `epidemic()`
 output <- model_default(
   population = uk_population,
-  transmissibility = 1.5 / 7.0,
+  transmission_rate = 1.5 / 7.0,
   infectiousness_rate = 1.0 / 3.0,
   recovery_rate = 1.0 / 7.0,
   intervention = list(contacts = close_schools),

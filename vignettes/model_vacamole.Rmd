@@ -172,7 +172,7 @@ double_vaccination
 
 First, we run the model with no vaccination. This is the default behaviour, and a vaccination regime only need be specified if it is to be included. The model's default parameters are:
 
- - Transmissibility ($\beta$, `transmissibility`): 0.186, resulting from an $R_0$ = 1.3 and an infectious period of 7 days, given that $\beta = R_0 / \text{infectious period}$.
+ - Transmission rate ($\beta$, `transmission_rate`): 0.186, resulting from an $R_0$ = 1.3 and an infectious period of 7 days, given that $\beta = R_0 / \text{infectious period}$.
 
  - Infectiousness rate ($\sigma$, `infectiousness_rate`): 0.5, assuming a pre-infectious period of 2 days, given that $\sigma = 1 / \text{pre-infectious period}$.
 

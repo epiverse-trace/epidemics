@@ -91,7 +91,7 @@ We assume that ebola has a mean infectious period of 12 days, and that the time 
 
 Together, these give the following values:
 
- - Transmissibility ($\beta$): 0.125,
+ - Transmission rate ($\beta$): 0.125,
  
  - Infectiousness rate ($\gamma^E$ in @getz2018): 0.4,
  
@@ -305,7 +305,7 @@ set.seed(0)
 data_intervention <- model_ebola(
   population = guinea_population,
   intervention = list(
-    transmissibility = reduce_transmission
+    transmission_rate = reduce_transmission
   ),
   time_end = 100
 )
@@ -382,7 +382,7 @@ set.seed(0)
 data_apply_vax <- model_ebola(
   population = guinea_population,
   time_dependence = list(
-    transmissibility = time_dep_vax
+    transmission_rate = time_dep_vax
   ),
   time_end = 100
 )
@@ -622,7 +622,7 @@ set.seed(0)
 data_combined_interventions <- model_ebola(
   population = guinea_population,
   intervention = list(
-    transmissibility = reduce_transmission,
+    transmission_rate = reduce_transmission,
     prop_community = improve_hospitalisation,
     etu_risk = improve_etu_safety,
     funeral_risk = reduce_funeral_risk

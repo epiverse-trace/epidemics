@@ -14,10 +14,10 @@
 #' infectious individuals.
 #' @param mortality_rate A numeric for the mortality rate of
 #' infectious or hospitalised individuals.
-#' @param transmissibility_vax A numeric of values between 0.0 and 1.0
-#' giving the transmissibility of the infection to individuals who
+#' @param transmission_rate_vax A numeric of values between 0.0 and 1.0
+#' giving the transmission_rate of the infection to individuals who
 #' have received two doses of the vaccine. The default values is 80% of the
-#' transmissibility of the infection to individuals who are not doubly
+#' transmission_rate of the infection to individuals who are not doubly
 #' vaccinated.
 #' @param hospitalisation_rate_vax A numeric of values between 0.0 and 1.0
 #' giving the hospitalisation rate of infectious individuals who
@@ -58,8 +58,8 @@
 #' must follow Tidyverse recycling rules: all vectors must have the same length,
 #' or, vectors of length 1 will be recycled to the length of any other vector.
 #'
-#' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.186, resulting from
-#' an \eqn{R_0} = 1.3 and an infectious period of 7 days. The transmissibility
+#' - Transmission rate (\eqn{\beta}, `transmission_rate`): 0.186, resulting from
+#' an \eqn{R_0} = 1.3 and an infectious period of 7 days. The transmission rate
 #' for doubly vaccinated individuals (\eqn{\beta_v}) is 80% of \eqn{\beta},
 #' 0.1488.
 #'
@@ -130,10 +130,10 @@
 #' head(data)
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' # and three discrete values of transmissibility
+#' # and three discrete values of transmission_rate
 #' data <- model_vacamole(
 #'   population = population,
-#'   transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
+#'   transmission_rate = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 #' )
 #'
 #' # view some data
@@ -142,8 +142,8 @@
 #'
 #' @export
 model_vacamole <- function(population,
-                           transmissibility = 1.3 / 7.0,
-                           transmissibility_vax = 0.8 * transmissibility,
+                           transmission_rate = 1.3 / 7.0,
+                           transmission_rate_vax = 0.8 * transmission_rate,
                            infectiousness_rate = 1.0 / 2.0,
                            hospitalisation_rate = 1.0 / 1000,
                            hospitalisation_rate_vax = 0.8 *
@@ -165,14 +165,14 @@ model_vacamole <- function(population,
   assert_population(population, compartments)
 
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
-  checkmate::assert_numeric(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(hospitalisation_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(mortality_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
 
   # parameters for rates affecting only doubly vaccinated
-  checkmate::assert_numeric(transmissibility_vax, lower = 0, upper = 1)
+  checkmate::assert_numeric(transmission_rate_vax, lower = 0, upper = 1)
   checkmate::assert_numeric(hospitalisation_rate_vax, lower = 0, upper = 1)
   checkmate::assert_numeric(mortality_rate_vax, lower = 0, upper = 1)
 
@@ -183,12 +183,12 @@ model_vacamole <- function(population,
 
   # check all vector lengths are equal or 1L
   params <- list(
-    transmissibility = transmissibility,
+    transmission_rate = transmission_rate,
     infectiousness_rate = infectiousness_rate,
     hospitalisation_rate = hospitalisation_rate,
     mortality_rate = mortality_rate,
     recovery_rate = recovery_rate,
-    transmissibility_vax = transmissibility_vax,
+    transmission_rate_vax = transmission_rate_vax,
     hospitalisation_rate_vax = hospitalisation_rate_vax,
     mortality_rate_vax = mortality_rate_vax,
     time_end = time_end
@@ -261,7 +261,7 @@ model_vacamole <- function(population,
   time_dependence <- list(
     .cross_check_timedep(
       time_dependence,
-      c("transmissibility", "infectiousness_rate", "recovery_rate")
+      c("transmission_rate", "infectiousness_rate", "recovery_rate")
     )
   )
 
@@ -351,7 +351,7 @@ model_vacamole <- function(population,
   # allow modification of only some parameters
   model_params <- params[
     c(
-      "transmissibility", "transmissibility_vax", "infectiousness_rate",
+      "transmission_rate", "transmission_rate_vax", "infectiousness_rate",
       "hospitalisation_rate", "hospitalisation_rate_vax",
       "mortality_rate", "mortality_rate_vax", "recovery_rate"
     )
@@ -359,7 +359,7 @@ model_vacamole <- function(population,
 
   # modifiable parameters
   model_params_primary <- model_params[c(
-    "transmissibility", "infectiousness_rate", "hospitalisation_rate",
+    "transmission_rate", "infectiousness_rate", "hospitalisation_rate",
     "mortality_rate", "recovery_rate"
   )]
 
@@ -392,16 +392,16 @@ model_vacamole <- function(population,
       (params[["vax_time_end"]] > t))
 
   # calculate transitions
-  s_to_e <- (model_params[["transmissibility"]] * y[, 1] *
+  s_to_e <- (model_params[["transmission_rate"]] * y[, 1] *
     contact_matrix_ %*% (y[, 6] + y[, 7]))
   # transitions into the vaccinated compartments
   s_to_v1 <- current_nu[, 1] * y[, 1]
   v1_to_v2 <- current_nu[, 2] * y[, 2]
 
   # transitions into the exposed compartment
-  v1_to_e <- model_params[["transmissibility"]] * y[, 2] *
+  v1_to_e <- model_params[["transmission_rate"]] * y[, 2] *
     (contact_matrix_ %*% (y[, 6] + y[, 7]))
-  v2_to_ev <- model_params[["transmissibility_vax"]] * y[, 3] *
+  v2_to_ev <- model_params[["transmission_rate_vax"]] * y[, 3] *
     (contact_matrix_ %*% (y[, 6] + y[, 7]))
 
   # transitions into the infectious compartment

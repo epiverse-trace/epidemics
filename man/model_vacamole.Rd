@@ -6,8 +6,8 @@
 \usage{
 model_vacamole(
   population,
-  transmissibility = 1.3/7,
-  transmissibility_vax = 0.8 * transmissibility,
+  transmission_rate = 1.3/7,
+  transmission_rate_vax = 0.8 * transmission_rate,
   infectiousness_rate = 1/2,
   hospitalisation_rate = 1/1000,
   hospitalisation_rate_vax = 0.8 * hospitalisation_rate,
@@ -26,16 +26,16 @@ model_vacamole(
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See \code{\link[=population]{population()}}.}
 
-\item{transmissibility}{A numeric for the rate at which individuals
+\item{transmission_rate}{A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
 \eqn{\beta = R_0 / \text{infectious period}}. See \strong{Details} for default
 values.}
 
-\item{transmissibility_vax}{A numeric of values between 0.0 and 1.0
-giving the transmissibility of the infection to individuals who
+\item{transmission_rate_vax}{A numeric of values between 0.0 and 1.0
+giving the transmission_rate of the infection to individuals who
 have received two doses of the vaccine. The default values is 80\% of the
-transmissibility of the infection to individuals who are not doubly
+transmission_rate of the infection to individuals who are not doubly
 vaccinated.}
 
 \item{infectiousness_rate}{A numeric for the rate at which individuals
@@ -135,8 +135,8 @@ However, model parameters may be passed as numeric vectors. These vectors
 must follow Tidyverse recycling rules: all vectors must have the same length,
 or, vectors of length 1 will be recycled to the length of any other vector.
 \itemize{
-\item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.186, resulting from
-an \eqn{R_0} = 1.3 and an infectious period of 7 days. The transmissibility
+\item Transmission rate (\eqn{\beta}, \code{transmission_rate}): 0.186, resulting from
+an \eqn{R_0} = 1.3 and an infectious period of 7 days. The transmission rate
 for doubly vaccinated individuals (\eqn{\beta_v}) is 80\% of \eqn{\beta},
 0.1488.
 \item Infectiousness rate (\eqn{\sigma}, \code{infectiousness_rate}): 0.5, assuming
@@ -184,10 +184,10 @@ data <- model_vacamole(
 head(data)
 
 # run epidemic simulation with no vaccination or intervention
-# and three discrete values of transmissibility
+# and three discrete values of transmission_rate
 data <- model_vacamole(
   population = population,
-  transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
+  transmission_rate = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 )
 
 # view some data

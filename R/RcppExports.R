@@ -10,7 +10,7 @@
 #' [model_default_cpp()].
 #'
 #' @param initial_state A matrix for the initial state of the compartments.
-#' @param transmissibility The transmission rate \eqn{\beta} at which
+#' @param transmission_rate The transmission rate \eqn{\beta} at which
 #' unvaccinated and partially vaccinated individuals are infected by the
 #' disease.
 #' @param infectiousness_rate The rate of transition from exposed to infectious
@@ -35,8 +35,8 @@
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.model_default_cpp <- function(initial_state, transmissibility, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_default_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
+.model_default_cpp <- function(initial_state, transmission_rate, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_default_internal`, initial_state, transmission_rate, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 
 #' @title Run an SEIHR ODE model for diphtheria using a Boost solver
@@ -49,7 +49,7 @@
 #' [model_diphtheria_cpp()].
 #'
 #' @param initial_state A matrix for the initial state of the compartments.
-#' @param transmissibility The transmission rate \eqn{\beta}.
+#' @param transmission_rate The transmission rate \eqn{\beta}.
 #' @param infectiousness_rate The rate of transition from exposed to infectious
 #' \eqn{\alpha}.
 #' @param recovery_rate The recovery rate \eqn{\gamma}.
@@ -73,8 +73,8 @@
 #' as specified in the initial conditions matrix.
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.model_diphtheria_cpp <- function(initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_diphtheria_internal`, initial_state, transmissibility, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end, increment)
+.model_diphtheria_cpp <- function(initial_state, transmission_rate, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_diphtheria_internal`, initial_state, transmission_rate, infectiousness_rate, recovery_rate, reporting_rate, prop_hosp, hosp_entry_rate, hosp_exit_rate, rate_interventions, time_dependence, pop_change_times, pop_change_values, time_end, increment)
 }
 
 #' @title Run the RIVM Vacamole model
@@ -90,10 +90,10 @@
 #' [model_vacamole_cpp()].
 #'
 #' @param initial_state A matrix for the initial state of the compartments.
-#' @param transmissibility The transmission rate \eqn{\beta} at which
+#' @param transmission_rate The transmission rate \eqn{\beta} at which
 #' unvaccinated and partially vaccinated individuals are infected by the
 #' disease.
-#' @param transmissibility_vax The transmission rate \eqn{\beta_V} at which
+#' @param transmission_rate_vax The transmission rate \eqn{\beta_V} at which
 #' individuals who have received two vaccine doses are infected by the disease.
 #' @param infectiousness_rate The rate of transition from exposed to infectious
 #' \eqn{\alpha}.
@@ -127,7 +127,7 @@
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.model_vacamole_cpp <- function(initial_state, transmissibility, transmissibility_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_vacamole_internal`, initial_state, transmissibility, transmissibility_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
+.model_vacamole_cpp <- function(initial_state, transmission_rate, transmission_rate_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
+    .Call(`_epidemics_model_vacamole_internal`, initial_state, transmission_rate, transmission_rate_vax, infectiousness_rate, mortality_rate, mortality_rate_vax, hospitalisation_rate, hospitalisation_rate_vax, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
 }
 

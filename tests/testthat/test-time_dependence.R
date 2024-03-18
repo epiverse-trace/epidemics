@@ -4,7 +4,7 @@
 test_that("Time dependence: Basic expectations", {
   expect_identical(
     .no_time_dependence(),
-    list(transmissibility = function(time, x) x),
+    list(transmission_rate = function(time, x) x),
     ignore_function_env = TRUE
   )
 

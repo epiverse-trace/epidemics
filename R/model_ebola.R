@@ -61,7 +61,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #' contacts, which means that the `contact_matrix` is ignored. For consistency,
 #' the matrix must be square and have as many rows as demography groups, which
 #' is one.
-#' @param transmissibility A single number for the rate at which individuals
+#' @param transmission_rate A single number for the rate at which individuals
 #' move from the susceptible to the exposed compartment upon contact with an
 #' infectious individual. Often denoted as \eqn{\beta}, with
 #' \eqn{\beta = R_0 / \text{infectious period}}.
@@ -84,15 +84,15 @@ prob_discrete_erlang <- function(shape, rate) {
 #' hospitalised individuals. Must be a single value between 0.0 and 1.0, where
 #' 0.0 indicates that hospitalisation completely prevents onward transmission,
 #' and 1.0 indicates that hospitalisation does not prevent onward transmission
-#' at all. `etu_risk` is used to scale the value of transmissibility for the
-#' transmissibility \eqn{\beta}. Defaults to 0.2.
+#' at all. `etu_risk` is used to scale the value of transmission_rate for the
+#' transmission_rate \eqn{\beta}. Defaults to 0.2.
 #' @param funeral_risk The relative risk of onward transmission of EVD from
 #' funerals of individuals who died with EVD.
 #' Must be a single value between 0.0 and 1.0, where
 #' 0.0 indicates that there is no onward transmission, and 1.0 indicates that
 #' funeral transmission is equivalent to transmission in the community.
-#' `funeral_risk` is used to scale the value of transmissibility for the
-#' transmissibility \eqn{\beta}. Defaults to 0.5.
+#' `funeral_risk` is used to scale the value of transmission_rate for the
+#' transmission_rate \eqn{\beta}. Defaults to 0.5.
 #' @param intervention A named list of `<rate_intervention>` objects
 #' representing optional pharmaceutical or non-pharmaceutical interventions
 #' applied to the model parameters listed above.
@@ -181,7 +181,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #'
 #' The default values are:
 #'
-#' - Transmissibility (\eqn{\beta}, `transmissibility`): 0.125, resulting from
+#' - Transmission rate (\eqn{\beta}, `transmission_rate`): 0.125, resulting from
 #' an \eqn{R_0} = 1.5 and an infectious period of 12 days.
 #'
 #' - Infectiousness rate (\eqn{\gamma^E}, `infectiousness_rate`): 0.4, assuming
@@ -234,7 +234,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #' @export
 model_ebola <- function(population,
                         erlang_subcompartments = 2,
-                        transmissibility = 1.5 / 12,
+                        transmission_rate = 1.5 / 12,
                         infectiousness_rate = erlang_subcompartments / 5,
                         removal_rate = erlang_subcompartments / 12,
                         prop_community = 0.9,
@@ -257,7 +257,7 @@ model_ebola <- function(population,
 
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
   checkmate::assert_count(erlang_subcompartments, positive = TRUE)
-  checkmate::assert_number(transmissibility, lower = 0, finite = TRUE)
+  checkmate::assert_number(transmission_rate, lower = 0, finite = TRUE)
   checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_number(removal_rate, lower = 0, finite = TRUE)
   # ratios are bounded 0 - 1
@@ -280,7 +280,7 @@ model_ebola <- function(population,
     checkmate::assert_names(
       names(intervention),
       subset.of = c(
-        "transmissibility", "infectiousness_rate", "removal_rate",
+        "transmission_rate", "infectiousness_rate", "removal_rate",
         "prop_community", "etu_risk", "funeral_risk"
       )
     )
@@ -304,7 +304,7 @@ model_ebola <- function(population,
     checkmate::assert_names(
       names(time_dependence),
       subset.of = c(
-        "transmissibility", "infectiousness_rate", "removal_rate",
+        "transmission_rate", "infectiousness_rate", "removal_rate",
         "prop_community", "etu_risk", "funeral_risk"
       )
     )
@@ -372,9 +372,9 @@ model_ebola <- function(population,
   # define a fixed rounding factor for all timesteps to save function calls
   rounding_factor <- stats::rnorm(n_infectious_boxcars - 1, 0, 1e-2)
 
-  # place parameter transmissibility in list for rate interventions function
+  # place parameter transmission_rate in list for rate interventions function
   parameters <- list(
-    transmissibility = transmissibility,
+    transmission_rate = transmission_rate,
     prop_community = prop_community,
     etu_risk = etu_risk,
     funeral_risk = funeral_risk
@@ -407,17 +407,17 @@ model_ebola <- function(population,
 
     # transmission modifiers - 1.0 for baseline, user-provided for ETU risk and
     # funeral risk
-    transmissibility_modifiers <- c(
+    transmission_rate_modifiers <- c(
       1.0, params[["etu_risk"]], params[["funeral_risk"]]
     )
 
-    # get current transmissibility as base rate * intervention * p(infectious)
+    # get current transmission_rate as base rate * intervention * p(infectious)
     # TODO: check if transmissibilities should be summed or averaged
-    current_transmissibility <- sum(params[["transmissibility"]] *
-      transmissibility_modifiers *
+    current_transmission_rate <- sum(params[["transmission_rate"]] *
+      transmission_rate_modifiers *
       sim_data[time - 1, c("infectious", "hospitalised", "funeral")]) /
       population_size
-    exposure_prob <- 1.0 - exp(-current_transmissibility)
+    exposure_prob <- 1.0 - exp(-current_transmission_rate)
 
     # calculate new exposures
     new_exposed <- stats::rbinom(

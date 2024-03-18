@@ -77,22 +77,22 @@ test_that("Ebola model: basic expectations", {
   )
 })
 
-test_that("Higher transmissibility leads to larger final size, ebola model", {
+test_that("Higher transmission_rate leads to larger final size, ebola model", {
   # prepare epidemic model runs with different R0 estimates
   r0_low <- 1.3
   r0_high <- 1.7
   infectious_period <- 12
-  transmissibility_vec <- c(r0_low, r0_high) / infectious_period
+  transmission_rate_vec <- c(r0_low, r0_high) / infectious_period
 
   # get data
   set.seed(0)
   data <- lapply(
-    transmissibility_vec,
+    transmission_rate_vec,
     function(beta) {
       # run model on data
       data <- model_ebola(
         population = pop,
-        transmissibility = beta,
+        transmission_rate = beta,
         time_end = 100
       )
     }
@@ -128,7 +128,7 @@ population <- population(
 # Ebola model with interventions that prevent any transmission
 test_that("Ebola model works with rate interventions", {
   intervention <- list(
-    transmissibility = intervention(
+    transmission_rate = intervention(
       type = "rate",
       time_begin = 1, time_end = 100, reduction = 1
     )

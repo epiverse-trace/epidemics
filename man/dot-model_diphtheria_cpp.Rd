@@ -6,7 +6,7 @@
 \usage{
 .model_diphtheria_cpp(
   initial_state,
-  transmissibility,
+  transmission_rate,
   infectiousness_rate,
   recovery_rate,
   reporting_rate,
@@ -24,7 +24,7 @@
 \arguments{
 \item{initial_state}{A matrix for the initial state of the compartments.}
 
-\item{transmissibility}{The transmission rate \eqn{\beta}.}
+\item{transmission_rate}{The transmission rate \eqn{\beta}.}
 
 \item{infectiousness_rate}{The rate of transition from exposed to infectious
 \eqn{\alpha}.}

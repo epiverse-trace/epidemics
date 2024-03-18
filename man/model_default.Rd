@@ -6,7 +6,7 @@
 \usage{
 model_default(
   population,
-  transmissibility = 1.3/7,
+  transmission_rate = 1.3/7,
   infectiousness_rate = 1/2,
   recovery_rate = 1/7,
   intervention = NULL,
@@ -21,7 +21,7 @@ model_default(
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See \code{\link[=population]{population()}}.}
 
-\item{transmissibility}{A numeric for the rate at which individuals
+\item{transmission_rate}{A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
 \eqn{\beta = R_0 / \text{infectious period}}. See \strong{Details} for default
@@ -84,7 +84,7 @@ epidemic model with the compartments
 This model can accommodate heterogeneity in social contacts among demographic
 groups, as well as differences in the sizes of demographic groups.
 
-The \code{population}, \code{transmissibility}, \code{infectiousness_rate}, and
+The \code{population}, \code{transmission_rate}, \code{infectiousness_rate}, and
 \code{recovery_rate}
 arguments are mandatory, while passing an \code{intervention} and \code{vaccination}
 are optional and can be used to simulate scenarios with different epidemic
@@ -103,7 +103,7 @@ or, vectors of length 1 will be recycled to the length of any other vector.
 
 The default values are:
 \itemize{
-\item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.186, assuming an
+\item Transmission rate (\eqn{\beta}, \code{transmission_rate}): 0.186, assuming an
 \eqn{R_0} = 1.3 and an infectious period of 7 days.
 \item Infectiousness rate (\eqn{\sigma}, \code{infectiousness_rate}): 0.5, assuming
 a pre-infectious period of 2 days.
@@ -126,10 +126,10 @@ uk_population <- population(
 )
 
 # run epidemic simulation with no vaccination or intervention
-# and three discrete values of transmissibility
+# and three discrete values of transmission rate
 data <- model_default(
   population = uk_population,
-  transmissibility = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
+  transmission_rate = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
 )
 
 # view some data

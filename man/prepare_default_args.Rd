@@ -16,7 +16,7 @@ This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
 rather than proportional values;
-\item \code{transmissibility}, \code{infectiousness_rate}, \code{recovery_rate}: three numbers
+\item \code{transmission_rate}, \code{infectiousness_rate}, \code{recovery_rate}: three numbers
 representing the transmission rate of the infection, the rate of transition
 from exposed to infectious, and the recovery rate, respectively;
 \item \code{contact_matrix}, a numeric matrix for the population contact matrix

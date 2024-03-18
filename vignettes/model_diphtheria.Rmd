@@ -88,7 +88,7 @@ prop_vaccinated <- c(0.05, 0.2, 0.05)
 
 We run the model with its default parameters, assuming that:
 
-- diphtheria has an $R_0$ of 4.0 and a mean infectious period of 4.5 days, giving a transmissibility ($\beta$) of about 0.889;
+- diphtheria has an $R_0$ of 4.0 and a mean infectious period of 4.5 days, giving a transmission rate ($\beta$) of about 0.889;
 - diphtheria has a pre-infectious or incubation period of 3 days, giving an infectiousness rate ($\sigma$) of about 0.33; and
 - the recovery rate of diphtheria is about 0.33.
 

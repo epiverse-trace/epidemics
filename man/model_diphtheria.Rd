@@ -6,7 +6,7 @@
 \usage{
 model_diphtheria(
   population,
-  transmissibility = 4/4.5,
+  transmission_rate = 4/4.5,
   infectiousness_rate = 1/3,
   recovery_rate = 1/3,
   reporting_rate = 0.03,
@@ -26,7 +26,7 @@ model_diphtheria(
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See \code{\link[=population]{population()}}.}
 
-\item{transmissibility}{A numeric for the rate at which individuals
+\item{transmission_rate}{A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
 \eqn{\beta = R_0 / \text{infectious period}}. See \strong{Details} for default
@@ -119,8 +119,8 @@ or, vectors of length 1 will be recycled to the length of any other vector.
 
 The default values are taken from Finger et al. (2019) where possible:
 \itemize{
-\item Transmissibility (\eqn{\beta}, \code{transmissibility}): 0.8888889, assuming an
-\eqn{R_0} of 4.0 and a total infectious period of 4.5 days.
+\item Transmission rate (\eqn{\beta}, \code{transmission_rate}): 0.8888889, assuming
+an \eqn{R_0} of 4.0 and a total infectious period of 4.5 days.
 \item Infectiousness rate (\eqn{\sigma}, \code{infectiousness_rate}): 0.333, assuming
 a pre-infectious period of 3 days.
 \item Reporting rate (\eqn{r}, \code{reporting_rate}): 0.03, assuming that 3\% of

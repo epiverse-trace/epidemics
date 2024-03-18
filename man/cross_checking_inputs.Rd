@@ -43,7 +43,7 @@ the model input \code{x} affects.}
 \item \code{.cross_check_intervention()} returns a named list with at least the
 elements "contacts" describing a \verb{<contacts_intervention>} on \code{population}
 (if this is among the allowed targets), and a \verb{<rate_intervention>} on the
-transmissibility parameter. If these are present in \code{x}, they are
+transmission rate parameter. If these are present in \code{x}, they are
 returned as is, or substituted if missing. Any other interventions
 are also returned. If \code{x} is \code{NULL}, dummy contact and rate interventions
 are returned in a list.
@@ -51,7 +51,7 @@ are returned in a list.
 for \code{population}, or a dummy vaccination regime with \code{doses} number of doses
 for each age group.
 \item \code{.cross_check_timedep()} returns \code{x} if \code{x} is not \code{NULL}, otherwise
-returns a dummy function operating on the transmissibility parameter by
+returns a dummy function operating on the transmission rate parameter by
 default; see \code{\link[=.no_time_dependence]{.no_time_dependence()}};
 \item \code{.cross_check_popchange()} returns \code{x} after checks against \code{population} if
 \code{x} is not \code{NULL}, otherwise returns a dummy list with no population change;

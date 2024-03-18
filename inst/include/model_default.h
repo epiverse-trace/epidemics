@@ -43,7 +43,7 @@ struct epidemic_default {
   /// @param model_params An unordered map of string-double pairs, with the
   /// model parameters as keys, and parameter values as values. The
   /// model parameters are:
-  /// - transmissibility The transmission rate
+  /// - transmission_rate The transmission rate
   /// - infectiousness_rate The rate at which individuals become infectious
   /// - recovery_rate The recovery rate
   /// @param contact_matrix The population contact matrix
@@ -116,7 +116,7 @@ struct epidemic_default {
     // for vectorised operations
 
     // compartmental transitions without accounting for contacts
-    Eigen::ArrayXd sToE = model_params_temp["transmissibility"] *
+    Eigen::ArrayXd sToE = model_params_temp["transmission_rate"] *
                           x.col(0).array() * (cm_temp * x.col(2)).array();
     Eigen::ArrayXd eToI =
         model_params_temp["infectiousness_rate"] * x.col(1).array();
@@ -124,7 +124,7 @@ struct epidemic_default {
     Eigen::ArrayXd sToV = vax_nu_current.col(0).array() * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)
-    // β: transmissibility; ν: vaccination rate; σ: infectiousness rate
+    // β: transmission_rate; ν: vaccination rate; σ: infectiousness rate
     // γ: recovery rate
     dxdt.col(0) = -sToE - sToV;  // -β*S*contacts*I - ν*S
     dxdt.col(1) = sToE - eToI;   // β*S*contacts*I - σ*E

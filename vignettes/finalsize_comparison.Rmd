@@ -59,7 +59,7 @@ While both _finalsize_ and _epidemics_ can be used to calculate the epidemic fin
 **_finalsize_** assumes that both infection and population characteristics are fixed to their initial conditions.
 For the infection, this includes properties such as the transmission rate, while for the population, it includes social contacts between demographic groups, and the proportion of demographic groups that have specific levels of susceptibility to infection.
 
-An advantage is that _finalsize_ only requires that we define the initial transmissibility of the infection and susceptibility of the population, rather than all the time-dependent processes that drive the epidemic shape, such as the duration of infectiousness or latent period of the infection. For questions relating to epidemic shape, rather than shape, this results in a much simpler set of inputs.
+An advantage is that _finalsize_ only requires that we define the initial transmission rate of the infection and susceptibility of the population, rather than all the time-dependent processes that drive the epidemic shape, such as the duration of infectiousness or latent period of the infection. For questions relating to epidemic shape, rather than shape, this results in a much simpler set of inputs.
 
 However, it also means that _finalsize_ cannot be used to model temporal dynamics of epidemic response, or be used to answer policy questions with a temporal component, such as when to implement interventions.
 
@@ -140,11 +140,11 @@ uk_population
 
 We model the spread of influenza with pandemic potential, assuming $R_0 = $ 1.5, a pre-infectious period of 3 days, and an infectious period of 7 days.
 
-This leads to the following model parameters for transmissibility $\beta$, the rate of transition from exposed to infectious $\sigma$, and the recovery rate $\gamma$.
+This leads to the following model parameters for transmission rate $\beta$, the rate of transition from exposed to infectious $\sigma$, and the recovery rate $\gamma$.
 
 ```{r}
 # simulate pandemic parameters
-transmissibility <- 1.5 / 7
+transmission_rate <- 1.5 / 7
 infectiousness_rate <- 1 / 3
 recovery_rate <- 1 / 7
 ```
@@ -179,7 +179,7 @@ We obtain the 'final' epidemic size using `epidemics::epidemic_size()`.
 # model epidemic with vaccination prior to the main epidemic wave
 output <- model_default(
   population = uk_population,
-  transmissibility = transmissibility,
+  transmission_rate = transmission_rate,
   infectiousness_rate = infectiousness_rate,
   recovery_rate = recovery_rate,
   vaccination = vaccinate_elders,
@@ -328,7 +328,7 @@ benchmark <- mark(
   ode_model = epidemic_size(
     model_default(
       population = uk_population,
-      transmissibility = transmissibility,
+      transmission_rate = transmission_rate,
       infectiousness_rate = infectiousness_rate,
       recovery_rate = recovery_rate,
       vaccination = vaccinate_elders,

@@ -117,7 +117,7 @@
 #' - `.cross_check_intervention()` returns a named list with at least the
 #' elements "contacts" describing a `<contacts_intervention>` on `population`
 #' (if this is among the allowed targets), and a `<rate_intervention>` on the
-#' transmissibility parameter. If these are present in `x`, they are
+#' transmission rate parameter. If these are present in `x`, they are
 #' returned as is, or substituted if missing. Any other interventions
 #' are also returned. If `x` is `NULL`, dummy contact and rate interventions
 #' are returned in a list.
@@ -127,7 +127,7 @@
 #' for each age group.
 #'
 #' - `.cross_check_timedep()` returns `x` if `x` is not `NULL`, otherwise
-#' returns a dummy function operating on the transmissibility parameter by
+#' returns a dummy function operating on the transmission rate parameter by
 #' default; see [.no_time_dependence()];
 #'
 #' - `.cross_check_popchange()` returns `x` after checks against `population` if
@@ -137,7 +137,7 @@
 .cross_check_intervention <- function(x, population, allowed_targets) {
   # create dummy intervention set
   tmp_intervention <- list(
-    transmissibility = .no_rate_intervention()
+    transmission_rate = .no_rate_intervention()
   )
   # Ebola and Diphtheria models do not allow contact interventions
   if ("contacts" %in% allowed_targets) {

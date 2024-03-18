@@ -52,9 +52,9 @@ struct epidemic_vacamole {
   /// @param model_params An unordered map of string-double pairs, with the
   /// model parameters as keys, and parameter values as values. The
   /// model parameters are:
-  /// - transmissibility The transmission rate for un-or-single vaccinated
+  /// - transmission_rate The transmission rate for un-or-single vaccinated
   /// individuals
-  /// - transmissibility_vax The transmission rate for double-vaccinated
+  /// - transmission_rate_vax The transmission rate for double-vaccinated
   /// individuals
   /// - infectiousness_rate The rate at which individuals become infectious
   /// - mortality_rate The mortality rate of un-or-single-vaccinated individuals
@@ -138,7 +138,7 @@ struct epidemic_vacamole {
 
     // compartmental transitions without accounting for contacts
     // Susceptible (unvaccinated) to exposed
-    Eigen::ArrayXd sToE = model_params_temp["transmissibility"] *
+    Eigen::ArrayXd sToE = model_params_temp["transmission_rate"] *
                           x.col(0).array() *
                           (cm_temp * (x.col(5) + x.col(6))).array();
 
@@ -148,11 +148,11 @@ struct epidemic_vacamole {
     Eigen::ArrayXd v1ToV2 = vax_nu_current.col(1).array() * x.col(1).array();
 
     // Vaccinated one dose to exposed - same as susceptible to exposed
-    Eigen::ArrayXd v1ToE = model_params_temp["transmissibility"] *
+    Eigen::ArrayXd v1ToE = model_params_temp["transmission_rate"] *
                            x.col(1).array() *
                            (cm_temp * (x.col(5) + x.col(6))).array();
-    // Vaccinated two doses to exposed - uses different transmissibility
-    Eigen::ArrayXd v2ToEv = model_params_temp["transmissibility_vax"] *
+    // Vaccinated two doses to exposed - uses different transmission_rate
+    Eigen::ArrayXd v2ToEv = model_params_temp["transmission_rate_vax"] *
                             x.col(2).array() *
                             (cm_temp * (x.col(5) + x.col(6))).array();
 
@@ -197,7 +197,7 @@ struct epidemic_vacamole {
         model_params_temp["recovery_rate"] * x.col(8).array();
 
     // compartmental changes accounting for contacts
-    // β: transmissibility; βv: transmissibility for doubly vaccinated;
+    // β: transmission_rate; βv: transmission_rate for doubly vaccinated;
     // ν1, ν2: vaccination rate first, second dose;
     // σ: infectiousness rate; γ: recovery rate;
     // η: hospitalisation rate; η_v: hosp. rate doubly vaccinated

@@ -92,12 +92,12 @@ test_that("Default model: basic expectations, scalar arguments", {
 
 # NOTE: statistical correctness is not expected to change for vectorised input
 test_that("Default model: statistical correctness, parameters", {
-  # expect final size increases with transmissibility
+  # expect final size increases with transmission_rate
   size_beta_low <- epidemic_size(
-    model_default(uk_population, transmissibility = 1.3 / 7.0)
+    model_default(uk_population, transmission_rate = 1.3 / 7.0)
   )
   size_beta_high <- epidemic_size(
-    model_default(uk_population, transmissibility = 1.5 / 7.0)
+    model_default(uk_population, transmission_rate = 1.5 / 7.0)
   )
   expect_true(
     all(size_beta_high > size_beta_low)
@@ -203,14 +203,14 @@ test_that("Default model: rate interventions", {
   expect_no_condition(
     model_default(
       uk_population,
-      intervention = list(transmissibility = intervention)
+      intervention = list(transmission_rate = intervention)
     )
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
   data <- model_default(
     uk_population,
-    intervention = list(transmissibility = intervention)
+    intervention = list(transmission_rate = intervention)
   )
   expect_s3_class(data, "data.frame")
   expect_identical(length(data), 4L)
@@ -248,7 +248,7 @@ test_that("Default model: vaccination and stats. correctness", {
 test_that("Default model: time dependence", {
   # expect time dependence is correctly handled
   time_dependence <- list(
-    transmissibility = function(time, x, t_change = time_end / 2) {
+    transmission_rate = function(time, x, t_change = time_end / 2) {
       ifelse(time > t_change, x / 2, x)
     },
     recovery_rate = function(time, x, t_change = time_end / 2) {
@@ -298,7 +298,7 @@ test_that("Default model: errors and warnings, scalar arguments", {
 
   # expect errors for infection parameters
   expect_error(
-    model_default(uk_population, transmissibility = "0.19"),
+    model_default(uk_population, transmission_rate = "0.19"),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
@@ -345,7 +345,7 @@ test_that("Default model: errors and warnings, scalar arguments", {
   expect_error(
     model_default(
       uk_population,
-      intervention = list(transmissibility = intervention)
+      intervention = list(transmission_rate = intervention)
     ),
     regexp = "Must inherit from class 'rate_intervention'"
   )
@@ -382,14 +382,14 @@ test_that("Default model: errors and warnings, scalar arguments", {
   expect_error(
     model_default(
       uk_population,
-      time_dependence = list(transmissibility = function(x) x)
+      time_dependence = list(transmission_rate = function(x) x)
     ),
     regexp = "Must have first formal arguments \\(ordered\\): time,x."
   )
   expect_error(
     model_default(
       uk_population,
-      time_dependence = list(transmissibility = NULL)
+      time_dependence = list(transmission_rate = NULL)
     ),
     regexp = "Contains missing values"
   )
@@ -405,19 +405,19 @@ test_that("Default model: infection parameters as vectors", {
   expect_no_condition(
     model_default(
       uk_population,
-      transmissibility = beta, infectiousness_rate = sigma,
+      transmission_rate = beta, infectiousness_rate = sigma,
       recovery_rate = gamma
     )
   )
   # expect output structure is a nested data.table
   output <- model_default(
     uk_population,
-    transmissibility = beta, infectiousness_rate = sigma,
+    transmission_rate = beta, infectiousness_rate = sigma,
     recovery_rate = gamma
   )
   expect_s3_class(output, c("data.frame", "data.table"))
   expect_identical(nrow(output), length(beta))
-  expect_identical(output$transmissibility, beta)
+  expect_identical(output$transmission_rate, beta)
   checkmate::expect_list(output$data, types = "data.frame", any.missing = FALSE)
 
   # expect `parameter_set` and `scenario` are correctly filled
@@ -456,7 +456,7 @@ test_that("Default model: composable elements as lists", {
       contacts = intervention(
         "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
       ),
-      transmissibility = intervention(
+      transmission_rate = intervention(
         "mask_mandate", "rate", 0, time_end, 0.5
       )
     )
@@ -509,7 +509,7 @@ test_that("Default model: multi-parameter, multi-composables", {
       contacts = intervention(
         "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
       ),
-      transmissibility = intervention(
+      transmission_rate = intervention(
         "mask_mandate", "rate", 0, time_end, 0.5
       )
     )
@@ -518,7 +518,7 @@ test_that("Default model: multi-parameter, multi-composables", {
   expect_no_condition(
     model_default(
       uk_population,
-      transmissibility = beta, recovery_rate = gamma,
+      transmission_rate = beta, recovery_rate = gamma,
       intervention = npi_list
     )
   )
@@ -526,7 +526,7 @@ test_that("Default model: multi-parameter, multi-composables", {
   # expect output is a nested data.frame-like object
   output <- model_default(
     uk_population,
-    transmissibility = beta, recovery_rate = gamma,
+    transmission_rate = beta, recovery_rate = gamma,
     intervention = npi_list
   )
   expect_s3_class(output, c("data.frame", "data.table"))
@@ -567,7 +567,7 @@ test_that("Default model: errors on vectorised input", {
   expect_error(
     model_default(
       uk_population,
-      transmissibility = beta[-1], recovery_rate = gamma
+      transmission_rate = beta[-1], recovery_rate = gamma
     ),
     regexp = "All parameters must be of the same length, or must have length 1"
   )
@@ -599,10 +599,10 @@ test_that("Default model: errors on vectorised input", {
       uk_population,
       time_dependence = list(
         time_dep_01 = list(
-          transmissibility = function(x) x
+          transmission_rate = function(x) x
         ),
         time_dep_02 = list(
-          transmissibility = function(x) x
+          transmission_rate = function(x) x
         )
       )
     ),

@@ -14,8 +14,8 @@ articles:
   modelling_scenarios: modelling_scenarios.html
   modelling_time_dependence: modelling_time_dependence.html
   modelling_vaccination: modelling_vaccination.html
-last_built: 2024-03-14T10:25Z
+last_built: 2024-03-18T12:24Z
 urls:
-  reference: https://epiverse.github.io/epidemics/reference
-  article: https://epiverse.github.io/epidemics/articles
+  reference: https://epiverse-trace.github.io/epidemics/reference
+  article: https://epiverse-trace.github.io/epidemics/articles
 

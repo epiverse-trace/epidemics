@@ -13,7 +13,7 @@ touchstone::branch_install()
 # Default model
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source("touchstone/setup.R")
+    source("touchstone/setup_ode.R")
   },
   default = {
     model_default(
@@ -27,7 +27,7 @@ touchstone::benchmark_run(
 # Vacamole model
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source("touchstone/setup.R")
+    source("touchstone/setup_ode.R")
   },
   default = {
     model_vacamole(
@@ -41,7 +41,7 @@ touchstone::benchmark_run(
 # Diphtheria model
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source("touchstone/setup.R")
+    source("touchstone/setup_ode.R")
   },
   default = {
     model_diphtheria(
@@ -59,7 +59,7 @@ model_ebola(
 )
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source("touchstone/setup.R")
+    source("touchstone/setup_ebola.R")
   },
   default = {
     withr::with_seed(

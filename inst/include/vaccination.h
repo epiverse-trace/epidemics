@@ -14,18 +14,6 @@
 // add to namespace vaccination
 namespace vaccination {
 
-/// @brief Get the group specific vaccination rate from a `vaccination` object
-/// @param vaccination A `vaccination` object in the form of an Rcpp List
-/// @return An Eigen Array of group-specific vaccination rates, with dimensions
-/// matching those the `vaccination` class member `nu`, in which each element
-/// `i,j` gives the group- and dose-specific vaccination rate, in row `i` and
-/// column `j` respectively.
-inline Eigen::MatrixXd get_nu(const Rcpp::List &vaccination) {
-  // convert to Eigen array, then resize to match the nu matrix
-  Eigen::MatrixXd nu(Rcpp::as<Eigen::MatrixXd>(vaccination["nu"]));
-  return nu;
-}
-
 /// @brief Get the vaccination rate at a time in the vaccination regime
 /// @param t A double value giving the current time, which is compared against
 /// the vaccination start and end times.

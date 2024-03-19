@@ -74,6 +74,10 @@
   vax_time_end <- mod_args[["vaccination"]][["time_end"]]
   vax_nu <- mod_args[["vaccination"]][["nu"]]
 
+  # calculate vax_nu as the NUMBER of vaccinations per timestep
+  # rather than a fraction/rate. See issue #198 for more details.
+  vax_nu <- vax_nu * mod_args[["population"]][["demography_vector"]]
+
   # remove processed model arguments
   mod_args[c("population", "intervention", "vaccination")] <- NULL
   mod_args[c("param_set", "scenario")] <- NULL

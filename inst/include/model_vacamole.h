@@ -142,10 +142,11 @@ struct epidemic_vacamole {
                           x.col(0).array() *
                           (cm_temp * (x.col(5) + x.col(6))).array();
 
+    /// NOTE: vax_nu_current holds COUNTS, not rates. See issue #198 for details
     // Susceptible to vaccinated with one dose
-    Eigen::ArrayXd sToV1 = vax_nu_current.col(0).array() * x.col(0).array();
+    Eigen::ArrayXd sToV1 = vax_nu_current.col(0).array();
     // Vaccinated one dose to vaccinated with two doses
-    Eigen::ArrayXd v1ToV2 = vax_nu_current.col(1).array() * x.col(1).array();
+    Eigen::ArrayXd v1ToV2 = vax_nu_current.col(1).array();
 
     // Vaccinated one dose to exposed - same as susceptible to exposed
     Eigen::ArrayXd v1ToE = model_params_temp.at("transmission_rate") *
@@ -200,13 +201,14 @@ struct epidemic_vacamole {
 
     // compartmental changes accounting for contacts
     // β: transmission_rate; βv: transmission_rate for doubly vaccinated;
-    // ν1, ν2: vaccination rate first, second dose;
+    // ν1, ν2: vaccination COUNTS for first, second dose;
+    /// NOTE: see issue #198 for more on vaccination
     // σ: infectiousness rate; γ: recovery rate;
     // η: hospitalisation rate; η_v: hosp. rate doubly vaccinated
     // ω: mortality rate; ω_v: mort. rate doubly vaccinated
-    dxdt.col(0) = -sToE - sToV1;           // -β*S*contacts*(I+Iv) - ν1*S
-    dxdt.col(1) = sToV1 - v1ToE - v1ToV2;  // ν1*S -β*V1*contacts*(I+Iv) - ν2*V
-    dxdt.col(2) = v1ToV2 - v2ToEv;         // ν2*V - βv*V2*contacts*(I+Iv)
+    dxdt.col(0) = -sToE - sToV1;           // -β*S*contacts*(I+Iv) - ν1
+    dxdt.col(1) = sToV1 - v1ToE - v1ToV2;  // ν1 -β*V1*contacts*(I+Iv) - ν2
+    dxdt.col(2) = v1ToV2 - v2ToEv;         // ν2 - βv*V2*contacts*(I+Iv)
     dxdt.col(3) = sToE + v1ToE - eToI;     // β*(S+V1)*contacts*(I+Iv) - σE
     dxdt.col(4) = v2ToEv - evToIv;         // βv*V2*contacts*(I+Iv) - αE
     dxdt.col(5) = eToI - iToH - iToR - iToD;        // σE - I(γ + η + ω)

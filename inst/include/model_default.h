@@ -122,16 +122,20 @@ struct epidemic_default {
         model_params_temp.at("infectiousness_rate") * x.col(1).array();
     Eigen::ArrayXd iToR =
         model_params_temp.at("recovery_rate") * x.col(2).array();
-    Eigen::ArrayXd sToV = vax_nu_current.col(0).array() * x.col(0).array();
+
+    /// NOTE: vax_nu_current holds COUNTS, not rates. See issue #198 for details
+    Eigen::ArrayXd sToV = vax_nu_current.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)
-    // β: transmission_rate; ν: vaccination rate; σ: infectiousness rate
+    // β: transmission_rate; ν: vaccination COUNTS, see issue #198
+    /// NOTE: see issue #198 for more on vaccination
+    // σ: infectiousness rate
     // γ: recovery rate
-    dxdt.col(0) = -sToE - sToV;  // -β*S*contacts*I - ν*S
+    dxdt.col(0) = -sToE - sToV;  // -β*S*contacts*I - ν
     dxdt.col(1) = sToE - eToI;   // β*S*contacts*I - σ*E
     dxdt.col(2) = eToI - iToR;   // σ*E - γ*I
     dxdt.col(3) = iToR;          // γ*I
-    dxdt.col(4) = sToV;          // ν*S
+    dxdt.col(4) = sToV;          // ν
   }
 };
 

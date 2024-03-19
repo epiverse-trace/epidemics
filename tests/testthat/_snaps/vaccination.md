@@ -79,3 +79,27 @@
            dose_1 dose_2
       [1,]  0.001  0.001
 
+# Epidemic model with vaccination
+
+    Code
+      data_vaccination[data_vaccination$compartment == "vaccinated" &
+        data_vaccination$time < 5, ]
+    Output
+           time demography_group compartment     value
+          <num>           <char>      <char>     <num>
+       1:     0           [0,40)  vaccinated    0.0000
+       2:     0          [40,65)  vaccinated    0.0000
+       3:     0              65+  vaccinated    0.0000
+       4:     1           [0,40)  vaccinated    0.0000
+       5:     1          [40,65)  vaccinated    0.0000
+       6:     1              65+  vaccinated  967.3058
+       7:     2           [0,40)  vaccinated    0.0000
+       8:     2          [40,65)  vaccinated    0.0000
+       9:     2              65+  vaccinated 1934.6116
+      10:     3           [0,40)  vaccinated    0.0000
+      11:     3          [40,65)  vaccinated    0.0000
+      12:     3              65+  vaccinated 2901.9174
+      13:     4           [0,40)  vaccinated    0.0000
+      14:     4          [40,65)  vaccinated    0.0000
+      15:     4              65+  vaccinated 3869.2232
+

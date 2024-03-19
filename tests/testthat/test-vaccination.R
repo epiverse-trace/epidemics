@@ -132,6 +132,11 @@ data <- model_default(
 )
 
 test_that("Epidemic model with vaccination", {
+  # Expect snapshot for vaccinated compartment
+  expect_snapshot(
+    data_vaccination[data_vaccination$compartment == "vaccinated" &
+      data_vaccination$time < 5, ]
+  )
   # expect that only the last age group is vaccinated
   total_vaccinated <- data_vaccination[data_vaccination$compartment ==
     "vaccinated" & data_vaccination$time ==

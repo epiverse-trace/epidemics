@@ -71,10 +71,6 @@ touchstone::benchmark_run(
 )
 
 # Ebola model
-model_ebola(
-  population = guinea_population,
-  time_end = 100
-)
 touchstone::benchmark_run(
   expr_before_benchmark = {
     source("touchstone/setup_ebola.R")

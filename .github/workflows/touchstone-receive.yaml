@@ -1,3 +1,4 @@
+# Modified to follow workflow in EpiNow2
 name: Continuous Benchmarks (Receive)
 
 concurrency:
@@ -6,17 +7,20 @@ concurrency:
 
 on: 
   pull_request:
+    paths:
+      # Where model code is defined: R/, src/, inst/include/
+      - "inst/include/**"
+      - "src/**"
+      - "R/**"
+      # Benchmarking code, config file, and manual trigger
+      - "touchstone/**"
+      - ".github/workflows/touchstone-*.yaml"
+      - ".benchmark"
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest 
-    if:
-      true &&
-      (
-        github.event.comment.author_association == 'OWNER' ||
-        github.event.comment.author_association == 'MEMBER' ||
-        github.event.comment.author_association == 'COLLABORATOR' 
-      )
+    runs-on: ubuntu-latest
+    # Allow benchmarking workflow to run for external contribs
     outputs:
       config: ${{ steps.read_touchstone_config.outputs.config }}
     steps:
@@ -52,5 +56,4 @@ jobs:
           cache-version: 1
           benchmarking_repo: ${{ matrix.config.benchmarking_repo }}
           benchmarking_ref: ${{ matrix.config.benchmarking_ref }}
-          benchmarking_path: ${{ matrix.config.benchmarking_path }} 
-          force_upstream: true
+          benchmarking_path: ${{ matrix.config.benchmarking_path }}

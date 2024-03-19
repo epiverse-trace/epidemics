@@ -13,40 +13,58 @@ touchstone::branch_install()
 # Default model
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source("touchstone/setup.R")
+    source("touchstone/setup_ode.R")
   },
-  default = {
+  default_ode = {
     model_default(
       population = uk_population,
-      time_end = 600, increment = 1.0
+      time_end = max_time
     )
   },
   n = 50
 )
 
-# Vacamole model
+# Default model with parameter vectors
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source("touchstone/setup.R")
+    source("touchstone/setup_ode.R")
   },
-  default = {
-    model_vacamole(
+  default_ode_param_vec = {
+    model_default(
       population = uk_population,
-      time_end = 600, increment = 1.0
+      transmission_rate = beta,
+      time_end = max_time
     )
   },
   n = 50
 )
 
-# Diphtheria model
+# Default model with intervention scenarios
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source("touchstone/setup.R")
+    source("touchstone/setup_ode.R")
   },
-  default = {
-    model_diphtheria(
+  default_ode_interventions = {
+    model_default(
       population = uk_population,
-      time_end = 600, increment = 1.0
+      intervention = intervention_scenarios,
+      time_end = max_time
+    )
+  },
+  n = 50
+)
+
+# Default model with parameter vector and intervention scenarios
+touchstone::benchmark_run(
+  expr_before_benchmark = {
+    source("touchstone/setup_ode.R")
+  },
+  default_ode_paramvec_intervs = {
+    model_default(
+      population = uk_population,
+      transmission_rate = beta,
+      intervention = intervention_scenarios,
+      time_end = max_time
     )
   },
   n = 50
@@ -59,7 +77,7 @@ model_ebola(
 )
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source("touchstone/setup.R")
+    source("touchstone/setup_ebola.R")
   },
   default = {
     withr::with_seed(

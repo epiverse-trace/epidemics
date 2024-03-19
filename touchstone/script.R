@@ -21,7 +21,7 @@ touchstone::benchmark_run(
       time_end = max_time
     )
   },
-  n = 50
+  n = 25
 )
 
 # Default model with parameter vectors
@@ -36,7 +36,7 @@ touchstone::benchmark_run(
       time_end = max_time
     )
   },
-  n = 50
+  n = 25
 )
 
 # Default model with intervention scenarios
@@ -51,7 +51,7 @@ touchstone::benchmark_run(
       time_end = max_time
     )
   },
-  n = 50
+  n = 25
 )
 
 # Default model with parameter vector and intervention scenarios
@@ -67,7 +67,7 @@ touchstone::benchmark_run(
       time_end = max_time
     )
   },
-  n = 50
+  n = 25
 )
 
 # Ebola model
@@ -86,7 +86,7 @@ touchstone::benchmark_run(
       }
     )
   },
-  n = 50
+  n = 25
 )
 
 # create artifacts used downstream in the GitHub Action

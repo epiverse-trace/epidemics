@@ -394,7 +394,7 @@ test_that("Vacamole model: time dependence", {
   )
 
   expect_true(
-    all(epidemic_size(data_waning_immunity) > epidemic_size(data))
+    all(epidemic_size(data_waning_immunity) > epidemic_size(data_all_vax))
   )
 })
 

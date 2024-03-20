@@ -116,11 +116,12 @@ struct epidemic_default {
     // for vectorised operations
 
     // compartmental transitions without accounting for contacts
-    Eigen::ArrayXd sToE = model_params_temp["transmission_rate"] *
+    Eigen::ArrayXd sToE = model_params_temp.at("transmission_rate") *
                           x.col(0).array() * (cm_temp * x.col(2)).array();
     Eigen::ArrayXd eToI =
-        model_params_temp["infectiousness_rate"] * x.col(1).array();
-    Eigen::ArrayXd iToR = model_params_temp["recovery_rate"] * x.col(2).array();
+        model_params_temp.at("infectiousness_rate") * x.col(1).array();
+    Eigen::ArrayXd iToR =
+        model_params_temp.at("recovery_rate") * x.col(2).array();
     Eigen::ArrayXd sToV = vax_nu_current.col(0).array() * x.col(0).array();
 
     // compartmental changes accounting for contacts (for dS and dE)

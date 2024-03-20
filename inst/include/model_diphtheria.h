@@ -100,21 +100,22 @@ struct epidemic_diphtheria {
     // compartmental transitions without accounting for stratified contacts
     // NOTE: division by population size - this is typically included in the
     // contact matrix scaling in other models
-    Eigen::ArrayXd sToE = model_params_temp["transmission_rate"] *
+    Eigen::ArrayXd sToE = model_params_temp.at("transmission_rate") *
                           total_infections * x.col(0) / x.sum();
     Eigen::ArrayXd eToI =
-        model_params_temp["infectiousness_rate"] * x.col(1).array();
+        model_params_temp.at("infectiousness_rate") * x.col(1).array();
     // hospitalised individuals = a function of reporting, p(hospitalised),
     // time to hospitalisation, and time to discharge from hospital
-    Eigen::ArrayXd iToH =
-        model_params_temp["prop_hosp"] * model_params_temp["reporting_rate"] *
-        model_params_temp["hosp_entry_rate"] * x.col(2).array();
+    Eigen::ArrayXd iToH = model_params_temp.at("prop_hosp") *
+                          model_params_temp.at("reporting_rate") *
+                          model_params_temp.at("hosp_entry_rate") *
+                          x.col(2).array();
 
     // recoveries are from the infectious/ed who are NOT hospitalised
     Eigen::ArrayXd iToR =
-        model_params_temp["recovery_rate"] * (x.col(2).array() - iToH);
+        model_params_temp.at("recovery_rate") * (x.col(2).array() - iToH);
     Eigen::ArrayXd hToR =
-        model_params_temp["hosp_exit_rate"] * x.col(3).array();
+        model_params_temp.at("hosp_exit_rate") * x.col(3).array();
 
     // compartmental changes; note that there are no contacts
     // β: transmission_rate; σ: infectiousness rate; γ: recovery rate

@@ -199,6 +199,36 @@ test_that("Vacamole model: statistical correctness, parameters", {
     unique(data[grepl("hospitalised", data$compartment, fixed = TRUE)]$value),
     0
   )
+
+  # expect that full vaccination susceptibility (beta_V = 1.0)
+  # removes benefit of vaccination
+  uk_pop_all_vax <- uk_population
+  uk_pop_all_vax$initial_conditions[, "S"] <- rep(0, 2)
+  uk_pop_all_vax$initial_conditions[, "V2"] <- rep((1 - 1e-6), 2)
+
+  # set similar transmisison rate
+  beta <- 1.3 / 7
+  # for normal population with no vaccination, no mortality, no hospitalisation
+  data <- model_vacamole(
+    population = uk_population,
+    transmission_rate = beta,
+    mortality_rate = 0, hospitalisation_rate = 0
+  )
+
+  # for artificial population where all are double vaccinated,
+  # no mortality, no hospitalisation
+  data_all_vax <- model_vacamole(
+    population = uk_pop_all_vax,
+    transmission_rate_vax = beta,
+    mortality_rate = 0, hospitalisation_rate = 0
+  )
+
+  # when vaccination does not reduce transmission,
+  # expect ratio is 1.0, i.e., both are identical
+  expect_identical(
+    epidemic_size(data_all_vax), epidemic_size(data),
+    tolerance = 1e-6
+  )
 })
 
 # prepare baseline for comparison of against intervention scenarios

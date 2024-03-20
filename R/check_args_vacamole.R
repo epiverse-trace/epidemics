@@ -60,10 +60,17 @@
   # prepare the contact matrix and the initial conditions
   cmat_init_state <- .prepare_population(mod_args[["population"]])
 
-  # check the interventions list against the population
+  # check the interventions list against the population and allowed
+  # model parameters
   mod_args[["intervention"]] <- .cross_check_intervention(
     mod_args[["intervention"]], mod_args[["population"]],
-    c("contacts", "transmission_rate", "infectiousness_rate", "recovery_rate")
+    c(
+      "contacts",
+      "transmission_rate", "infectiousness_rate", "recovery_rate",
+      "hospitalisation_rate", "mortality_rate",
+      "transmission_rate_vax", "hospitalisation_rate_vax",
+      "mortality_rate_vax"
+    )
   )
   # check the vaccination against the population
   mod_args[["vaccination"]] <- .cross_check_vaccination(

@@ -172,9 +172,9 @@ model_vacamole <- function(population,
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
 
   # parameters for rates affecting only doubly vaccinated
-  checkmate::assert_numeric(transmission_rate_vax, lower = 0, upper = 1)
-  checkmate::assert_numeric(hospitalisation_rate_vax, lower = 0, upper = 1)
-  checkmate::assert_numeric(mortality_rate_vax, lower = 0, upper = 1)
+  checkmate::assert_numeric(transmission_rate_vax, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(hospitalisation_rate_vax, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(mortality_rate_vax, lower = 0, finite = TRUE)
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
@@ -261,7 +261,12 @@ model_vacamole <- function(population,
   time_dependence <- list(
     .cross_check_timedep(
       time_dependence,
-      c("transmission_rate", "infectiousness_rate", "recovery_rate")
+      c(
+        "transmission_rate", "infectiousness_rate", "recovery_rate",
+        "hospitalisation_rate", "mortality_rate",
+        "transmission_rate_vax", "hospitalisation_rate_vax",
+        "mortality_rate_vax"
+      )
     )
   )
 

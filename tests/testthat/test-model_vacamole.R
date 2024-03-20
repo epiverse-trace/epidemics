@@ -283,7 +283,7 @@ test_that("Vacamole model: contacts interventions and stats. correctness", {
   )
 })
 
-test_that("Vacamole model: rate interventions", {
+test_that("Vacamole model: rate interventions and stats correctness", {
   intervention_01 <- intervention(
     "mask_mandate", "rate", 0, time_end, 0.5
   )
@@ -369,6 +369,32 @@ test_that("Vacamole model: time dependence", {
   # expect final size is lower with intervention
   expect_true(
     all(epidemic_size(data_baseline) > epidemic_size(data))
+  )
+
+  # An example with waning immunity
+  # expect that a fully vaccinated population subjected to a 'waning immunity'
+  # time-dependence has a higher final size than one without the intervention
+  uk_pop_all_vax <- uk_population
+  uk_pop_all_vax$initial_conditions[, "S"] <- rep(0, 2)
+  uk_pop_all_vax$initial_conditions[, "V2"] <- rep((1 - 1e-6), 2)
+
+  # NOTE: defined as increasing transmission rate (baseline is 80% of unvaxxed)
+  waning_immunity <- function(time, x) x * ((1 + 0.001)^time)
+
+  data_all_vax <- model_vacamole(
+    uk_pop_all_vax,
+    mortality_rate = 0, hospitalisation_rate = 0
+  )
+  data_waning_immunity <- model_vacamole(
+    uk_pop_all_vax,
+    mortality_rate = 0, hospitalisation_rate = 0,
+    time_dependence = list(
+      transmission_rate_vax = waning_immunity
+    )
+  )
+
+  expect_true(
+    all(epidemic_size(data_waning_immunity) > epidemic_size(data))
   )
 })
 

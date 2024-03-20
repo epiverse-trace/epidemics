@@ -38,12 +38,12 @@ uk_population <- population(
 double_vaccination <- vaccination(
   name = "double_vaccination",
   nu = matrix(
-    1e-3,
-    nrow = 2, ncol = 2
+    c(1e-3, 5e-4), # fewer second doses
+    nrow = 2, ncol = 2, byrow = TRUE
   ),
   time_begin = matrix(
-    00,
-    nrow = 2, ncol = 2
+    c(0, 50),
+    nrow = 2, ncol = 2, byrow = TRUE # second dose given from t = 50 onwards
   ),
   time_end = matrix(
     100,
@@ -335,6 +335,13 @@ test_that("Vacamole model: two dose vaccination and stats. correctness", {
   # expect final size is lower with intervention
   expect_true(
     all(epidemic_size(data_baseline) > epidemic_size(data))
+  )
+
+  # expect snapshot for range from t = 50:55
+  # second dose begins at t = 50
+  expect_snapshot(
+    data[grepl("dose", data$compartment, fixed = TRUE) &
+      time %in% seq(50, 55), ]
   )
 })
 

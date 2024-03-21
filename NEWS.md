@@ -17,6 +17,14 @@ This release focuses on the ODE models in _epidemics_.
 
 5. The infection parameter "transmissibility" has been renamed to "transmission rate" and the corresponding function argument is `transmission_rate`; see PR #196.
 
+## Model functions
+
+- ODE model functions can now be passed numeric vectors of infection parameters, and lists of intervention sets (a list of `<intervention>`s), and lists of `<vaccination>` to the `intervention` and `vaccination` argument respectively. This is the **main change in this minor version.**
+
+- ODE model functions take on {data.table} to make combinations of interventions and vaccinations (together called a 'scenario'), and infection parameter sets to run each scenario for each parameter set.
+
+- ODE model functions all return `<data.table>`s - these may be nested with the model arguments as identity columns if vectors of parameters or multiple scenarios are passed. A simple, unnested `<data.table>` is passed if the model function is called with scalar arguments. See PR #176 for the implementation.
+
 ## Model structures
 
 - There are no changes to compartmental transitions;
@@ -63,7 +71,7 @@ No substantial changes to classes; small additions of input checking to `<popula
 
 3. Removed {deSolve} from dependencies.
 
-4. Added {ggist}, {withr}, {purr} and {tidyr} to Suggests; `CITATION.cff` updated to match.
+4. Added {ggdist}, {withr}, {purr} and {tidyr} to Suggests; `CITATION.cff` updated to match.
 
 5. Added basic infrastructure for continuous relative benchmarking, but this is a work in progress (see issue #184).
 

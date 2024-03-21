@@ -49,6 +49,7 @@ ODEs
 ORCID
 Odeint
 Ottar
+PRs
 Pannell
 Pieter
 RIVM
@@ -72,6 +73,7 @@ Tildesley
 VV
 Vacamole
 WIP
+Walkthrough
 Wallinga
 analogs
 bookdown
@@ -100,6 +102,7 @@ erroring
 etc
 finalsize
 geq
+ggdist
 ggplot
 gh
 github
@@ -131,6 +134,7 @@ timepoint
 timesteps
 uBLAS
 unnest
+unnested
 unnesting
 vacamole
 withr

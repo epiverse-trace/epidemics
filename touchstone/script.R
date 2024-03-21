@@ -75,7 +75,7 @@ touchstone::benchmark_run(
   expr_before_benchmark = {
     source("touchstone/setup_ebola.R")
   },
-  default = {
+  ebola = {
     withr::with_seed(
       seed = 1,
       {

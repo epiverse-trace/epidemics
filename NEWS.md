@@ -1,37 +1,35 @@
 # epidemics 0.2.0
 
-This is a second GitHub release of _epidemics_ which makes substantial additions to the functionality in v0.1.0, and introduces significant breaking changes from PR #176.
+This is a second GitHub release of _epidemics_ which makes substantial additions to the functionality in v0.1.0, and introduces significant breaking changes (#176).
 This release is the end point of [this project to ship vectorised ODE models.](https://github.com/orgs/epiverse-trace/projects/35/)
 
 This release focuses on the ODE models in _epidemics_.
 
 ## Breaking changes
 
-1. All model functions have been renamed to `model_<NAME>()`, removing the language suffix.
+1. All model functions have been renamed to `model_<NAME>()`, removing the language suffix (#176).
 
-2. The wrappers around R-only implementations of the 'default' and 'Vacamole' models have been removed, but the ODE system functions have been retained for potential future use.
+2. The wrappers around R-only implementations of the 'default' and 'Vacamole' models have been removed, but the ODE system functions have been retained for potential future use (#176).
 
-3. The "Vacamole" model has been refactored with the arguments `*_reduction_vax` for the effect of double vaccination on compartmental transition rates renamed to `*_vax`, where `*` may be one of "susceptibility", "hospitalisation", and "mortality". Previously, these parameters were implemented in the internal C++ code, but presented as inverse values to users (i.e., `susceptibility_vax = susceptibility * (1 - (susceptibility_reduction_vax)))`). This change brings the user-facing representation in line with the internal implementation, and allows these parameters to be targeted by rate interventions and time-dependence, which was not possible earlier (resolved in PRs #176, #203, and overriding PR #144).
+3. The "Vacamole" model has been refactored with the arguments `*_reduction_vax` for the effect of double vaccination on compartmental transition rates renamed to `*_vax`, where `*` may be one of "susceptibility", "hospitalisation", and "mortality". Previously, these parameters were implemented in the internal C++ code, but presented as inverse values to users (i.e., `susceptibility_vax = susceptibility * (1 - (susceptibility_reduction_vax)))`). This change brings the user-facing representation in line with the internal implementation, and allows these parameters to be targeted by rate interventions and time-dependence, which was not possible earlier (#176, #203, and overriding #144).
 
-4. The function `get_parameter()` has been removed.
+4. The function `get_parameter()` has been removed (#176).
 
-5. The infection parameter "transmissibility" has been renamed to "transmission rate" and the corresponding function argument is `transmission_rate`; see PR #196.
+5. The infection parameter "transmissibility" has been renamed to "transmission rate" and the corresponding function argument is `transmission_rate` (#196).
 
 ## Model functions
 
-- ODE model functions can now be passed numeric vectors of infection parameters, and lists of intervention sets (a list of `<intervention>`s), and lists of `<vaccination>` to the `intervention` and `vaccination` argument respectively. This is the **main change in this minor version.**
+- ODE model functions can now be passed numeric vectors of infection parameters, and lists of intervention sets (a list of `<intervention>`s), and lists of `<vaccination>` to the `intervention` and `vaccination` argument respectively. This is the **main change in this minor version.** (#176)
 
-- ODE model functions take on {data.table} to make combinations of interventions and vaccinations (together called a 'scenario'), and infection parameter sets to run each scenario for each parameter set.
+- ODE model functions take on {data.table} to make combinations of interventions and vaccinations (together called a 'scenario'), and infection parameter sets to run each scenario for each parameter set (#176).
 
-- ODE model functions all return `<data.table>`s - these may be nested with the model arguments as identity columns if vectors of parameters or multiple scenarios are passed. A simple, unnested `<data.table>` is passed if the model function is called with scalar arguments. See PR #176 for the implementation.
+- ODE model functions all return `<data.table>`s - these may be nested with the model arguments as identity columns if vectors of parameters or multiple scenarios are passed. A simple, unnested `<data.table>` is passed if the model function is called with scalar arguments (#176).
 
 ## Model structures
 
-- There are no changes to compartmental transitions;
+- There is a fix to how vaccination is implemented in the default and Vacamole models: the group-specific vaccination rates passed in a `<vaccination>` are internally converted to a count by multiplication with the group-specific population size, and this value is subtracted from any susceptibles, while vaccination is active. The previous implementation made the number of vaccinations dependent on the number of susceptibles, which was not in line with a public health understanding of vaccination (details: #198, fix: #202).
 
-- There is a fix to how vaccination is implemented in the default and Vacamole models: the group-specific vaccination rates passed in a `<vaccination>` are internally converted to a count by multiplication with the group-specific population size, and this value is subtracted from any susceptibles, while vaccination is active. The previous implementation made the number of vaccinations dependent on the number of susceptibles, which was not in line with a public health understanding of vaccination. More details are found in issue #198, with the fix added in PR #202.
-
-- All C++ ODE model implementation now access values from the `std::unordered_map` of model parameters using the `at` operator on keys (`model_params.at("parameter_name")`) rather than using `[` (`model_params["parameter_name"]`); the latter method will introduce a key-value pair of `parameter_name : 0` for numeric value types when the key is missing from the map. This led to issues with the Vacamole model where the `*_vax` parameters were not correctly transferred to C++ and were substituted with 0s without throwing an error. This is fixed in PR #203.
+- All C++ ODE model implementation now access values from the `std::unordered_map` of model parameters using the `at` operator on keys (`model_params.at("parameter_name")`) rather than using `[` (`model_params["parameter_name"]`); the latter method will introduce a key-value pair of `parameter_name : 0` for numeric value types when the key is missing from the map. This led to issues with the Vacamole model where the `*_vax` parameters were not correctly transferred to C++ and were substituted with 0s without throwing an error (#203).
 
 ## Classes
 
@@ -49,17 +47,17 @@ No substantial changes to classes; small additions of input checking to `<popula
 
 ## Documentation
 
-1. The benchmarking vignette has been removed as the R-only model implementations are no longer provided to users.
+1. The benchmarking vignette has been removed as the R-only model implementations are no longer provided to users (#176).
 
-2. The vignette on parameter uncertainty has been rewritten to show how to pass vectors of infection parameters and model composable elements to model functions, and renamed to "Modelling parameter uncertainty and epidemic scenarios".
+2. The vignette on parameter uncertainty has been rewritten to show how to pass vectors of infection parameters and model composable elements to model functions, and renamed to "Modelling parameter uncertainty and epidemic scenarios" (#176).
 
-3. A design decisions vignette has been added to help developers and contributors understand the package architecture and design choices made in _epidemics_ development; this includes a conceptual design diagram as well as an architecture diagram.
+3. A design decisions vignette has been added to help developers and contributors understand the package architecture and design choices made in _epidemics_ development; this includes a conceptual design diagram as well as an architecture diagram (#188).
 
-4. All function documentation has been updated to reflect name changes and other minor improvements.
+4. All function documentation has been updated to reflect name changes and other minor improvements (#176).
 
-5. The README has been reorganised to shift the model list to the end, to make the installation instructions easier to find.
+5. The README has been reorganised to shift the model list to the end, to make the installation instructions easier to find (#176).
 
-6. Corrected the website URL in `_pkgdown.yml`; this allows search functionality in the package website.
+6. Corrected the website URL in `_pkgdown.yml`; this allows search functionality in the package website (#195).
 
 7. Updated WORDLIST.
 
@@ -73,9 +71,7 @@ No substantial changes to classes; small additions of input checking to `<popula
 
 4. Added {ggdist}, {withr}, {purr} and {tidyr} to Suggests; `CITATION.cff` updated to match.
 
-5. Added basic infrastructure for continuous relative benchmarking, but this is a work in progress (see issue #184).
-
-6. Updated NEWS.md file to track changes to the package.
+5. Added basic infrastructure for continuous relative benchmarking (#206).
 
 
 # epidemics 0.1.0

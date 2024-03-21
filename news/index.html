@@ -17,7 +17,7 @@
     <a href="https://epiverse-trace.github.io/" class="external-link"><img src="../logo_white.svg" id="logo" alt="Epiverse-TRACE"></a>
     <a class="navbar-brand me-2" href="../index.html">epidemics</a>
 
-    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
+    <small class="nav-text text-muted me-auto version-number" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,42 +82,56 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="epidemics-development-version">epidemics (development version)<a class="anchor" aria-label="anchor" href="#epidemics-development-version"></a></h2>
-<p>The development version of <em>epidemics</em> makes substantial additions to the functionality in v0.1.0, and introduces significant breaking changes in <a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>.</p>
+<h2 class="pkg-version" data-toc-text="0.2.0" id="epidemics-020">epidemics 0.2.0<a class="anchor" aria-label="anchor" href="#epidemics-020"></a></h2>
+<p>This is a second GitHub release of <em>epidemics</em> which makes substantial additions to the functionality in v0.1.0, and introduces significant breaking changes (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>). This release is the end point of <a href="https://github.com/orgs/epiverse-trace/projects/35/" class="external-link">this project to ship vectorised ODE models.</a></p>
+<p>This release focuses on the ODE models in <em>epidemics</em>.</p>
 <div class="section level3">
-<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
-<ol style="list-style-type: decimal"><li><p>The “Vacamole” model has been refactored with the arguments <code>*_reduction_vax</code> for the effect of double vaccination on compartmental transition rates renamed to <code>*_vax</code>, where <code>*</code> may be one of susceptibility, hospitalisation, and mortality. Previously, these parameters were implemented in the internal C++ code, but presented as inverse values to users (i.e., <code>susceptibility_vax = susceptibility * (1 - (susceptibility_reduction_vax)))</code>). This change brings the user-facing representation in line with the internal implementation, and allows these parameters to be targeted by rate interventions and time-dependence, which was not possible earlier.</p></li>
-<li><p>All model function have been renamed to <code>model_&lt;NAME&gt;()</code>, removing the language suffix.</p></li>
-<li><p>The wrappers around R-only implementations of the ‘default’ and ‘Vacamole’ models have been removed, but the ODE system functions have been retained.</p></li>
-<li><p>The function <code>get_parameter()</code> has been removed.</p></li>
+<h3 id="breaking-changes-0-2-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-0"></a></h3>
+<ol style="list-style-type: decimal"><li><p>All model functions have been renamed to <code>model_&lt;NAME&gt;()</code>, removing the language suffix (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+<li><p>The wrappers around R-only implementations of the ‘default’ and ‘Vacamole’ models have been removed, but the ODE system functions have been retained for potential future use (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+<li><p>The “Vacamole” model has been refactored with the arguments <code>*_reduction_vax</code> for the effect of double vaccination on compartmental transition rates renamed to <code>*_vax</code>, where <code>*</code> may be one of “susceptibility”, “hospitalisation”, and “mortality”. Previously, these parameters were implemented in the internal C++ code, but presented as inverse values to users (i.e., <code>susceptibility_vax = susceptibility * (1 - (susceptibility_reduction_vax)))</code>). This change brings the user-facing representation in line with the internal implementation, and allows these parameters to be targeted by rate interventions and time-dependence, which was not possible earlier (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>, <a href="https://github.com/epiverse-trace/epidemics/issues/203" class="external-link">#203</a>, and overriding <a href="https://github.com/epiverse-trace/epidemics/issues/144" class="external-link">#144</a>).</p></li>
+<li><p>The function <code>get_parameter()</code> has been removed (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+<li><p>The infection parameter “transmissibility” has been renamed to “transmission rate” and the corresponding function argument is <code>transmission_rate</code> (<a href="https://github.com/epiverse-trace/epidemics/issues/196" class="external-link">#196</a>).</p></li>
 </ol></div>
 <div class="section level3">
-<h3 id="model-structures-development-version">Model structures<a class="anchor" aria-label="anchor" href="#model-structures-development-version"></a></h3>
-<p>There is no change to the model structures.</p>
-</div>
+<h3 id="model-functions-0-2-0">Model functions<a class="anchor" aria-label="anchor" href="#model-functions-0-2-0"></a></h3>
+<ul><li><p>ODE model functions can now be passed numeric vectors of infection parameters, and lists of intervention sets (a list of <code>&lt;intervention&gt;</code>s), and lists of <code>&lt;vaccination&gt;</code> to the <code>intervention</code> and <code>vaccination</code> argument respectively. This is the <strong>main change in this minor version.</strong> (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>)</p></li>
+<li><p>ODE model functions take on {data.table} to make combinations of interventions and vaccinations (together called a ‘scenario’), and infection parameter sets to run each scenario for each parameter set (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+<li><p>ODE model functions all return <code>&lt;data.table&gt;</code>s - these may be nested with the model arguments as identity columns if vectors of parameters or multiple scenarios are passed. A simple, unnested <code>&lt;data.table&gt;</code> is passed if the model function is called with scalar arguments (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+</ul></div>
 <div class="section level3">
-<h3 id="classes-development-version">Classes<a class="anchor" aria-label="anchor" href="#classes-development-version"></a></h3>
+<h3 id="model-structures-0-2-0">Model structures<a class="anchor" aria-label="anchor" href="#model-structures-0-2-0"></a></h3>
+<ul><li><p>There is a fix to how vaccination is implemented in the default and Vacamole models: the group-specific vaccination rates passed in a <code>&lt;vaccination&gt;</code> are internally converted to a count by multiplication with the group-specific population size, and this value is subtracted from any susceptibles, while vaccination is active. The previous implementation made the number of vaccinations dependent on the number of susceptibles, which was not in line with a public health understanding of vaccination (details: <a href="https://github.com/epiverse-trace/epidemics/issues/198" class="external-link">#198</a>, fix: <a href="https://github.com/epiverse-trace/epidemics/issues/202" class="external-link">#202</a>).</p></li>
+<li><p>All C++ ODE model implementation now access values from the <code>std::unordered_map</code> of model parameters using the <code>at</code> operator on keys (<code>model_params.at("parameter_name")</code>) rather than using <code>[</code> (<code>model_params["parameter_name"]</code>); the latter method will introduce a key-value pair of <code>parameter_name : 0</code> for numeric value types when the key is missing from the map. This led to issues with the Vacamole model where the <code>*_vax</code> parameters were not correctly transferred to C++ and were substituted with 0s without throwing an error (<a href="https://github.com/epiverse-trace/epidemics/issues/203" class="external-link">#203</a>).</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="classes-0-2-0">Classes<a class="anchor" aria-label="anchor" href="#classes-0-2-0"></a></h3>
 <p>No substantial changes to classes; small additions of input checking to <code>&lt;population&gt;</code> class.</p>
 </div>
 <div class="section level3">
-<h3 id="helper-functions-development-version">Helper functions<a class="anchor" aria-label="anchor" href="#helper-functions-development-version"></a></h3>
+<h3 id="helper-functions-0-2-0">Helper functions<a class="anchor" aria-label="anchor" href="#helper-functions-0-2-0"></a></h3>
 <ol style="list-style-type: decimal"><li><p>Internal helper functions <code>.check_args_model_*()</code> and <code>.prepare_args_model_*()</code> have been combined into single functions <code>.check_prepare_args_*()</code> that are called both for their output and for input checking side effects.</p></li>
 <li><p>The new internal functions <code><a href="../reference/dot-prepare_population.html">.prepare_population()</a></code>, <code><a href="../reference/cross_checking_inputs.html">.cross_check_intervention()</a></code>, <code><a href="../reference/cross_checking_inputs.html">.cross_check_vaccination()</a></code>, <code><a href="../reference/cross_checking_inputs.html">.cross_check_timedep()</a></code>, and <code><a href="../reference/cross_checking_inputs.html">.cross_check_popchange()</a></code> check and prepare a model population and check other inputs for compatibility with it. These are used in <code>.check_prepare_args_*()</code>.</p></li>
 <li><p>New internal functions have been added to check and recycle lists of vectors; original implementations by <a href="https://github.com/TimTaylor" class="external-link">@TimTaylor</a>.</p></li>
 <li><p><code>output_to_df()</code> is renamed to <code><a href="../reference/dot-output_to_df.html">.output_to_df()</a></code>.</p></li>
 </ol></div>
 <div class="section level3">
-<h3 id="documentation-development-version">Documentation<a class="anchor" aria-label="anchor" href="#documentation-development-version"></a></h3>
-<ol style="list-style-type: decimal"><li><p>The benchmarking vignette has been removed as the R-only model implementations are no longer provided to users.</p></li>
-<li><p>The vignette on parameter uncertainty has been rewritten to show how to pass vectors of infection parameters and model composable elements to model functions, and renamed to “Modelling parameter uncertainty and epidemic scenarios”.</p></li>
-<li><p>All function documentation has been updated to reflect name changes and other minor improvements.</p></li>
+<h3 id="documentation-0-2-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-2-0"></a></h3>
+<ol style="list-style-type: decimal"><li><p>The benchmarking vignette has been removed as the R-only model implementations are no longer provided to users (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+<li><p>The vignette on parameter uncertainty has been rewritten to show how to pass vectors of infection parameters and model composable elements to model functions, and renamed to “Modelling parameter uncertainty and epidemic scenarios” (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+<li><p>A design decisions vignette has been added to help developers and contributors understand the package architecture and design choices made in <em>epidemics</em> development; this includes a conceptual design diagram as well as an architecture diagram (<a href="https://github.com/epiverse-trace/epidemics/issues/188" class="external-link">#188</a>).</p></li>
+<li><p>All function documentation has been updated to reflect name changes and other minor improvements (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+<li><p>The README has been reorganised to shift the model list to the end, to make the installation instructions easier to find (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+<li><p>Corrected the website URL in <code>_pkgdown.yml</code>; this allows search functionality in the package website (<a href="https://github.com/epiverse-trace/epidemics/issues/195" class="external-link">#195</a>).</p></li>
+<li><p>Updated WORDLIST.</p></li>
 </ol></div>
 <div class="section level3">
-<h3 id="package-development-version">Package<a class="anchor" aria-label="anchor" href="#package-development-version"></a></h3>
+<h3 id="package-0-2-0">Package<a class="anchor" aria-label="anchor" href="#package-0-2-0"></a></h3>
 <ol style="list-style-type: decimal"><li><p>All ODE model functions have received a more extensive and more standardised (as much as possible) test suite.</p></li>
 <li><p>Filenames have been standardised to show which files are related, e.g. <code>R/model_default.R</code>, <code>src/model_default.cpp</code>, and <code>inst/include/model_default.h</code>; references to filenames such as in the package header have been updated.</p></li>
 <li><p>Removed {deSolve} from dependencies.</p></li>
-<li><p>Updated NEWS.md file to track changes to the package.</p></li>
+<li><p>Added {ggdist}, {withr}, {purr} and {tidyr} to Suggests; <code>CITATION.cff</code> updated to match.</p></li>
+<li><p>Added basic infrastructure for continuous relative benchmarking (<a href="https://github.com/epiverse-trace/epidemics/issues/206" class="external-link">#206</a>).</p></li>
 </ol></div>
 </div>
     <div class="section level2">

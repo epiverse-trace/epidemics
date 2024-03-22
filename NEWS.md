@@ -1,3 +1,5 @@
+# epidemics (development version)
+
 # epidemics 0.2.0
 
 This is a second GitHub release of _epidemics_ which makes substantial additions to the functionality in v0.1.0, and introduces significant breaking changes (#176).

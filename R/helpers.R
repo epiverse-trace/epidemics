@@ -235,7 +235,7 @@ new_infections <- function(data,
   )
   checkmate::assert_names(
     colnames(data),
-    must.include = c("time", "demography_group", "compartment", "value")
+    must.include = c("time", "date", "demography_group", "compartment", "value")
   )
   checkmate::assert_character(
     compartments_from_susceptible,
@@ -256,7 +256,7 @@ new_infections <- function(data,
   # cast data wide, this makes a copy
   data <- data.table::dcast(
     data,
-    time + demography_group ~ compartment,
+    time + date + demography_group ~ compartment,
     value.var = "value"
   )
 
@@ -281,9 +281,11 @@ new_infections <- function(data,
   # return data in long format, by demographic group by default,
   # or aggregated otherwise; do not return other compartments
   # subsetting below creates a copy - input `data` is safe
-  data <- data[, c("time", "demography_group", "new_infections")]
+  data <- data[, c("time", "date", "demography_group", "new_infections")]
   if (!by_group) {
-    data <- data[, list(new_infections = sum(new_infections)), by = "time"]
+    data <- data[, list(
+      new_infections = sum(new_infections)
+    ), by = c("time", "date")]
   }
 
   # return data

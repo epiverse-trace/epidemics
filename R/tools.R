@@ -25,7 +25,7 @@
   # basic input checking only
   stopifnot(
     "`x` must be a list with vector elements" =
-      is.list(x) && all(vapply(x, is.vector, TRUE))
+      checkmate::test_list(x, types = c("numeric", "Date"))
   )
   lens <- lengths(x)
   not_scalar <- lens != 1L

@@ -36,8 +36,7 @@
 //' @param rate_interventions A named list of `<rate_intervention>` objects.
 //' @param time_dependence A named list of functions for parameter time
 //' dependence.
-//' @param time_end The end time of the simulation.
-//' @param increment The time increment of the simulation.
+//' @param duration The duration of the simulation in days.
 //' @return A two element list, where the first element is a list of matrices
 //' whose elements correspond to the numbers of individuals in each compartment
 //' as specified in the initial conditions matrix (see [population()]).
@@ -53,8 +52,8 @@ Rcpp::List model_default_internal(
     const Eigen::MatrixXd &vax_time_begin, const Eigen::MatrixXd &vax_time_end,
     const Eigen::MatrixXd &vax_nu, const Rcpp::List &rate_interventions,
     const Rcpp::List &time_dependence,
-    const double &time_end = 100.0,  // double required by boost solver
-    const double &increment = 1.0) {
+    const double &duration  // double required by boost solver
+    ) {
   // initial conditions from input
   odetools::state_type x = initial_state;
 
@@ -84,9 +83,11 @@ Rcpp::List model_default_internal(
       odetools::state_type, double, odetools::state_type, double,
       boost::numeric::odeint::vector_space_algebra>
       stepper;
-
+   
+  // define the increment as 1.0 days; double required
+  const double increment = 1.0;
   // run the function without assignment
-  boost::numeric::odeint::integrate_const(stepper, this_model, x, 0.0, time_end,
+  boost::numeric::odeint::integrate_const(stepper, this_model, x, 0.0, duration,
                                           increment,
                                           odetools::observer(x_vec, times));
 

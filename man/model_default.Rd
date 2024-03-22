@@ -12,8 +12,8 @@ model_default(
   intervention = NULL,
   vaccination = NULL,
   time_dependence = NULL,
-  time_end = 100,
-  increment = 1
+  start_date = Sys.Date(),
+  duration = 100
 )
 }
 \arguments{
@@ -56,11 +56,11 @@ that is dependent on \code{time} (\code{x} represents a model parameter).
 See \strong{Details} for more information, as well as the vignette on time-
 dependence \code{vignette("time_dependence", package = "epidemics")}.}
 
-\item{time_end}{The maximum number of timesteps over which to run the model.
-Taken as days, with a default value of 100 days. May be a numeric vector.}
+\item{start_date}{A \code{Date} taken as the model start date; defaults to today's
+date. May be a numeric vector.}
 
-\item{increment}{The size of the time increment. Taken as days, with a
-default value of 1 day.}
+\item{duration}{The maximum number of timesteps, taken to be days, over which
+to run the model; defaults too 100 days. May be a numeric vector.}
 }
 \value{
 A \verb{<data.table>}.

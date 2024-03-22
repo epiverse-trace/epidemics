@@ -48,10 +48,10 @@
 #' that is dependent on `time` (`x` represents a model parameter).
 #' See **Details** for more information, as well as the vignette on time-
 #' dependence \code{vignette("time_dependence", package = "epidemics")}.
-#' @param time_end The maximum number of timesteps over which to run the model.
-#' Taken as days, with a default value of 100 days. May be a numeric vector.
-#' @param increment The size of the time increment. Taken as days, with a
-#' default value of 1 day.
+#' @param start_date A `Date` taken as the model start date; defaults to today's
+#' date. May be a numeric vector.
+#' @param duration The maximum number of timesteps, taken to be days, over which
+#' to run the model; defaults too 100 days. May be a numeric vector.
 #' @details
 #'
 #' # Details: SEIRV model suitable for directly transmitted infections
@@ -127,8 +127,8 @@ model_default <- function(population,
                           intervention = NULL,
                           vaccination = NULL,
                           time_dependence = NULL,
-                          time_end = 100,
-                          increment = 1) {
+                          start_date = Sys.Date(),
+                          duration = 100) {
   # get compartment names
   compartments <- c(
     "susceptible", "exposed", "infectious", "recovered", "vaccinated"
@@ -139,22 +139,23 @@ model_default <- function(population,
   checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
-  checkmate::assert_integerish(time_end, lower = 0)
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
-  checkmate::assert_integerish(time_end, lower = 0)
-  checkmate::assert_number(increment, lower = 1e-3, finite = TRUE)
+  checkmate::assert_date(start_date, any.missing = FALSE)
+  checkmate::assert_integerish(duration, lower = 0)
 
   # check all vector lengths are equal or 1L
   params <- list(
     transmission_rate = transmission_rate,
     infectiousness_rate = infectiousness_rate,
     recovery_rate = recovery_rate,
-    time_end = time_end
+    start_date = start_date, duration = duration
   )
   # take parameter names here as names(DT) updates by reference!
   param_names <- names(params)
+  # exclude start_date as not used by model
+  param_names <- setdiff(param_names, "start_date")
 
   # Check if `intervention` is a single intervention set or a list of such sets
   # NULL is allowed;
@@ -193,9 +194,8 @@ model_default <- function(population,
   )
 
   # make lists if not lists
-  if (is_population(population)) {
-    population <- list(population)
-  }
+  n_demo_groups <- length(population[["demography_vector"]])
+  population <- list(population)
   if (is_lofints) {
     intervention <- list(intervention)
   }
@@ -235,7 +235,6 @@ model_default <- function(population,
     intervention = intervention,
     vaccination = vaccination,
     time_dependence = time_dependence,
-    increment = increment,
     sorted = FALSE
   )
 
@@ -261,6 +260,17 @@ model_default <- function(population,
       compartments = compartments
     )
   })]
+
+  # add dates instead of times to model time-series
+  model_output[, "data" := Map(data, duration, start_date,
+    f = function(dt, duration_, start_date_) {
+      dt$date <- rep(
+        seq(start_date_, start_date_ + duration_, 1),
+        each = n_demo_groups * length(compartments)
+      )
+      dt
+    }
+  )]
 
   # remove temporary arguments
   model_output$args <- NULL

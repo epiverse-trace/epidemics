@@ -18,8 +18,7 @@
   vax_nu,
   rate_interventions,
   time_dependence,
-  time_end = 100,
-  increment = 1
+  duration
 )
 }
 \arguments{
@@ -55,9 +54,7 @@ interventions.}
 \item{time_dependence}{A named list of functions for parameter time
 dependence.}
 
-\item{time_end}{The end time of the simulation.}
-
-\item{increment}{The time increment of the simulation.}
+\item{duration}{The duration of the simulation in days.}
 }
 \value{
 A two element list, where the first element is a list of matrices

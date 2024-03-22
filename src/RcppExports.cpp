@@ -13,8 +13,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // model_default_internal
-Rcpp::List model_default_internal(const Eigen::MatrixXd& initial_state, const double& transmission_rate, const double& infectiousness_rate, const double& recovery_rate, const Eigen::MatrixXd& contact_matrix, const Rcpp::NumericVector& npi_time_begin, const Rcpp::NumericVector& npi_time_end, const Rcpp::NumericMatrix& npi_cr, const Eigen::MatrixXd& vax_time_begin, const Eigen::MatrixXd& vax_time_end, const Eigen::MatrixXd& vax_nu, const Rcpp::List& rate_interventions, const Rcpp::List& time_dependence, const double& time_end, const double& increment);
-RcppExport SEXP _epidemics_model_default_internal(SEXP initial_stateSEXP, SEXP transmission_rateSEXP, SEXP infectiousness_rateSEXP, SEXP recovery_rateSEXP, SEXP contact_matrixSEXP, SEXP npi_time_beginSEXP, SEXP npi_time_endSEXP, SEXP npi_crSEXP, SEXP vax_time_beginSEXP, SEXP vax_time_endSEXP, SEXP vax_nuSEXP, SEXP rate_interventionsSEXP, SEXP time_dependenceSEXP, SEXP time_endSEXP, SEXP incrementSEXP) {
+Rcpp::List model_default_internal(const Eigen::MatrixXd& initial_state, const double& transmission_rate, const double& infectiousness_rate, const double& recovery_rate, const Eigen::MatrixXd& contact_matrix, const Rcpp::NumericVector& npi_time_begin, const Rcpp::NumericVector& npi_time_end, const Rcpp::NumericMatrix& npi_cr, const Eigen::MatrixXd& vax_time_begin, const Eigen::MatrixXd& vax_time_end, const Eigen::MatrixXd& vax_nu, const Rcpp::List& rate_interventions, const Rcpp::List& time_dependence, const double& duration);
+RcppExport SEXP _epidemics_model_default_internal(SEXP initial_stateSEXP, SEXP transmission_rateSEXP, SEXP infectiousness_rateSEXP, SEXP recovery_rateSEXP, SEXP contact_matrixSEXP, SEXP npi_time_beginSEXP, SEXP npi_time_endSEXP, SEXP npi_crSEXP, SEXP vax_time_beginSEXP, SEXP vax_time_endSEXP, SEXP vax_nuSEXP, SEXP rate_interventionsSEXP, SEXP time_dependenceSEXP, SEXP durationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,9 +31,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type vax_nu(vax_nuSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type rate_interventions(rate_interventionsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type time_dependence(time_dependenceSEXP);
-    Rcpp::traits::input_parameter< const double& >::type time_end(time_endSEXP);
-    Rcpp::traits::input_parameter< const double& >::type increment(incrementSEXP);
-    rcpp_result_gen = Rcpp::wrap(model_default_internal(initial_state, transmission_rate, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment));
+    Rcpp::traits::input_parameter< const double& >::type duration(durationSEXP);
+    rcpp_result_gen = Rcpp::wrap(model_default_internal(initial_state, transmission_rate, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, duration));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -93,7 +92,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_epidemics_model_default_internal", (DL_FUNC) &_epidemics_model_default_internal, 15},
+    {"_epidemics_model_default_internal", (DL_FUNC) &_epidemics_model_default_internal, 14},
     {"_epidemics_model_diphtheria_internal", (DL_FUNC) &_epidemics_model_diphtheria_internal, 14},
     {"_epidemics_model_vacamole_internal", (DL_FUNC) &_epidemics_model_vacamole_internal, 20},
     {NULL, NULL, 0}

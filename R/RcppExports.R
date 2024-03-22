@@ -28,15 +28,14 @@
 #' @param rate_interventions A named list of `<rate_intervention>` objects.
 #' @param time_dependence A named list of functions for parameter time
 #' dependence.
-#' @param time_end The end time of the simulation.
-#' @param increment The time increment of the simulation.
+#' @param duration The duration of the simulation in days.
 #' @return A two element list, where the first element is a list of matrices
 #' whose elements correspond to the numbers of individuals in each compartment
 #' as specified in the initial conditions matrix (see [population()]).
 #' The second list element is a vector of timesteps.
 #' @keywords internal
-.model_default_cpp <- function(initial_state, transmission_rate, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end = 100.0, increment = 1.0) {
-    .Call(`_epidemics_model_default_internal`, initial_state, transmission_rate, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, time_end, increment)
+.model_default_cpp <- function(initial_state, transmission_rate, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, duration) {
+    .Call(`_epidemics_model_default_internal`, initial_state, transmission_rate, infectiousness_rate, recovery_rate, contact_matrix, npi_time_begin, npi_time_end, npi_cr, vax_time_begin, vax_time_end, vax_nu, rate_interventions, time_dependence, duration)
 }
 
 #' @title Run an SEIHR ODE model for diphtheria using a Boost solver

@@ -91,3 +91,21 @@ Adding epidemiological compartments is similar to modifying compartmental transi
 1. Add and modify model ODEs as appropriate in `inst/include/model_*.h` (see sections above).
 
 2. Modify the `compartments` vector in `R/model_*.R` to include the name of the new compartment. This is used both in checking that the input `<population>` has the correct number of compartments in its initial state matrix, as well as for formatting the output data.
+
+## Changing vaccination rates over time
+
+_epidemics_ treats vaccination as special process that requires a composable element in the form of an S3 class, `<vaccination>`, which allows defining time-limited, group-specific vaccination rates for multiple vaccination doses if necessary.
+
+Vaccination is only strictly allowed in the ODE models 'default' and 'Vacamole', and these are covered here. Begin by dismantling the model code to remove any functionality related to the `<vaccination>` class.
+
+1. Modify `R/model_*.R` to remove `vaccination` from the function arguments, and any input checking on the `vaccination` argument. Also remove the inclusion of `vaccination` in the model arguments `<data.table>`.
+
+2. Remove any cross-checking of the `vaccination` against the `population` in `R/check_args_*.R`, and remove the inclusion of `vax_time_begin`, `vax_time_end`, and `vax_nu` from the return of the function `.check_prepare_args_*()`.
+
+3. Remove the `vax_time_begin`, `vax_time_end`, and `vax_nu` arguments from the model ODE `struct` constructor in `inst/include/model_*.h`; also remove these from the model object initialisation in `src/model_*.cpp`. Remove any code related to calculating current vacccination rates from the model ODE code.
+
+4. At this stage, the ODE model does not support vaccination using a `<vaccination>`, and any existing "vaccinated" compartment is essentially isolated from the other compartments, as the value of `current_nu`
+
+5. Next, follow the steps described above to re-establish compartmental transitions from the appropriate compartments to the vaccinated compartment, using either a single population-wide vaccination rate, or an age-specific rate.
+
+6. **Note that** the number of individuals vaccinated should be calculated as counts, and not a rate, when used in compartmental transitions. This is because the rate of vaccination is typically specified as a proportion of the total population, or of age groups, and should be dependent on the number of individuals available to vaccinate.

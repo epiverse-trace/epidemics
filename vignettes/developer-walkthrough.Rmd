@@ -1,0 +1,71 @@
+---
+title: "Guide to developing epidemics features"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+vignette: >
+  %\VignetteIndexEntry{Guide to developing epidemics features}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette is intended to be a guide to making small, targeted edits to features in _epidemics_, and is aimed at current and future contributors, and at advanced users who might want to use a slightly modified local version of an _epidemics_-provided model for specific analyses.
+
+::: {.alert .alert-warning}
+**New to developing _epidemics_?** Please read the [vignette on design decisions taken during the development process](design-principles.html), and see the concept and architecture diagrams in that vignette.
+:::
+
+## Scope
+
+This vignette is structured around use cases, which are ordered in ascending order of difficulty based on the skills required to make package modifications given the exisiting package architecture.
+
+Consequently this vignette does not cover major changes that would require a substantial rewrite of the package, such as switching the C++ solver used for ODE models, or switching to using _cpp11_ rather than _Rcpp_.
+
+This vignette also does not tackle questions around epidemic modelling choices - such as which compartmenal transitions should be allowed; we strongly recommend the involvement of a specialist in such cases.
+
+::: {.alert .alert-warning}
+**Making substantial changes to a model in _epidemics_?** Have you modified an existing model to cover new use cases or disease types? We welcome contributions of new model structures. Examples include models targeting vector borne diseases, or diseases with a sylvatic cycle. Please get in touch via a GitHub issue or Discussion!
+:::
+
+## Modifying which parameters can be time dependent
+
+Making the infection parameters of existing models time-dependent is straightforward using the `time_dependence` argument to model functions.
+Currently, all models support time-dependence on most infection parameters.
+This _does not include_ the vaccination rate (see more on that below).
+
+See the [vignette on time-dependence](modelling_time_dependence.html) for how this functionality currently works.
+
+To modify which parameters of new or existing models can be made (optionally) time-dependent using the existing functionality:
+
+1. For **ODE models**, first modify the `std::unordered_map` named `model_params` in the corresponding model source file, `src/model_*.cpp`, to add or remove a key-value pair. Adding a parameter to this map automatically enables both time-dependence as well as rate interventions; removing a parameter from this map means disallowing both.
+
+2. Next, modify the model functions and the argument cross-checking functions to ensure that the model allows time-dependence and rate interventions on the correct set of infection parameters.
+
+    - The vector of allowed targets for time-dependence is an argument to the function `.cross_check_timedep()` called in `model_*()` from `R/model_*.R`, while the vector of allowed targets for rate interventions is a similar argument to the function `.cross_check_intervention()` called in `.check_prepare_args_*()` from `R/check_args_*.R`; in all cases `*` refers to the model name.
+
+    - This initial cross-checking is required to prevent errors in the C++ code (typically, a key-not-found error) which may be difficult for users to understand and fix.
+
+3. Finally, ODE model code can be simplified to remove time-dependence (and rate interventions, or one of them) entirely by deleting the call to `time_dependence::apply_time_dependence` in the ODE model `FunctionObject` in `inst/include/model_*.h`. This will not affect upstream code, and may be one way of gaining a small improvement in model performance, so long as time-dependence is not required.
+
+4. For the **stochastic Ebola model**, infection parameters are held in a named list called `parameters`. The elements of this list that are targeted for time-dependence are modified within the model loop.
+
+    - Adding parameters to the list allows them to be be targeted by inbuilt time-dependence functionality.
+    
+    - _However_, removing parameters from the list will lead to errors as they are needed for compartmental transitions. Instead, add input checks on the arguments `intervention` and `time_dependence` to prevent these elements from being modified.
+    
+    - Remove the appropriate code from within the loop to completely disallow time-dependence and rate interventions without affecting upstream code.
+
+    - _Note that_ the Ebola model does support modifying the infectiousness rate or the removal rate, as these are used to calculate the number of sub-compartments (representing days) in each epidemiological compartment; these values must remain fixed throughout the model's run time.
+
+## Adding compartmental fluxes without changing compartments
+

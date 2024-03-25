@@ -84,3 +84,10 @@ Since _epidemics_ focuses on general models for use within the first 100 days of
 
 5. Ensure that all R wrapper code -- especially input checking and cross-checking code -- is updated to reflect that one or more infection parameters are now vectors.
 
+## Adding epidemiological compartments
+
+Adding epidemiological compartments is similar to modifying compartmental transitions, but requires a few extra steps.
+
+1. Add and modify model ODEs as appropriate in `inst/include/model_*.h` (see sections above).
+
+2. Modify the `compartments` vector in `R/model_*.R` to include the name of the new compartment. This is used both in checking that the input `<population>` has the correct number of compartments in its initial state matrix, as well as for formatting the output data.

@@ -31,10 +31,11 @@ articles:
   - model_vacamole
   - model_ebola
   - model_diphtheria
-- title: Package design
-  navbar: Package design and architecture
+- title: Guides for developers
+  navbar: Guides for developers
   contents:
   - design-principles
+  - developer-walkthrough
   
 
 reference:

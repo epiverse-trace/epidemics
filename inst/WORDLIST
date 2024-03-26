@@ -85,6 +85,7 @@ colorspace
 com
 composable
 config
+cpp
 dD
 dE
 dH
@@ -92,6 +93,7 @@ dI
 dR
 dS
 dV
+dX
 deSolve
 dfrac
 doi
@@ -122,6 +124,7 @@ pak
 param
 pkg
 recyclability
+rightarrow
 rmarkdown
 rollout
 socialmixr

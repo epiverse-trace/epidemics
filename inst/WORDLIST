@@ -49,7 +49,6 @@ ODEs
 ORCID
 Odeint
 Ottar
-PRs
 Pannell
 Pieter
 RIVM
@@ -73,7 +72,6 @@ Tildesley
 VV
 Vacamole
 WIP
-Walkthrough
 Wallinga
 analogs
 bookdown
@@ -83,6 +81,7 @@ codecov
 colorspace
 com
 composable
+cpp
 dD
 dE
 dH
@@ -90,6 +89,7 @@ dI
 dR
 dS
 dV
+dX
 deSolve
 dfrac
 doi
@@ -119,6 +119,7 @@ pak
 param
 pkg
 recyclability
+rightarrow
 rmarkdown
 rollout
 socialmixr

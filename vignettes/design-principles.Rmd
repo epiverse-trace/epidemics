@@ -1,5 +1,5 @@
 ---
-title: "Design Principles for epidemics"
+title: "Design principles for epidemics"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -7,7 +7,7 @@ output:
 pkgdown:
   as_is: true
 vignette: >
-  %\VignetteIndexEntry{Design Principles for epidemics}
+  %\VignetteIndexEntry{Design principles for epidemics}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---

@@ -19,10 +19,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette is intended to be a guide to making small, targeted edits to features in _epidemics_, and is aimed at current and future contributors, and at advanced users who might want to use a slightly modified local version of an _epidemics_-provided model for specific analyses.
+This vignette is intended to be a guide to making small, targeted edits to features in _epidemics_, and is aimed at current and future contributors, and at advanced users who might want to use a slightly modified local version of an _epidemics_ provided model for specific analyses.
 
 ::: {.alert .alert-warning}
-**New to developing _epidemics_?** Please read the [vignette on design decisions taken during the development process](design-principles.html), and see the concept and architecture diagrams in that vignette.
+**New to developing epidemics?**
+Please read the [vignette on design decisions taken during the development process](design-principles.html), and see the concept and architecture diagrams in that vignette.
 :::
 
 ## Scope
@@ -33,8 +34,9 @@ Consequently this vignette does not cover major changes that would require a sub
 
 This vignette also does not tackle questions around epidemic modelling choices - such as which compartmenal transitions should be allowed; we strongly recommend the involvement of a specialist in such cases.
 
-::: {.alert .alert-warning}
-**Making substantial changes to a model in _epidemics_?** Have you modified an existing model to cover new use cases or disease types? We welcome contributions of new model structures. Examples include models targeting vector borne diseases, or diseases with a sylvatic cycle. Please get in touch via a GitHub issue or Discussion!
+::: {.alert .alert-info}
+**Making substantial changes to a model in epidemics?**
+Have you modified an existing model to cover new use cases or disease types? We welcome contributions of new model structures. Examples include models targeting vector borne diseases, or diseases with a sylvatic cycle. Please get in touch via a GitHub issue or Discussion!
 :::
 
 ## Modifying which parameters can be time dependent

@@ -67,6 +67,111 @@ To modify which parameters of new or existing models can be made (optionally) ti
 
     - _Note that_ the Ebola model does support modifying the infectiousness rate or the removal rate, as these are used to calculate the number of sub-compartments (representing days) in each epidemiological compartment; these values must remain fixed throughout the model's run time.
 
+## Modifying compartmental flows without changing compartments
+
+Modifying compartmental flows is straightforward for the ODE models in _epidemics_. This is not easy for the stochastic Ebola model due to the use of discrete-time flows between sub-compartments rather than probabilistic flows between compartments.
+We shall not discuss the Ebola model further here.
+
+::: {.alert .alert-warning}
+**Note that** existing compartmenal flows are typically controlled by infection parameters, which can be set to zero to disallow specific transitions. For example, to simulate a scenario in which hospitalisation is not available, the Vacamole model can be run with the argument `hospitalisation_rate = 0.0`.
+
+Please check whether setting an infection parameter to zero better suits your use case.
+:::
+
+This section focuses on adding novel inflows and outflows via some illustrative examples.
+
+1. First, navigate to the end of each model `FunctionObject` defined in `inst/include/model_*.h` and edit the ODEs found there (see examples below). Users can hard-code the parameter values in these files for quick edits, but we recommend taking the next few steps to allow changing these values from R.
+
+2. Next, modify the C++ function arguments in `src/model_*.cpp` so that any newly added rate parameters can be passed from R to C++. Typically, single parameters should be passed by reference as `const double`.
+
+  - If you seek to use time-dependence and rate interventions with the newly added parameters should follow the steps in the section above.
+
+3. Finally, modify the R code in `R/model_*.R` so that the R function accepts the new parameter as an appropriately checked argument.
+
+4. When adding parameters such as birth and death rates, make sure that this is accounted for in any unit tests (see especially the current expectation in most models that there is a constant population size).
+
+### Modelling births to $S$ and deaths from all compartments
+
+Define birth rate and background mortality rate parameters (denoted $b$ and $d$ respectively), and modify the compartmental transitions as follows. This example shows only the equations for the susceptible compartment.
+
+```c++
+// Add births to S, where b is the birth rate, and N is the population size
+dxdt.col(0) = B -sToE - sToV;  // B -β*S*contacts*I - ν
+
+// Add deaths to S, where d is the death rate, and N is the population size
+dxdt.col(0) = B -sToE - sToV - dS;  // B -β*S*contacts*I - ν - dS
+```
+
+  - For a model with age stratification, note that `B` and `d * S` ($d_i S_i$) have to be of the type `Eigen::ArrayXd`, and of the same length as the number of demographic groups, to represent the flows in to and out of each age group.
+  
+  - To simulate births as the only inflow in an age-stratified model, `B` must have the same length as `N`, with only the first element having a non-zero value. `B` is still required to be a vector for compatibility with other vector/array elements. Setting other values of `B` to be non-zero positive values can be used to model immigration or other long-term processes.
+
+    ```c++
+    // where `x` is the current state matrix
+    // get current population size
+    // recall rows are demography groups, columns are compartments
+    const Eigen::ArrayXd population_size = x.rowwise().sum();
+
+    // define a birth rate
+    const double b = 1e-3;
+
+    // calculate number of births
+    double births_ = (b * population_size.sum());
+    
+    // create the vector `B`
+    Eigen::ArrayXd births(4);  // hardcoded for four age groups
+    // fill all values as 0.0
+    births.fill(0.0);
+    // set the first value to births_
+    births(0) = births_;
+    ```
+
+  - To add an immigration component, continue from the example above. Note that 'immigration' here is used in the population dynamics sense of the term, and simply means individuals entering the population.
+
+    ```c++
+    // a uniform value for the rate of immigration in all age groups
+    const double immigration_rate = SOME_VALUE;
+
+    // calculate immigration as a proportion of each age group
+    const Eigen::ArrayXd immigration = immigration_rate * population_size;
+
+    // sum births and immigration
+    const Eigen::ArrayXd all_inflows = births + immigration;
+    ```
+
+  - Deaths from each comparment can be similarly included. Background mortality, i.e., not related to the epidemic can be modelled as a vector of mortality rates `d` multiplied by the size of each demographic group $i$ in any compartment $X$, as either $-dX_i$ for uniform background mortality, or $-d_i X_i$ for age-specific mortality.
+
+### Modelling sources of infectious individuals such as from zoonotic spillover_rate
+
+Define a uniform spillover rate and add this to the $S \rightarrow I$ transition.
+
+```c++
+// define a uniform spillover rate from contact with animals
+const double spillover_rate = SOME_VALUE;
+
+// include this additional S -> E transition
+// note x.col(0).array() is the vector of age-specific susceptibles
+const Eigen::ArrayXd zoonotic_infection = spillover_rate * x.col(0).array();
+
+dxdt.col(0) = -sToE - sToV - zoonotic_infection;  // -β*S*contacts*I - ν - zoonotic infection
+```
+
+### Modelling waning immunity
+
+Similar to previous examples, define a uniform waning rate for the immunity of recovered individuals and modify the appropriate compartmental transitions.
+
+```c++
+// define an age-specific waning rate
+const double waning_rate = SOME_VALUE;
+
+// include this new R -> S transition
+// note x.col(3).array() is the vector of age-specific recovereds
+const Eigen::ArrayXd re_susceptibles = waning_rate * x.col(3).array();
+
+// add individuals with renewed susceptibility
+dxdt.col(0) = -sToE - sToV + re_susceptibles;  // -β*S*contacts*I - ν - re_susceptibles
+```
+
 ## Group-specific infection parameters
 
 _epidemics_ ODE models can be modified to support group-specific infection parameters instead of uniform, population-wide parameters. This is essentially how vaccinations are implemented.

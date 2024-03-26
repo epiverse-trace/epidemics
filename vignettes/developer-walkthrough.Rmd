@@ -28,11 +28,11 @@ Please read the [vignette on design decisions taken during the development proce
 
 ## Scope
 
-This vignette is structured around use cases of making package modifications given the exisiting package architecture.
+This vignette is structured around use cases of making package modifications given the existing package architecture.
 
 Consequently this vignette does not cover major changes that would require a substantial rewrite of the package, such as switching the C++ solver used for ODE models, or switching to using _cpp11_ rather than _Rcpp_.
 
-This vignette also does not tackle questions around epidemic modelling choices - such as which compartmenal transitions should be allowed; we strongly recommend the involvement of a specialist in such cases.
+This vignette also does not tackle questions around epidemic modelling choices - such as which compartmental transitions should be allowed; we strongly recommend the involvement of a specialist in such cases.
 
 ::: {.alert .alert-info}
 **Making substantial changes to a model in epidemics?**
@@ -75,7 +75,7 @@ Modifying compartmental flows is straightforward for the ODE models in _epidemic
 We shall not discuss the Ebola model further here.
 
 ::: {.alert .alert-warning}
-**Note that** existing compartmenal flows are typically controlled by infection parameters, which can be set to zero to disallow specific transitions. For example, to simulate a scenario in which hospitalisation is not available, the Vacamole model can be run with the argument `hospitalisation_rate = 0.0`.
+**Note that** existing compartmental flows are typically controlled by infection parameters, which can be set to zero to disallow specific transitions. For example, to simulate a scenario in which hospitalisation is not available, the Vacamole model can be run with the argument `hospitalisation_rate = 0.0`.
 
 Please check whether setting an infection parameter to zero better suits your use case.
 :::
@@ -141,7 +141,7 @@ dxdt.col(0) = B -sToE - sToV - dS;  // B -β*S*contacts*I - ν - dS
     const Eigen::ArrayXd all_inflows = births + immigration;
     ```
 
-  - Deaths from each comparment can be similarly included. Background mortality, i.e., not related to the epidemic can be modelled as a vector of mortality rates `d` multiplied by the size of each demographic group $i$ in any compartment $X$, as either $-dX_i$ for uniform background mortality, or $-d_i X_i$ for age-specific mortality.
+  - Deaths from each compartment can be similarly included. Background mortality, i.e., not related to the epidemic can be modelled as a vector of mortality rates `d` multiplied by the size of each demographic group $i$ in any compartment $X$, as either $-dX_i$ for uniform background mortality, or $-d_i X_i$ for age-specific mortality.
 
 ### Modelling sources of infectious individuals such as from zoonotic spillover_rate
 
@@ -209,7 +209,7 @@ Vaccination is only strictly allowed in the ODE models 'default' and 'Vacamole',
 
 2. Remove any cross-checking of the `vaccination` against the `population` in `R/check_args_*.R`, and remove the inclusion of `vax_time_begin`, `vax_time_end`, and `vax_nu` from the return of the function `.check_prepare_args_*()`.
 
-3. Remove the `vax_time_begin`, `vax_time_end`, and `vax_nu` arguments from the model ODE `struct` constructor in `inst/include/model_*.h`; also remove these from the model object initialisation in `src/model_*.cpp`. Remove any code related to calculating current vacccination rates from the model ODE code.
+3. Remove the `vax_time_begin`, `vax_time_end`, and `vax_nu` arguments from the model ODE `struct` constructor in `inst/include/model_*.h`; also remove these from the model object initialisation in `src/model_*.cpp`. Remove any code related to calculating current vaccination rates from the model ODE code.
 
 4. At this stage, the ODE model does not support vaccination using a `<vaccination>`, and any existing "vaccinated" compartment is essentially isolated from the other compartments, as the value of `current_nu`
 

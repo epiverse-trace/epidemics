@@ -15,6 +15,7 @@
 #' Names for the demographic groups are generated if no names are provided in
 #' the `population` object; these are of the form "demo_group_X".
 .output_to_df <- function(output, population, compartments) {
+  # TODO: consider removing input checks as fn is internal
   # input checking
   checkmate::assert_list(output,
     any.missing = FALSE, all.missing = FALSE,
@@ -74,6 +75,20 @@
   )
 
   data
+}
+
+.output_to_df_ebola <- function(output, population, compartments) {
+  # calculate replicates, format output, and assign replicate numbers
+  replicates <- seq_along(output)
+  output <- lapply(output, .output_to_df, population, compartments)
+
+  output <- Map(output, replicates, f = function(df, i) {
+    df[["replicate"]] <- i
+    df
+  })
+
+  # return single data.table
+  data.table::rbindlist(output)
 }
 
 #' Get the epidemic size

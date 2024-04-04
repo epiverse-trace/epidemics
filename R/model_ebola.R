@@ -61,54 +61,69 @@ prob_discrete_erlang <- function(shape, rate) {
 #' contacts, which means that the `contact_matrix` is ignored. For consistency,
 #' the matrix must be square and have as many rows as demography groups, which
 #' is one.
-#' @param transmission_rate A single number for the rate at which individuals
+#' @param transmission_rate A numeric vector for the rate at which individuals
 #' move from the susceptible to the exposed compartment upon contact with an
 #' infectious individual. Often denoted as \eqn{\beta}, with
 #' \eqn{\beta = R_0 / \text{infectious period}}.
 #' See **Details** for default values.
-#' @param infectiousness_rate A single number for the rate at which individuals
+#' @param infectiousness_rate A numeric vector for the rate at which individuals
 #' move from the exposed to the infectious compartment. Often denoted as
 #' \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 #' This value does not depend upon the number of infectious individuals in the
 #' population.
 #' See **Details** for default values.
-#' @param erlang_subcompartments The number of Erlang subcompartments assumed
-#' for the exposed, infectious, and hospitalised compartments. Defaults to 2.
-#' @param removal_rate The rate at which infectious individuals transition from
-#' the infectious or hospitalised compartments to the funeral or removed
-#' compartments. This model does not distinguish between recoveries and
-#' deaths. Denoted in Getz and Dougherty as \eqn{\gamma^I} (see **Details**).
-#' @param prop_community The proportion of infectious individuals who remain in
-#' the community and are not hospitalised for treatment. Defaults to 0.5
-#' @param etu_risk The relative risk of onward transmission of EVD from
-#' hospitalised individuals. Must be a single value between 0.0 and 1.0, where
+#' @param erlang_subcompartments A numeric, integer-like vector for the number
+#' of Erlang sub-compartments assumed for the exposed, infectious, and
+#' hospitalised compartments. Defaults to 2.
+#' @param removal_rate A numeric vector for the rate at which infectious
+#' individuals transition from the infectious or hospitalised compartments to
+#' the funeral or removed compartments.
+#' This model does not distinguish between recoveries and deaths.
+#' Denoted in Getz and Dougherty as \eqn{\gamma^I} (see **Details**).
+#' @param prop_community A numeric vector for the proportion of infectious
+#' individuals who remain in the community and are not hospitalised for
+#' treatment. Defaults to 0.9.
+#' @param etu_risk A numeric vector for the relative risk of onward transmission
+#' of EVD from hospitalised individuals, with values between 0.0 and 1.0, where
 #' 0.0 indicates that hospitalisation completely prevents onward transmission,
 #' and 1.0 indicates that hospitalisation does not prevent onward transmission
-#' at all. `etu_risk` is used to scale the value of transmission_rate for the
-#' transmission_rate \eqn{\beta}. Defaults to 0.2.
-#' @param funeral_risk The relative risk of onward transmission of EVD from
-#' funerals of individuals who died with EVD.
-#' Must be a single value between 0.0 and 1.0, where
-#' 0.0 indicates that there is no onward transmission, and 1.0 indicates that
-#' funeral transmission is equivalent to transmission in the community.
-#' `funeral_risk` is used to scale the value of transmission_rate for the
-#' transmission_rate \eqn{\beta}. Defaults to 0.5.
-#' @param intervention A named list of `<rate_intervention>` objects
+#' at all; values are relative to the baseline transmission rate \eqn{\beta}.
+#' Defaults to 0.7.
+#' @param funeral_risk A numeric vector for the relative risk of onward
+#' transmission of EVD from funerals of individuals who died with EVD.
+#' Must be between 0.0 and 1.0, where 0.0 indicates that there is no onward
+#' transmission, and 1.0 indicates that funeral transmission is equivalent to
+#' the baseline transmission rate in the community \eqn{\beta}.
+#' Defaults to 0.5.
+#' @param intervention An optional named list of `<rate_intervention>` objects
 #' representing optional pharmaceutical or non-pharmaceutical interventions
-#' applied to the model parameters listed above.
-#' @param time_dependence A named list where each name
-#' is a model parameter, and each element is a function with
-#' the first two arguments being the current simulation `time`, and `x`, a value
-#' that is dependent on `time` (`x` represents a model parameter).
+#' applied to the model parameters listed above. May also be a list of such
+#' lists, in which case each set of interventions is treated as a separate
+#' scenario. See **Details** below.
+#' @param time_dependence An optional named list where each element is a
+#' function with the first two arguments being the current simulation `time`,
+#' and `x`, a value that is dependent on `time`
+#' (`x` represents a model parameter).
+#' List names must correspond to model parameters modified by the function.
+#' Alternatively, may be a list of such lists, in which case each set of
+#' functions is treated as a distinct scenario.
 #' See **Details** for more information, as well as the vignette on time-
 #' dependence \code{vignette("time_dependence", package = "epidemics")}.
-#' @param time_end The maximum number of timesteps over which to run the model,
-#' in days. Defaults to 100 days.
-#' @return
-#' A `<data.table>` in
-#' long format with the columns "time", "compartment", "age_group", and "value",
-#' that gives the number of individuals in each model compartment over time (
-#' from 1 to `time_end`).
+#' @param time_end A numeric, integer-like vector for the maximum number of
+#' timesteps over which to run the model, in days. Defaults to 100 days.
+#' @return A `<data.table>`.
+#' If the model parameters and composable elements are all scalars, a single
+#' `<data.table>` with the columns "time", "compartment", "age_group", and
+#' "value", giving the number of individuals per demographic group
+#' in each compartment at each timestep in long (or "tidy") format is returned.
+#'
+#' If the model parameters or composable elements are lists or list-like,
+#' a nested `<data.table>` is returned with a list column "data", which holds
+#' the compartmental values described above.
+#' Other columns hold parameters and composable elements relating to the model
+#' run. Columns "scenario" and "param_set" identify combinations of composable
+#' elements (population, interventions, vaccination regimes), and infection
+#' parameters, respectively.
 #' @details
 #'
 #' # Details: Discrete-time Ebola virus disease model
@@ -202,6 +217,31 @@ prob_discrete_erlang <- function(shape, rate) {
 #' An example is shown in the vignette about this model; run this code to open
 #' the vignette: \code{vignette("ebola_model", package = "epidemics")}
 #'
+#' ## Vector inputs
+#'
+#' ### Vector parameter inputs
+#'
+#' The model infection parameters and the model duration may be passed as
+#' numeric or integer-like vectors (as appropriate to the parameter), to
+#' simulate the effect of parameter uncertainty.
+#' All parameter vectors must be of the same length, or any one parameter vector
+#' may have a length > 1 while all other have a length of 1. In the first case,
+#' each i-th combination of parameters is treated as a parameter set. In the
+#' second case, all single value parameters (scalars) are recycled to the same
+#' length as the non-scalar parameter.
+#'
+#' The model is run for $N$ stochastic realisations of each parameter set.
+#' Random number seeds are preserved across parameter sets, so that differences
+#' in outcomes in each j-th run are due to differences in parameters alone.
+#'
+#' ### Vector inputs for composable elements
+#'
+#' The `intervention` and `time_dependence` arguments also accept vectorised
+#' inputs in the form of lists of intervention and time dependence sets.
+#' Each combination of intervention and time-dependence sets is treated as a
+#' distinct 'scenario', and realisations of each parameter set are run for each
+#' scenario.
+#'
 #' @references
 #' Li, S.-L., Ferrari, M. J., Bjørnstad, O. N., Runge, M. C., Fonnesbeck, C. J.,
 #' Tildesley, M. J., Pannell, D., & Shea, K. (2019). Concurrent assessment of
@@ -233,101 +273,207 @@ prob_discrete_erlang <- function(shape, rate) {
 #' head(data)
 #' @export
 model_ebola <- function(population,
-                        erlang_subcompartments = 2,
                         transmission_rate = 1.5 / 12,
+                        erlang_subcompartments = 2,
                         infectiousness_rate = erlang_subcompartments / 5,
                         removal_rate = erlang_subcompartments / 12,
                         prop_community = 0.9,
                         etu_risk = 0.7,
                         funeral_risk = 0.5,
                         intervention = NULL,
-                        time_dependence = NULL, time_end = 100) {
+                        time_dependence = NULL, time_end = 100,
+                        replicates = 100) {
   # input checking for the ebola R model - there is no dedicated checker fn
   # and input checking is performed here, making it different from other models
   # define compartment names
   compartments <- c(
-    "susceptible", "exposed", "infectious",
-    "hospitalised", "funeral", "removed"
+    "susceptible", "exposed", "infectious", "hospitalised", "funeral", "removed"
   )
+  assert_population(population, compartments)
 
-  assert_population(
-    population,
-    compartments = compartments
-  )
+  # NOTE: this relates to model structure but is allowed to be vectorised
+  checkmate::assert_integerish(erlang_subcompartments, lower = 1)
 
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
-  checkmate::assert_count(erlang_subcompartments, positive = TRUE)
-  checkmate::assert_number(transmission_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(infectiousness_rate, lower = 0, finite = TRUE)
-  checkmate::assert_number(removal_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(removal_rate, lower = 0, finite = TRUE)
   # ratios are bounded 0 - 1
-  checkmate::assert_number(prop_community, lower = 0, upper = 1)
-  checkmate::assert_number(etu_risk, lower = 0, upper = 1)
-  checkmate::assert_number(funeral_risk, lower = 0, upper = 1)
+  checkmate::assert_numeric(prop_community, lower = 0, upper = 1)
+  checkmate::assert_numeric(etu_risk, lower = 0, upper = 1)
+  checkmate::assert_numeric(funeral_risk, lower = 0, upper = 1)
 
-  # check time is a count
-  checkmate::assert_count(time_end, positive = TRUE)
+  # check time is an integerish vector
+  checkmate::assert_integerish(time_end, lower = 0)
+  # replicates cannot vary
+  checkmate::assert_count(replicates, positive = TRUE)
 
-  # check all interventions are rate_interventions and target correct params
-  if (!is.null(intervention)) {
-    checkmate::assert_list(
-      intervention,
-      min.len = 1,
-      names = "unique", any.missing = FALSE,
-      types = "rate_intervention"
-    )
-    # check for model parameters targeted
-    checkmate::assert_names(
-      names(intervention),
-      subset.of = c(
-        "transmission_rate", "infectiousness_rate", "removal_rate",
-        "prop_community", "etu_risk", "funeral_risk"
+  # check all vector lengths are equal or 1L
+  params <- list(
+    erlang_subcompartments = erlang_subcompartments,
+    transmission_rate = transmission_rate,
+    infectiousness_rate = infectiousness_rate,
+    removal_rate = removal_rate,
+    prop_community = prop_community,
+    etu_risk = etu_risk,
+    funeral_risk = funeral_risk,
+    time_end = time_end,
+    replicates = replicates
+  )
+  # take parameter names here as names(DT) updates by reference!
+  param_names <- names(params)
+
+  # Check if `intervention` is a single intervention set or a list of such sets
+  # NULL is allowed;
+  # NOTE: only <rate_intervention> is allowed in this model
+  is_lofints <- checkmate::test_list(
+    intervention, "rate_intervention",
+    all.missing = FALSE, null.ok = TRUE
+  )
+  # allow some NULLs (a valid no intervention scenario) but not all NULLs
+  is_lofls <- checkmate::test_list(
+    intervention,
+    types = c("list", "null"), all.missing = FALSE
+  ) &&
+    # Check that all elements of intervention sets are either
+    # `<rate_intervention>` or NULL
+    all(
+      vapply(
+        unlist(intervention, recursive = FALSE),
+        FUN = function(x) {
+          is_rate_intervention(x) || is.null(x)
+        }, TRUE
       )
     )
+
+  # Further input checking
+  stopifnot(
+    # Check if parameters can be recycled
+    "All parameters must be of the same length, or must have length 1" =
+      .test_recyclable(params),
+    "`intervention` must be a list of <rate_intervention> or a list of such
+    lists" =
+      is_lofints || is_lofls
+  )
+
+  # make lists if not lists
+  population <- list(population) # NOTE: currently not list, but see issue #181
+  if (is_lofints) {
+    intervention <- list(intervention)
   }
+
   # check that time-dependence functions are passed as a list with at least the
-  # arguments `time` and `x`
-  # time must be before x, and they must be first two args
-  if (!is.null(time_dependence)) {
-    checkmate::assert_list(
+  # arguments `time` and `x`, in order as the first two args
+  # NOTE: this functionality is not vectorised;
+  # convert to list for data.table list column
+  checkmate::assert_list(
+    time_dependence, "function",
+    null.ok = TRUE,
+    any.missing = FALSE, names = "unique"
+  )
+  # lapply on null returns an empty list
+  invisible(
+    lapply(time_dependence, checkmate::assert_function,
+      args = c("time", "x"), ordered = TRUE
+    )
+  )
+  # NOTE: `infectiousness_rate` and `removal_rate` are not allowed as they
+  # control the number of epidemiological sub-compartments, which cannot be
+  # safely changed while the model is running
+  time_dependence <- list(
+    .cross_check_timedep(
       time_dependence,
-      types = "function",
-      names = "unique", any.missing = FALSE
+      c("transmission_rate", "prop_community", "etu_risk", "funeral_risk")
     )
-    invisible(
-      lapply(time_dependence, checkmate::check_function,
-        args = c("time", "x"),
-        ordered = TRUE
-      )
-    )
-    # check for model parameters targeted
-    checkmate::assert_names(
-      names(time_dependence),
-      subset.of = c(
-        "transmission_rate", "infectiousness_rate", "removal_rate",
-        "prop_community", "etu_risk", "funeral_risk"
-      )
+  )
+
+  # collect parameters and add a parameter set identifier
+  params <- data.table::as.data.table(params)
+  params[, "param_set" := .I]
+
+  # this nested data.table will be returned
+  model_output <- data.table::CJ(
+    population = population,
+    intervention = intervention,
+    time_dependence = time_dependence,
+    sorted = FALSE
+  )
+
+  # Send warning when > 10,000 runs (including replicates) are requested
+  runs <- nrow(model_output) * nrow(params) * replicates
+  warning_threshold <- 1e4
+  if (runs > warning_threshold) {
+    cli::cli_warn(
+      sprintf(
+        "Running %i scenarios and %i parameter sets with %i
+        replicates each, for a total of %i model runs.",
+        nrow(model_output), nrow(params), replicates, runs
+      ),
+      " This may take some time."
     )
   }
 
-  # get initial conditions
-  initial_state <- as.numeric(population[["initial_conditions"]]) *
-    population[["demography_vector"]]
+  # process the population, interventions, and vaccinations, after
+  # cross-checking them agains the relevant population
+  model_output[, args := apply(model_output, 1, function(x) {
+    .check_prepare_args_ebola(c(x))
+  })]
+  model_output[, "scenario" := .I]
 
-  # round to nearest integer
-  initial_state <- round(initial_state)
-  names(initial_state) <- compartments
+  # combine infection parameters and scenarios
+  # NOTE: join X[Y] must have params as X as list cols not supported for X
+  model_output <- params[, as.list(model_output), by = names(params)]
 
-  # prepare output table
+  # collect model arguments in column data, then overwrite
+  model_output[, args := apply(model_output, 1, function(x) {
+    c(x[["args"]], x[param_names]) # avoid including col "param_set"
+  })]
+
+  # call the internal function on all elements of the list args
+  # NOTE: using internal seed preservation to ensure parameter sets use
+  # identical random number streams
+  model_output[, "data" := lapply(args, function(l) {
+    do.call(.model_ebola_internal, l)
+  })]
+
+  # convert the raw data to output
+  model_output[, "data" := Map(
+    data, population,
+    f = function(df, pop) {
+      .output_to_df_ebola(df, pop, compartments)
+    }
+  )]
+
+  # remove temporary arguments
+  model_output$args <- NULL
+
+  # check for single row output, i.e., scalar arguments, and return data.table
+  # do not return the parameters in this case
+  if (nrow(model_output) == 1L) {
+    model_output <- model_output[["data"]][[1L]] # hardcoded for special case
+  }
+
+  # return data.table
+  model_output[]
+}
+
+#' @title Internal code for the Ebola model
+#' @inheritParams model_ebola
+#' @details
+#' **NOTE** that all arguments to this internal function must be scalars for
+#' infection parameters or single intervention or time-dependence sets for
+#' composable elements.
+#' @keywords internal
+.model_ebola_internal <- function(
+    initial_state, erlang_subcompartments, transmission_rate,
+    infectiousness_rate, removal_rate, prop_community, etu_risk, funeral_risk,
+    intervention, time_dependence, time_end, replicates) {
+  # calculate required quantities
   population_size <- sum(initial_state)
-  sim_data <- matrix(NA_integer_, nrow = time_end, ncol = length(compartments))
-  colnames(sim_data) <- compartments
 
-  # assign initial conditions
-  sim_data[1, ] <- initial_state
-
-  # prepare probability vectors for which Erlang sub-compartment (boxcar)
+  # prepare probability vectors for which epidemiological sub-compartment
   # will receive any newly exposed or infectious individuals
+  # TODO: rename to be more informative; scheduled for follow-up PR
   exposed_boxcar_rates <- prob_discrete_erlang(
     shape = erlang_subcompartments,
     rate = infectiousness_rate
@@ -337,42 +483,23 @@ model_ebola <- function(population,
     rate = removal_rate
   )
 
-  # count number of infectious blocks or boxcars
+  # compartment names required again
+  compartments <- c(
+    "susceptible", "exposed", "infectious", "hospitalised", "funeral", "removed"
+  )
+
+  # count number of infectious sub-compartments
   n_infectious_boxcars <- length(infectious_boxcar_rates)
 
-  # initialise current conditions for exposed and infectious compartments
-  exposed_current <- as.vector(
-    stats::rmultinom(
-      1,
-      size = sim_data[1, "exposed"],
-      prob = exposed_boxcar_rates
-    )
+  # Prepare data matrix and assign initial state
+  sim_data <- matrix(
+    NA_integer_,
+    nrow = time_end, ncol = length(compartments)
   )
-  exposed_past <- exposed_current
+  colnames(sim_data) <- compartments
+  sim_data[1, ] <- initial_state # at time = 1
 
-  infectious_current <- as.vector(
-    stats::rmultinom(1,
-      size = sim_data[1, "infectious"],
-      prob = infectious_boxcar_rates
-    )
-  )
-  infectious_past <- infectious_current
-
-  hospitalised_current <- as.vector(
-    stats::rmultinom(1,
-      size = sim_data[1, "hospitalised"],
-      prob = infectious_boxcar_rates
-    )
-  )
-  hospitalised_past <- hospitalised_current
-
-  funeral_trans_current <- sim_data[1, "funeral"]
-  funeral_trans_past <- funeral_trans_current
-
-  # define a fixed rounding factor for all timesteps to save function calls
-  rounding_factor <- stats::rnorm(n_infectious_boxcars - 1, 0, 1e-2)
-
-  # place parameter transmission_rate in list for rate interventions function
+  # place `transmission_rate` in list for rate_interventions function
   parameters <- list(
     transmission_rate = transmission_rate,
     prop_community = prop_community,
@@ -380,128 +507,175 @@ model_ebola <- function(population,
     funeral_risk = funeral_risk
   )
 
-  ## Run the simulation from time t = 2 to t = time_end
-  for (time in seq(2, time_end)) {
-    # make a copy to assign time-dependent and intervention-affected values
-    params <- parameters
+  # Use seed preservation to ensure that random number streams are preserved
+  # for runs of intervention*parameter sets; i.e., run `i` of each set
+  # should use the same random numbers
+  # NOTE: Seed preservation could also be implemented one level up, but might be
+  # more difficult to understand in context
+  output_runs <- withr::with_preserve_seed({
+    lapply(seq_len(replicates), function(x) {
+      # NOTE: the original ebola model code continues here, but is simply
+      # wrapped in seed preservation code.
 
-    # apply time dependence before interventions
-    time_dependent_params <- Map(
-      parameters[names(time_dependence)],
-      time_dependence,
-      f = function(x, func) {
-        func(time = time, x = x) # NOTE: time taken from loop index!
-      }
-    )
-    # assign time-modified param values
-    params[names(time_dependent_params)] <- time_dependent_params
+      # Get a small random number for use with the hospitalisation functionality
+      # save function calls by reusing the vector of values
+      rounding_factor <- stats::rnorm(n_infectious_boxcars - 1, 0, 1e-2)
 
-    # check if an intervention is active and apply it to rates
-    params <- intervention_on_rates(
-      t = time,
-      interventions = intervention[
-        setdiff(names(intervention), "contacts")
-      ],
-      parameters = params
-    )
-
-    # transmission modifiers - 1.0 for baseline, user-provided for ETU risk and
-    # funeral risk
-    transmission_rate_modifiers <- c(
-      1.0, params[["etu_risk"]], params[["funeral_risk"]]
-    )
-
-    # get current transmission_rate as base rate * intervention * p(infectious)
-    # TODO: check if transmissibilities should be summed or averaged
-    current_transmission_rate <- sum(params[["transmission_rate"]] *
-      transmission_rate_modifiers *
-      sim_data[time - 1, c("infectious", "hospitalised", "funeral")]) /
-      population_size
-    exposure_prob <- 1.0 - exp(-current_transmission_rate)
-
-    # calculate new exposures
-    new_exposed <- stats::rbinom(
-      1, sim_data[time - 1, "susceptible"], exposure_prob
-    )
-    # handle non-zero new exposures
-    if (new_exposed > 0) {
-      # distribute new exposures and add past exposures moved forward by one
-      # timestep
+      # Distribute individuals into sub-compartments
       exposed_current <- as.vector(
-        stats::rmultinom(1, size = new_exposed, prob = exposed_boxcar_rates)
-      ) +
-        c(exposed_past[-1], 0)
-    } else {
-      exposed_current <- c(exposed_past[-1], 0)
-    }
-
-    # handle hospitalisations first, as required for infectious compartment
-    # new hospitalisations are a proportion of individuals from infectious
-    # sub-compartments. Add a small normally distributed error to proportion
-    # hospitalised to facilitate rounding to avoid fractional individuals
-    # NOTE: proportion hospitalised = 1 - proportion community
-    hospitalised_current <- round(
-      # the SD of the normal distribution is small enough that values
-      # added to zero lead to rounding to zero
-      # first infectious_past compartment cannot be hospitalised and is
-      # transferred to funeral compartment
-      (infectious_past[-1] * (1.0 - params[["prop_community"]])) +
-        rounding_factor
-    )
-
-    # calculate new infectious individuals
-    new_infectious <- exposed_past[1]
-    # handle non-zero new infectious
-    if (new_infectious > 0) {
-      infectious_current <- as.vector(
         stats::rmultinom(
           1,
-          size = new_infectious, prob = infectious_boxcar_rates
-        ) +
-          c(infectious_past[-1] - hospitalised_current, 0)
+          size = sim_data[1, "exposed"],
+          prob = exposed_boxcar_rates
+        )
       )
-    } else {
-      infectious_current <- c(infectious_past[-1] - hospitalised_current, 0)
-    }
+      exposed_past <- exposed_current
 
-    # continue handling hospitalisations
-    # concat zero to hospitalised_current at start as no infectious can go to
-    # this compartment
-    hospitalised_current <- c(0, hospitalised_current) +
-      c(hospitalised_past[-1], 0)
+      infectious_current <- as.vector(
+        stats::rmultinom(1,
+          size = sim_data[1, "infectious"],
+          prob = infectious_boxcar_rates
+        )
+      )
+      infectious_past <- infectious_current
 
-    # calculate new individuals in the funeral transmission class
-    funeral_trans_current <- infectious_past[1]
+      hospitalised_current <- as.vector(
+        stats::rmultinom(1,
+          size = sim_data[1, "hospitalised"],
+          prob = infectious_boxcar_rates
+        )
+      )
+      hospitalised_past <- hospitalised_current
 
-    # calculate new safely removed as the final hospitalised sub-compartments
-    # and new burials of potentially transmitting funerals
-    new_removed <- hospitalised_past[1] + funeral_trans_past
+      # NOTE: "funeral" has no sub-compartments
+      funeral_trans_current <- sim_data[1, "funeral"]
+      funeral_trans_past <- funeral_trans_current
 
-    # set past vectors to current vectors
-    exposed_past <- exposed_current
-    infectious_past <- infectious_current
-    hospitalised_past <- hospitalised_current
-    funeral_trans_past <- funeral_trans_current
+      # Run the simulation from time t = 2 to t = time_end
+      # A loop is required as conditions at each time t + 1 depend on time t.
+      for (time in seq(2, time_end)) {
+        # make a copy to assign time-dependent and intervention-affected values
+        params <- parameters
 
-    # prepare the data for output
-    sim_data[time, "susceptible"] <- sim_data[time - 1, "susceptible"] -
-      new_exposed
-    sim_data[time, "exposed"] <- sum(exposed_current)
-    sim_data[time, "infectious"] <- sum(infectious_current)
-    sim_data[time, "hospitalised"] <- sum(hospitalised_current)
-    sim_data[time, "funeral"] <- funeral_trans_current
-    sim_data[time, "removed"] <- sim_data[time - 1, "removed"] +
-      new_removed
+        # apply time dependence before interventions
+        time_dependent_params <- Map(
+          parameters[names(time_dependence)],
+          time_dependence,
+          f = function(x, func) {
+            func(time = time, x = x) # NOTE: time taken from loop index!
+          }
+        )
+        # assign time-modified param values
+        params[names(time_dependent_params)] <- time_dependent_params
+
+        # check if an intervention is active and apply it to rates
+        params <- intervention_on_rates(
+          t = time,
+          interventions = intervention,
+          parameters = params
+        )
+
+        # transmission modifiers - 1.0 for baseline, user-provided for ETU risk
+        # and funeral risk
+        transmission_rate_modifiers <- c(
+          1.0, params[["etu_risk"]], params[["funeral_risk"]]
+        )
+
+        # get current transmission_rate as
+        # base rate * intervention * p(infectious)
+        # TODO: check if transmissibilities should be summed or averaged
+        current_transmission_rate <- sum(params[["transmission_rate"]] *
+          transmission_rate_modifiers *
+          sim_data[time - 1, c("infectious", "hospitalised", "funeral")]) /
+          population_size
+        exposure_prob <- 1.0 - exp(-current_transmission_rate)
+
+        # calculate new exposures
+        new_exposed <- stats::rbinom(
+          1, sim_data[time - 1, "susceptible"], exposure_prob
+        )
+        # handle non-zero new exposures
+        if (new_exposed > 0) {
+          # distribute new exposures and add past exposures moved forward by one
+          # timestep
+          exposed_current <- as.vector(
+            stats::rmultinom(1, size = new_exposed, prob = exposed_boxcar_rates)
+          ) +
+            c(exposed_past[-1], 0)
+        } else {
+          exposed_current <- c(exposed_past[-1], 0)
+        }
+
+        # handle hospitalisations first, as required for infectious compartment
+        # new hospitalisations are a proportion of individuals from infectious
+        # sub-compartments. Add a small normally distributed error to proportion
+        # hospitalised to facilitate rounding to avoid fractional individuals
+        # NOTE: proportion hospitalised = 1 - proportion community
+        hospitalised_current <- round(
+          # the SD of the normal distribution is small enough that values
+          # added to zero lead to rounding to zero
+          # first infectious_past compartment cannot be hospitalised and is
+          # transferred to funeral compartment
+          (infectious_past[-1] * (1.0 - params[["prop_community"]])) +
+            rounding_factor
+        )
+
+        # calculate new infectious individuals
+        new_infectious <- exposed_past[1]
+        # handle non-zero new infectious
+        if (new_infectious > 0) {
+          infectious_current <- as.vector(
+            stats::rmultinom(
+              1,
+              size = new_infectious, prob = infectious_boxcar_rates
+            ) +
+              c(infectious_past[-1] - hospitalised_current, 0)
+          )
+        } else {
+          infectious_current <- c(infectious_past[-1] - hospitalised_current, 0)
+        }
+
+        # continue handling hospitalisations
+        # concat zero to hospitalised_current at start as no infectious can go
+        # to this compartment
+        hospitalised_current <- c(0, hospitalised_current) +
+          c(hospitalised_past[-1], 0)
+
+        # calculate new individuals in the funeral transmission class
+        funeral_trans_current <- infectious_past[1]
+
+        # calculate new safely removed as the final hospitalised
+        # sub-compartments and new burials of potentially transmitting funerals
+        new_removed <- hospitalised_past[1] + funeral_trans_past
+
+        # set past vectors to current vectors
+        exposed_past <- exposed_current
+        infectious_past <- infectious_current
+        hospitalised_past <- hospitalised_current
+        funeral_trans_past <- funeral_trans_current
+
+        # prepare the data for output
+        sim_data[time, "susceptible"] <- sim_data[time - 1, "susceptible"] -
+          new_exposed
+        sim_data[time, "exposed"] <- sum(exposed_current)
+        sim_data[time, "infectious"] <- sum(infectious_current)
+        sim_data[time, "hospitalised"] <- sum(hospitalised_current)
+        sim_data[time, "funeral"] <- funeral_trans_current
+        sim_data[time, "removed"] <- sim_data[time - 1, "removed"] +
+          new_removed
+      }
+
+      # return simulated data matrix and time as a two element list
+      # replicate id is handled in `.output_to_df_ebola()`
+      list(x = sim_data, time = seq_len(time_end))
+    })
+  })
+
+  # return replicates data
+  # if there is only one replicate, wrap in a list
+  if (length(output_runs) == 1) {
+    list(output_runs)
+  } else {
+    output_runs
   }
-
-  # convert to long format
-  data <- .output_to_df(
-    output = list(x = sim_data, time = seq_len(time_end)),
-    population = population,
-    compartments = c(
-      "susceptible", "exposed", "infectious",
-      "hospitalised", "funeral", "removed"
-    )
-  )
-  data.table::setDF(data)[]
 }

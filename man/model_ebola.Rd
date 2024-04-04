@@ -6,8 +6,8 @@
 \usage{
 model_ebola(
   population,
-  erlang_subcompartments = 2,
   transmission_rate = 1.5/12,
+  erlang_subcompartments = 2,
   infectiousness_rate = erlang_subcompartments/5,
   removal_rate = erlang_subcompartments/12,
   prop_community = 0.9,
@@ -15,7 +15,8 @@ model_ebola(
   funeral_risk = 0.5,
   intervention = NULL,
   time_dependence = NULL,
-  time_end = 100
+  time_end = 100,
+  replicates = 100
 )
 }
 \arguments{
@@ -30,64 +31,80 @@ contacts, which means that the \code{contact_matrix} is ignored. For consistency
 the matrix must be square and have as many rows as demography groups, which
 is one.}
 
-\item{erlang_subcompartments}{The number of Erlang subcompartments assumed
-for the exposed, infectious, and hospitalised compartments. Defaults to 2.}
-
-\item{transmission_rate}{A single number for the rate at which individuals
+\item{transmission_rate}{A numeric vector for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \eqn{\beta}, with
 \eqn{\beta = R_0 / \text{infectious period}}.
 See \strong{Details} for default values.}
 
-\item{infectiousness_rate}{A single number for the rate at which individuals
+\item{erlang_subcompartments}{A numeric, integer-like vector for the number
+of Erlang sub-compartments assumed for the exposed, infectious, and
+hospitalised compartments. Defaults to 2.}
+
+\item{infectiousness_rate}{A numeric vector for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
 This value does not depend upon the number of infectious individuals in the
 population.
 See \strong{Details} for default values.}
 
-\item{removal_rate}{The rate at which infectious individuals transition from
-the infectious or hospitalised compartments to the funeral or removed
-compartments. This model does not distinguish between recoveries and
-deaths. Denoted in Getz and Dougherty as \eqn{\gamma^I} (see \strong{Details}).}
+\item{removal_rate}{A numeric vector for the rate at which infectious
+individuals transition from the infectious or hospitalised compartments to
+the funeral or removed compartments.
+This model does not distinguish between recoveries and deaths.
+Denoted in Getz and Dougherty as \eqn{\gamma^I} (see \strong{Details}).}
 
-\item{prop_community}{The proportion of infectious individuals who remain in
-the community and are not hospitalised for treatment. Defaults to 0.5}
+\item{prop_community}{A numeric vector for the proportion of infectious
+individuals who remain in the community and are not hospitalised for
+treatment. Defaults to 0.9.}
 
-\item{etu_risk}{The relative risk of onward transmission of EVD from
-hospitalised individuals. Must be a single value between 0.0 and 1.0, where
+\item{etu_risk}{A numeric vector for the relative risk of onward transmission
+of EVD from hospitalised individuals, with values between 0.0 and 1.0, where
 0.0 indicates that hospitalisation completely prevents onward transmission,
 and 1.0 indicates that hospitalisation does not prevent onward transmission
-at all. \code{etu_risk} is used to scale the value of transmission_rate for the
-transmission_rate \eqn{\beta}. Defaults to 0.2.}
+at all; values are relative to the baseline transmission rate \eqn{\beta}.
+Defaults to 0.7.}
 
-\item{funeral_risk}{The relative risk of onward transmission of EVD from
-funerals of individuals who died with EVD.
-Must be a single value between 0.0 and 1.0, where
-0.0 indicates that there is no onward transmission, and 1.0 indicates that
-funeral transmission is equivalent to transmission in the community.
-\code{funeral_risk} is used to scale the value of transmission_rate for the
-transmission_rate \eqn{\beta}. Defaults to 0.5.}
+\item{funeral_risk}{A numeric vector for the relative risk of onward
+transmission of EVD from funerals of individuals who died with EVD.
+Must be between 0.0 and 1.0, where 0.0 indicates that there is no onward
+transmission, and 1.0 indicates that funeral transmission is equivalent to
+the baseline transmission rate in the community \eqn{\beta}.
+Defaults to 0.5.}
 
-\item{intervention}{A named list of \verb{<rate_intervention>} objects
+\item{intervention}{An optional named list of \verb{<rate_intervention>} objects
 representing optional pharmaceutical or non-pharmaceutical interventions
-applied to the model parameters listed above.}
+applied to the model parameters listed above. May also be a list of such
+lists, in which case each set of interventions is treated as a separate
+scenario. See \strong{Details} below.}
 
-\item{time_dependence}{A named list where each name
-is a model parameter, and each element is a function with
-the first two arguments being the current simulation \code{time}, and \code{x}, a value
-that is dependent on \code{time} (\code{x} represents a model parameter).
+\item{time_dependence}{An optional named list where each element is a
+function with the first two arguments being the current simulation \code{time},
+and \code{x}, a value that is dependent on \code{time}
+(\code{x} represents a model parameter).
+List names must correspond to model parameters modified by the function.
+Alternatively, may be a list of such lists, in which case each set of
+functions is treated as a distinct scenario.
 See \strong{Details} for more information, as well as the vignette on time-
 dependence \code{vignette("time_dependence", package = "epidemics")}.}
 
-\item{time_end}{The maximum number of timesteps over which to run the model,
-in days. Defaults to 100 days.}
+\item{time_end}{A numeric, integer-like vector for the maximum number of
+timesteps over which to run the model, in days. Defaults to 100 days.}
 }
 \value{
-A \verb{<data.table>} in
-long format with the columns "time", "compartment", "age_group", and "value",
-that gives the number of individuals in each model compartment over time (
-from 1 to \code{time_end}).
+A \verb{<data.table>}.
+If the model parameters and composable elements are all scalars, a single
+\verb{<data.table>} with the columns "time", "compartment", "age_group", and
+"value", giving the number of individuals per demographic group
+in each compartment at each timestep in long (or "tidy") format is returned.
+
+If the model parameters or composable elements are lists or list-like,
+a nested \verb{<data.table>} is returned with a list column "data", which holds
+the compartmental values described above.
+Other columns hold parameters and composable elements relating to the model
+run. Columns "scenario" and "param_set" identify combinations of composable
+elements (population, interventions, vaccination regimes), and infection
+parameters, respectively.
 }
 \description{
 Simulate an epidemic using a discrete-time, stochastic SEIR
@@ -189,6 +206,34 @@ modifies model parameters --- specifically, the transmission rate --- in a
 way that is consistent with the effect of vaccination.
 An example is shown in the vignette about this model; run this code to open
 the vignette: \code{vignette("ebola_model", package = "epidemics")}
+}
+
+\subsection{Vector inputs}{
+\subsection{Vector parameter inputs}{
+
+The model infection parameters and the model duration may be passed as
+numeric or integer-like vectors (as appropriate to the parameter), to
+simulate the effect of parameter uncertainty.
+All parameter vectors must be of the same length, or any one parameter vector
+may have a length > 1 while all other have a length of 1. In the first case,
+each i-th combination of parameters is treated as a parameter set. In the
+second case, all single value parameters (scalars) are recycled to the same
+length as the non-scalar parameter.
+
+The model is run for $N$ stochastic realisations of each parameter set.
+Random number seeds are preserved across parameter sets, so that differences
+in outcomes in each j-th run are due to differences in parameters alone.
+}
+
+\subsection{Vector inputs for composable elements}{
+
+The \code{intervention} and \code{time_dependence} arguments also accept vectorised
+inputs in the form of lists of intervention and time dependence sets.
+Each combination of intervention and time-dependence sets is treated as a
+distinct 'scenario', and realisations of each parameter set are run for each
+scenario.
+}
+
 }
 }
 

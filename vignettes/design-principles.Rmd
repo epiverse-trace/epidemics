@@ -93,7 +93,42 @@ The notes here refer to broad decisions and not to individual models -- see indi
 
 ### Stochastic models
 
-_epidemics_ only includes a single stochastic model adapted from earlier implementations, and hence common design decisions for stochastic models are likely to be worked out only as more models are added. The input and output types correspond to the ODE model types. This model is written in R [although this may change in future](https://github.com/epiverse-trace/epidemics/issues/179).
+_epidemics_ currently includes a single discrete-time stochastic model that implements a sub-compartment system taken from @getz2018, and initially adapted in _Epirecipes_.
+Some modelling decisions are explained here, while recognising that adding more models with different implementations could see them being revisited.
+
+  - Stochastic models currently target, and are expected to target, diseases for which outbreak sizes are initially small and thus where stochasticity matters more; the typical example is Ebola virus disease (called Ebola hereon), and this is reflected in the model name.
+
+  - The Ebola model is also expected to be suitable for diseases with a high fatality risk that are detected when outbreak sizes are small, and with an isolation and treatment response comparable to Ebola, e.g. Marburg virus disease.
+ 
+  - **Note that** very different alternative implementations of stochastic models exist.
+
+  - The current implementation was chosen due to the use of Erlang sub-compartments that were felt to better represent the long-tailed distributions of infection times seen in haemorrhagic fevers like Ebola.
+
+  - The model implements a two-level structure similar to the ODE models, with `.model_ebola_internal()` the function implementing the simulation, while `model_ebola()` is the user-facing wrapper with input checks and parameter and scenario combination handling.
+   
+  - The model allows vectors for the infection parameters and the duration (called `time_end`); however the number of replicates for each parameter-scenario combination is not allowed to vary. A default of 100 was chosen as a reasonable middle ground between efficiency and realism.
+
+  - The model allows lists of intervention sets and time-dependence functions to be passed.
+
+    - Only interventions on model parameters are allowed, and interventions on social contacts are not allowed, as the model does not include age-stratification in transmission (or otherwise).
+
+    - The parameters `infectiousness_rate` (often denoted $\sigma$) and `removal_rate` (recovery or death with safe burial, $\gamma$) _cannot_ be targeted by rate interventions or time-dependence as these values determine the number of sub-compartments in the exposed and infectious (and hospitalised) compartments, respectively. These are fixed at the start of the simulation, and changing them partway is challenging to support as it would involve redistributing individuals currently in any sub-compartment into more or fewer sub-compartments.
+
+  - The model supports and defaults to multiple replicates or runs for each parameter-scenario combination.
+
+    - For any $N$ runs with a single parameter set and a single intervention set, runs will differ due to stochasticity (essentially, as different random numbers are drawn for each run).
+
+    - For any $N$ runs with multiple parameter sets and a single intervention set, runs will differ due to stochasticity _within_ parameter sets, but any differences between runs _across_ parameter sets (e.g. two different transmission rates) will be due to differences in parameter values alone.
+
+    - For multiple runs of multiple parameter-scenario combinations, differences among runs will be due to differences in parameters and composable elements (such as interventions) alone.
+
+    - The [_withr_ package](https://CRAN.R-project.org/package=withr) is used to ensure that seeds are preserved across parameter sets and interventions.
+
+  - The input and output types correspond to the ODE model types.
+  
+  - The model is written in R [although this may change in future](https://github.com/epiverse-trace/epidemics/issues/179). The main reason for keeping the implemenation in R is that the `stats::rmultinom()` function is a very efficient way of drawing from a categorical distribution (often called a discrete distribution) with heterogeneous probabilities. This [StackOverflow question from 2014](https://stackoverflow.com/questions/23097269/efficient-multinomial-sampling-when-sample-size-and-probability-vary) has more details including benchmarks against other implementations using _Rcpp_; though old, we have benchmarked a minimal example using _Boost_ and found that this information is still valid.
+
+    - One possible reason to switch at least part of the Ebola model implementation to C++ is to make use of more efficient random number generation from the GNU Scientific Library via [_RcppGSL_](https://CRAN.R-project.org/package=RcppGSL), although there may be [issues for users trying to compile from source on Windows](https://stackoverflow.com/questions/55976547/linking-gsl-libraries-to-rcppgsl-in-windows-10).
 
 ### Classes
 

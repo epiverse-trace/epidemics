@@ -193,9 +193,7 @@ model_default <- function(population,
   )
 
   # make lists if not lists
-  if (is_population(population)) {
-    population <- list(population)
-  }
+  population <- list(population) # NOTE: currently not list, but see issue #181
   if (is_lofints) {
     intervention <- list(intervention)
   }
@@ -325,7 +323,7 @@ model_default <- function(population,
   # assign time-modified param values
   model_params[names(time_dependent_params)] <- time_dependent_params
 
-  model_params <- intervention_on_rates(
+  model_params <- .intervention_on_rates(
     t = t,
     interventions = params[["rate_interventions"]],
     parameters = model_params

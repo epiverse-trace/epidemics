@@ -36,7 +36,8 @@ Imports:
     Rcpp,
     RcppEigen,
     stats,
-    utils
+    utils,
+    withr
 Suggests: 
     bench,
     bookdown,
@@ -54,8 +55,7 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     tibble,
-    tidyr,
-    withr
+    tidyr
 LinkingTo: 
     BH,
     Rcpp,

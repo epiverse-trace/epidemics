@@ -1,234 +1,593 @@
 #### Tests for the ebola model ####
 
-# prepare data
-demography_vector <- 67000
+# Prepare population and parameters
+demography_vector <- 67000 # small population
+contact_matrix <- matrix(1)
 
+# manual case counts divided by pop size rather than proportions as small sizes
+# introduce errors when converting to counts in the model code; extra
+# individuals may appear
+infectious <- 1
+exposed <- 10
+initial_conditions <- matrix(
+  c(demography_vector - infectious - exposed, exposed, infectious, 0, 0, 0) /
+    demography_vector,
+  nrow = 1
+)
+rownames(contact_matrix) <- "full_pop"
 pop <- population(
-  contact_matrix = matrix(1),
+  contact_matrix = contact_matrix,
   demography_vector = demography_vector,
-  initial_conditions = matrix(
-    c(1 - 1e-3, 1e-3 / 2, 1e-3 / 2, 0, 0, 0),
-    nrow = 1
-  )
+  initial_conditions = initial_conditions
 )
 
-# basic expectations
-test_that("Ebola model: basic expectations", {
-  # runs without issues
-  expect_no_condition(
-    model_ebola(
-      population = pop,
-      time_end = 100
-    )
-  )
+compartments <- c(
+  "susceptible", "exposed", "infectious", "hospitalised", "funeral", "removed"
+)
 
-  set.seed(1)
-  # returns a data.table
-  data <- model_ebola(
-    population = pop,
-    time_end = 200
-  )
-  expect_s3_class(
-    data, "data.frame"
-  )
-  expect_length(data, 4L)
+# prepare integer values for expectations on data length
+time_end <- 100L
+replicates <- 10L
+
+test_that("Ebola model: basic expectations, scalar arguments", {
+  # expect run with no conditions for default arguments
+  expect_no_condition(model_ebola(pop, replicates = replicates))
+
+  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
+  data <- withr::with_seed(1, model_ebola(pop, replicates = replicates))
+  expect_s3_class(data, "data.frame")
+  expect_identical(length(data), 5L) # extra column for replicate identifier
   expect_named(
-    data, c("compartment", "demography_group", "value", "time"),
+    data, c("time", "demography_group", "compartment", "value", "replicate"),
     ignore.order = TRUE
   )
-  expect_setequal(
-    unique(data$compartment),
-    c(
-      "susceptible", "exposed", "infectious",
-      "hospitalised", "funeral", "removed"
-    )
+  expect_identical(
+    nrow(data),
+    length(demography_vector) * (time_end) * length(compartments) * replicates
   )
-
-  # check for all positive values within the range 0 and total population size
+  expect_identical(unique(data$compartment), compartments)
   expect_true(
-    all(
-      data$value >= 0 & data$value <= sum(pop$demography_vector)
+    checkmate::test_numeric(
+      data$value,
+      upper = max(demography_vector), lower = 0, any.missing = FALSE
     )
   )
+  expect_identical(
+    unique(data$demography_group), rownames(pop$contact_matrix)
+  )
 
-  # check for identical numbers of individuals at start and end
-  # Note only valid for models without births and deaths
+  # expect constant population size overall and per demography-group
+  # NOTE: testing expectation for a single replicate
+  data <- data[data$replicate == 1, ]
   expect_identical(
     sum(data[data$time == min(data$time), ]$value),
     sum(data[data$time == max(data$time), ]$value),
-    tolerance = 1
+    tolerance = 1e-6
   )
-
-  # check that all age groups in the simulation are the same
-  # size as the demography vector --- here, only one age group
   final_state <- matrix(
     unlist(data[data$time == max(data$time), ]$value),
     nrow = nrow(pop$contact_matrix)
   )
   expect_identical(
-    rowSums(final_state),
-    pop$demography_vector,
-    tolerance = 1
+    rowSums(final_state), pop$demography_vector,
+    tolerance = 1e-6
   )
 
-  # snaphshot test
+  # expect snapshot is preserved; note this is a single replicate
   expect_snapshot(
-    head(data)
+    head(data, 20L)
   )
 })
 
-test_that("Higher transmission_rate leads to larger final size, ebola model", {
-  # prepare epidemic model runs with different R0 estimates
-  r0_low <- 1.3
-  r0_high <- 1.7
-  infectious_period <- 12
-  transmission_rate_vec <- c(r0_low, r0_high) / infectious_period
+# NOTE: statistical correctness is not expected to change for vectorised input
+test_that("Ebola model: statistical correctness, parameters", {
+  # expect final size increases with transmission_rate
+  size_beta_low <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, transmission_rate = 1.3 / 12, replicates = 1)
+    )
+  )
+  size_beta_high <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, transmission_rate = 1.5 / 12, replicates = 1)
+    )
+  )
+  expect_gt(size_beta_high, size_beta_low)
 
-  # get data
-  set.seed(0)
-  data <- lapply(
-    transmission_rate_vec,
-    function(beta) {
-      # run model on data
-      data <- model_ebola(
-        population = pop,
-        transmission_rate = beta,
-        time_end = 100
-      )
+  # expect final size increases with infectiousness rate (lower incubation time)
+  size_sigma_low <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, infectiousness_rate = 1 / 5, replicates = 1)
+    )
+  )
+  size_sigma_high <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, infectiousness_rate = 1 / 2, replicates = 1)
+    )
+  )
+  expect_gt(size_sigma_high, size_sigma_low)
+
+  # expect final size decreases with removal rate (fewer infection events)
+  size_gamma_low <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, removal_rate = 1 / 5, replicates = 1)
+    )
+  )
+  size_gamma_high <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, removal_rate = 1 / 2, replicates = 1)
+    )
+  )
+  expect_lt(size_gamma_high, size_gamma_low) # NOTE: expect less than!
+
+  # expect that increased ETU safety reduces final size
+  size_etu_risk_high <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, etu_risk = 0.9, replicates = 1)
+    )
+  )
+  size_etu_risk_low <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, etu_risk = 0.1, replicates = 1)
+    )
+  )
+  expect_gt(size_etu_risk_high, size_etu_risk_low)
+
+  # expect that increased hospitalisation safety reduces final size
+  size_prop_comm_high <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, prop_community = 0.9, etu_risk = 0.1, replicates = 1)
+    )
+  )
+  size_prop_comm_low <- epidemic_size(
+    withr::with_seed(
+      1, model_ebola(pop, prop_community = 0.3, etu_risk = 0.3, replicates = 1)
+    )
+  )
+  expect_gt(size_prop_comm_high, size_prop_comm_low)
+
+  # NOTE: not testing the effect of `erlang_subcompartments` as this is
+  # equivalent to testing the effect of `transmission_rate` or `removal_rate`
+  # with less reasonable variation (lower bound 1, only integer values)
+
+  # Further tests to check model mechanics: expectations on final size when
+  # specific parameters are zero
+  popsize <- 10e3
+  total_cases <- 20
+
+  population <- population(
+    contact_matrix = matrix(1),
+    demography_vector = popsize,
+    initial_conditions = matrix(
+      c(popsize - total_cases, 0, total_cases, 0, 0, 0) / popsize,
+      nrow = 1L, ncol = 6L, byrow = TRUE
+    )
+  )
+
+  # Expect hospitalisations are zero when all infections are in the community
+  data <- model_ebola(
+    population = population, prop_community = 1.0, replicates = 1
+  )
+  expect_identical(
+    unique(data[data$compartment == "hospitalised", ]$value), 0
+  )
+
+  # Expect that full ETU safety leads to a fixed final size == total_cases
+  # create a dummy population where all individuals are hospitalised
+  popsize <- 10e3
+  total_cases <- 20
+
+  population <- population(
+    contact_matrix = matrix(1),
+    demography_vector = popsize,
+    initial_conditions = matrix(
+      c(popsize - total_cases, 0, 0, total_cases, 0, 0) / popsize,
+      nrow = 1L, ncol = 6L, byrow = TRUE
+    )
+  )
+  data <- model_ebola(
+    population = population, prop_community = 0, etu_risk = 0, replicates = 1
+  )
+  expect_equal(
+    epidemic_size(data), total_cases,
+    ignore_attr = TRUE
+  )
+
+  # Expect that full funeral safety leads to a fixed final size == total_cases
+  # create a population with only funeral infections possible
+  population <- population(
+    contact_matrix = matrix(1),
+    demography_vector = popsize,
+    initial_conditions = matrix(
+      c(popsize - total_cases, 0, 0, 0, total_cases, 0) / popsize,
+      nrow = 1L, ncol = 6L, byrow = TRUE
+    )
+  )
+  data <- model_ebola(
+    population = population, prop_community = 1,
+    funeral_risk = 0, replicates = 1
+  )
+  expect_equal(
+    epidemic_size(data), total_cases,
+    ignore_attr = TRUE
+  )
+})
+
+# prepare baseline for comparison of against intervention scenarios
+data_baseline <- withr::with_seed(1, model_ebola(pop, replicates = 1))
+
+test_that("Ebola model: rate interventions", {
+  intervention_01 <- intervention(
+    "mask_mandate", "rate", 0, time_end, 0.5
+  )
+  intervention_02 <- intervention(
+    "mask_mandate", "rate", time_end / 2, time_end, 0.1
+  )
+  intervention <- c(intervention_01, intervention_02)
+
+  # repeat some basic checks from default case with no intervention
+  # expect run with no conditions for default arguments
+  expect_no_condition(
+    model_ebola(
+      pop,
+      intervention = list(transmission_rate = intervention)
+    )
+  )
+
+  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
+  data <- withr::with_seed(
+    1,
+    model_ebola(
+      pop,
+      intervention = list(transmission_rate = intervention),
+      replicates = 1
+    )
+  )
+  expect_s3_class(data, "data.frame")
+  expect_identical(length(data), 5L) # replicates column expected
+
+  # expect final size is lower with intervention
+  expect_gt(epidemic_size(data_baseline), epidemic_size(data))
+})
+
+test_that("Ebola model: time dependence", {
+  # expect time dependence is correctly handled
+  time_dependence <- list(
+    transmission_rate = function(time, x, t_change = time_end / 2) {
+      ifelse(time > t_change, x / 2, x)
+    },
+    # hospitalisation increases, and prop_community decreases by 50%
+    prop_community = function(time, x, t_change = time_end / 2) {
+      ifelse(time > t_change, x * 0.5, x)
     }
   )
 
-  # get final size as total removed
-  final_sizes <- lapply(data, epidemic_size)
-
-  # test for effect of R0
-  expect_true(
-    all(final_sizes[["r0_high"]] > final_sizes[["r0_low"]])
-  )
-})
-
-#### Correctness of the ebola model ####
-# the Ebola model is stochastic, but can be tested by setting some parameters
-# and applying certain interventions
-# prepare population size and object
-popsize <- 10e3
-total_cases <- 20
-
-population <- population(
-  name = "dummy population",
-  contact_matrix = matrix(1),
-  demography_vector = 10e3,
-  initial_conditions = matrix(
-    c(popsize - total_cases, 10, 10, 0, 0, 0) / popsize,
-    nrow = 1L, ncol = 6L,
-    byrow = TRUE
-  )
-)
-
-# Ebola model with interventions that prevent any transmission
-test_that("Ebola model works with rate interventions", {
-  intervention <- list(
-    transmission_rate = intervention(
-      type = "rate",
-      time_begin = 1, time_end = 100, reduction = 1
-    )
+  # repeat some basic checks from default case with no time_dependence
+  # expect run with no conditions for default arguments
+  expect_no_condition(
+    model_ebola(pop, time_dependence = time_dependence)
   )
 
-  # ideally no conditions are triggered
-  data <- model_ebola(
-    population = population,
-    intervention = intervention,
-    time_end = 100
+  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
+  data <- withr::with_seed(
+    1,
+    model_ebola(pop, time_dependence = time_dependence, replicates = 1)
   )
-
-  # expect basic outcomes
   expect_s3_class(data, "data.frame")
-  expect_length(data, 4L)
-  expect_named(
-    data, c("compartment", "demography_group", "value", "time"),
-    ignore.order = TRUE
+  expect_identical(length(data), 5L)
+
+  # expect final size is lower with intervention
+  expect_gt(epidemic_size(data_baseline), epidemic_size(data))
+})
+
+test_that("Ebola model: errors and warnings, scalar arguments", {
+  # expect errors on basic input checking
+  expect_error(
+    model_ebola(population = "population"),
+    regexp = "(Assertion on 'population' failed)*(Must inherit)*(population)"
   )
-  expect_setequal(
-    unique(data$compartment),
-    c(
-      "susceptible", "exposed", "infectious",
-      "hospitalised", "funeral", "removed"
+  expect_error(
+    model_ebola(population = population),
+    regexp = "(Assertion on 'population' failed)*(Must inherit)*(population)"
+  )
+  pop_wrong_compartments <- pop
+  pop_wrong_compartments$initial_conditions <- initial_conditions[, -1]
+  expect_error(
+    model_ebola(pop_wrong_compartments),
+    regexp = "(Assertion on)*(initial_conditions)*failed"
+  )
+
+  # expect errors for infection parameters
+  expect_error(
+    model_ebola(pop, transmission_rate = "0.19"),
+    regexp = "Must be of type 'numeric'"
+  )
+  expect_error(
+    model_ebola(pop, infectiousness_rate = list(0.2)),
+    regexp = "Must be of type 'numeric'"
+  )
+  expect_error(
+    model_ebola(pop, removal_rate = "0.19"),
+    regexp = "Must be of type 'numeric'"
+  )
+  expect_error(
+    model_ebola(pop, erlang_subcompartments = "2"),
+    regexp = "Must be of type 'integerish"
+  )
+  expect_error(
+    model_ebola(pop, erlang_subcompartments = 2.5),
+    regexp = "Must be of type 'integerish"
+  )
+  expect_error(
+    model_ebola(pop, prop_community = 1.01),
+    regexp = "not <= 1"
+  )
+  expect_error(
+    model_ebola(pop, funeral_risk = "1.01"),
+    regexp = "Must be of type 'numeric'"
+  )
+  expect_error(
+    model_ebola(pop, etu_risk = 1.01),
+    regexp = "not <= 1"
+  )
+  # NOTE: further checks on parameter type are ommitted here.
+
+  # expect error on time parameters
+  expect_error(
+    model_ebola(pop, time_end = "100"),
+    regexp = "Must be of type 'integerish'"
+  )
+  expect_error(
+    model_ebola(pop, time_end = 100.5),
+    regexp = "Must be of type 'integerish'"
+  )
+  expect_error(
+    model_ebola(pop, time_end = c(100, -100, 10)),
+    regexp = "(Element)*(is not >= 0)"
+  )
+  expect_error(
+    model_ebola(pop, replicates = "0.1"),
+    regexp = "Must be of type 'count'"
+  )
+  expect_error(
+    model_ebola(pop, replicates = c(10, 20)),
+    regexp = "Must have length 1"
+  )
+
+  # expect error on poorly specified interventions
+  intervention <- intervention(
+    "school_closure", "contacts", 0, time_end, 0.5 # no contacts_interventions
+  )
+  expect_error(
+    model_ebola(
+      pop,
+      intervention = list(contacts = intervention)
     )
   )
 
-  # expect epidemiological correctness
-  # epidemic size is the same as `total_cases` for the rate intervention
-  # which completely stops transmission
-  expect_equal(
-    epidemic_size(data),
-    total_cases,
-    ignore_attr = TRUE
+  # expect error on poorly specified time-dependence function list
+  expect_error(
+    model_ebola(
+      pop,
+      time_dependence = function(x) x
+    ),
+    regexp = "Must be of type 'list'"
+  )
+  expect_error(
+    model_ebola(
+      pop,
+      time_dependence = list(function(x) x)
+    ),
+    regexp = "Must have names"
+  )
+  expect_error(
+    model_ebola(
+      pop,
+      time_dependence = list(transmission_rate = function(x) x)
+    ),
+    regexp = "Must have first formal arguments \\(ordered\\): time,x."
+  )
+  expect_error(
+    model_ebola(
+      pop,
+      time_dependence = list(transmission_rate = NULL)
+    ),
+    regexp = "Contains missing values"
   )
 })
 
-# test that hospitalisations work
-test_that("Ebola model with hospitalisation", {
-  data <- model_ebola(
-    population = population,
-    prop_community = 1.0,
-    time_end = 100
+# prepare vectors of parameters
+beta <- rnorm(10, 1.3 / 7, sd = 0.01)
+sigma <- rnorm(10, 0.5, sd = 0.01)
+gamma <- rnorm(10, 1 / 7, sd = 0.01)
+
+test_that("Ebola model: infection parameters as vectors", {
+  # expect no conditions when vectors are passed
+  expect_no_condition(
+    model_ebola(
+      pop,
+      transmission_rate = beta, infectiousness_rate = sigma,
+      removal_rate = gamma, replicates = 1
+    )
   )
-  # expect that there are no hospitalisations
+  # expect output structure is a nested data.table
+  output <- model_ebola(
+    pop,
+    transmission_rate = beta, infectiousness_rate = sigma,
+    removal_rate = gamma, replicates = 1
+  )
+  expect_s3_class(output, c("data.frame", "data.table"))
+  expect_identical(nrow(output), length(beta))
+  expect_identical(output$transmission_rate, beta)
+  checkmate::expect_list(output$data, types = "data.frame", any.missing = FALSE)
+
+  # expect `parameter_set` and `scenario` are correctly filled
+  expect_identical(output$param_set, seq_along(beta))
+  expect_identical(unique(output$scenario), 1L)
+
+  # expect list column of interventions and vaccination
+  checkmate::expect_list(
+    output$population,
+    types = "population", any.missing = FALSE
+  )
+  checkmate::expect_list(
+    output$intervention,
+    types = c("list", "null")
+  )
+  checkmate::expect_list(
+    output$time_dependence,
+    types = c("list", "null"), any.missing = FALSE
+  )
+})
+
+test_that("Ebola model: composable elements as lists", {
+  # expect no conditions when multiple interventions are passed
+  # NOTE: only rate interventions are allowed
+  npi_list <- list(
+    scenario_baseline = NULL,
+    scenario_01 = list(
+      transmission_rate = intervention(
+        "mask_mandate", "rate", 0, time_end, 0.5
+      )
+    ),
+    scenario_02 = list(
+      transmission_rate = intervention(
+        "mask_mandate", "rate", 0, time_end, 0.5
+      ),
+      etu_risk = intervention(
+        "better_isolation", "rate", time_end / 2, time_end, 0.5
+      )
+    )
+  )
+
+  expect_no_condition(
+    model_ebola(pop, intervention = npi_list, replicates = 10)
+  )
+
+  # expect output is a nested data.frame-like object
+  output <- model_ebola(pop, intervention = npi_list, replicates = 10)
+  expect_s3_class(output, c("data.frame", "data.table"))
+  expect_identical(nrow(output), length(npi_list))
+  checkmate::expect_list(output$data, types = "data.frame", any.missing = FALSE)
+
+  # expect `parameter_set` and `scenario` are correctly filled
+  expect_identical(output$scenario, seq_along(npi_list))
+  expect_identical(unique(output$param_set), 1L)
+
+  # expect list column of interventions and vaccination
+  checkmate::expect_list(
+    output$population,
+    types = "population", any.missing = FALSE
+  )
+  # some interventions may be missing
+  checkmate::expect_list(
+    output$intervention,
+    types = c("list", "null")
+  )
+  checkmate::expect_list(
+    output$time_dependence,
+    types = c("list", "null")
+  )
+})
+
+test_that("Ebola model: multi-parameter, multi-composables", {
+  # expect no conditions when multiple interventions or vaccinations are passed
+  npi_list <- list(
+    scenario_baseline = NULL,
+    scenario_01 = list(
+      transmission_rate = intervention(
+        "mask_mandate", "rate", 0, time_end, 0.5
+      )
+    ),
+    scenario_02 = list(
+      transmission_rate = intervention(
+        "mask_mandate", "rate", 0, time_end, 0.5
+      ),
+      etu_risk = intervention(
+        "better_isolation", "rate", time_end / 2, time_end, 0.5
+      )
+    )
+  )
+
+  # reuse parameter sets from earlier tests
+  expect_no_condition(
+    model_ebola(
+      pop,
+      transmission_rate = beta, removal_rate = gamma,
+      intervention = npi_list,
+      replicates = 10
+    )
+  )
+
+  # expect output is a nested data.frame-like object
+  output <- model_ebola(
+    pop,
+    transmission_rate = beta, removal_rate = gamma,
+    intervention = npi_list, replicates = 10
+  )
+  expect_s3_class(output, c("data.frame", "data.table"))
+  expect_identical(nrow(output), length(npi_list) * length(beta))
+  checkmate::expect_list(output$data, types = "data.frame", any.missing = FALSE)
+
+  # expect `parameter_set` and `scenario` are correctly filled
   expect_identical(
-    unique(data[data$compartment == "hospitalised", ]$value),
-    0
+    output$scenario, rep(seq_along(npi_list), length(beta))
+  )
+  expect_identical(unique(output$param_set), seq_along(beta))
+  expect_identical(
+    output$param_set, rep(seq_along(beta), each = length(npi_list))
   )
 
-  # ebola model with full ETU safety leads to a fixed final size
-  population <- population(
-    name = "dummy population",
-    contact_matrix = matrix(1),
-    demography_vector = 10e3,
-    initial_conditions = matrix(
-      # all infectious are in hospital, no exposed
-      c(popsize - total_cases, 0, 0, total_cases, 0, 0) / popsize,
-      nrow = 1L, ncol = 6L,
-      byrow = TRUE
-    )
+  # expect list column of interventions and vaccination
+  checkmate::expect_list(
+    output$population,
+    types = "population", any.missing = FALSE
   )
-
-  # expect that the final size is the same as `total_cases` (20)
-  data <- model_ebola(
-    population = population,
-    prop_community = 0, etu_risk = 0,
-    time_end = 100
+  # some interventions or vaccinations may be missing
+  checkmate::expect_list(
+    output$intervention,
+    types = c("list", "null"), any.missing = TRUE
   )
-  expect_equal(
-    epidemic_size(data),
-    total_cases,
-    ignore_attr = TRUE
+  checkmate::expect_list(
+    output$time_dependence,
+    types = c("list", "null"), any.missing = FALSE
   )
 })
 
-# test that funeral safety works
-test_that("Ebola model with funeral safety", {
-  # ebola model with full funeral safety leads to a fixed final size
-  population <- population(
-    name = "dummy population",
-    contact_matrix = matrix(1),
-    demography_vector = 10e3,
-    initial_conditions = matrix(
-      # multiple ebola-related funerals, no other infectious or exposed
-      c(popsize - total_cases, 0, 0, 0, total_cases, 0) / popsize,
-      nrow = 1L, ncol = 6L,
-      byrow = TRUE
-    )
+test_that("Ebola model: errors on vectorised input", {
+  # expect errors on poorly specified vector inputs
+  expect_error(
+    model_ebola(
+      pop,
+      transmission_rate = beta[-1], removal_rate = gamma
+    ),
+    regexp = "All parameters must be of the same length, or must have length 1"
+  )
+  expect_error(
+    model_ebola(
+      pop,
+      intervention = list(
+        NULL,
+        list(dummy = intervention)
+      )
+    ),
+    regexp =
+      "`intervention` must be a list of <rate_intervention> or a list of such"
   )
 
-  # expect that the final size is the same as `total_cases` (20)
-  data <- model_ebola(
-    population = population,
-    prop_community = 1, funeral_risk = 0,
-    time_end = 100
-  )
-  expect_equal(
-    epidemic_size(data),
-    total_cases,
-    ignore_attr = TRUE
+  # expect time-dependence cannot be vectorised
+  expect_error(
+    model_ebola(
+      pop,
+      time_dependence = list(
+        time_dep_01 = list(
+          transmission_rate = function(x) x
+        ),
+        time_dep_02 = list(
+          transmission_rate = function(x) x
+        )
+      )
+    ),
+    regexp = "May only contain the following types: \\{function\\}"
   )
 })

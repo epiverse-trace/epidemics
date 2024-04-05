@@ -787,13 +787,13 @@ intervention_on_cm <- function(t, cm, time_begin, time_end, cr) {
 #' @keywords internal
 #'
 #' @return
-#' `cumulative_rate_intervention()` returns a number of the proportion
+#' `.cumulative_rate_intervention()` returns a number of the proportion
 #' reduction in a model rate parameter.
 #'
 #' `intervention_on_cm()` returns the contact matrix `cm` scaled by the
 #' cumulative effect of any active interventions.
 #'
-cumulative_rate_intervention <- function(t, time_begin, time_end, reduction) {
+.cumulative_rate_intervention <- function(t, time_begin, time_end, reduction) {
   # determine which interventions are active, promote to numeric
   interventions_active <- as.vector(t > time_begin & t < time_end)
 
@@ -820,11 +820,11 @@ cumulative_rate_intervention <- function(t, time_begin, time_end, reduction) {
 #' \eqn{\beta}, or the recovery rate, \eqn{\gamma}.
 #' @return A named list of the same length as `parameters`, with the same names.
 #' These parameters can then be used in a timestep of an ODE model.
-intervention_on_rates <- function(t, interventions, parameters) {
+.intervention_on_rates <- function(t, interventions, parameters) {
   new_values <- Map(
     interventions, names(interventions),
     f = function(interv, name) {
-      effect <- cumulative_rate_intervention(
+      effect <- .cumulative_rate_intervention(
         t = t,
         time_begin = interv[["time_begin"]], time_end = interv[["time_end"]],
         reduction = interv[["reduction"]]

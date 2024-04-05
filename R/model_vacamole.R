@@ -380,7 +380,7 @@ model_vacamole <- function(population,
   # assign time-modified param values
   model_params_primary[names(time_dependent_params)] <- time_dependent_params
 
-  model_params_primary <- intervention_on_rates(
+  model_params_primary <- .intervention_on_rates(
     t = t,
     interventions = params[["rate_interventions"]],
     parameters = model_params_primary

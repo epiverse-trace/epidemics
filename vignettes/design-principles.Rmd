@@ -96,7 +96,7 @@ The notes here refer to broad decisions and not to individual models -- see indi
 _epidemics_ currently includes a single discrete-time stochastic model that implements a sub-compartment system taken from @getz2018, and initially adapted in _Epirecipes_.
 Some modelling decisions are explained here, while recognising that adding more models with different implementations could see them being revisited.
 
-  - Stochastic models currently target, and are expected to target, diseases for which outbreak sizes are initially small and thus where stochasticity matters more; the typical example is Ebola virus disease (called Ebola hereon), and this is reflected in the model name.
+  - Stochastic models currently target, and are expected to target, diseases for which outbreak sizes are initially small and thus where stochasticity matters more; the typical example is Ebola virus disease (simply, Ebola), and this is reflected in the model name.
 
   - The Ebola model is also expected to be suitable for diseases with a high fatality risk that are detected when outbreak sizes are small, and with an isolation and treatment response comparable to Ebola, e.g. Marburg virus disease.
  
@@ -126,7 +126,7 @@ Some modelling decisions are explained here, while recognising that adding more 
 
   - The input and output types correspond to the ODE model types.
   
-  - The model is written in R [although this may change in future](https://github.com/epiverse-trace/epidemics/issues/179). The main reason for keeping the implemenation in R is that the `stats::rmultinom()` function is a very efficient way of drawing from a categorical distribution (often called a discrete distribution) with heterogeneous probabilities. This [StackOverflow question from 2014](https://stackoverflow.com/questions/23097269/efficient-multinomial-sampling-when-sample-size-and-probability-vary) has more details including benchmarks against other implementations using _Rcpp_; though old, we have benchmarked a minimal example using _Boost_ and found that this information is still valid.
+  - The model is written in R [although this may change in future](https://github.com/epiverse-trace/epidemics/issues/179). The main reason for keeping the implementation in R is that the `stats::rmultinom()` function is a very efficient way of drawing from a categorical distribution (often called a discrete distribution) with heterogeneous probabilities. This [StackOverflow question from 2014](https://stackoverflow.com/questions/23097269/efficient-multinomial-sampling-when-sample-size-and-probability-vary) has more details including benchmarks against other implementations using _Rcpp_; though old, we have benchmarked a minimal example using _Boost_ and found that this information is still valid.
 
     - One possible reason to switch at least part of the Ebola model implementation to C++ is to make use of more efficient random number generation from the GNU Scientific Library via [_RcppGSL_](https://CRAN.R-project.org/package=RcppGSL), although there may be [issues for users trying to compile from source on Windows](https://stackoverflow.com/questions/55976547/linking-gsl-libraries-to-rcppgsl-in-windows-10).
 
@@ -178,6 +178,7 @@ The aim is to restrict the number of hard dependencies while maintaining user-fr
 - [_Rcpp_](https://CRAN.R-project.org/package=Rcpp): provides linking between C++ and R;
 - [_RcppEigen_](https://CRAN.R-project.org/package=RcppEigen): provides matrix classes suitable for use with Boost _odeint_;
 - [_BH_](https://CRAN.R-project.org/package=BH): provides the Boost _odeint_ ODE solvers;
+- [_withr_](https://CRAN.R-project.org/package=withr): for seed management;
 - _stats_ and _utils_: already installed with R, and used only in the Ebola model, and hence liable to be removed in the future.
 
 A wider range of packages are taken on as soft dependencies to make the vignettes more user-friendly.
@@ -190,8 +191,7 @@ A wider range of packages are taken on as soft dependencies to make the vignette
 - [_ggplot2_](https://CRAN.R-project.org/package=ggplot2), [_scales_](https://CRAN.R-project.org/package=scales), [_colorspace_](https://CRAN.R-project.org/package=colorspace): packages for plotting;
 - [_socialmixr_](https://CRAN.R-project.org/package=socialmixr): to obtain social contacts matrices;
 - [_spelling_](https://CRAN.R-project.org/package=spelling): for spell-checking;
-- [_testthat_](https://CRAN.R-project.org/package=testthat) (>= 3.0.0): for unit tests;
-- [_withr_](https://CRAN.R-project.org/package=withr): for seed management.
+- [_testthat_](https://CRAN.R-project.org/package=testthat) (>= 3.0.0): for unit tests.
 
 ## Contribute
 

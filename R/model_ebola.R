@@ -490,14 +490,6 @@ model_ebola <- function(population,
   # count number of infectious sub-compartments
   n_infectious_boxcars <- length(infectious_boxcar_rates)
 
-  # Prepare data matrix and assign initial state
-  sim_data <- matrix(
-    NA_integer_,
-    nrow = time_end, ncol = length(compartments)
-  )
-  colnames(sim_data) <- compartments
-  sim_data[1, ] <- initial_state # at time = 1
-
   # place `transmission_rate` in list for rate_interventions function
   parameters <- list(
     transmission_rate = transmission_rate,
@@ -512,8 +504,14 @@ model_ebola <- function(population,
   # NOTE: Seed preservation could also be implemented one level up, but might be
   # more difficult to understand in context
   output_runs <- lapply(seq_len(replicates), function(xi_) {
-    # NOTE: the original ebola model code continues here, but is simply
-    # wrapped in seed preservation code.
+    # NOTE: the original ebola model code continues here
+    # Prepare data matrix and assign initial state
+    sim_data <- matrix(
+      NA_integer_,
+      nrow = time_end, ncol = length(compartments)
+    )
+    colnames(sim_data) <- compartments
+    sim_data[1, ] <- initial_state # at time = 1
 
     # Get a small random number for use with the hospitalisation functionality
     # save function calls by reusing the vector of values

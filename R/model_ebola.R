@@ -432,17 +432,15 @@ model_ebola <- function(population,
   # call the internal function on all elements of the list args
   # NOTE: using internal seed preservation to ensure parameter sets use
   # identical random number streams
-  model_output[, "data" := lapply(args, function(l) {
-    do.call(.model_ebola_internal, l)
+  # NOTE: call to `.model_ebola_internal()` wrapped in `.output_to_df_ebola()`
+  # as separating them leads to unexpected list column structure when using `:=`
+  model_output[, "data" := Map(args, population, f = function(l, p) {
+    .output_to_df_ebola(
+      output = do.call(.model_ebola_internal, l),
+      population = p, # from local scope within data.table
+      compartments = compartments
+    )
   })]
-
-  # convert the raw data to output
-  model_output[, "data" := Map(
-    data, population,
-    f = function(df, pop) {
-      .output_to_df_ebola(df, pop, compartments)
-    }
-  )]
 
   # remove temporary arguments
   model_output$args <- NULL
@@ -671,11 +669,6 @@ model_ebola <- function(population,
     })
   })
 
-  # return replicates data
-  # if there is only one replicate, wrap in a list
-  if (length(output_runs) == 1) {
-    list(output_runs)
-  } else {
-    output_runs
-  }
+  # return output runs
+  output_runs
 }

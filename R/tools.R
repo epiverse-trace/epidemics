@@ -144,25 +144,25 @@
     tmp_intervention[["contacts"]] <- .no_contacts_intervention(population)
   }
   if (is.null(x)) {
-    return(tmp_intervention)
+    tmp_intervention
+  } else {
+    # check that interventions are on allowed targets
+    # these are typically "contacts" and some infection parameters
+    checkmate::assert_names(names(x), subset.of = allowed_targets)
+
+    # check that contact interventions are suitable for population
+    if ("contacts" %in% names(x)) {
+      assert_intervention(x[["contacts"]], "contacts", population)
+    }
+    # check class of other intervention objects
+    invisible(
+      lapply(x[names(x) != "contacts"], assert_intervention, type = "rate")
+    )
+
+    # replace dummy values with user values if avaialable, and return
+    tmp_intervention[names(x)] <- x
+    tmp_intervention
   }
-
-  # check that interventions are on allowed targets
-  # these are typically "contacts" and some infection parameters
-  checkmate::assert_names(names(x), subset.of = allowed_targets)
-
-  # check that contact interventions are suitable for population
-  if ("contacts" %in% names(x)) {
-    assert_intervention(x[["contacts"]], "contacts", population)
-  }
-  # check class of other intervention objects
-  invisible(
-    lapply(x[names(x) != "contacts"], assert_intervention, type = "rate")
-  )
-
-  # replace dummy values with user values if avaialable, and return
-  tmp_intervention[names(x)] <- x
-  tmp_intervention
 }
 
 #' Cross-check a `<vaccination>`

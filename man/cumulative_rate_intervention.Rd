@@ -2,9 +2,10 @@
 % Please edit documentation in R/intervention.R
 \name{cumulative_rate_intervention}
 \alias{cumulative_rate_intervention}
+\alias{.cumulative_rate_intervention}
 \title{Calculate the Cumulative Effect of Interventions on Rate Parameters}
 \usage{
-cumulative_rate_intervention(t, time_begin, time_end, reduction)
+.cumulative_rate_intervention(t, time_begin, time_end, reduction)
 }
 \arguments{
 \item{t}{The current time.}
@@ -21,7 +22,7 @@ overlap, the proportions are \emph{added}, for a maximum possible value of 1.0
 (i.e., rate set to zero).}
 }
 \value{
-\code{cumulative_rate_intervention()} returns a number of the proportion
+\code{.cumulative_rate_intervention()} returns a number of the proportion
 reduction in a model rate parameter.
 
 \code{intervention_on_cm()} returns the contact matrix \code{cm} scaled by the

@@ -94,7 +94,7 @@ See \strong{Details} for more information.
 \section{Details: SEIRV model suitable for directly transmitted infections}{
 \subsection{Model parameters}{
 
-This model only allows for single, populatio n-wide rates of
+This model only allows for single, population-wide rates of
 transitions between compartments per model run.
 
 However, model parameters may be passed as numeric vectors. These vectors

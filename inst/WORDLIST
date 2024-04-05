@@ -39,6 +39,7 @@ Kutupalong
 LMIC
 Leeuwen
 Leung
+Marburg
 Melker
 Minh
 Miura
@@ -49,7 +50,6 @@ ODEs
 ORCID
 Odeint
 Ottar
-PRs
 Pannell
 Pieter
 RIVM
@@ -57,6 +57,7 @@ RTools
 Rcpp
 RcppArmadillo
 RcppEigen
+RcppGSL
 RcppXPtrUtils
 Runge
 SEI
@@ -67,13 +68,13 @@ SEIRS
 SEIRV
 Shou
 Siddiqui
+StackOverflow
 Susceptibles
 Tidyverse
 Tildesley
 VV
 Vacamole
 WIP
-Walkthrough
 Wallinga
 analogs
 bookdown

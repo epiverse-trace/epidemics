@@ -591,3 +591,103 @@ test_that("Ebola model: errors on vectorised input", {
     regexp = "May only contain the following types: \\{function\\}"
   )
 })
+
+test_that("Ebola model: seed management", {
+  # Seed management across parameter combinations
+  # NOTE: Set up N replicates of M parameter values (creating M sets), and
+  # vary parameters such that there is no real effect.
+  # (e.g. vary etu_risk with no hospitalisations), allowing tests of equality.
+  # NOTE: tests should pass without explicit external seed management
+  data <- model_ebola(
+    population = pop,
+    transmission_rate = 3 / 12, # increased to have more variation in t = 2
+    prop_community = 1.0,
+    etu_risk = c(0.9, 0.8),
+    replicates = 2 # minimum required, easier to handle
+  )
+  data <- data$data # extract model timeseries
+
+  # expect that outcomes are identical _across_ parameter sets
+  data_param_sets <- lapply(data, function(df) {
+    split(df[time == max(time), ], by = "replicate")
+  })
+  expect_true(
+    Reduce(identical, data_param_sets)
+  )
+
+  # expect that outcomes vary _within_ parameter sets
+  # NOTE: this could probably be cleaned up
+  expect_false(
+    all(
+      vapply(data_param_sets, FUN = function(l) {
+        # remove replicate identifier
+        l <- lapply(l, function(df) {
+          df$replicate <- NULL
+          df
+        })
+        Reduce(identical, l)
+      }, FUN.VALUE = logical(1))
+    )
+  )
+
+  # Seed management across intervention scenarios
+  # NOTE: Set up N replicates of M intervention sets (creting M scenarios),
+  # structured so that scenarios are initially similar, and then vary due to
+  # intervention
+  # (e.g. reduce transmission after t = threshold), allowing tests of equality
+  # in early stages but differences in later stages
+  # NOTE: tests should pass without explicit external seed management
+  npi_list <- list(
+    scenario_baseline = NULL,
+    scenario_01 = list(
+      transmission_rate = intervention(
+        "transmission", "rate", 50, 100, 1.0
+      )
+    ),
+    scenario_02 = list(
+      transmission_rate = intervention(
+        "transmission", "rate", 50, 100, 1.0
+      )
+    )
+  )
+  output <- model_ebola(
+    population = pop,
+    intervention = npi_list,
+    replicates = 3L, # replicates
+    time_end = time_end
+  )
+  data <- output$data
+
+  # expect that early outcomes are identical _across_ scenarios
+  data_early <- lapply(data, function(df) {
+    split(df[time == 10L], by = "replicate")
+  })
+
+  # TODO: fix this test
+  expect_true(
+    Reduce(identical, data_early)
+  )
+
+  # expect that early outcomes varying within scenarios
+  expect_false(
+    all(
+      vapply(data_early, FUN = function(l) {
+        # remove replicate identifier
+        l <- lapply(l, function(df) {
+          df$replicate <- NULL
+          df
+        })
+        Reduce(identical, l)
+      }, FUN.VALUE = logical(1))
+    )
+  )
+
+  # expect that late outcomes are identical _across_ parameter sets
+  data_late <- lapply(data, function(df) {
+    split(df[time > max(time) - 5L], by = "replicate")
+  })
+
+  expect_false(
+    Reduce(identical, data_early)
+  )
+})

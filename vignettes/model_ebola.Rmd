@@ -38,14 +38,15 @@ This is often the case with outbreaks of infections such as Ebola virus disease 
 _epidemics_ includes a discrete time, stochastic compartmental model of ebola based on a consensus model presented in @li2019, with six compartments --- susceptible, exposed, infectious, hospitalised, funeral, and removed.
 The transitions between compartments are based on an Erlang model developed by @getz2018 for the 2014 West African EVD outbreak, with the code adapted from [Epirecipes](http://epirecip.es/epicookbook/chapters/erlang/r).
 
-The model does not include demographic variation in contacts, as ebola spreads primarily among contacts caring for infected individuals, making age or demographic structure less important.
-
-This model can currently accommodate interventions on model rates only (as there are no demographic groups for contacts interventions).
+The model allows easily running multiple replicates, accepts infection parameter vectors to help model parameter uncertainty, and can accept lists of intervention sets to model response scenarios.
 
 ```{r setup}
 # some initial setup to load necessary packages
 library(epidemics)
 library(dplyr)
+library(purrr)
+library(tidyr)
+library(withr)
 library(ggplot2)
 ```
 
@@ -111,20 +112,21 @@ This can also be interpreted as the proportion of funerals that are ebola-safe.
 ## Run epidemic model
 
 We run the model using the function `model_ebola()`.
-While there is a C++ equivalent of this model, it was not found to be much faster than the R-only version, and is not made available to users.
 
-The model is run for 100 days, with data reported on each day.
+The model is run for 100 days (the default), with data reported on each day.
 This is an appropriate period over which to obtain initial predictions for the outbreak, and after which response efforts such as non-pharmaceutical interventions and vaccination campaigns are likely to be launched to bring the outbreak under control.
 
-```{r}
-# set seed to get consistent results
-set.seed(0)
+The function automatically runs 100 replicates (stochastic realisations) as a default, and this can be changed using the `replicates` argument.
 
+```{r}
+# run with a pre-set seed for consisten results
 # run the epidemic model using `epidemic`
 # we call the model "ebola" from the library
-data <- model_ebola(
-  population = guinea_population,
-  time_end = 100
+data <- withr::with_seed(
+  1,
+  model_ebola(
+    population = guinea_population
+  )
 )
 
 # view the head of the output
@@ -135,124 +137,57 @@ head(data)
 
 We plot the ebola epidemic over time, showing the number of individuals exposed and infectious.
 
-```{r class.source = 'fold-hide', fig.cap="Model results from a single run showing the number of individuals in the exposed and infectious compartments over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others."}
+```{r class.source = 'fold-hide', fig.cap="Model results from a single run showing the epidemic size over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others. Grey lines show 100 stochastic realisations or model replicates."}
 # plot figure of epidemic curve
-filter(data, compartment %in% c("exposed", "infectious")) %>%
+filter(data, compartment == "removed") %>%
   ggplot(
     aes(
-      x = time,
-      y = value,
-      colour = compartment
+      x = time, y = value
     )
   ) +
-  geom_line() +
+  geom_line(aes(group = replicate), linewidth = 0.2, colour = "grey") +
+  stat_summary(
+    fun.min = function(x) quantile(x, 0.025),
+    fun.max = function(x) quantile(x, 0.975),
+    geom = "ribbon", fill = "red", alpha = 0.2
+  ) +
+  stat_summary(geom = "line") +
   scale_y_continuous(
     labels = scales::comma
   ) +
-  scale_colour_brewer(
-    palette = "Dark2",
-    name = NULL,
-    labels = c("Exposed", "Infectious")
-  ) +
   expand_limits(
-    x = c(0, 101)
+    x = c(0, 101),
+    y = c(-10, NA)
   ) +
+  coord_cartesian(expand = FALSE) +
   theme_bw() +
   theme(
     legend.position = "top"
   ) +
   labs(
     x = "Simulation time (days)",
-    linetype = "Compartment",
-    y = "Individuals"
+    y = "Outbreak size"
   )
 ```
 
-## Consensus estimates from multiple model iterations
-
-Since the ebola model is a stochastic one, model results will vary in each run.
-We can run the model multiple times --- here, 100 times --- and plot the number of infectious people, to get a consensus idea of what an ebola outbreak might look like.
-
-```{r}
-# set seed for consistent output
-set.seed(1)
-
-# run the simulation 100 times
-data <- lapply(
-  X = seq(100),
-  FUN = function(x) {
-    data <- model_ebola(
-      population = guinea_population,
-      time_end = 100
-    )
-
-    # add replicate number and return data
-    data$replicate <- x
-    data
-  }
-)
-
-# use data.table to collect the data
-data_timeseries <- bind_rows(data)
-```
-
-We plot the data.
-
-```{r class.source = 'fold-hide', fig.cap="Model results from 100 runs showing the number of individuals in the infectious compartments over 100 days of each outbreak. All models assume that 1 initially infectious person has exposed 10 others. A simple summary using the mean (black line with standard error as shaded red regions), plotted over the individual model runs (grey) show that there can be wide variation in individual outbreak trajectories."}
-filter(data_timeseries, compartment == "infectious") %>%
-  ggplot() +
-  geom_line(
-    aes(time, value, group = replicate),
-    alpha = 0.3, colour = "grey50"
-  ) +
-  stat_summary(
-    aes(time, value),
-    geom = "ribbon",
-    fill = "red", alpha = 0.5
-  ) +
-  stat_summary(
-    aes(time, value),
-    geom = "line"
-  ) +
-  scale_y_continuous(
-    labels = scales::comma
-  ) +
-  expand_limits(
-    x = c(0, 101)
-  ) +
-  coord_cartesian(
-    expand = FALSE
-  ) +
-  theme_bw() +
-  theme(
-    legend.position = "top"
-  ) +
-  labs(
-    x = "Simulation time (days)",
-    y = "Individuals infectious with ebola"
-  )
-```
-
-We observe that model stochasticity leads to wide variation in model outcomes, and not all simulation replicates lead to exponential growth of the outbreak within the first 100 days.
-However, in a number of replicates, the outbreak has only a low daily incidence within the simulation time, although these replicates might show exponential growth later.
+We observe that model stochasticity leads to wide variation in model outcomes.
 
 We can find the 'final size' of each replicate using the `epidemic_size()` function on the original simulation data.
 Note that the final size here refers to the final size after 365 days, which is the duration of our simulation.
 
 ```{r}
 # apply the function over each replicate
-data_final_size <- lapply(
-  X = data,
-  FUN = epidemic_size, include_deaths = FALSE, by_group = FALSE
-)
-data_final_size <- unlist(data_final_size)
+data_final_size <- nest(data, .by = "replicate") %>%
+  mutate(
+    final_size = map_dbl(data, epidemic_size)
+  )
 ```
 
-```{r class.source = 'fold-hide', fig.cap="Histogram of the final outbreak sizes of 100 ebola outbreaks. These are taken from the 100 model runs presented in the earlier figure, and show that most outbreaks may affect fewer than 500 individuals within their first 100 days."}
+```{r class.source = 'fold-hide', fig.cap="Histogram of the final sizes of 100 ebola outbreaks. These are taken from the 100 model runs presented in the earlier figure, and show that most outbreaks have fewer than 500 deaths or recoveries within their first 100 days."}
 # plot a histogram of the replicates
-ggplot() +
+ggplot(data_final_size) +
   geom_histogram(
-    aes(data_final_size),
+    aes(final_size),
     fill = "steelblue"
   ) +
   scale_x_continuous(
@@ -266,18 +201,27 @@ ggplot() +
     legend.position = "top"
   ) +
   labs(
-    x = "Epidemic size at 100 days",
+    x = "Outbreak size at 100 days",
     y = "Number of replicates"
   )
 ```
 
 We see that while some replicates affect over 600 individuals within the first 100 days, most replicates have fewer than 500 cases, suggesting that responses to halt the spread of ebola could be quite effective in most real outbreaks.
 
+::: {.alert .alert-info}
+**Looking to model parameter uncertainty?** The [vignette on modelling parameter uncertainty](modelling_scenarios.html) has helpful information that is also applicable to the Ebola model.
+:::
+
 ## Applying interventions that reduce transmission
 
-An intervention that reduces transmission can be applied by passing a `<rate_intervention>` on the transmission rate parameter, `beta`.
+Interventions that affect model parameters (called rate interventions) can be simulated for an Ebola outbreak in the same way as for other models; creating and passing rate interventions is covered in the [vignette on modelling rate interventions.](modelling_rate_interventions.html)
 
-We begin with an initial simple example that models an intervention that begins 15 days into the outbreak, and reduces transmission by 20%.
+::: {.alert .alert-warning}
+**Note that** the model does not include demographic variation in contacts, as EVD spreads primarily among contacts caring for infected individuals, making age or demographic structure less important. Thus this model allows interventions on model rates only (as there are no demographic groups for contacts interventions).
+:::
+
+Here, we compare the effect of an intervention that begins 15 days into the outbreak, and reduces transmission by 20%, against the counterfactual, baseline scenario of no specific outbreak response.
+We simulate 100 days as in the previous examples.
 
 ```{r}
 # create an intervention on the transmission rate
@@ -285,37 +229,32 @@ reduce_transmission <- intervention(
   type = "rate",
   time_begin = 15, time_end = 100, reduction = 0.2
 )
+
+# create a list of intervention scenarios
+intervention_scenarios <- list(
+  baseline = NULL,
+  response = list(
+    transmission_rate = reduce_transmission
+  )
+)
 ```
 
-We can pass the intervention to the model function's `intervention` argument.
-
 ```{r}
-# set a seed for comparison with the baseline model
-set.seed(0)
-
-# run the epidemic model and save data as the baseline
-data_baseline <- model_ebola(
-  population = guinea_population,
-  time_end = 100
-)
-
-set.seed(0)
-# note that the intervention is passed within a list,
-# where it is named for the rate it is targeting
-data_intervention <- model_ebola(
-  population = guinea_population,
-  intervention = list(
-    transmission_rate = reduce_transmission
-  ),
-  time_end = 100
+# run the epidemic model and save data as the baseline, using a fixed seed
+data_scenarios <- withr::with_seed(
+  1,
+  model_ebola(
+    population = guinea_population,
+    intervention = intervention_scenarios
+  )
 )
 
 # assign scenario names
-data_baseline$scenario <- "baseline"
-data_intervention$scenario <- "intervention"
+data_scenarios$scenario <- c("baseline", "response")
 
-# bind the data together
-data_scenarios <- bind_rows(data_baseline, data_intervention)
+# unnest the data, preserving scenario identifiers
+data_scenarios <- select(data_scenarios, data, scenario) %>%
+  unnest(data)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."}
@@ -326,10 +265,14 @@ filter(data_scenarios, compartment == "removed") %>%
     linetype = "dotted"
   ) +
   geom_line(
-    aes(time, value, colour = scenario)
+    aes(time, value,
+      colour = scenario,
+      group = interaction(scenario, replicate)
+    ),
+    linewidth = 0.2
   ) +
   scale_colour_brewer(
-    palette = "Set1",
+    palette = "Dark2",
     name = "Scenario",
     labels = c("Baseline", "Intervention")
   ) +
@@ -343,7 +286,7 @@ filter(data_scenarios, compartment == "removed") %>%
   )
 ```
 
-We see that applying an intervention that reduces transmission can be effective in reducing the number of individuals infected over the outbreak.
+We see that applying an intervention that reduces transmission may be effective in reducing outbreak sizes. 
 
 ## Modelling the roll-out of vaccination
 
@@ -355,6 +298,8 @@ This is done by using the _time dependence_ functionality of _epidemics_.
 
 ::: {.alert .alert-warning}
 **New to implementing parameter time dependence in _epidemics_?** It may help to read the [vignette on time dependence functionality](time_dependence.html) first!
+
+**Note that** the time-dependence composable element cannot be passed as a set of scenarios.
 :::
 
 We first define a function suitable for the `time_dependence` argument.
@@ -375,23 +320,27 @@ time_dep_vax <- function(
 ```
 
 ```{r}
-# set a seed for comparison with the baseline model
-set.seed(0)
-# note that the intervention is passed within a list,
-# where it is named for the rate it is targeting
-data_apply_vax <- model_ebola(
-  population = guinea_population,
-  time_dependence = list(
-    transmission_rate = time_dep_vax
-  ),
-  time_end = 100
+data_baseline <- with_seed(
+  1,
+  model_ebola(
+    population = guinea_population
+  )
+)
+data_vax_scenario <- with_seed(
+  1,
+  model_ebola(
+    population = guinea_population,
+    time_dependence = list(
+      transmission_rate = time_dep_vax
+    )
+  )
 )
 
-# assign scenario name
-data_apply_vax$scenario <- "apply_vaccination"
+data_baseline$scenario <- "baseline"
+data_vax_scenario$scenario <- "scenario"
 
 # bind the data together
-data_scenarios <- bind_rows(data_baseline, data_apply_vax)
+data_scenarios <- bind_rows(data_baseline, data_vax_scenario)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality."}
@@ -402,10 +351,14 @@ filter(data_scenarios, compartment == "removed") %>%
     linetype = "dotted"
   ) +
   geom_line(
-    aes(time, value, colour = scenario)
+    aes(time, value,
+      colour = scenario,
+      group = interaction(scenario, replicate)
+    ),
+    linewidth = 0.2
   ) +
   scale_colour_brewer(
-    palette = "Set1",
+    palette = "Dark2",
     name = "Scenario",
     labels = c("Baseline", "Vaccination campaign")
   ) +
@@ -433,11 +386,8 @@ We can use the EVD model and existing functionality in _epidemics_ to model the 
 
 - safety of funeral practices to reduce the risk of transmission from dead bodies.
 
-Here, we show the effects of these interventions separately, before showing their combined effect.
-
-### Improving hospitalisation
-
-We first model an intervention that begins 15 days into the outbreak, and reduces the proportion of individuals who are infectious in the community by 30%, thus improving the proportion that are hospitalised.
+Here, we show the combined effects of these interventions separately. 
+We can pass the interventions to the model function's `intervention` argument as a named list, with the names indicating the model parameters to target.
 
 ```{r}
 # create an intervention on the transmission rate
@@ -445,120 +395,13 @@ improve_hospitalisation <- intervention(
   type = "rate",
   time_begin = 15, time_end = 100, reduction = 0.3
 )
-```
 
-We can pass the interventions to the model function's `intervention` argument as a named list, with the names indicating the model parameters to target.
-
-```{r}
-# set a seed for comparison with the baseline model
-set.seed(0)
-# note that the intervention is passed within a list,
-# where it is named for the rate it is targeting
-data_improve_hosp <- model_ebola(
-  population = guinea_population,
-  intervention = list(
-    prop_community = improve_hospitalisation
-  ),
-  time_end = 100
-)
-
-# assign scenario name
-data_improve_hosp$scenario <- "improve_hosp"
-
-# bind the data together
-data_scenarios <- bind_rows(data_baseline, data_improve_hosp)
-```
-
-```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the proportion of infectious cases in the community by transferring them to a hospitalisation setting."}
-filter(data_scenarios, compartment == "removed") %>%
-  ggplot() +
-  geom_vline(
-    xintercept = 15,
-    linetype = "dotted"
-  ) +
-  geom_line(
-    aes(time, value, colour = scenario)
-  ) +
-  scale_colour_brewer(
-    palette = "Set1",
-    name = "Scenario",
-    labels = c("Baseline", "Improved hospitalisation")
-  ) +
-  theme_bw() +
-  theme(
-    legend.position = "top"
-  ) +
-  labs(
-    x = "Days",
-    y = "Outbreak size"
-  )
-```
-
-### Improve ETU safety
-
-We next model an intervention to improve the safety of ETUs by reducing transmission risk by 70%, alongside the earlier improvement in hospitalisation.
-
-```{r}
-# create an intervention on the transmission rate
+# create an intervention on ETU risk
 improve_etu_safety <- intervention(
   type = "rate",
   time_begin = 15, time_end = 100, reduction = 0.7
 )
-```
 
-```{r}
-# set a seed for comparison with the baseline model
-set.seed(0)
-# note that the intervention is passed within a list,
-# where it is named for the rate it is targeting
-data_improve_etu <- model_ebola(
-  population = guinea_population,
-  intervention = list(
-    etu_risk = improve_etu_safety
-  ),
-  time_end = 100
-)
-
-# assign scenario name
-data_improve_etu$scenario <- "improve_etu"
-
-# bind the data together
-data_scenarios <- bind_rows(data_baseline, data_improve_etu)
-```
-
-```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the risk of ebola transmission in a hospitalisation context."}
-filter(data_scenarios, compartment == "removed") %>%
-  ggplot() +
-  geom_vline(
-    xintercept = 15,
-    linetype = "dotted"
-  ) +
-  geom_line(
-    aes(time, value, colour = scenario)
-  ) +
-  scale_colour_brewer(
-    palette = "Set1",
-    name = "Scenario",
-    labels = c("Baseline", "Improve ETU safety")
-  ) +
-  theme_bw() +
-  theme(
-    legend.position = "top"
-  ) +
-  labs(
-    x = "Days",
-    y = "Outbreak size"
-  )
-```
-
-Note that the reason that this intervention has little to no effect is that it is only likely to be effective when the proportion of cases hospitalised is high.
-In this model, the large majority of cases remain in the community, and improving the safety of ETUs is not an effective intervention.
-
-### Improve funeral safety
-
-We next model an intervention to improve the safety of funeral practices, by reducing transmission risk associated with funerals by 50%.
-
-```{r}
 # create an intervention on the transmission rate
 reduce_funeral_risk <- intervention(
   type = "rate",
@@ -567,88 +410,68 @@ reduce_funeral_risk <- intervention(
 ```
 
 ```{r}
-# set a seed for comparison with the baseline model
-set.seed(0)
-# note that the intervention is passed within a list,
-# where it is named for the rate it is targeting
-data_improve_funeral <- model_ebola(
-  population = guinea_population,
-  intervention = list(
-    funeral_risk = reduce_funeral_risk
-  ),
-  time_end = 100
-)
-
-# assign scenario name
-data_improve_funeral$scenario <- "improve_funeral"
-
-# bind the data together
-data_scenarios <- bind_rows(data_baseline, data_improve_funeral)
-```
-
-```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces the risk of ebola transmission in a funeral context."}
-filter(data_scenarios, compartment == "removed") %>%
-  ggplot() +
-  geom_vline(
-    xintercept = 15,
-    linetype = "dotted"
-  ) +
-  geom_line(
-    aes(time, value, colour = scenario)
-  ) +
-  scale_colour_brewer(
-    palette = "Set1",
-    name = "Scenario",
-    labels = c("Baseline", "Improve funeral safety")
-  ) +
-  scale_y_sqrt() +
-  theme_bw() +
-  theme(
-    legend.position = "top"
-  ) +
-  labs(
-    x = "Days",
-    y = "Outbreak size"
-  )
-```
-
-### Combined interventions
-
-```{r}
-# set a seed for comparison with the baseline model
-set.seed(0)
-# note that the intervention is passed within a list,
-# where it is named for the rate it is targeting
-data_combined_interventions <- model_ebola(
-  population = guinea_population,
-  intervention = list(
+# create a list of single and combined interventions
+intervention_scenarios <- list(
+  baseline = NULL,
+  combined = list(
     transmission_rate = reduce_transmission,
     prop_community = improve_hospitalisation,
     etu_risk = improve_etu_safety,
     funeral_risk = reduce_funeral_risk
-  ),
-  time_end = 100
+  )
 )
-
-# assign scenario name
-data_combined_interventions$scenario <- "combined_interventions"
-
-# bind the data together
-data_scenarios <- bind_rows(data_baseline, data_combined_interventions)
 ```
 
-```{r class.source = 'fold-hide', fig.cap="Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days."}
+```{r}
+# run the epidemic model and save data as the baseline, using a fixed seed
+data_scenarios <- withr::with_seed(
+  1,
+  model_ebola(
+    population = guinea_population,
+    intervention = intervention_scenarios
+  )
+)
+```
+
+```{r}
+# name the scenarios and unnest the data
+data_scenarios <- mutate(
+  data_scenarios,
+  scenario = names(intervention_scenarios)
+)
+
+data_scenarios <- select(data_scenarios, scenario, data) %>%
+  unnest(data)
+```
+
+```{r class.source = 'fold-hide', fig.cap="Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days. Individual scenario replicates are shown in the background, while the shaded region shows the 95% interval, and the heavy central line shows the mean for each scenario."}
 filter(data_scenarios, compartment == "removed") %>%
-  ggplot() +
+  ggplot(aes(time, value, colour = scenario)) +
   geom_vline(
     xintercept = 15,
     linetype = "dotted"
   ) +
   geom_line(
-    aes(time, value, colour = scenario)
+    aes(group = interaction(scenario, replicate)),
+    linewidth = 0.2, alpha = 0.5
+  ) +
+  stat_summary(
+    geom = "ribbon",
+    fun.min = function(x) quantile(x, 0.025),
+    fun.max = function(x) quantile(x, 0.975),
+    alpha = 0.3, colour = NA,
+    aes(fill = scenario)
+  ) +
+  stat_summary(
+    geom = "line", linewidth = 1
   ) +
   scale_colour_brewer(
-    palette = "Set1",
+    palette = "Dark2",
+    name = "Scenario",
+    labels = c("Baseline", "Combined interventions")
+  ) +
+  scale_fill_brewer(
+    palette = "Dark2",
     name = "Scenario",
     labels = c("Baseline", "Combined interventions")
   ) +

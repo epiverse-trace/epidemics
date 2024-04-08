@@ -643,11 +643,6 @@ test_that("Ebola model: seed management", {
       transmission_rate = intervention(
         "transmission", "rate", 50, 100, 1.0
       )
-    ),
-    scenario_02 = list(
-      transmission_rate = intervention(
-        "transmission", "rate", 50, 100, 1.0
-      )
     )
   )
   output <- model_ebola(
@@ -662,13 +657,11 @@ test_that("Ebola model: seed management", {
   data_early <- lapply(data, function(df) {
     split(df[time == 10L], by = "replicate")
   })
-
-  # TODO: fix this test
   expect_true(
     Reduce(identical, data_early)
   )
 
-  # expect that early outcomes varying within scenarios
+  # expect that early outcomes vary _within_ scenarios
   expect_false(
     all(
       vapply(data_early, FUN = function(l) {
@@ -682,12 +675,11 @@ test_that("Ebola model: seed management", {
     )
   )
 
-  # expect that late outcomes are identical _across_ parameter sets
+  # expect that late outcomes are different _across_ sets
   data_late <- lapply(data, function(df) {
-    split(df[time > max(time) - 5L], by = "replicate")
+    split(df[time == max(time)], by = "replicate")
   })
-
   expect_false(
-    Reduce(identical, data_early)
+    Reduce(identical, data_late)
   )
 })

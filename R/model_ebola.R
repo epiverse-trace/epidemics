@@ -110,6 +110,7 @@ prob_discrete_erlang <- function(shape, rate) {
 #' See **Details** for more information, as well as the vignette on time-
 #' dependence \code{vignette("time_dependence", package = "epidemics")}.
 #' @param time_end A numeric, integer-like vector for the maximum number of
+#' @param replicates A single number for replicates to run. Defaults to 100.
 #' timesteps over which to run the model, in days. Defaults to 100 days.
 #' @return A `<data.table>`.
 #' If the model parameters and composable elements are all scalars, a single
@@ -465,8 +466,13 @@ model_ebola <- function(population,
 .model_ebola_internal <- function(
     initial_state, erlang_subcompartments, transmission_rate,
     infectiousness_rate, removal_rate, prop_community, etu_risk, funeral_risk,
-    intervention, time_dependence, time_end, replicates) {
+    intervention, time_dependence, time_end, replicates, local_seeds) {
+  # seed management: preserve local seed for next parameter-scenario combination
+  # but pre-generate seeds for each replicate as random number stream is
+  # affected by interventions that reduce infections
   withr::local_preserve_seed()
+  local_seeds <- sample.int(.Machine$integer.max, replicates)
+
   # calculate required quantities
   population_size <- sum(initial_state)
 
@@ -501,9 +507,10 @@ model_ebola <- function(population,
   # Use seed preservation to ensure that random number streams are preserved
   # for runs of intervention*parameter sets; i.e., run `i` of each set
   # should use the same random numbers
-  # NOTE: Seed preservation could also be implemented one level up, but might be
-  # more difficult to understand in context
-  output_runs <- lapply(seq_len(replicates), function(xi_) {
+  output_runs <- Map(seq_len(replicates), local_seeds, f = function(xi_, seed) {
+    # use local seed from pre-generated seeds
+    withr::local_seed(seed)
+
     # NOTE: the original ebola model code continues here
     # Prepare data matrix and assign initial state
     sim_data <- matrix(

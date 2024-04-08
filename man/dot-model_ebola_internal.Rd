@@ -16,7 +16,8 @@
   intervention,
   time_dependence,
   time_end,
-  replicates
+  replicates,
+  local_seeds
 )
 }
 \arguments{
@@ -77,7 +78,9 @@ functions is treated as a distinct scenario.
 See \strong{Details} for more information, as well as the vignette on time-
 dependence \code{vignette("time_dependence", package = "epidemics")}.}
 
-\item{time_end}{A numeric, integer-like vector for the maximum number of
+\item{time_end}{A numeric, integer-like vector for the maximum number of}
+
+\item{replicates}{A single number for replicates to run. Defaults to 100.
 timesteps over which to run the model, in days. Defaults to 100 days.}
 }
 \description{

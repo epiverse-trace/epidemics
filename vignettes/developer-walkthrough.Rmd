@@ -79,6 +79,22 @@ A simplified view of the package structure is shown below. Note the files indica
 └── vignettes                   # vignettes
 ```
 
+## Adding or removing model parameters
+
+Adding or removing parameters to the ODE models involves working with all levels of the model code.
+
+Consider an example of adding a uniform, age-independent, background mortality rate $\omega$ (note that the Vacamole model already has such a rate). Removing a parameter involves reversing these steps.
+
+  1. Modify the user-facing model function in `R/model_*.R` to accept the mortality rate as an argument; add documentation and input checks, and ensure that it is included in parameter set creation; this is **level 1**, the top level, of the code.
+
+  2. Modify the internal C++ function in `src/model_*.cpp` to accept the mortality rate as an argument of the type `const double`; this also applies to integer-like inputs as the `double` type is better suited for R's `numeric` type, which most users will be working with. This is **level 2** of the code, one level down.
+
+  3. Add the mortality rate to the `std::unordered_map` of key-value pairs of parameters and their names, in `src/model_*.cpp`; this is used to access the parameters in the ODE solver, as well as enabling rate interventions and time-dependence.
+
+  4. Modify the compartmental transitions in the `FunctionObject` ODE model `inst/include/model_*.h` appropriately to include the mortality rate. This is **level 3** of the code, two levels down.
+
+  5. Write unit tests to check for the statistical correctness of the model with the newly added parameter, for example, testing that a non-zero mortality rate leads to fewer individuals at the end of a model run than at the start. Note that adding new parameters may cause existing tests to fail, as in the previous example (as all _epidemics_ models expect fixed population sizes).
+
 
 ## Modifying which parameters can be time dependent
 

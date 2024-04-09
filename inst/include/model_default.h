@@ -115,6 +115,10 @@ struct epidemic_default {
     /// NOTE: Casting initial conditions matrix columns to arrays is necessary
     /// for vectorised operations
 
+    // columns are as follows
+    // 0|1|2|3|4
+    // S|E|I|R|V
+
     // compartmental transitions without accounting for contacts
     Eigen::ArrayXd sToE = model_params_temp.at("transmission_rate") *
                           x.col(0).array() * (cm_temp * x.col(2)).array();

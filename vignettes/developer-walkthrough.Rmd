@@ -34,10 +34,13 @@ Consequently this vignette does not cover major changes that would require a sub
 
 This vignette also does not tackle questions around epidemic modelling choices - such as which compartmental transitions should be allowed; we strongly recommend the involvement of a specialist in such cases.
 
+Finally, this vignette relates only to the deterministic ODE models in _epidemics_, as these are expected to be the main starting points for most users seeking to create their own models.
+
 ::: {.alert .alert-info}
 **Making substantial changes to a model in epidemics?**
-Have you modified an existing model to cover new use cases or disease types? We welcome contributions of new model structures. Examples include models targeting vector borne diseases, or diseases with a sylvatic cycle. Please get in touch via a GitHub issue or Discussion!
+Have you modified an existing model to cover new use cases or disease types? We welcome contributions of new model structures. Examples include models targeting vector borne diseases, or diseases with a sylvatic cycle. Please get in touch via a [GitHub Issue](https://github.com/epiverse-trace/epidemics/issues) or on the [Epiverse-TRACE Discussion board](https://github.com/orgs/epiverse-trace/discussions)!
 :::
+
 ## A guide to package structure
 
 A simplified view of the package structure is shown below. Note the files indicated by comments in capitals and the associated 'level' of the code; this roughly corresponds to the level in the call stack.

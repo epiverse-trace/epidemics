@@ -183,6 +183,38 @@ We will consider a number of modifications to the susceptible compartment in the
 
 4. Deaths from each compartment can be similarly included. Background mortality, i.e., not related to the epidemic can be modelled as a vector of mortality rates `d` multiplied by the size of each demographic group $i$ in any compartment $X$, as either $-dX_i$ for uniform background mortality, or $-d_i X_i$ for age-specific mortality.
 
+### Modelling sources of infectious individuals such as from zoonotic spillover_rate
+
+Define a uniform spillover rate and add this to the $S \rightarrow I$ transition.
+
+```{.cpp filename="inst/include/model_*.h"}
+// define a uniform spillover rate from contact with animals
+const double spillover_rate = SOME_VALUE;
+
+// include this additional S -> E transition
+// note x.col(0).array() is the vector of age-specific susceptibles
+// each model header file 
+const Eigen::ArrayXd zoonotic_infection = spillover_rate * x.col(0).array();
+
+dxdt.col(0) = -sToE - sToV - zoonotic_infection;  // -β*S*contacts*I - ν - zoonotic infection
+```
+
+### Modelling waning immunity
+
+Similar to previous examples, define a uniform waning rate for the immunity of recovered individuals and modify the appropriate compartmental transitions.
+
+```{.cpp filename="inst/include/model_*.h"}
+// define an age-specific waning rate
+const double waning_rate = SOME_VALUE;
+
+// include this new R -> S transition
+// note x.col(3).array() is the vector of age-specific recovereds
+const Eigen::ArrayXd re_susceptibles = waning_rate * x.col(3).array();
+
+// add individuals with renewed susceptibility
+dxdt.col(0) = -sToE - sToV + re_susceptibles;  // -β*S*contacts*I - ν - re_susceptibles
+```
+
 ## Modifying which parameters can be time dependent
 
 Making the infection parameters of existing models time-dependent is straightforward using the `time_dependence` argument to model functions.

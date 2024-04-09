@@ -38,6 +38,47 @@ This vignette also does not tackle questions around epidemic modelling choices -
 **Making substantial changes to a model in epidemics?**
 Have you modified an existing model to cover new use cases or disease types? We welcome contributions of new model structures. Examples include models targeting vector borne diseases, or diseases with a sylvatic cycle. Please get in touch via a GitHub issue or Discussion!
 :::
+## A guide to package structure
+
+A simplified view of the package structure is shown below. Note the files indicated by comments in capitals and the associated 'level' of the code; this roughly corresponds to the level in the call stack.
+
+```{.sh filename="epidemics/"}
+.
+├── DESCRIPTION
+├── NAMESPACE
+├── R
+│   ├── RcppExports.R           # auto-generated from `src/`
+│   ├── check_args_*.R          # MODEL-SPECIFIC INPUT CROSS-CHECKING FUNC
+│   ├── dummy_elements.R        # functions for empty composable elements
+│   ├── helpers.R               # functions to handle model output
+│   ├── input_check_helpers.R   # functions to construct cross-checking fns
+│   ├── intervention.R          # intervention classes
+│   ├── model_*.R               # USER-FACING MODEL FUNCTION; LEVEL 1
+│   ├── population.R            # population class
+│   ├── tools.R                 # internal utility functions
+│   └── vaccination.R           # vaccination class
+├── epidemics.Rproj
+├── inst
+│   └── include
+│       ├── epidemics.h         # package header, must include all `model_*.h`
+│       ├── intervention.h      # functions to handle interventions in C++
+│       ├── model_*.h           # MODEL ODE SYSTEM; LEVEL 3
+│       ├── ode_tools.h         # definition of the initial state struct
+│       ├── population.h        # functions to handle populations in C++
+│       ├── time_dependence.h   # functions to handle time-dependence in C++
+│       └── vaccination.h       # functions to handle vaccinations in C++
+├── man
+│   └── *.Rd                    # R function documentation
+├── src
+│   ├── Makevars                # UNIX make options for Rcpp
+│   ├── Makevars.win            # Windows make options for Rcpp
+│   ├── RcppExports.cpp         # auto-generated from `src/`
+│   └── model_*.cpp             # MODEL FUNC WRAPPING ODE SYSTEM; LEVEL 2
+│
+├── tests                       # test files
+└── vignettes                   # vignettes
+```
+
 
 ## Modifying which parameters can be time dependent
 

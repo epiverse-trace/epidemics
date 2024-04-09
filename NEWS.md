@@ -1,5 +1,9 @@
 # epidemics (development version)
 
+## Documentation
+
+1. Adds a developer-focused vignette on how to modify epidemics and model structures to address potential modelling requests or tasks (#210).
+
 # epidemics 0.3.0
 
 This is a minor version release of _epidemics_ is the end point of this project that allows [vector inputs to the Ebola model](https://github.com/orgs/epiverse-trace/projects/36) (#211, #212).

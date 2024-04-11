@@ -19,10 +19,11 @@ uk_population <- population(
   initial_conditions = initial_conditions
 )
 
+time_end <- 200
 # run epidemic simulation with no vaccination or intervention
 data <- model_default(
   population = uk_population,
-  time_end = 200,
+  time_end = time_end,
   increment = 1
 )
 
@@ -34,6 +35,11 @@ test_that("Epidemic size functions", {
     initial_conditions[, "infectious"],
     ignore_attr = TRUE
   )
+  expect_equal(
+    epidemic_size(data, time = 0),
+    epidemic_initial_size,
+    ignore_attr = TRUE
+  )
 
   # test the final size
   epidemic_final_size <- epidemic_size(data)
@@ -41,6 +47,25 @@ test_that("Epidemic size functions", {
     epidemic_final_size,
     data[data$compartment == "recovered" & data$time == max(data$time), ]$value,
     ignore_attr = TRUE
+  )
+  expect_equal(
+    epidemic_size(data, time = time_end),
+    epidemic_final_size,
+    ignore_attr = TRUE
+  )
+
+  # expect return types and contents
+  expect_s3_class(
+    epidemic_size(data, simplify = FALSE),
+    "data.table"
+  )
+  expect_s3_class(
+    epidemic_size(data, by_group = FALSE, simplify = FALSE),
+    "data.table"
+  )
+  expect_s3_class(
+    epidemic_size(data, time = c(1, 2), simplify = TRUE),
+    "data.table"
   )
 
   # expect that the final size proportion is the same as the demography prop.

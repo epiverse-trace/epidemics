@@ -4,17 +4,28 @@
 \alias{epidemic_size}
 \title{Get the epidemic size}
 \usage{
-epidemic_size(data, stage = 1, by_group = TRUE, include_deaths = TRUE)
+epidemic_size(
+  data,
+  stage = 1,
+  time = NULL,
+  by_group = TRUE,
+  include_deaths = TRUE,
+  simplify = TRUE
+)
 }
 \arguments{
 \item{data}{A table of model output, typically
 the output of \code{\link[=model_default]{model_default()}} or similar functions.}
 
-\item{stage}{The stage of the epidemic at which to return the epidemic size;
-here, 0.0 represents the initial conditions of the epidemic (0\% of model time
-), while 1.0 represents the end of the epidemic model (100\% of model time).
-The values returned at \code{stage = 1.0} represent the \emph{final size} of the
-epidemic.}
+\item{stage}{A numeric vector for the stage of the epidemic at which to
+return the epidemic size; here, 0.0 represents the initial conditions of the
+epidemic (0\% of model time), while 1.0 represents the end of the epidemic
+model (100\% of model time). Defaults to 1.0, at which stage returned values
+represent the \emph{final size} of the epidemic.
+This value is overridden by any values passed to the \code{time} argument.}
+
+\item{time}{An optional numeric vector for the timepoint of the epidemic at
+which to return the epidemic size. Overrides any values passed to \code{stage}.}
 
 \item{by_group}{A logical representing whether the epidemic size should be
 returned by demographic group, or whether a single population-wide value is
@@ -26,11 +37,24 @@ Defaults to \code{TRUE}, which makes the function look for a \code{"dead"} compa
 in the data. If there is no such column, the function returns
 only the final number of recovered or removed individuals in each demographic
 group.}
+
+\item{simplify}{A logical determining whether the epidemic size data should
+be simplified to a vector with one element for each demographic group.
+If the length of \code{stage} or \code{time} is $>$ 1, this argument is overridden and
+the data are returned as a \verb{<data.table>}.
+group.}
 }
 \value{
-A single number when \code{by_group = FALSE}, or a vector of numbers of
-the same length as the number of demographic groups when \code{by_group = TRUE}.
-Returns the absolute sizes and not proportions.
+If \code{simplify == TRUE} and a single timepoint is requested, returns a vector
+of epidemic sizes of the same length as the number of demographic groups.
+If \code{by_group == FALSE}, sums the epidemic size to return an overall value for
+the full population.
+
+If multiple timepoints are requested, no simplification to a vector is
+possible; returns a \verb{<data.table>} of timepoints and epidemic sizes at each
+timepoint.
+
+All options return the absolute sizes and not proportions.
 }
 \description{
 Get the size of the epidemic at any stage between the start and the end.

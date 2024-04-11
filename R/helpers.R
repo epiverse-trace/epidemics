@@ -90,11 +90,14 @@
 #'
 #' @param data A table of model output, typically
 #' the output of [model_default()] or similar functions.
-#' @param stage The stage of the epidemic at which to return the epidemic size;
-#' here, 0.0 represents the initial conditions of the epidemic (0% of model time
-#' ), while 1.0 represents the end of the epidemic model (100% of model time).
-#' The values returned at `stage = 1.0` represent the _final size_ of the
-#' epidemic.
+#' @param stage A numeric vector for the stage of the epidemic at which to
+#' return the epidemic size; here, 0.0 represents the initial conditions of the
+#' epidemic (0% of model time), while 1.0 represents the end of the epidemic
+#' model (100% of model time). Defaults to 1.0, at which stage returned values
+#' represent the _final size_ of the epidemic.
+#' This value is overridden by any values passed to the `time` argument.
+#' @param time An optional numeric vector for the timepoint of the epidemic at
+#' which to return the epidemic size. Overrides any values passed to `stage`.
 #' @param by_group A logical representing whether the epidemic size should be
 #' returned by demographic group, or whether a single population-wide value is
 #' returned. Defaults to `TRUE`.
@@ -104,9 +107,22 @@
 #' in the data. If there is no such column, the function returns
 #' only the final number of recovered or removed individuals in each demographic
 #' group.
-#' @return A single number when `by_group = FALSE`, or a vector of numbers of
-#' the same length as the number of demographic groups when `by_group = TRUE`.
-#' Returns the absolute sizes and not proportions.
+#' @param simplify A logical determining whether the epidemic size data should
+#' be simplified to a vector with one element for each demographic group.
+#' If the length of `stage` or `time` is $>$ 1, this argument is overridden and
+#' the data are returned as a `<data.table>`.
+#' group.
+#' @return
+#' If `simplify == TRUE` and a single timepoint is requested, returns a vector
+#' of epidemic sizes of the same length as the number of demographic groups.
+#' If `by_group == FALSE`, sums the epidemic size to return an overall value for
+#' the full population.
+#'
+#' If multiple timepoints are requested, no simplification to a vector is
+#' possible; returns a `<data.table>` of timepoints and epidemic sizes at each
+#' timepoint.
+#'
+#' All options return the absolute sizes and not proportions.
 #' @export
 #'
 #' @examples
@@ -132,8 +148,8 @@
 #' # get the epidemic size at the halfway point
 #' epidemic_size(data, stage = 0.5)
 epidemic_size <- function(
-    data, stage = 1.0, by_group = TRUE,
-    include_deaths = TRUE) {
+    data, stage = 1.0, time = NULL, by_group = TRUE,
+    include_deaths = TRUE, simplify = TRUE) {
   # input checking for data - this allows data.tables as well
   checkmate::assert_data_frame(
     data,
@@ -145,20 +161,31 @@ epidemic_size <- function(
   )
   checkmate::assert_logical(by_group, len = 1L)
   checkmate::assert_logical(include_deaths, len = 1L)
-  checkmate::assert_number(stage, lower = 0.0, upper = 1.0, finite = TRUE)
+  checkmate::assert_numeric(
+    stage,
+    lower = 0.0, upper = 1.0, finite = TRUE,
+    null.ok = TRUE, any.missing = FALSE
+  )
+  checkmate::assert_integerish(
+    time,
+    lower = 0, upper = max(data[["time"]]), # not suitable for Ebola model
+    null.ok = TRUE, any.missing = FALSE
+  )
 
   stopifnot(
     "No 'recovered' or 'removed' compartment in `data`, check compartments" =
       any(c("removed", "recovered") %in% unique(data$compartment)),
     "`data` should have only one of 'recovered' or 'removed' compartments" =
-      !all(c("removed", "recovered") %in% unique(data$compartment))
+      !all(c("removed", "recovered") %in% unique(data$compartment)),
+    "One of `stage` or `time` must be provided; both are NULL!" =
+      !all(is.null(c(stage, time)))
   )
   # if deaths are requested to be counted, but no "dead" compartment exists
   # throw a message
   if (include_deaths && (!"dead" %in% unique(data$compartment))) {
     message(
-      "No 'dead' compartment found in `data`; counting only 'recovered'",
-      " individuals in the epidemic size."
+      "epidemic_size(): No 'dead' compartment found in `data`; counting only",
+      " 'recovered' or 'removed' individuals in the epidemic size."
     )
   }
   # add include_deaths to compartments to search
@@ -167,19 +194,50 @@ epidemic_size <- function(
     "recovered", "removed"
   )
   if (include_deaths) {
-    size_compartments <- c(size_compartments, "include_deaths")
+    size_compartments <- c(size_compartments, "dead")
+  }
+
+  # calculate time to get and override stage if provided
+  times_to_get <- round(max(data$time) * stage, 2)
+  if (!is.null(time)) {
+    message(
+      "epidemic_size(): `time` provided will override any `stage` provided"
+    )
+    times_to_get <- time
+  }
+
+  if (length(times_to_get) > 1L) {
+    message(
+      "Returning epidemic size by demographic group, cannot simplify to vector"
+    )
+    simplify <- FALSE
   }
 
   # get final numbers recovered - operate on data.table as though data.table
   epidemic_size_ <- data[data$compartment %in% size_compartments &
-    data$time == round(max(data$time) * stage, 2), ]
+    data$time %in% times_to_get, ]
 
+  # set data.table if not already, reove after #211 is merged
+  data.table::setDT(epidemic_size_)
+
+  # NOTE: requires data.table
   if (by_group) {
-    epidemic_size_ <- epidemic_size_[["value"]]
-    names(epidemic_size_) <- unique(data$demography_group)
+    epidemic_size_ <- epidemic_size_[,
+      list(value = sum(.SD)),
+      .SDcols = "value",
+      by = c("time", "demography_group")
+    ]
+    if (simplify) {
+      epidemic_size_ <- epidemic_size_[["value"]]
+    }
   } else {
-    epidemic_size_ <- sum(epidemic_size_[["value"]])
-    names(epidemic_size_) <- "total_population"
+    epidemic_size_ <- epidemic_size_[,
+      list(value = sum(.SD)),
+      by = "time", .SDcols = "value"
+    ]
+    if (simplify) {
+      epidemic_size_ <- epidemic_size_[["value"]]
+    }
   }
 
   # return epidemic size

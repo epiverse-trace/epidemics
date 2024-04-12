@@ -118,9 +118,10 @@
 #' If `by_group == FALSE`, sums the epidemic size to return an overall value for
 #' the full population.
 #'
-#' If multiple timepoints are requested, no simplification to a vector is
-#' possible; returns a `<data.table>` of timepoints and epidemic sizes at each
-#' timepoint.
+#' If multiple timepoints are requested, or if multiple replicates are present
+#' under a specially named column "replicate" (only from the Ebola model), no
+#' simplification to a vector is possible; returns a `<data.table>` of
+#' timepoints and epidemic sizes at each timepoint.
 #'
 #' All options return the absolute sizes and not proportions.
 #' @export
@@ -206,9 +207,20 @@ epidemic_size <- function(
     times_to_get <- time
   }
 
-  if (length(times_to_get) > 1L) {
+  # determine grouping columns to handle ebola model special case
+  grouping_cols <- c("time")
+  if (by_group) {
+    grouping_cols <- c(grouping_cols, "demography_group")
+  }
+  if ("replicate" %in% colnames(data)) {
+    grouping_cols <- c(grouping_cols, "replicate")
+    n_replicates <- max(data[["replicate"]])
+  }
+
+  if (length(times_to_get) > 1L || n_replicates > 1) {
     message(
-      "Returning epidemic size by demographic group, cannot simplify to vector"
+      "Returning epidemic size at multiple time points, or for multiple",
+      " replicates; cannot simplify output to vector; returning `<data.table>`"
     )
     simplify <- FALSE
   }
@@ -221,23 +233,13 @@ epidemic_size <- function(
   data.table::setDT(epidemic_size_)
 
   # NOTE: requires data.table
-  if (by_group) {
-    epidemic_size_ <- epidemic_size_[,
-      list(value = sum(.SD)),
-      .SDcols = "value",
-      by = c("time", "demography_group")
-    ]
-    if (simplify) {
-      epidemic_size_ <- epidemic_size_[["value"]]
-    }
-  } else {
-    epidemic_size_ <- epidemic_size_[,
-      list(value = sum(.SD)),
-      by = "time", .SDcols = "value"
-    ]
-    if (simplify) {
-      epidemic_size_ <- epidemic_size_[["value"]]
-    }
+  epidemic_size_ <- epidemic_size_[,
+    list(value = sum(.SD)),
+    .SDcols = "value",
+    by = grouping_cols
+  ]
+  if (simplify) {
+    epidemic_size_ <- epidemic_size_[["value"]]
   }
 
   # return epidemic size

@@ -208,7 +208,7 @@ epidemic_size <- function(
   }
 
   # determine grouping columns to handle ebola model special case
-  grouping_cols <- c("time")
+  grouping_cols <- "time"
   if (by_group) {
     grouping_cols <- c(grouping_cols, "demography_group")
   }

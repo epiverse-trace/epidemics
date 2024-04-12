@@ -212,6 +212,7 @@ epidemic_size <- function(
   if (by_group) {
     grouping_cols <- c(grouping_cols, "demography_group")
   }
+  n_replicates <- 1 # set dummy value
   if ("replicate" %in% colnames(data)) {
     grouping_cols <- c(grouping_cols, "replicate")
     n_replicates <- max(data[["replicate"]])

@@ -121,3 +121,32 @@ test_that("Epidemic size with no deaths is correct", {
     epidemic_size(data)
   )
 })
+
+test_that("Epidemic size for ebola model with replicates", {
+  # prepare data
+  demography_vector <- 67000
+  replicates <- 100L
+
+  pop <- population(
+    contact_matrix = matrix(1),
+    demography_vector = demography_vector,
+    initial_conditions = matrix(
+      c(1 - 1e-3, 1e-3 / 2, 1e-3 / 2, 0, 0, 0),
+      nrow = 1
+    )
+  )
+
+  # expect that function returns data.table when replicates > 1
+  output <- model_ebola(pop, replicates = replicates)
+  data <- epidemic_size(output, simplify = TRUE)
+
+  expect_s3_class(data, "data.table")
+  expect_identical(
+    nrow(data), replicates
+  )
+
+  # expect that output can be simplified when replicates = 1
+  output <- model_ebola(pop, replicates = 1L)
+  data <- epidemic_size(output, simplify = TRUE)
+  expect_vector(data, numeric())
+})

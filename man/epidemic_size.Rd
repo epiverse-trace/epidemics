@@ -50,9 +50,10 @@ of epidemic sizes of the same length as the number of demographic groups.
 If \code{by_group == FALSE}, sums the epidemic size to return an overall value for
 the full population.
 
-If multiple timepoints are requested, no simplification to a vector is
-possible; returns a \verb{<data.table>} of timepoints and epidemic sizes at each
-timepoint.
+If multiple timepoints are requested, or if multiple replicates are present
+under a specially named column "replicate" (only from the Ebola model), no
+simplification to a vector is possible; returns a \verb{<data.table>} of
+timepoints and epidemic sizes at each timepoint.
 
 All options return the absolute sizes and not proportions.
 }

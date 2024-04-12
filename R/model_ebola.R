@@ -513,9 +513,10 @@ model_ebola <- function(population,
 
     # NOTE: the original ebola model code continues here
     # Prepare data matrix and assign initial state
+    # NOTE: returns time_end + 1 rows for consistency with ODE models
     sim_data <- matrix(
       NA_integer_,
-      nrow = time_end, ncol = length(compartments)
+      nrow = time_end + 1, ncol = length(compartments)
     )
     colnames(sim_data) <- compartments
     sim_data[1, ] <- initial_state # at time = 1
@@ -554,9 +555,9 @@ model_ebola <- function(population,
     funeral_trans_current <- sim_data[1, "funeral"]
     funeral_trans_past <- funeral_trans_current
 
-    # Run the simulation from time t = 2 to t = time_end
+    # Run the simulation from time t = 2 to t = time_end + 1 (nrows in data)
     # A loop is required as conditions at each time t + 1 depend on time t.
-    for (time in seq(2, time_end)) {
+    for (time in seq(2, nrow(sim_data))) {
       # make a copy to assign time-dependent and intervention-affected values
       params <- parameters
 
@@ -668,7 +669,7 @@ model_ebola <- function(population,
 
     # return simulated data matrix and time as a two element list
     # replicate id is handled in `.output_to_df_ebola()`
-    list(x = sim_data, time = seq_len(time_end))
+    list(x = sim_data, time = seq(0, time_end))
   })
 
   # return output runs

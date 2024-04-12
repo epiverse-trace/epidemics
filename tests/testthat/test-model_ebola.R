@@ -41,9 +41,11 @@ test_that("Ebola model: basic expectations, scalar arguments", {
     data, c("time", "demography_group", "compartment", "value", "replicate"),
     ignore.order = TRUE
   )
+  # NOTE: expect timepoints as seq(0, time_end)
   expect_identical(
     nrow(data),
-    length(demography_vector) * (time_end) * length(compartments) * replicates
+    length(demography_vector) * (time_end + 1L) * length(compartments) *
+      replicates
   )
   expect_identical(unique(data$compartment), compartments)
   expect_true(

@@ -1,8 +1,11 @@
 url: https://epiverse-trace.github.io/epidemics/
 template:
+  bootstrap: 5
   bslib:
     font_weight_base : 300
   package: epiversetheme
+development:
+  mode: auto
 articles:
 - title: Modelling interventions
   navbar: Modelling interventions

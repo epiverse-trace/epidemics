@@ -86,17 +86,100 @@ A simplified view of the package structure is shown below. Note the files indica
 
 Adding or removing parameters to the ODE models involves working with all levels of the model code.
 
-Consider an example of adding a uniform, age-independent, background mortality rate $\omega$ (note that the Vacamole model already has such a rate). Removing a parameter involves reversing these steps.
+Consider an example of adding a uniform, age-independent, background mortality rate $\omega$ that is unrelated to the epidemic itself. Removing a parameter involves reversing these steps.
 
   1. Modify the user-facing model function in `R/model_*.R` to accept the mortality rate as an argument; add documentation and input checks, and ensure that it is included in parameter set creation; this is **level 1**, the top level, of the code.
 
+      ```{.r filename="R/model_*.R"}
+      #' @export
+      model_new = function(
+        population,
+        <EXISTING PARAMETERS>,
+        mortality_rate,           # <== New parameter added.
+        <OTHER ARGUMENTS>) {}
+      ```
+
   2. Modify the internal C++ function in `src/model_*.cpp` to accept the mortality rate as an argument of the type `const double`; this also applies to integer-like inputs as the `double` type is better suited for R's `numeric` type, which most users will be working with. This is **level 2** of the code, one level down.
+
+      ```{.cpp filename="src/model_*.cpp"}
+      // Note this function is exposed to R but not exported from the package
+      //' [[Rcpp::export(name=".model_NAME_cpp")]]    // <== Use model name.
+      Rcpp::List model_NAME_internal(
+        const Eigen::MatrixXd &initial_state,
+        const double &transmission_rate,
+        const double &infectiousness_rate,
+        const double &recovery_rate,
+        const double &mortality_rate,       // <== New parameter added.
+        <OTHER_ARGUMENTS>) {
+          /* model setup and ODE solving */
+        }
+        
+      ```
 
   3. Add the mortality rate to the `std::unordered_map` of key-value pairs of parameters and their names, in `src/model_*.cpp`; this is used to access the parameters in the ODE solver, as well as enabling rate interventions and time-dependence.
 
+      ```{.cpp filename="src/model_*.cpp"}
+      Rcpp::List model_NAME_internal(
+        const Eigen::MatrixXd &initial_state,
+        const double &transmission_rate,
+        const double &infectiousness_rate,
+        const double &recovery_rate,
+        const double &mortality_rate
+        <OTHER_ARGUMENTS>) {
+
+          // create a map of the model parameters
+          std::unordered_map<std::string, double> model_params{
+              {"transmission_rate", transmission_rate},
+              {"infectiousness_rate", infectiousness_rate},
+              {"recovery_rate", recovery_rate},
+              {"mortality_rate", mortality_rate}    // <== New parameter added.
+            };
+
+          /* ODE solving */
+        }
+      ```
+
   4. Modify the compartmental transitions in the `FunctionObject` ODE model `inst/include/model_*.h` appropriately to include the mortality rate. This is **level 3** of the code, two levels down.
 
-  5. Write unit tests to check for the statistical correctness of the model with the newly added parameter, for example, testing that a non-zero mortality rate leads to fewer individuals at the end of a model run than at the start. Note that adding new parameters may cause existing tests to fail, as in the previous example (as all _epidemics_ models expect fixed population sizes).
+      ```{.cpp filename="inst/include/model_*.h"}
+      namespace epidemics {
+      
+      struct epidemic_new {
+        // Model elements as struct members
+        // two maps for the model parameters, one for dynamic modification
+        const std::unordered_map<std::string, double> model_params;
+        std::unordered_map<std::string, double> model_params_temp;
+        <OTHER STRUCT MEMBERS>
+
+        // constructor
+        epidemic_new(<ARGUMENTS>) : <CONSTRUCTOR LIST> {}
+
+        // overloaded operator
+        void operator()(const odetools::state_type& x,    // the current state
+                  odetools::state_type& dxdt,             // change in state
+                  const double t) {                       // the current time
+          /* dynamic parameter calculation here */
+
+          // implement background mortality rate here
+          // NOTE: compartments are hard-coded as column positions
+          // and demographic groups are rows.
+          // Accessed columns must be converted to arrays for
+          // vectorised operations.
+
+          // For the 0-th column, i.e., susceptibles
+          dxdt.col(0) = <NEW INFECTIONS AND VACCINATIONS> -
+            (
+              model_params_temp.at("mortality_rate") *    // mortality rate *
+                x.col(0).array()                          // susceptibles
+            );
+          
+          // and so on for all i columns in x
+        }
+
+      }
+      ```
+
+  5. Write or update unit tests to check for the statistical correctness of the model with the newly added parameter (e.g., for this example, test that a non-zero mortality rate leads to fewer individuals at the end of the model than at the start).
 
 ## Modifying compartmental flows without changing compartments
 

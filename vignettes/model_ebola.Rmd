@@ -135,9 +135,9 @@ head(data)
 
 ## Prepare data and visualise infections
 
-We plot the ebola epidemic over time, showing the number of individuals exposed and infectious.
+We plot the size of the ebola epidemic over time; the epidemic size is taken to be the number of individuals considered 'removed'.
 
-```{r class.source = 'fold-hide', fig.cap="Model results from a single run showing the epidemic size over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others. Grey lines show 100 stochastic realisations or model replicates."}
+```{r fig-initial, class.source = 'fold-hide', fig.cap="Model results from a single run showing the epidemic size over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others. Grey lines show 100 stochastic realisations or model replicates."}
 # plot figure of epidemic curve
 filter(data, compartment == "removed") %>%
   ggplot(
@@ -170,10 +170,11 @@ filter(data, compartment == "removed") %>%
   )
 ```
 
-We observe that model stochasticity leads to wide variation in model outcomes.
+We observe that model stochasticity leads to wide variation in model outcomes within the first 100 days: some outbreaks may be much more severe than the mean outbreak.
+Note how in nearly all replicates, the epidemic size is increasing at near exponential rates.
 
-We can find the 'final size' of each replicate using the `epidemic_size()` function on the original simulation data.
-Note that the final size here refers to the final size after 365 days, which is the duration of our simulation.
+We can find the size of each replicate using the `epidemic_size()` function on the original simulation data.
+Note that the final size here refers to the final size after 100 days, which is the duration of our simulation.
 
 ```{r}
 # apply the function over each replicate
@@ -181,32 +182,10 @@ data_final_size <- nest(data, .by = "replicate") %>%
   mutate(
     final_size = map_dbl(data, epidemic_size)
   )
-```
 
-```{r class.source = 'fold-hide', fig.cap="Histogram of the final sizes of 100 ebola outbreaks. These are taken from the 100 model runs presented in the earlier figure, and show that most outbreaks have fewer than 500 deaths or recoveries within their first 100 days."}
-# plot a histogram of the replicates
-ggplot(data_final_size) +
-  geom_histogram(
-    aes(final_size),
-    fill = "steelblue"
-  ) +
-  scale_x_continuous(
-    labels = scales::comma
-  ) +
-  coord_cartesian(
-    expand = FALSE
-  ) +
-  theme_bw() +
-  theme(
-    legend.position = "top"
-  ) +
-  labs(
-    x = "Outbreak size at 100 days",
-    y = "Number of replicates"
-  )
+# get range of final sizes
+range(data_final_size$final_size)
 ```
-
-We see that while some replicates affect over 600 individuals within the first 100 days, most replicates have fewer than 500 cases, suggesting that responses to halt the spread of ebola could be quite effective in most real outbreaks.
 
 ::: {.alert .alert-info}
 **Looking to model parameter uncertainty?** The [vignette on modelling parameter uncertainty](modelling_scenarios.html) has helpful information that is also applicable to the Ebola model.
@@ -257,21 +236,33 @@ data_scenarios <- select(data_scenarios, data, scenario) %>%
   unnest(data)
 ```
 
-```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."}
+```{r class.source = 'fold-hide', fig.cap="Effect of implementing an intervention that reduces transmission by 20% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."}
 filter(data_scenarios, compartment == "removed") %>%
-  ggplot() +
+  ggplot(aes(time, value, colour = scenario)) +
   geom_vline(
     xintercept = 15,
     linetype = "dotted"
   ) +
   geom_line(
-    aes(time, value,
-      colour = scenario,
-      group = interaction(scenario, replicate)
-    ),
-    linewidth = 0.2
+    aes(group = interaction(scenario, replicate)),
+    linewidth = 0.2, alpha = 0.5
+  ) +
+  stat_summary(
+    geom = "ribbon",
+    fun.min = function(x) quantile(x, 0.025),
+    fun.max = function(x) quantile(x, 0.975),
+    alpha = 0.3, colour = NA,
+    aes(fill = scenario)
+  ) +
+  stat_summary(
+    geom = "line", linewidth = 1
   ) +
   scale_colour_brewer(
+    palette = "Dark2",
+    name = "Scenario",
+    labels = c("Baseline", "Intervention")
+  ) +
+  scale_fill_brewer(
     palette = "Dark2",
     name = "Scenario",
     labels = c("Baseline", "Intervention")
@@ -303,18 +294,17 @@ This is done by using the _time dependence_ functionality of _epidemics_.
 :::
 
 We first define a function suitable for the `time_dependence` argument.
-This function assumes that the baseline transmission rate of ebola decreases over time, with a 5% reduction each day due to vaccination.
+This function assumes that the baseline transmission rate of ebola decreases over time, with a 0.5% reduction each day due to vaccination.
 
 ```{r}
-# we assume a maximum time of 100 days, and a 5% daily reduction
+# we assume a 0.5% daily reduction
 # we assume that this vaccination begins on the 15th day
 time_dep_vax <- function(
-    time, x, max_time = 100, time_start = 15,
-    reduction = 0.05) {
+    time, x, time_start = 15, reduction = 0.005) {
   if (time < time_start) {
     x
   } else {
-    x * ((1.0 - reduction)^(time / max_time))
+    x * (1.0 - reduction)^time
   }
 }
 ```
@@ -345,19 +335,31 @@ data_scenarios <- bind_rows(data_baseline, data_vax_scenario)
 
 ```{r class.source = 'fold-hide', fig.cap="Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality."}
 filter(data_scenarios, compartment == "removed") %>%
-  ggplot() +
+  ggplot(aes(time, value, colour = scenario)) +
   geom_vline(
     xintercept = 15,
     linetype = "dotted"
   ) +
   geom_line(
-    aes(time, value,
-      colour = scenario,
-      group = interaction(scenario, replicate)
-    ),
-    linewidth = 0.2
+    aes(group = interaction(scenario, replicate)),
+    linewidth = 0.2, alpha = 0.5
+  ) +
+  stat_summary(
+    geom = "ribbon",
+    fun.min = function(x) quantile(x, 0.025),
+    fun.max = function(x) quantile(x, 0.975),
+    alpha = 0.3, colour = NA,
+    aes(fill = scenario)
+  ) +
+  stat_summary(
+    geom = "line", linewidth = 1
   ) +
   scale_colour_brewer(
+    palette = "Dark2",
+    name = "Scenario",
+    labels = c("Baseline", "Vaccination campaign")
+  ) +
+  scale_fill_brewer(
     palette = "Dark2",
     name = "Scenario",
     labels = c("Baseline", "Vaccination campaign")
@@ -487,9 +489,9 @@ filter(data_scenarios, compartment == "removed") %>%
 
 ## Details: Discrete-time Ebola virus disease model
 
-This model has compartments adopted from the consensus model for Ebola virus disease presented in Li et al. (2019), and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from Getz and Dougherty (2018); see **References**.
+This model has compartments adopted from the consensus model for Ebola virus disease presented in @li2019, and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from @getz2018; see **References**.
 
-The R code for this model is adapted from code by Ha Minh Lam and initially made available on _Epirecipes_ (https://github.com/epirecipes/epicookbook) under the MIT license.
+The R code for this model is adapted from code by [Ha Minh Lam and initially made available on _Epirecipes_](https://github.com/epirecipes/epicookbook) under the MIT license.
 
 The transition rates between the exposed and infectious, and infectious and funeral compartments (and also hospitalised to removed), $\gamma^E$ and $\gamma^I$ in Getz and Dougherty's notation, are passed by the user as the `infectiousness_rate` and `removal_rate` respectively.
 

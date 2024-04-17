@@ -111,8 +111,8 @@ lags behind the R implementation, and is likely to be removed.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">model_ebola</span><span class="op">(</span></span>
 <span>  <span class="va">population</span>,</span>
-<span>  erlang_subcompartments <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  transmission_rate <span class="op">=</span> <span class="fl">1.5</span><span class="op">/</span><span class="fl">12</span>,</span>
+<span>  erlang_subcompartments <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  infectiousness_rate <span class="op">=</span> <span class="va">erlang_subcompartments</span><span class="op">/</span><span class="fl">5</span>,</span>
 <span>  removal_rate <span class="op">=</span> <span class="va">erlang_subcompartments</span><span class="op">/</span><span class="fl">12</span>,</span>
 <span>  prop_community <span class="op">=</span> <span class="fl">0.9</span>,</span>
@@ -120,7 +120,8 @@ lags behind the R implementation, and is likely to be removed.</p>
 <span>  funeral_risk <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  time_dependence <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
+<span>  time_end <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  replicates <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -137,21 +138,22 @@ the matrix must be square and have as many rows as demography groups, which
 is one.</p></dd>
 
 
-<dt>erlang_subcompartments</dt>
-<dd><p>The number of Erlang subcompartments assumed
-for the exposed, infectious, and hospitalised compartments. Defaults to 2.</p></dd>
-
-
 <dt>transmission_rate</dt>
-<dd><p>A single number for the rate at which individuals
+<dd><p>A numeric vector for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \(\beta\), with
 \(\beta = R_0 / \text{infectious period}\).
 See <strong>Details</strong> for default values.</p></dd>
 
 
+<dt>erlang_subcompartments</dt>
+<dd><p>A numeric, integer-like vector for the number
+of Erlang sub-compartments assumed for the exposed, infectious, and
+hospitalised compartments. Defaults to 2.</p></dd>
+
+
 <dt>infectiousness_rate</dt>
-<dd><p>A single number for the rate at which individuals
+<dd><p>A numeric vector for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \(\sigma\), with \(\sigma = 1.0 / \text{pre-infectious period}\).
 This value does not depend upon the number of infectious individuals in the
@@ -160,64 +162,84 @@ See <strong>Details</strong> for default values.</p></dd>
 
 
 <dt>removal_rate</dt>
-<dd><p>The rate at which infectious individuals transition from
-the infectious or hospitalised compartments to the funeral or removed
-compartments. This model does not distinguish between recoveries and
-deaths. Denoted in Getz and Dougherty as \(\gamma^I\) (see <strong>Details</strong>).</p></dd>
+<dd><p>A numeric vector for the rate at which infectious
+individuals transition from the infectious or hospitalised compartments to
+the funeral or removed compartments.
+This model does not distinguish between recoveries and deaths.
+Denoted in Getz and Dougherty as \(\gamma^I\) (see <strong>Details</strong>).</p></dd>
 
 
 <dt>prop_community</dt>
-<dd><p>The proportion of infectious individuals who remain in
-the community and are not hospitalised for treatment. Defaults to 0.5</p></dd>
+<dd><p>A numeric vector for the proportion of infectious
+individuals who remain in the community and are not hospitalised for
+treatment. Defaults to 0.9.</p></dd>
 
 
 <dt>etu_risk</dt>
-<dd><p>The relative risk of onward transmission of EVD from
-hospitalised individuals. Must be a single value between 0.0 and 1.0, where
+<dd><p>A numeric vector for the relative risk of onward transmission
+of EVD from hospitalised individuals, with values between 0.0 and 1.0, where
 0.0 indicates that hospitalisation completely prevents onward transmission,
 and 1.0 indicates that hospitalisation does not prevent onward transmission
-at all. <code>etu_risk</code> is used to scale the value of transmission_rate for the
-transmission_rate \(\beta\). Defaults to 0.2.</p></dd>
+at all; values are relative to the baseline transmission rate \(\beta\).
+Defaults to 0.7.</p></dd>
 
 
 <dt>funeral_risk</dt>
-<dd><p>The relative risk of onward transmission of EVD from
-funerals of individuals who died with EVD.
-Must be a single value between 0.0 and 1.0, where
-0.0 indicates that there is no onward transmission, and 1.0 indicates that
-funeral transmission is equivalent to transmission in the community.
-<code>funeral_risk</code> is used to scale the value of transmission_rate for the
-transmission_rate \(\beta\). Defaults to 0.5.</p></dd>
+<dd><p>A numeric vector for the relative risk of onward
+transmission of EVD from funerals of individuals who died with EVD.
+Must be between 0.0 and 1.0, where 0.0 indicates that there is no onward
+transmission, and 1.0 indicates that funeral transmission is equivalent to
+the baseline transmission rate in the community \(\beta\).
+Defaults to 0.5.</p></dd>
 
 
 <dt>intervention</dt>
-<dd><p>A named list of <code>&lt;rate_intervention&gt;</code> objects
+<dd><p>An optional named list of <code>&lt;rate_intervention&gt;</code> objects
 representing optional pharmaceutical or non-pharmaceutical interventions
-applied to the model parameters listed above.</p></dd>
+applied to the model parameters listed above. May also be a list of such
+lists, in which case each set of interventions is treated as a separate
+scenario. See <strong>Details</strong> below.</p></dd>
 
 
 <dt>time_dependence</dt>
-<dd><p>A named list where each name
-is a model parameter, and each element is a function with
-the first two arguments being the current simulation <code>time</code>, and <code>x</code>, a value
-that is dependent on <code>time</code> (<code>x</code> represents a model parameter).
+<dd><p>An optional named list where each element is a
+function with the first two arguments being the current simulation <code>time</code>,
+and <code>x</code>, a value that is dependent on <code>time</code>
+(<code>x</code> represents a model parameter).
+List names must correspond to model parameters modified by the function.
+Alternatively, may be a list of such lists, in which case each set of
+functions is treated as a distinct scenario.
 See <strong>Details</strong> for more information, as well as the vignette on time-
 dependence <code>vignette("time_dependence", package = "epidemics")</code>.</p></dd>
 
 
 <dt>time_end</dt>
-<dd><p>The maximum number of timesteps over which to run the model,
-in days. Defaults to 100 days.</p></dd>
+<dd><p>A numeric, integer-like vector for the maximum number of</p></dd>
+
+
+<dt>replicates</dt>
+<dd><p>A single number for replicates to run. Defaults to 100.
+timesteps over which to run the model, in days. Defaults to 100 days.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A <code>&lt;data.table&gt;</code> in
-long format with the columns "time", "compartment", "age_group", and "value",
-that gives the number of individuals in each model compartment over time (
-from 1 to <code>time_end</code>).</p>
+<p>A <code>&lt;data.table&gt;</code>.
+If the model parameters and composable elements are all scalars, a single
+<code>&lt;data.table&gt;</code> with the columns "time", "compartment", "age_group", and
+"value", giving the number of individuals per demographic group
+in each compartment at each timestep in long (or "tidy") format is returned.</p>
+
+
+<p>If the model parameters or composable elements are lists or list-like,
+a nested <code>&lt;data.table&gt;</code> is returned with a list column "data", which holds
+the compartmental values described above.
+Other columns hold parameters and composable elements relating to the model
+run. Columns "scenario" and "param_set" identify combinations of composable
+elements (population, interventions, vaccination regimes), and infection
+parameters, respectively.</p>
     </div>
     <div class="section level2">
     <h2 id="details-discrete-time-ebola-virus-disease-model">Details: Discrete-time Ebola virus disease model<a class="anchor" aria-label="anchor" href="#details-discrete-time-ebola-virus-disease-model"></a></h2>
@@ -301,6 +323,40 @@ An example is shown in the vignette about this model; run this code to open
 the vignette: <code>vignette("ebola_model", package = "epidemics")</code></p>
 </div>
 
+<div class="section">
+<h3 id="vector-inputs">Vector inputs<a class="anchor" aria-label="anchor" href="#vector-inputs"></a></h3>
+
+<div class="section">
+<h4 id="vector-parameter-inputs">Vector parameter inputs<a class="anchor" aria-label="anchor" href="#vector-parameter-inputs"></a></h4>
+
+
+<p>The model infection parameters and the model duration may be passed as
+numeric or integer-like vectors (as appropriate to the parameter), to
+simulate the effect of parameter uncertainty.
+All parameter vectors must be of the same length, or any one parameter vector
+may have a length &gt; 1 while all other have a length of 1. In the first case,
+each i-th combination of parameters is treated as a parameter set. In the
+second case, all single value parameters (scalars) are recycled to the same
+length as the non-scalar parameter.</p>
+<p>The model is run for $N$ stochastic realisations of each parameter set.
+Random number seeds are preserved across parameter sets, so that differences
+in outcomes in each j-th run are due to differences in parameters alone.</p>
+</div>
+
+<div class="section">
+<h4 id="vector-inputs-for-composable-elements">Vector inputs for composable elements<a class="anchor" aria-label="anchor" href="#vector-inputs-for-composable-elements"></a></h4>
+
+
+<p>The <code>intervention</code> and <code>time_dependence</code> arguments also accept vectorised
+inputs in the form of lists of intervention and time dependence sets.
+Each combination of intervention and time-dependence sets is treated as a
+distinct 'scenario', and realisations of each parameter set are run for each
+scenario.</p>
+</div>
+
+
+</div>
+
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -333,13 +389,14 @@ epidemic models. Journal of Biological Dynamics, 12(1), 16–38.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># view some data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   time demography_group  compartment    value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1     demo_group_1  susceptible 13999972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    1     demo_group_1      exposed       14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1     demo_group_1   infectious       14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    1     demo_group_1 hospitalised        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    1     demo_group_1      funeral        0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    1     demo_group_1      removed        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     time demography_group  compartment    value replicate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;int&gt;           &lt;char&gt;       &lt;char&gt;    &lt;num&gt;     &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0     demo_group_1  susceptible 13999972         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0     demo_group_1      exposed       14         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:     0     demo_group_1   infectious       14         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:     0     demo_group_1 hospitalised        0         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5:     0     demo_group_1      funeral        0         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6:     0     demo_group_1      removed        0         1</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

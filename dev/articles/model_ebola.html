@@ -124,12 +124,14 @@
 This is often the case with outbreaks of infections such as Ebola virus disease (EVD, or simply, ebola).</p>
 <p><em>epidemics</em> includes a discrete time, stochastic compartmental model of ebola based on a consensus model presented in <span class="citation">Li et al. (<a href="#ref-li2019">2019</a>)</span>, with six compartments — susceptible, exposed, infectious, hospitalised, funeral, and removed.
 The transitions between compartments are based on an Erlang model developed by <span class="citation">Getz and Dougherty (<a href="#ref-getz2018">2018</a>)</span> for the 2014 West African EVD outbreak, with the code adapted from <a href="http://epirecip.es/epicookbook/chapters/erlang/r" class="external-link">Epirecipes</a>.</p>
-<p>The model does not include demographic variation in contacts, as ebola spreads primarily among contacts caring for infected individuals, making age or demographic structure less important.</p>
-<p>This model can currently accommodate interventions on model rates only (as there are no demographic groups for contacts interventions).</p>
+<p>The model allows easily running multiple replicates, accepts infection parameter vectors to help model parameter uncertainty, and can accept lists of intervention sets to model response scenarios.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># some initial setup to load necessary packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://withr.r-lib.org" class="external-link">withr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 </details><div class="section level2">
 <h2 id="prepare-population-and-initial-conditions">Prepare population and initial conditions<a class="anchor" aria-label="anchor" href="#prepare-population-and-initial-conditions"></a>
@@ -190,231 +192,159 @@ This can also be interpreted as the proportion of funerals that are ebola-safe.<
 <div class="section level2">
 <h2 id="run-epidemic-model">Run epidemic model<a class="anchor" aria-label="anchor" href="#run-epidemic-model"></a>
 </h2>
-<p>We run the model using the function <code><a href="../reference/model_ebola.html">model_ebola()</a></code>.
-While there is a C++ equivalent of this model, it was not found to be much faster than the R-only version, and is not made available to users.</p>
-<p>The model is run for 100 days, with data reported on each day.
+<p>We run the model using the function <code><a href="../reference/model_ebola.html">model_ebola()</a></code>.</p>
+<p>The model is run for 100 days (the default), with data reported on each day.
 This is an appropriate period over which to obtain initial predictions for the outbreak, and after which response efforts such as non-pharmaceutical interventions and vaccination campaigns are likely to be launched to bring the outbreak under control.</p>
+<p>The function automatically runs 100 replicates (stochastic realisations) as a default, and this can be changed using the <code>replicates</code> argument.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set seed to get consistent results</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span></span>
+<code class="sourceCode R"><span><span class="co"># run with a pre-set seed for consisten results</span></span>
 <span><span class="co"># run the epidemic model using `epidemic`</span></span>
 <span><span class="co"># we call the model "ebola" from the library</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">with_seed</a></span><span class="op">(</span></span>
+<span>  <span class="fl">1</span>,</span>
+<span>  <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
+<span>    population <span class="op">=</span> <span class="va">guinea_population</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># view the head of the output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   time demography_group  compartment    value</span></span>
-<span><span class="co">#&gt; 1    1     demo_group_1  susceptible 13999989</span></span>
-<span><span class="co">#&gt; 2    1     demo_group_1      exposed       10</span></span>
-<span><span class="co">#&gt; 3    1     demo_group_1   infectious        1</span></span>
-<span><span class="co">#&gt; 4    1     demo_group_1 hospitalised        0</span></span>
-<span><span class="co">#&gt; 5    1     demo_group_1      funeral        0</span></span>
-<span><span class="co">#&gt; 6    1     demo_group_1      removed        0</span></span></code></pre></div>
+<span><span class="co">#&gt;     time demography_group  compartment    value replicate</span></span>
+<span><span class="co">#&gt;    &lt;int&gt;           &lt;char&gt;       &lt;char&gt;    &lt;num&gt;     &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:     0     demo_group_1  susceptible 13999989         1</span></span>
+<span><span class="co">#&gt; 2:     0     demo_group_1      exposed       10         1</span></span>
+<span><span class="co">#&gt; 3:     0     demo_group_1   infectious        1         1</span></span>
+<span><span class="co">#&gt; 4:     0     demo_group_1 hospitalised        0         1</span></span>
+<span><span class="co">#&gt; 5:     0     demo_group_1      funeral        0         1</span></span>
+<span><span class="co">#&gt; 6:     0     demo_group_1      removed        0         1</span></span></code></pre></div>
 </details>
 </div>
 <div class="section level2">
 <h2 id="prepare-data-and-visualise-infections">Prepare data and visualise infections<a class="anchor" aria-label="anchor" href="#prepare-data-and-visualise-infections"></a>
 </h2>
-<p>We plot the ebola epidemic over time, showing the number of individuals exposed and infectious.</p>
+<p>We plot the size of the ebola epidemic over time; the epidemic size is taken to be the number of individuals considered ‘removed’.</p>
 <details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot figure of epidemic curve</span></span>
-<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">compartment</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exposed"</span>, <span class="st">"infectious"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
-<span>      x <span class="op">=</span> <span class="va">time</span>,</span>
-<span>      y <span class="op">=</span> <span class="va">value</span>,</span>
-<span>      colour <span class="op">=</span> <span class="va">compartment</span></span>
+<span>      x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="va">value</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">replicate</span><span class="op">)</span>, linewidth <span class="op">=</span> <span class="fl">0.2</span>, colour <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
+<span>    fun.min <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0.025</span><span class="op">)</span>,</span>
+<span>    fun.max <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0.975</span><span class="op">)</span>,</span>
+<span>    geom <span class="op">=</span> <span class="st">"ribbon"</span>, fill <span class="op">=</span> <span class="st">"red"</span>, alpha <span class="op">=</span> <span class="fl">0.2</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"line"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span></span>
 <span>    labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/comma.html" class="external-link">comma</a></span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span></span>
-<span>    palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
-<span>    name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Exposed"</span>, <span class="st">"Infectious"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/expand_limits.html" class="external-link">expand_limits</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">101</span><span class="op">)</span></span>
+<span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">101</span><span class="op">)</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="cn">NA</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
 <span>    legend.position <span class="op">=</span> <span class="st">"top"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="st">"Simulation time (days)"</span>,</span>
-<span>    linetype <span class="op">=</span> <span class="st">"Compartment"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Individuals"</span></span>
+<span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-5"></span>
-<img src="model_ebola_files/figure-html/unnamed-chunk-5-1.png" alt="Model results from a single run showing the number of individuals in the exposed and infectious compartments over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others."><p class="caption">
-Figure 1: Model results from a single run showing the number of individuals in the exposed and infectious compartments over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others.
+<span style="display:block;" id="fig:fig-initial"></span>
+<img src="model_ebola_files/figure-html/fig-initial-1.png" alt="Model results from a single run showing the epidemic size over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others. Grey lines show 100 stochastic realisations or model replicates."><p class="caption">
+Figure 1: Model results from a single run showing the epidemic size over 100 days of the outbreak. The model assumes that 1 initially infectious person has exposed 10 others. Grey lines show 100 stochastic realisations or model replicates.
 </p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="consensus-estimates-from-multiple-model-iterations">Consensus estimates from multiple model iterations<a class="anchor" aria-label="anchor" href="#consensus-estimates-from-multiple-model-iterations"></a>
-</h2>
-<p>Since the ebola model is a stochastic one, model results will vary in each run.
-We can run the model multiple times — here, 100 times — and plot the number of infectious people, to get a consensus idea of what an ebola outbreak might look like.</p>
+<p>We observe that model stochasticity leads to wide variation in model outcomes within the first 100 days: some outbreaks may be much more severe than the mean outbreak.
+Note how in nearly all replicates, the epidemic size is increasing at near exponential rates.</p>
+<p>We can find the size of each replicate using the <code><a href="../reference/epidemic_size.html">epidemic_size()</a></code> function on the original simulation data.
+Note that the final size here refers to the final size after 100 days, which is the duration of our simulation.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set seed for consistent output</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># run the simulation 100 times</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span></span>
-<span>  X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
-<span>  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
-<span>      population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>      time_end <span class="op">=</span> <span class="fl">100</span></span>
-<span>    <span class="op">)</span></span>
-<span></span>
-<span>    <span class="co"># add replicate number and return data</span></span>
-<span>    <span class="va">data</span><span class="op">$</span><span class="va">replicate</span> <span class="op">&lt;-</span> <span class="va">x</span></span>
-<span>    <span class="va">data</span></span>
-<span>  <span class="op">}</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># use data.table to collect the data</span></span>
-<span><span class="va">data_timeseries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
-</details><p>We plot the data.</p>
-<details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data_timeseries</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"infectious"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, group <span class="op">=</span> <span class="va">replicate</span><span class="op">)</span>,</span>
-<span>    alpha <span class="op">=</span> <span class="fl">0.3</span>, colour <span class="op">=</span> <span class="st">"grey50"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span><span class="op">)</span>,</span>
-<span>    geom <span class="op">=</span> <span class="st">"ribbon"</span>,</span>
-<span>    fill <span class="op">=</span> <span class="st">"red"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span><span class="op">)</span>,</span>
-<span>    geom <span class="op">=</span> <span class="st">"line"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span></span>
-<span>    labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/comma.html" class="external-link">comma</a></span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/expand_limits.html" class="external-link">expand_limits</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">101</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span></span>
-<span>    expand <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    legend.position <span class="op">=</span> <span class="st">"top"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="st">"Simulation time (days)"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Individuals infectious with ebola"</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-7"></span>
-<img src="model_ebola_files/figure-html/unnamed-chunk-7-1.png" alt="Model results from 100 runs showing the number of individuals in the infectious compartments over 100 days of each outbreak. All models assume that 1 initially infectious person has exposed 10 others. A simple summary using the mean (black line with standard error as shaded red regions), plotted over the individual model runs (grey) show that there can be wide variation in individual outbreak trajectories."><p class="caption">
-Figure 2: Model results from 100 runs showing the number of individuals in the infectious compartments over 100 days of each outbreak. All models assume that 1 initially infectious person has exposed 10 others. A simple summary using the mean (black line with standard error as shaded red regions), plotted over the individual model runs (grey) show that there can be wide variation in individual outbreak trajectories.
-</p>
-</div>
-<p>We observe that model stochasticity leads to wide variation in model outcomes, and not all simulation replicates lead to exponential growth of the outbreak within the first 100 days.
-However, in a number of replicates, the outbreak has only a low daily incidence within the simulation time, although these replicates might show exponential growth later.</p>
-<p>We can find the ‘final size’ of each replicate using the <code><a href="../reference/epidemic_size.html">epidemic_size()</a></code> function on the original simulation data.
-Note that the final size here refers to the final size after 365 days, which is the duration of our simulation.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># apply the function over each replicate</span></span>
-<span><span class="va">data_final_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span></span>
-<span>  X <span class="op">=</span> <span class="va">data</span>,</span>
-<span>  FUN <span class="op">=</span> <span class="va">epidemic_size</span>, include_deaths <span class="op">=</span> <span class="cn">FALSE</span>, by_group <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">data_final_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">data_final_size</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># plot a histogram of the replicates</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">data_final_size</span><span class="op">)</span>,</span>
-<span>    fill <span class="op">=</span> <span class="st">"steelblue"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span></span>
-<span>    labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/comma.html" class="external-link">comma</a></span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span></span>
-<span>    expand <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    legend.position <span class="op">=</span> <span class="st">"top"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="st">"Epidemic size at 100 days"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Number of replicates"</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-9"></span>
-<img src="model_ebola_files/figure-html/unnamed-chunk-9-1.png" alt="Histogram of the final outbreak sizes of 100 ebola outbreaks. These are taken from the 100 model runs presented in the earlier figure, and show that most outbreaks may affect fewer than 500 individuals within their first 100 days."><p class="caption">
-Figure 3: Histogram of the final outbreak sizes of 100 ebola outbreaks. These are taken from the 100 model runs presented in the earlier figure, and show that most outbreaks may affect fewer than 500 individuals within their first 100 days.
-</p>
+<span><span class="va">data_final_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">nest</a></span><span class="op">(</span><span class="va">data</span>, .by <span class="op">=</span> <span class="st">"replicate"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    final_size <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dbl</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">epidemic_size</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># get range of final sizes</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">data_final_size</span><span class="op">$</span><span class="va">final_size</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1]  97 686</span></span></code></pre></div>
+</details><div class="alert alert-info">
+<p><strong>Looking to model parameter uncertainty?</strong> The <a href="modelling_scenarios.html">vignette on modelling parameter uncertainty</a> has helpful information that is also applicable to the Ebola model.</p>
 </div>
-<p>We see that while some replicates affect over 600 individuals within the first 100 days, most replicates have fewer than 500 cases, suggesting that responses to halt the spread of ebola could be quite effective in most real outbreaks.</p>
 </div>
 <div class="section level2">
 <h2 id="applying-interventions-that-reduce-transmission">Applying interventions that reduce transmission<a class="anchor" aria-label="anchor" href="#applying-interventions-that-reduce-transmission"></a>
 </h2>
-<p>An intervention that reduces transmission can be applied by passing a <code>&lt;rate_intervention&gt;</code> on the transmission rate parameter, <code>beta</code>.</p>
-<p>We begin with an initial simple example that models an intervention that begins 15 days into the outbreak, and reduces transmission by 20%.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>Interventions that affect model parameters (called rate interventions) can be simulated for an Ebola outbreak in the same way as for other models; creating and passing rate interventions is covered in the <a href="modelling_rate_interventions.html">vignette on modelling rate interventions.</a></p>
+<div class="alert alert-warning">
+<p><strong>Note that</strong> the model does not include demographic variation in contacts, as EVD spreads primarily among contacts caring for infected individuals, making age or demographic structure less important. Thus this model allows interventions on model rates only (as there are no demographic groups for contacts interventions).</p>
+</div>
+<p>Here, we compare the effect of an intervention that begins 15 days into the outbreak, and reduces transmission by 20%, against the counterfactual, baseline scenario of no specific outbreak response.
+We simulate 100 days as in the previous examples.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create an intervention on the transmission rate</span></span>
 <span><span class="va">reduce_transmission</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"rate"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">15</span>, time_end <span class="op">=</span> <span class="fl">100</span>, reduction <span class="op">=</span> <span class="fl">0.2</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</details><p>We can pass the intervention to the model function’s <code>intervention</code> argument.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># run the epidemic model and save data as the baseline</span></span>
-<span><span class="va">data_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co"># note that the intervention is passed within a list,</span></span>
-<span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span><span class="co"># create a list of intervention scenarios</span></span>
+<span><span class="va">intervention_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  baseline <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  response <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    transmission_rate <span class="op">=</span> <span class="va">reduce_transmission</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># run the epidemic model and save data as the baseline, using a fixed seed</span></span>
+<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">with_seed</a></span><span class="op">(</span></span>
+<span>  <span class="fl">1</span>,</span>
+<span>  <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
+<span>    population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
+<span>    intervention <span class="op">=</span> <span class="va">intervention_scenarios</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># assign scenario names</span></span>
-<span><span class="va">data_baseline</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"baseline"</span></span>
-<span><span class="va">data_intervention</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"intervention"</span></span>
+<span><span class="va">data_scenarios</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"baseline"</span>, <span class="st">"response"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># bind the data together</span></span>
-<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_intervention</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<span><span class="co"># unnest the data, preserving scenario identifiers</span></span>
+<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">data_scenarios</span>, <span class="va">data</span>, <span class="va">scenario</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data_scenarios</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>    linetype <span class="op">=</span> <span class="st">"dotted"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html" class="external-link">interaction</a></span><span class="op">(</span><span class="va">scenario</span>, <span class="va">replicate</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    linewidth <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
+<span>    geom <span class="op">=</span> <span class="st">"ribbon"</span>,</span>
+<span>    fun.min <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0.025</span><span class="op">)</span>,</span>
+<span>    fun.max <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0.975</span><span class="op">)</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.3</span>, colour <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
+<span>    geom <span class="op">=</span> <span class="st">"line"</span>, linewidth <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span></span>
-<span>    palette <span class="op">=</span> <span class="st">"Set1"</span>,</span>
+<span>    palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
+<span>    name <span class="op">=</span> <span class="st">"Scenario"</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Intervention"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span></span>
+<span>    palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
 <span>    name <span class="op">=</span> <span class="st">"Scenario"</span>,</span>
 <span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Intervention"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
@@ -427,12 +357,12 @@ Figure 3: Histogram of the final outbreak sizes of 100 ebola outbreaks. These ar
 <span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-12"></span>
-<img src="model_ebola_files/figure-html/unnamed-chunk-12-1.png" alt="Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."><p class="caption">
-Figure 4: Effect of implementing an intervention that reduces transmission by 30% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak.
+<span style="display:block;" id="fig:unnamed-chunk-8"></span>
+<img src="model_ebola_files/figure-html/unnamed-chunk-8-1.png" alt="Effect of implementing an intervention that reduces transmission by 20% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak."><p class="caption">
+Figure 2: Effect of implementing an intervention that reduces transmission by 20% during an ebola outbreak. The intervention begins on the 15th day (dotted vertical line), and is active for the remainder of the model duration. Applying this intervention leads to many fewer individuals infectious with ebola over the outbreak.
 </p>
 </div>
-<p>We see that applying an intervention that reduces transmission can be effective in reducing the number of individuals infected over the outbreak.</p>
+<p>We see that applying an intervention that reduces transmission may be effective in reducing outbreak sizes.</p>
 </div>
 <div class="section level2">
 <h2 id="modelling-the-roll-out-of-vaccination">Modelling the roll-out of vaccination<a class="anchor" aria-label="anchor" href="#modelling-the-roll-out-of-vaccination"></a>
@@ -442,51 +372,71 @@ Figure 4: Effect of implementing an intervention that reduces transmission by 30
 <p>This is done by using the <em>time dependence</em> functionality of <em>epidemics</em>.</p>
 <div class="alert alert-warning">
 <p><strong>New to implementing parameter time dependence in <em>epidemics</em>?</strong> It may help to read the <a href="time_dependence.html">vignette on time dependence functionality</a> first!</p>
+<p><strong>Note that</strong> the time-dependence composable element cannot be passed as a set of scenarios.</p>
 </div>
 <p>We first define a function suitable for the <code>time_dependence</code> argument.
-This function assumes that the baseline transmission rate of ebola decreases over time, with a 5% reduction each day due to vaccination.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># we assume a maximum time of 100 days, and a 5% daily reduction</span></span>
+This function assumes that the baseline transmission rate of ebola decreases over time, with a 0.5% reduction each day due to vaccination.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># we assume a 0.5% daily reduction</span></span>
 <span><span class="co"># we assume that this vaccination begins on the 15th day</span></span>
 <span><span class="va">time_dep_vax</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span></span>
-<span>    <span class="va">time</span>, <span class="va">x</span>, <span class="va">max_time</span> <span class="op">=</span> <span class="fl">100</span>, <span class="va">time_start</span> <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>    <span class="va">reduction</span> <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">time</span>, <span class="va">x</span>, <span class="va">time_start</span> <span class="op">=</span> <span class="fl">15</span>, <span class="va">reduction</span> <span class="op">=</span> <span class="fl">0.005</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="va">time</span> <span class="op">&lt;</span> <span class="va">time_start</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">x</span></span>
 <span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>    <span class="va">x</span> <span class="op">*</span> <span class="op">(</span><span class="op">(</span><span class="fl">1.0</span> <span class="op">-</span> <span class="va">reduction</span><span class="op">)</span><span class="op">^</span><span class="op">(</span><span class="va">time</span> <span class="op">/</span> <span class="va">max_time</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">x</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1.0</span> <span class="op">-</span> <span class="va">reduction</span><span class="op">)</span><span class="op">^</span><span class="va">time</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co"># note that the intervention is passed within a list,</span></span>
-<span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_apply_vax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  time_dependence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    transmission_rate <span class="op">=</span> <span class="va">time_dep_vax</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">with_seed</a></span><span class="op">(</span></span>
+<span>  <span class="fl">1</span>,</span>
+<span>  <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
+<span>    population <span class="op">=</span> <span class="va">guinea_population</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">data_vax_scenario</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">with_seed</a></span><span class="op">(</span></span>
+<span>  <span class="fl">1</span>,</span>
+<span>  <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
+<span>    population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
+<span>    time_dependence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      transmission_rate <span class="op">=</span> <span class="va">time_dep_vax</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># assign scenario name</span></span>
-<span><span class="va">data_apply_vax</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"apply_vaccination"</span></span>
+<span><span class="va">data_baseline</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"baseline"</span></span>
+<span><span class="va">data_vax_scenario</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"scenario"</span></span>
 <span></span>
 <span><span class="co"># bind the data together</span></span>
-<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_apply_vax</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_vax_scenario</span><span class="op">)</span></span></code></pre></div>
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data_scenarios</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>    linetype <span class="op">=</span> <span class="st">"dotted"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html" class="external-link">interaction</a></span><span class="op">(</span><span class="va">scenario</span>, <span class="va">replicate</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    linewidth <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
+<span>    geom <span class="op">=</span> <span class="st">"ribbon"</span>,</span>
+<span>    fun.min <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0.025</span><span class="op">)</span>,</span>
+<span>    fun.max <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0.975</span><span class="op">)</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.3</span>, colour <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
+<span>    geom <span class="op">=</span> <span class="st">"line"</span>, linewidth <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span></span>
-<span>    palette <span class="op">=</span> <span class="st">"Set1"</span>,</span>
+<span>    palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
+<span>    name <span class="op">=</span> <span class="st">"Scenario"</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Vaccination campaign"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span></span>
+<span>    palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
 <span>    name <span class="op">=</span> <span class="st">"Scenario"</span>,</span>
 <span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Vaccination campaign"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
@@ -499,9 +449,9 @@ This function assumes that the baseline transmission rate of ebola decreases ove
 <span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-15"></span>
-<img src="model_ebola_files/figure-html/unnamed-chunk-15-1.png" alt="Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality."><p class="caption">
-Figure 5: Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality.
+<span style="display:block;" id="fig:unnamed-chunk-11"></span>
+<img src="model_ebola_files/figure-html/unnamed-chunk-11-1.png" alt="Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality."><p class="caption">
+Figure 3: Effect of implementing a vaccination regime that gradually reduces ebola transmission over time, using the time dependence functionality.
 </p>
 </div>
 <p>Similar functionality can be used to model other parameters more flexibly than allowed by the <code>&lt;rate_intervention&gt;</code> class.</p>
@@ -516,221 +466,83 @@ Figure 5: Effect of implementing a vaccination regime that gradually reduces ebo
 <li><p>safety of hospitals and the risk of community transmission, and</p></li>
 <li><p>safety of funeral practices to reduce the risk of transmission from dead bodies.</p></li>
 </ul>
-<p>Here, we show the effects of these interventions separately, before showing their combined effect.</p>
-<div class="section level3">
-<h3 id="improving-hospitalisation">Improving hospitalisation<a class="anchor" aria-label="anchor" href="#improving-hospitalisation"></a>
-</h3>
-<p>We first model an intervention that begins 15 days into the outbreak, and reduces the proportion of individuals who are infectious in the community by 30%, thus improving the proportion that are hospitalised.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<p>Here, we show the combined effects of these interventions separately.
+We can pass the interventions to the model function’s <code>intervention</code> argument as a named list, with the names indicating the model parameters to target.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create an intervention on the transmission rate</span></span>
 <span><span class="va">improve_hospitalisation</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"rate"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">15</span>, time_end <span class="op">=</span> <span class="fl">100</span>, reduction <span class="op">=</span> <span class="fl">0.3</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</details><p>We can pass the interventions to the model function’s <code>intervention</code> argument as a named list, with the names indicating the model parameters to target.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co"># note that the intervention is passed within a list,</span></span>
-<span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_improve_hosp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    prop_community <span class="op">=</span> <span class="va">improve_hospitalisation</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># assign scenario name</span></span>
-<span><span class="va">data_improve_hosp</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"improve_hosp"</span></span>
-<span></span>
-<span><span class="co"># bind the data together</span></span>
-<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_improve_hosp</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data_scenarios</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
-<span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>    linetype <span class="op">=</span> <span class="st">"dotted"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span></span>
-<span>    palette <span class="op">=</span> <span class="st">"Set1"</span>,</span>
-<span>    name <span class="op">=</span> <span class="st">"Scenario"</span>,</span>
-<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Improved hospitalisation"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    legend.position <span class="op">=</span> <span class="st">"top"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="st">"Days"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-18"></span>
-<img src="model_ebola_files/figure-html/unnamed-chunk-18-1.png" alt="Effect of implementing an intervention that reduces the proportion of infectious cases in the community by transferring them to a hospitalisation setting."><p class="caption">
-Figure 6: Effect of implementing an intervention that reduces the proportion of infectious cases in the community by transferring them to a hospitalisation setting.
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="improve-etu-safety">Improve ETU safety<a class="anchor" aria-label="anchor" href="#improve-etu-safety"></a>
-</h3>
-<p>We next model an intervention to improve the safety of ETUs by reducing transmission risk by 70%, alongside the earlier improvement in hospitalisation.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># create an intervention on the transmission rate</span></span>
+<span><span class="co"># create an intervention on ETU risk</span></span>
 <span><span class="va">improve_etu_safety</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"rate"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">15</span>, time_end <span class="op">=</span> <span class="fl">100</span>, reduction <span class="op">=</span> <span class="fl">0.7</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co"># note that the intervention is passed within a list,</span></span>
-<span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_improve_etu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    etu_risk <span class="op">=</span> <span class="va">improve_etu_safety</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># assign scenario name</span></span>
-<span><span class="va">data_improve_etu</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"improve_etu"</span></span>
-<span></span>
-<span><span class="co"># bind the data together</span></span>
-<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_improve_etu</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data_scenarios</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
-<span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>    linetype <span class="op">=</span> <span class="st">"dotted"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span></span>
-<span>    palette <span class="op">=</span> <span class="st">"Set1"</span>,</span>
-<span>    name <span class="op">=</span> <span class="st">"Scenario"</span>,</span>
-<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Improve ETU safety"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    legend.position <span class="op">=</span> <span class="st">"top"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="st">"Days"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-21"></span>
-<img src="model_ebola_files/figure-html/unnamed-chunk-21-1.png" alt="Effect of implementing an intervention that reduces the risk of ebola transmission in a hospitalisation context."><p class="caption">
-Figure 7: Effect of implementing an intervention that reduces the risk of ebola transmission in a hospitalisation context.
-</p>
-</div>
-<p>Note that the reason that this intervention has little to no effect is that it is only likely to be effective when the proportion of cases hospitalised is high.
-In this model, the large majority of cases remain in the community, and improving the safety of ETUs is not an effective intervention.</p>
-</div>
-<div class="section level3">
-<h3 id="improve-funeral-safety">Improve funeral safety<a class="anchor" aria-label="anchor" href="#improve-funeral-safety"></a>
-</h3>
-<p>We next model an intervention to improve the safety of funeral practices, by reducing transmission risk associated with funerals by 50%.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># create an intervention on the transmission rate</span></span>
+<span><span class="co"># create an intervention on the transmission rate</span></span>
 <span><span class="va">reduce_funeral_risk</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"rate"</span>,</span>
 <span>  time_begin <span class="op">=</span> <span class="fl">15</span>, time_end <span class="op">=</span> <span class="fl">100</span>, reduction <span class="op">=</span> <span class="fl">0.5</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co"># note that the intervention is passed within a list,</span></span>
-<span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_improve_funeral</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    funeral_risk <span class="op">=</span> <span class="va">reduce_funeral_risk</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># assign scenario name</span></span>
-<span><span class="va">data_improve_funeral</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"improve_funeral"</span></span>
-<span></span>
-<span><span class="co"># bind the data together</span></span>
-<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_improve_funeral</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data_scenarios</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
-<span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>    linetype <span class="op">=</span> <span class="st">"dotted"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span></span>
-<span>    palette <span class="op">=</span> <span class="st">"Set1"</span>,</span>
-<span>    name <span class="op">=</span> <span class="st">"Scenario"</span>,</span>
-<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Improve funeral safety"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_sqrt</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    legend.position <span class="op">=</span> <span class="st">"top"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="st">"Days"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-24"></span>
-<img src="model_ebola_files/figure-html/unnamed-chunk-24-1.png" alt="Effect of implementing an intervention that reduces the risk of ebola transmission in a funeral context."><p class="caption">
-Figure 8: Effect of implementing an intervention that reduces the risk of ebola transmission in a funeral context.
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="combined-interventions">Combined interventions<a class="anchor" aria-label="anchor" href="#combined-interventions"></a>
-</h3>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set a seed for comparison with the baseline model</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co"># note that the intervention is passed within a list,</span></span>
-<span><span class="co"># where it is named for the rate it is targeting</span></span>
-<span><span class="va">data_combined_interventions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
-<span>  intervention <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># create a list of single and combined interventions</span></span>
+<span><span class="va">intervention_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  baseline <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  combined <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    transmission_rate <span class="op">=</span> <span class="va">reduce_transmission</span>,</span>
 <span>    prop_community <span class="op">=</span> <span class="va">improve_hospitalisation</span>,</span>
 <span>    etu_risk <span class="op">=</span> <span class="va">improve_etu_safety</span>,</span>
 <span>    funeral_risk <span class="op">=</span> <span class="va">reduce_funeral_risk</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">100</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># run the epidemic model and save data as the baseline, using a fixed seed</span></span>
+<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">with_seed</a></span><span class="op">(</span></span>
+<span>  <span class="fl">1</span>,</span>
+<span>  <span class="fu"><a href="../reference/model_ebola.html">model_ebola</a></span><span class="op">(</span></span>
+<span>    population <span class="op">=</span> <span class="va">guinea_population</span>,</span>
+<span>    intervention <span class="op">=</span> <span class="va">intervention_scenarios</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># name the scenarios and unnest the data</span></span>
+<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>  <span class="va">data_scenarios</span>,</span>
+<span>  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">intervention_scenarios</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># assign scenario name</span></span>
-<span><span class="va">data_combined_interventions</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"combined_interventions"</span></span>
-<span></span>
-<span><span class="co"># bind the data together</span></span>
-<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_baseline</span>, <span class="va">data_combined_interventions</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">data_scenarios</span>, <span class="va">scenario</span>, <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data_scenarios</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"removed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span></span>
 <span>    xintercept <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>    linetype <span class="op">=</span> <span class="st">"dotted"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html" class="external-link">interaction</a></span><span class="op">(</span><span class="va">scenario</span>, <span class="va">replicate</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    linewidth <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
+<span>    geom <span class="op">=</span> <span class="st">"ribbon"</span>,</span>
+<span>    fun.min <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0.025</span><span class="op">)</span>,</span>
+<span>    fun.max <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0.975</span><span class="op">)</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.3</span>, colour <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html" class="external-link">stat_summary</a></span><span class="op">(</span></span>
+<span>    geom <span class="op">=</span> <span class="st">"line"</span>, linewidth <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span></span>
-<span>    palette <span class="op">=</span> <span class="st">"Set1"</span>,</span>
+<span>    palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
+<span>    name <span class="op">=</span> <span class="st">"Scenario"</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Combined interventions"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span></span>
+<span>    palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
 <span>    name <span class="op">=</span> <span class="st">"Scenario"</span>,</span>
 <span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Baseline"</span>, <span class="st">"Combined interventions"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
@@ -743,18 +555,17 @@ Figure 8: Effect of implementing an intervention that reduces the risk of ebola 
 <span>    y <span class="op">=</span> <span class="st">"Outbreak size"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-26"></span>
-<img src="model_ebola_files/figure-html/unnamed-chunk-26-1.png" alt="Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days."><p class="caption">
-Figure 9: Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days.
+<span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<img src="model_ebola_files/figure-html/unnamed-chunk-16-1.png" alt="Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days. Individual scenario replicates are shown in the background, while the shaded region shows the 95% interval, and the heavy central line shows the mean for each scenario."><p class="caption">
+Figure 4: Effect of implementing multiple simultaneous interventions to reduce transmission during an ebola outbreak, all beginning on the 15th day (dotted vertical line), and remaining active for the remainder of the model duration. Applying these interventions substantially reduces the final size of the outbreak, with a potential plateau in the outbreak size reached at 100 days. Individual scenario replicates are shown in the background, while the shaded region shows the 95% interval, and the heavy central line shows the mean for each scenario.
 </p>
-</div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="details-discrete-time-ebola-virus-disease-model">Details: Discrete-time Ebola virus disease model<a class="anchor" aria-label="anchor" href="#details-discrete-time-ebola-virus-disease-model"></a>
 </h2>
-<p>This model has compartments adopted from the consensus model for Ebola virus disease presented in Li et al. (2019), and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from Getz and Dougherty (2018); see <strong>References</strong>.</p>
-<p>The R code for this model is adapted from code by Ha Minh Lam and initially made available on <em>Epirecipes</em> (<a href="https://github.com/epirecipes/epicookbook" class="external-link uri">https://github.com/epirecipes/epicookbook</a>) under the MIT license.</p>
+<p>This model has compartments adopted from the consensus model for Ebola virus disease presented in <span class="citation">Li et al. (<a href="#ref-li2019">2019</a>)</span>, and with transitions between epidemiological compartments modelled using Erlang sub-compartments adapted from <span class="citation">Getz and Dougherty (<a href="#ref-getz2018">2018</a>)</span>; see <strong>References</strong>.</p>
+<p>The R code for this model is adapted from code by <a href="https://github.com/epirecipes/epicookbook" class="external-link">Ha Minh Lam and initially made available on <em>Epirecipes</em></a> under the MIT license.</p>
 <p>The transition rates between the exposed and infectious, and infectious and funeral compartments (and also hospitalised to removed), <span class="math inline">\(\gamma^E\)</span> and <span class="math inline">\(\gamma^I\)</span> in Getz and Dougherty’s notation, are passed by the user as the <code>infectiousness_rate</code> and <code>removal_rate</code> respectively.</p>
 <p>The shape of the Erlang distributions of passage times through the exposed and infectious compartments (<span class="math inline">\(k^E\)</span> and <span class="math inline">\(k^I\)</span>) are recommended to be set to 2 as a sensible choice, which is the default value for the <code>erlang_sbubcompartments</code> argument, but can be allowed to vary (but not independently).</p>
 <p>Getz and Dougherty’s equation (6) gives the relationship between these parameters and the mean pre-infectious <span class="math inline">\(\rho^E\)</span> and infectious <span class="math inline">\(\rho^I\)</span> periods.</p>

@@ -184,7 +184,39 @@ The eventual stable output type must allow users to conveniently access the epid
 <div class="section level3">
 <h3 id="stochastic-models">Stochastic models<a class="anchor" aria-label="anchor" href="#stochastic-models"></a>
 </h3>
-<p><em>epidemics</em> only includes a single stochastic model adapted from earlier implementations, and hence common design decisions for stochastic models are likely to be worked out only as more models are added. The input and output types correspond to the ODE model types. This model is written in R <a href="https://github.com/epiverse-trace/epidemics/issues/179" class="external-link">although this may change in future</a>.</p>
+<p><em>epidemics</em> currently includes a single discrete-time stochastic model that implements a sub-compartment system taken from <span class="citation">@getz2018</span>, and initially adapted in <em>Epirecipes</em>.
+Some modelling decisions are explained here, while recognising that adding more models with different implementations could see them being revisited.</p>
+<ul>
+<li><p>Stochastic models currently target, and are expected to target, diseases for which outbreak sizes are initially small and thus where stochasticity matters more; the typical example is Ebola virus disease (simply, Ebola), and this is reflected in the model name.</p></li>
+<li><p>The Ebola model is also expected to be suitable for diseases with a high fatality risk that are detected when outbreak sizes are small, and with an isolation and treatment response comparable to Ebola, e.g. Marburg virus disease.</p></li>
+<li><p><strong>Note that</strong> very different alternative implementations of stochastic models exist.</p></li>
+<li><p>The current implementation was chosen due to the use of Erlang sub-compartments that were felt to better represent the long-tailed distributions of infection times seen in haemorrhagic fevers like Ebola.</p></li>
+<li><p>The model implements a two-level structure similar to the ODE models, with <code><a href="../reference/dot-model_ebola_internal.html">.model_ebola_internal()</a></code> the function implementing the simulation, while <code><a href="../reference/model_ebola.html">model_ebola()</a></code> is the user-facing wrapper with input checks and parameter and scenario combination handling.</p></li>
+<li><p>The model allows vectors for the infection parameters and the duration (called <code>time_end</code>); however the number of replicates for each parameter-scenario combination is not allowed to vary. A default of 100 was chosen as a reasonable middle ground between efficiency and realism.</p></li>
+<li>
+<p>The model allows lists of intervention sets and time-dependence functions to be passed.</p>
+<ul>
+<li><p>Only interventions on model parameters are allowed, and interventions on social contacts are not allowed, as the model does not include age-stratification in transmission (or otherwise).</p></li>
+<li><p>The parameters <code>infectiousness_rate</code> (often denoted <span class="math inline">\(\sigma\)</span>) and <code>removal_rate</code> (recovery or death with safe burial, <span class="math inline">\(\gamma\)</span>) <em>cannot</em> be targeted by rate interventions or time-dependence as these values determine the number of sub-compartments in the exposed and infectious (and hospitalised) compartments, respectively. These are fixed at the start of the simulation, and changing them partway is challenging to support as it would involve redistributing individuals currently in any sub-compartment into more or fewer sub-compartments.</p></li>
+</ul>
+</li>
+<li>
+<p>The model supports and defaults to multiple replicates or runs for each parameter-scenario combination.</p>
+<ul>
+<li><p>For any <span class="math inline">\(N\)</span> runs with a single parameter set and a single intervention set, runs will differ due to stochasticity (essentially, as different random numbers are drawn for each run).</p></li>
+<li><p>For any <span class="math inline">\(N\)</span> runs with multiple parameter sets and a single intervention set, runs will differ due to stochasticity <em>within</em> parameter sets, but any differences between runs <em>across</em> parameter sets (e.g. two different transmission rates) will be due to differences in parameter values alone.</p></li>
+<li><p>For multiple runs of multiple parameter-scenario combinations, differences among runs will be due to differences in parameters and composable elements (such as interventions) alone.</p></li>
+<li><p>The <a href="https://CRAN.R-project.org/package=withr" class="external-link"><em>withr</em> package</a> is used to ensure that seeds are preserved across parameter sets and interventions.</p></li>
+</ul>
+</li>
+<li><p>The input and output types correspond to the ODE model types.</p></li>
+<li>
+<p>The model is written in R <a href="https://github.com/epiverse-trace/epidemics/issues/179" class="external-link">although this may change in future</a>. The main reason for keeping the implementation in R is that the <code><a href="https://rdrr.io/r/stats/Multinom.html" class="external-link">stats::rmultinom()</a></code> function is a very efficient way of drawing from a categorical distribution (often called a discrete distribution) with heterogeneous probabilities. This <a href="https://stackoverflow.com/questions/23097269/efficient-multinomial-sampling-when-sample-size-and-probability-vary" class="external-link">StackOverflow question from 2014</a> has more details including benchmarks against other implementations using <em>Rcpp</em>; though old, we have benchmarked a minimal example using <em>Boost</em> and found that this information is still valid.</p>
+<ul>
+<li>One possible reason to switch at least part of the Ebola model implementation to C++ is to make use of more efficient random number generation from the GNU Scientific Library via <a href="https://CRAN.R-project.org/package=RcppGSL" class="external-link"><em>RcppGSL</em></a>, although there may be <a href="https://stackoverflow.com/questions/55976547/linking-gsl-libraries-to-rcppgsl-in-windows-10" class="external-link">issues for users trying to compile from source on Windows</a>.</li>
+</ul>
+</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="classes">Classes<a class="anchor" aria-label="anchor" href="#classes"></a>
@@ -243,6 +275,8 @@ The eventual stable output type must allow users to conveniently access the epid
 <li>
 <a href="https://CRAN.R-project.org/package=BH" class="external-link"><em>BH</em></a>: provides the Boost <em>odeint</em> ODE solvers;</li>
 <li>
+<a href="https://CRAN.R-project.org/package=withr" class="external-link"><em>withr</em></a>: for seed management;</li>
+<li>
 <em>stats</em> and <em>utils</em>: already installed with R, and used only in the Ebola model, and hence liable to be removed in the future.</li>
 </ul>
 <p>A wider range of packages are taken on as soft dependencies to make the vignettes more user-friendly.</p>
@@ -264,9 +298,7 @@ The eventual stable output type must allow users to conveniently access the epid
 <li>
 <a href="https://CRAN.R-project.org/package=spelling" class="external-link"><em>spelling</em></a>: for spell-checking;</li>
 <li>
-<a href="https://CRAN.R-project.org/package=testthat" class="external-link"><em>testthat</em></a> (&gt;= 3.0.0): for unit tests;</li>
-<li>
-<a href="https://CRAN.R-project.org/package=withr" class="external-link"><em>withr</em></a>: for seed management.</li>
+<a href="https://CRAN.R-project.org/package=testthat" class="external-link"><em>testthat</em></a> (&gt;= 3.0.0): for unit tests.</li>
 </ul>
 </div>
 <div class="section level2">

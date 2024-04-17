@@ -15,22 +15,6 @@
 #' Names for the demographic groups are generated if no names are provided in
 #' the `population` object; these are of the form "demo_group_X".
 .output_to_df <- function(output, population, compartments) {
-  # TODO: consider removing input checks as fn is internal
-  # input checking
-  checkmate::assert_list(output,
-    any.missing = FALSE, all.missing = FALSE,
-    len = 2L, names = "unique"
-  )
-  checkmate::assert_names(
-    names(output),
-    identical.to = c("x", "time")
-  )
-  checkmate::assert_character(compartments,
-    any.missing = FALSE,
-    all.missing = FALSE, unique = TRUE
-  )
-  assert_population(population, compartments)
-
   # get demographic group names if any
   groupnames_from_contacts <- rownames(population$contact_matrix)
   groupnames_from_demography <- names(population$demography_vector)

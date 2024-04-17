@@ -9,10 +9,24 @@
 #' `<population>`.
 #'
 #' @return
-#' A list of model arguments suitable for [.model_ebola_internal()].
-#' This is a named list consisting of:
+#' A list of model arguments suitable for [.model_ebola_internal()], if all
+#' elements of `mod_args` are suitable for the Ebola model.
+#' If any of the model composable elements are not suitable, has the side-effect
+#' of throwing errors to the user.
+#' If any elements of `mod_args` are `NULL`, returns dummy placeholder values
+#' for those elements.
 #'
-#' **WIP**
+#' The returned list of prepared model arguments is a named list consisting of:
+#'
+#' - `"initial_state"`: the initial conditions of the simulation, which is the
+#' number of individuals in each compartment. No age stratification allowed.
+#'
+#' - `"intervention"`: either a list of `<rate_intervention>` objects, or a
+#' dummy `<rate_intervention>` if there are no interventions specified by the
+#' user.
+#'
+#' - `"time_dependence"`: the time-dependence composable element passed by the
+#' user. Input checks on this element occur in the higher level model function.
 #'
 #' @keywords internal
 #' @details

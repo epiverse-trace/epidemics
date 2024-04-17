@@ -12,10 +12,23 @@
 \verb{<population>}.}
 }
 \value{
-A list of model arguments suitable for \code{\link[=.model_ebola_internal]{.model_ebola_internal()}}.
-This is a named list consisting of:
+A list of model arguments suitable for \code{\link[=.model_ebola_internal]{.model_ebola_internal()}}, if all
+elements of \code{mod_args} are suitable for the Ebola model.
+If any of the model composable elements are not suitable, has the side-effect
+of throwing errors to the user.
+If any elements of \code{mod_args} are \code{NULL}, returns dummy placeholder values
+for those elements.
 
-\strong{WIP}
+The returned list of prepared model arguments is a named list consisting of:
+\itemize{
+\item \code{"initial_state"}: the initial conditions of the simulation, which is the
+number of individuals in each compartment. No age stratification allowed.
+\item \code{"intervention"}: either a list of \verb{<rate_intervention>} objects, or a
+dummy \verb{<rate_intervention>} if there are no interventions specified by the
+user.
+\item \code{"time_dependence"}: the time-dependence composable element passed by the
+user. Input checks on this element occur in the higher level model function.
+}
 }
 \description{
 Prepare arguments to \code{\link[=model_ebola]{model_ebola()}} for

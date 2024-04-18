@@ -1,5 +1,6 @@
 library("epidemics")
 library(withr)
+library(future)
 
 #### Set up population characteristics ####
 # for Guinea
@@ -19,3 +20,6 @@ guinea_population <- population(
     nrow = 1
   )
 )
+
+# allow multithreading
+future::plan("multicore", workers = 4)

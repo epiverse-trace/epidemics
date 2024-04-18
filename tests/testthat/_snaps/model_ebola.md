@@ -24,6 +24,6 @@
       17:     2         full_pop      funeral     0         1
       18:     2         full_pop      removed     0         1
       19:     3         full_pop  susceptible 66989         1
-      20:     3         full_pop      exposed     8         1
+      20:     3         full_pop      exposed     7         1
            time demography_group  compartment value replicate
 

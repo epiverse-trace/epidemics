@@ -28,6 +28,8 @@ License: MIT + file LICENSE
 URL: https://github.com/epiverse-trace/epidemics,
     https://epiverse-trace.github.io/epidemics/
 BugReports: https://github.com/epiverse-trace/epidemics/issues
+Depends:
+    purrr
 Imports:
     checkmate,
     cli,
@@ -46,6 +48,7 @@ Suggests:
     dplyr,
     EpiEstim,
     finalsize,
+    future,
     ggdist,
     ggplot2,
     knitr,

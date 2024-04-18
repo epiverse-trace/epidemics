@@ -471,7 +471,9 @@ model_ebola <- function(population,
   # but pre-generate seeds for each replicate as random number stream is
   # affected by interventions that reduce infections
   withr::local_preserve_seed()
-  local_seeds <- sample.int(.Machine$integer.max, replicates)
+  # single integer value that will be used to generate a L'Ecuyer-CMRG RNG seed
+  # see the furrr::furrr_options() documentation
+  local_seed <- sample.int(.Machine$integer.max, 1)
 
   # calculate required quantities
   population_size <- sum(initial_state)
@@ -510,7 +512,6 @@ model_ebola <- function(population,
   output_runs <- furrr::future_map(
     .x = seq_len(replicates), .f = function(xi_) {
       # use local seed from pre-generated seeds
-      # withr::local_seed(seed)
 
       # NOTE: the original ebola model code continues here
       # Prepare data matrix and assign initial state
@@ -672,7 +673,7 @@ model_ebola <- function(population,
       # replicate id is handled in `.output_to_df_ebola()`
       list(x = sim_data, time = seq(0, time_end))
     }, .options = furrr::furrr_options(
-      seed = local_seeds[1]
+      seed = local_seed
     )
   )
 

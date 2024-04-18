@@ -52,6 +52,21 @@ keywords:
 - vaccination
 references:
 - type: software
+  title: purrr
+  abstract: 'purrr: Functional Programming Tools'
+  notes: Depends
+  url: https://purrr.tidyverse.org/
+  repository: https://CRAN.R-project.org/package=purrr
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@rstudio.com
+  year: '2024'
+- type: software
   title: checkmate
   abstract: 'checkmate: Fast and Versatile Argument Checks'
   notes: Imports
@@ -97,6 +112,20 @@ references:
   - family-names: Hocking
     given-names: Toby
     orcid: https://orcid.org/0000-0002-3146-0865
+  year: '2024'
+- type: software
+  title: furrr
+  abstract: 'furrr: Apply Mapping Functions in Parallel using Futures'
+  notes: Imports
+  url: https://furrr.futureverse.org/
+  repository: https://CRAN.R-project.org/package=furrr
+  authors:
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@rstudio.com
+  - family-names: Dancho
+    given-names: Matt
+    email: mdancho@business-science.io
   year: '2024'
 - type: software
   title: glue
@@ -321,6 +350,18 @@ references:
     orcid: https://orcid.org/0000-0001-8814-9421
   year: '2024'
 - type: software
+  title: future
+  abstract: 'future: Unified Parallel and Distributed Processing in R for Everyone'
+  notes: Suggests
+  url: https://future.futureverse.org
+  repository: https://CRAN.R-project.org/package=future
+  authors:
+  - family-names: Bengtsson
+    given-names: Henrik
+    email: henrikb@braju.com
+    orcid: https://orcid.org/0000-0002-7579-5165
+  year: '2024'
+- type: software
   title: ggdist
   abstract: 'ggdist: Visualizations of Distributions and Uncertainty'
   notes: Suggests
@@ -381,21 +422,6 @@ references:
     given-names: Yihui
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
-  year: '2024'
-- type: software
-  title: purrr
-  abstract: 'purrr: Functional Programming Tools'
-  notes: Suggests
-  url: https://purrr.tidyverse.org/
-  repository: https://CRAN.R-project.org/package=purrr
-  authors:
-  - family-names: Wickham
-    given-names: Hadley
-    email: hadley@rstudio.com
-    orcid: https://orcid.org/0000-0003-4757-117X
-  - family-names: Henry
-    given-names: Lionel
-    email: lionel@rstudio.com
   year: '2024'
 - type: software
   title: rmarkdown

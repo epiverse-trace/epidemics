@@ -91,10 +91,11 @@
 #' @param data A table of model output, typically
 #' the output of [model_de  ault()] or similar functions.
 #' @param stage A numeric vector for the stage of the epidemic at which to
-#' return the epidemic size; here, 0.0 represents the start time of the epidemic, i.e., the initial conditions of the
-#' epidemic simulation, while 1.0 represents the end of the epidemic simulation.
-#' model (100% of model time). Defaults to 1.0, at which stage returned values
-#' represent the _final size_ of the epidemic.
+#' return the epidemic size; here 0.0 represents the start time of the epidemic
+#' i.e., the initial conditions of the epidemic simulation, while 1.0 represents
+#' the end of the epidemic simulation model (100% of model time).
+#' Defaults to 1.0, at which stage returned values represent the _final size_ of
+#' the epidemic.
 #' This value is overridden by any values passed to the `time` argument.
 #' @param time Alternative to `stage`, an integer-like vector for the timepoint
 #' of the epidemic at which to return the epidemic size.

@@ -53,6 +53,10 @@ test_that("Epidemic size functions", {
     epidemic_final_size,
     ignore_attr = TRUE
   )
+  expect_equal(
+    epidemic_size(data, time = time_end),
+    epidemic_size(data)
+  )
 
   # expect return types and contents
   expect_s3_class(
@@ -64,7 +68,7 @@ test_that("Epidemic size functions", {
     "data.table"
   )
   expect_s3_class(
-    epidemic_size(data, time = c(1, 2), simplify = TRUE),
+    epidemic_size(data, time = c(1, 2), simplify = FALSE),
     "data.table"
   )
 
@@ -138,8 +142,10 @@ test_that("Epidemic size for ebola model with replicates", {
 
   # expect that function returns data.table when replicates > 1
   output <- model_ebola(pop, replicates = replicates)
-  data <- epidemic_size(output, simplify = TRUE)
-
+  # throws a warning as expected
+  suppressWarnings(
+    data <- epidemic_size(output, simplify = TRUE)
+  )
   expect_s3_class(data, "data.table")
   expect_identical(
     nrow(data), replicates
@@ -149,4 +155,36 @@ test_that("Epidemic size for ebola model with replicates", {
   output <- model_ebola(pop, replicates = 1L)
   data <- epidemic_size(output, simplify = TRUE)
   expect_vector(data, numeric())
+})
+
+test_that("Epidemic size warnings and messages", {
+  # expect message when time is specified
+  expect_message(epidemic_size(data, time = 50))
+
+  # expect warning when multiple time points are requested and simplify is TRUE
+  expect_warning(epidemic_size(data, stage = c(0.1, 1.0)))
+  expect_warning(epidemic_size(data, time = c(10, 50)))
+  expect_error(
+    epidemic_size(data, time = NULL, stage = NULL),
+    regexp = "One of `stage` or `time` must be provided; both are NULL!"
+  )
+
+  # expect message when dead are requested but not present
+  expect_warning(epidemic_size(data, time = 50, include_deaths = TRUE))
+
+  # expect input checking errors
+  expect_error(epidemic_size("data"))
+  expect_error(epidemic_size(data[, c("time")]))
+  data_test <- data
+  colnames(data_test) <- letters[1:4]
+  expect_error(
+    epidemic_size(data_test),
+    regexp = "Names must include the elements"
+  )
+
+  expect_error(epidemic_size(data, by_group = 1))
+  expect_error(epidemic_size(data, include_deaths = 1))
+  expect_error(epidemic_size(data, stage = "0.1"))
+  expect_error(epidemic_size(data, time = "0.1"))
+  expect_error(epidemic_size(data, time = 0.1))
 })

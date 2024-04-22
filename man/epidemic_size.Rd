@@ -9,13 +9,13 @@ epidemic_size(
   stage = 1,
   time = NULL,
   by_group = TRUE,
-  include_deaths = TRUE,
+  include_deaths = FALSE,
   simplify = TRUE
 )
 }
 \arguments{
 \item{data}{A table of model output, typically
-the output of \code{\link[=model_default]{model_default()}} or similar functions.}
+the output of \code{\link[=model_de  ault]{model_de  ault()}} or similar functions.}
 
 \item{stage}{A numeric vector for the stage of the epidemic at which to
 return the epidemic size; here, 0.0 represents the initial conditions of the
@@ -24,8 +24,9 @@ model (100\% of model time). Defaults to 1.0, at which stage returned values
 represent the \emph{final size} of the epidemic.
 This value is overridden by any values passed to the \code{time} argument.}
 
-\item{time}{An optional numeric vector for the timepoint of the epidemic at
-which to return the epidemic size. Overrides any values passed to \code{stage}.}
+\item{time}{Alternative to \code{stage}, an integer-like vector for the timepoint
+of the epidemic at which to return the epidemic size.
+Overrides any values passed to \code{stage}.}
 
 \item{by_group}{A logical representing whether the epidemic size should be
 returned by demographic group, or whether a single population-wide value is
@@ -33,16 +34,15 @@ returned. Defaults to \code{TRUE}.}
 
 \item{include_deaths}{A logical value that indicates whether to count dead
 individuals in the epidemic size calculation.
-Defaults to \code{TRUE}, which makes the function look for a \code{"dead"} compartment
-in the data. If there is no such column, the function returns
-only the final number of recovered or removed individuals in each demographic
-group.}
+Defaults to \code{FALSE}. Setting \code{include_deaths = TRUE} makes the function look
+for a \code{"dead"} compartment in the data. If there is no such column, the
+function returns only the final number of recovered or removed individuals in
+each demographic group.}
 
 \item{simplify}{A logical determining whether the epidemic size data should
 be simplified to a vector with one element for each demographic group.
 If the length of \code{stage} or \code{time} is $>$ 1, this argument is overridden and
-the data are returned as a \verb{<data.table>}.
-group.}
+the data are returned as a \verb{<data.table>}.}
 }
 \value{
 If \code{simplify == TRUE} and a single timepoint is requested, returns a vector
@@ -87,9 +87,12 @@ data <- model_default(
   population = uk_population
 )
 
-# get the final epidemic size
+# get the final epidemic size if no other arguments are specified
 epidemic_size(data)
 
 # get the epidemic size at the halfway point
 epidemic_size(data, stage = 0.5)
+
+# alternatively, get the epidemic size at `time = 50`
+epidemic_size(data, time = 50)
 }

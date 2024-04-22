@@ -89,24 +89,25 @@
 #' group as well as the total epidemic size.
 #'
 #' @param data A table of model output, typically
-#' the output of [model_default()] or similar functions.
+#' the output of [model_de  ault()] or similar functions.
 #' @param stage A numeric vector for the stage of the epidemic at which to
 #' return the epidemic size; here, 0.0 represents the start time of the epidemic, i.e., the initial conditions of the
 #' epidemic simulation, while 1.0 represents the end of the epidemic simulation.
 #' model (100% of model time). Defaults to 1.0, at which stage returned values
 #' represent the _final size_ of the epidemic.
 #' This value is overridden by any values passed to the `time` argument.
-#' @param time An optional numeric vector for the timepoint of the epidemic at
-#' which to return the epidemic size. Overrides any values passed to `stage`.
+#' @param time Alternative to `stage`, an integer-like vector for the timepoint
+#' of the epidemic at which to return the epidemic size.
+#' Overrides any values passed to `stage`.
 #' @param by_group A logical representing whether the epidemic size should be
 #' returned by demographic group, or whether a single population-wide value is
 #' returned. Defaults to `TRUE`.
 #' @param include_deaths A logical value that indicates whether to count dead
 #' individuals in the epidemic size calculation.
-#' Defaults to `TRUE`, which makes the function look for a `"dead"` compartment
-#' in the data. If there is no such column, the function returns
-#' only the final number of recovered or removed individuals in each demographic
-#' group.
+#' Defaults to `FALSE`. Setting `include_deaths = TRUE` makes the function look
+#' for a `"dead"` compartment in the data. If there is no such column, the
+#' function returns only the final number of recovered or removed individuals in
+#' each demographic group.
 #' @param simplify A logical determining whether the epidemic size data should
 #' be simplified to a vector with one element for each demographic group.
 #' If the length of `stage` or `time` is $>$ 1, this argument is overridden and
@@ -142,14 +143,17 @@
 #'   population = uk_population
 #' )
 #'
-#' # get the final epidemic size
+#' # get the final epidemic size if no other arguments are specified
 #' epidemic_size(data)
 #'
 #' # get the epidemic size at the halfway point
 #' epidemic_size(data, stage = 0.5)
+#'
+#' # alternatively, get the epidemic size at `time = 50`
+#' epidemic_size(data, time = 50)
 epidemic_size <- function(
     data, stage = 1.0, time = NULL, by_group = TRUE,
-    include_deaths = TRUE, simplify = TRUE) {
+    include_deaths = FALSE, simplify = TRUE) {
   # input checking for data - this allows data.tables as well
   checkmate::assert_data_frame(
     data,
@@ -183,7 +187,7 @@ epidemic_size <- function(
   # if deaths are requested to be counted, but no "dead" compartment exists
   # throw a message
   if (include_deaths && (!"dead" %in% unique(data$compartment))) {
-    message(
+    warning(
       "epidemic_size(): No 'dead' compartment found in `data`; counting only",
       " 'recovered' or 'removed' individuals in the epidemic size."
     )
@@ -200,7 +204,7 @@ epidemic_size <- function(
   # calculate time to get and override stage if provided
   times_to_get <- round(max(data$time) * stage, 2)
   if (!is.null(time)) {
-    message(
+    cli::cli_inform(
       "epidemic_size(): `time` provided will override any `stage` provided"
     )
     times_to_get <- time
@@ -217,8 +221,8 @@ epidemic_size <- function(
     n_replicates <- max(data[["replicate"]])
   }
 
-  if (length(times_to_get) > 1L || n_replicates > 1) {
-    message(
+  if ((length(times_to_get) > 1L || n_replicates > 1) && simplify) {
+    warning(
       "Returning epidemic size at multiple time points, or for multiple",
       " replicates; cannot simplify output to vector; returning `<data.table>`"
     )

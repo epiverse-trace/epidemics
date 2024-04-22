@@ -1,6 +1,6 @@
 pandoc: 3.1.11
-pkgdown: 2.0.8
-pkgdown_sha: ~
+pkgdown: 2.0.9.9000
+pkgdown_sha: 64560974d3b5cf7691dc05b585a1d18f6837a9d1
 articles:
   design-principles: design-principles.html
   epidemics: epidemics.html
@@ -14,7 +14,7 @@ articles:
   modelling_scenarios: modelling_scenarios.html
   modelling_time_dependence: modelling_time_dependence.html
   modelling_vaccination: modelling_vaccination.html
-last_built: 2024-04-17T13:09Z
+last_built: 2024-04-22T13:35Z
 urls:
   reference: https://epiverse-trace.github.io/epidemics/reference
   article: https://epiverse-trace.github.io/epidemics/articles

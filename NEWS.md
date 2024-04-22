@@ -1,12 +1,34 @@
-# epidemics (development version)
+# epidemics 0.3.0
+
+This is a minor version release of _epidemics_ is the end point of this project that allows [vector inputs to the Ebola model](https://github.com/orgs/epiverse-trace/projects/36) (#211, #212).
 
 ## Breaking changes
 
+1. The Ebola model run with a single parameter set and a single set of composable (i.e., functionality before this vignette) now runs 100 replicates of the model by default, and the output returns the additional column name "replicate" (#211).
+
+2. The Ebola model disallows rate interventions on, and time-dependence for, the 'infectiousness rate' and the 'removal rate' as these control the number of epidemiological sub-compartments and cannot be allowed to vary during run time.
+
 1. The default behaviour of `epidemic_size()` is to exclude the 'dead' compartment from epidemic size calculations; this has changed from including it by default, as most models don't have a 'dead' compartment (#212);
+
+## Model functions
+
+1. The Ebola model code has been split into a two-level structure similar to the ODE models. The user facing function `model_ebola()` now handles input checking and some cross-checking, and makes combinations of infection parameter sets and scenarios, and handles output. The internal model function `.model_ebola_internal()` is now called over combinations of parameters and scenario elements (#211).
+
+2. `.model_ebola_internal()` relies on functionality from the {withr} package to preserve the random number seed between parameter set-scenario combinations, and to ensure that each $i$-th replicate of each scenario starts with the same random number stream.
+
+## Model structures
+
+## Classes
+
+1. The `<intervention>` helper functions `.cumulative_rate_intervention()` and `.intervention_on_rates()` have been renamed to include the prefix `.` to indicate they are internal functions (#211).
+
+2. Small updates to `.cross_check_intervention()` to better handle intervention sets where contacts interventions are optional (the Ebola model) (#211).
 
 ## Helper functions
 
-1. `epidemic_size()` is substantially updated (#212):
+1. `.check_prepare_args_ebola()` is a new argument cross-checking and preparation function for the Ebola model (#212).
+
+2. `epidemic_size()` is substantially updated (#212):
 
    - Added option for `time` which returns epidemic size at a specific time point, overriding the `stage` argument, defaults to `NULL` as the intended use of the function is to return the final size;
 
@@ -17,6 +39,24 @@
    - Added functionality to handle replicates from the Ebola model;
 
    - Added tests for new functionality.
+
+3. Added function `.output_to_df_ebola()` to handle output from the Ebola model (#211).
+
+## Documentation
+
+1. Updates to the Ebola model vignette showing new functionality.
+
+2. Updates to the design decisions vignette documenting decisions taken for the Ebola model.
+
+3. Enable auto development mode for the website in `_pkgdown.yml`, and manually specify Bootstrap version 5 (#213).
+
+4. Update WORDLIST.
+
+## Package
+
+1. {withr} moved from Suggests to Imports due to use in seed management.
+
+2. Added @bahadzie as contributor and @jamesmbaazam as reviewer.
 
 # epidemics 0.2.0
 
@@ -92,7 +132,6 @@ No substantial changes to classes; small additions of input checking to `<popula
 4. Added {ggdist}, {withr}, {purr} and {tidyr} to Suggests; `CITATION.cff` updated to match.
 
 5. Added basic infrastructure for continuous relative benchmarking (#206).
-
 
 # epidemics 0.1.0
 

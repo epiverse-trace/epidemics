@@ -1,6 +1,6 @@
 Package: epidemics
 Title: A Library of Compartmental Epidemic Scenario Models
-Version: 0.2.0.9000
+Version: 0.3.0
 Authors@R: c(
     person("Pratik", "Gupte", , "pratik.gupte@lshtm.ac.uk", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-5294-7819")),
@@ -12,10 +12,13 @@ Authors@R: c(
            comment = c(ORCID = "0000-0001-8814-9421")),
     person("Tim", "Taylor", , "tim.taylor@hiddenelephants.co.uk", role = c("ctb", "rev"),
            comment = c(ORCID = "0000-0002-8587-7113")),
+    person("Banky", "Ahadzie", , "bahadzie@gmail.com", role = "ctb"),
     person("Hugo", "Gruson", , "hugo.gruson@data.org", role = "rev",
            comment = c(ORCID = "0000-0002-4094-1476")),
     person("Joshua W.", "Lambert", , "joshua.lambert@lshtm.ac.uk", role = "rev",
-           comment = c(ORCID = "0000-0001-5218-3046"))
+           comment = c(ORCID = "0000-0001-5218-3046")),
+    person("James M.", "Azam", , "james.azam@lshtm.ac.uk", role = "rev",
+           comment = c(ORCID = "0000-0001-5782-7330"))
   )
 Description: A library of compartmental epidemic models taken from the
     published literature, and classes to represent populations with

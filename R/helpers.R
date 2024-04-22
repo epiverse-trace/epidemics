@@ -91,8 +91,8 @@
 #' @param data A table of model output, typically
 #' the output of [model_default()] or similar functions.
 #' @param stage A numeric vector for the stage of the epidemic at which to
-#' return the epidemic size; here, 0.0 represents the initial conditions of the
-#' epidemic (0% of model time), while 1.0 represents the end of the epidemic
+#' return the epidemic size; here, 0.0 represents the start time of the epidemic, i.e., the initial conditions of the
+#' epidemic simulation, while 1.0 represents the end of the epidemic simulation.
 #' model (100% of model time). Defaults to 1.0, at which stage returned values
 #' represent the _final size_ of the epidemic.
 #' This value is overridden by any values passed to the `time` argument.
@@ -111,7 +111,6 @@
 #' be simplified to a vector with one element for each demographic group.
 #' If the length of `stage` or `time` is $>$ 1, this argument is overridden and
 #' the data are returned as a `<data.table>`.
-#' group.
 #' @return
 #' If `simplify == TRUE` and a single timepoint is requested, returns a vector
 #' of epidemic sizes of the same length as the number of demographic groups.

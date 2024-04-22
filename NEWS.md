@@ -1,5 +1,23 @@
 # epidemics (development version)
 
+## Breaking changes
+
+1. The default behaviour of `epidemic_size()` is to exclude the 'dead' compartment from epidemic size calculations; this has changed from including it by default, as most models don't have a 'dead' compartment (#212);
+
+## Helper functions
+
+1. `epidemic_size()` is substantially updated (#212):
+
+   - Added option for `time` which returns epidemic size at a specific time point, overriding the `stage` argument, defaults to `NULL` as the intended use of the function is to return the final size;
+
+   - Added option to return epidemic sizes at multiple stages or time points (`stage` and `time` can be vectors);
+
+   - Added option to simplify the output to a vector, which is `TRUE` by default to keep consistency with previous functionality;
+
+   - Added functionality to handle replicates from the Ebola model;
+
+   - Added tests for new functionality.
+
 # epidemics 0.2.0
 
 This is a second GitHub release of _epidemics_ which makes substantial additions to the functionality in v0.1.0, and introduces significant breaking changes (#176).

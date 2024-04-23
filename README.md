@@ -1,5 +1,5 @@
 
-# epidemics: A library of compartmental epidemic scenario models <img src="man/figures/logo.svg" align="right" width="130"/>
+# epidemics: Composable epidemic scenario modelling <img src="man/figures/logo.svg" align="right" width="130"/>
 
 <!-- badges: start -->
 
@@ -15,13 +15,14 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.org/package=epidemics)
 <!-- badges: end -->
 
-*epidemics* is an R package that provides a convenient interface to a
-library of compartmental models that can help to model epidemic
-scenarios for directly transmitted respiratory infections such as
-influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus
-disease.
+*epidemics* is an R package that provides modular representations of
+populations and public health response measures, allowing them to be
+combined with epidemiological model structures curated from the
+published literature, to conveniently compose and compare epidemic
+scenario models.
 
-The models in *epidemics* implement methods outlined in Bjørnstad et al.
+The models in *epidemics* focus on directly transmitted infections, and
+implement methods outlined in Bjørnstad et al.
 ([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
 ([2020b](#ref-bjornstad2020)). The models in *epidemics* can help
 provide rough estimates of the course of epidemics, and the
@@ -199,25 +200,28 @@ vignettes](https://epiverse-trace.github.io/epidemics/), under
 
 ## Package models
 
-*epidemics* currently provides three models:
+*epidemics* provides a convenient interface to a library of
+compartmental models that can help to model epidemic scenarios for
+directly transmitted respiratory infections such as influenza or
+Covid-19 as well haemorrhagic fevers such as Ebola virus disease:
 
 1.  A deterministic SEIR-V model with susceptible, exposed, infectious,
     recovered, and vaccinated compartments (SEIR-V), allowing for
     heterogeneity in social contacts, the implementation of a
     group-specific non-pharmaceutical intervention that reduces social
     contacts, and a vaccination regime with group-specific start and end
-    dates,
+    dates;
 
 2.  The deterministic Vacamole model developed at [RIVM, the Dutch
     Public Health Institute](https://www.rivm.nl/) for the Covid-19
     pandemic, with a focus on scenario modelling for hospitalisation and
-    vaccination ([Ainslie et al. 2022](#ref-ainslie2022)),
+    vaccination ([Ainslie et al. 2022](#ref-ainslie2022));
 
 3.  A stochastic, discrete-time, compartmental SEIR model suitable for
     modelling haemorrhagic fevers such as Ebola Virus Disease, including
     hospitalisation and hospital and funeral transmissions, adapted from
     Li et al. ([2019](#ref-li2019)) and Getz and Dougherty
-    ([2018](#ref-getz2018)),
+    ([2018](#ref-getz2018));
 
 4.  An initial implementation of a compartmental model for diphtheria in
     the context of internally displaced persons camps, including a

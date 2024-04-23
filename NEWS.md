@@ -48,15 +48,23 @@ This is a minor version release of _epidemics_ is the end point of this project 
 
 2. Updates to the design decisions vignette documenting decisions taken for the Ebola model.
 
-3. Enable auto development mode for the website in `_pkgdown.yml`, and manually specify Bootstrap version 5 (#213).
+3. Updated sections on handling social contacts data in the 'Getting started' and 'Modelling interventions on social contacts' vignettes, added reference to Wallinga et al. 2006 <https://doi.org/10.1093/aje/kwj317> (#217).
 
-4. Update WORDLIST.
+4. Enables auto development mode for the website in `_pkgdown.yml`, and manually specify Bootstrap version 5 (#213).
+
+5. Updates WORDLIST.
+
+6. Updates installation instructions in the Readme; link under 'Contribute' correctly directs to pull requests page (#217).
 
 ## Package
 
 1. {withr} moved from Suggests to Imports due to use in seed management.
 
 2. Added @bahadzie as contributor and @jamesmbaazam as reviewer.
+
+3. Updates to the GitHub Actions workflows and linter config file.
+
+4. Updates the license year to 2024 in all files with the year.
 
 # epidemics 0.2.0
 

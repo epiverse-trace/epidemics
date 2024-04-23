@@ -84,6 +84,7 @@ codecov
 colorspace
 com
 composable
+config
 dD
 dE
 dH
@@ -107,10 +108,11 @@ ggdist
 ggplot
 gh
 github
+ij
 io
 knitr
 kylieainslie
-md
+linter
 odeint
 odin
 olds

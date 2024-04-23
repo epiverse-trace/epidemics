@@ -7,14 +7,13 @@ cff-version: 1.2.0
 message: 'To cite package "epidemics" in publications use:'
 type: software
 license: MIT
-title: 'epidemics: A Library of Compartmental Epidemic Scenario Models'
+title: 'epidemics: Composable Epidemic Scenario Modelling'
 version: 0.3.0
 abstract: A library of compartmental epidemic models taken from the published literature,
-  and classes to represent populations with heterogeneous characteristics, public
-  health response measures including non-pharmaceutical interventions on social contacts,
-  non-pharmaceutical and pharmaceutical interventions that affect disease transmissibility,
-  vaccination regimes, and disease seasonality, which can be combined to compose epidemic
-  scenarios.
+  and classes to represent affected populations, public health response measures including
+  non-pharmaceutical interventions on social contacts, non-pharmaceutical and pharmaceutical
+  interventions that affect disease transmissibility, vaccination regimes, and disease
+  seasonality, which can be combined to compose epidemic scenario models.
 authors:
 - family-names: Gupte
   given-names: Pratik

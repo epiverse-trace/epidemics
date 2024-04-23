@@ -1,3 +1,5 @@
+# epidemics (development version)
+
 # epidemics 0.3.0
 
 This is a minor version release of _epidemics_ is the end point of this project that allows [vector inputs to the Ebola model](https://github.com/orgs/epiverse-trace/projects/36) (#211, #212).

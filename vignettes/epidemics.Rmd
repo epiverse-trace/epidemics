@@ -18,7 +18,7 @@ editor_options:
 
 This initial vignette shows to get started with using the _epidemics_ package.
 
-Further vignettes include guidance on ["Modelling the implementation of vaccination regimes"](modelling_vaccination.html), as well as on["Modelling non-pharmaceutical interventions (NPIs) to reduce social contacts"](modelling_interventions.html) and ["Modelling multiple overlapping NPIs"](multiple_interventions.html).
+Further vignettes include guidance on ["Modelling the implementation of vaccination regimes"](modelling_vaccination.html), as well as on["Modelling non-pharmaceutical interventions (NPIs) to reduce social contacts"](modelling_interventions.html) and ["Modelling multiple overlapping NPIs"](modelling_multiple_interventions.html).
 
 There is also guidance available on specific models in the model library, such as the [Vacamole model developed by RIVM, the Dutch Institute for Public Health](model_vacamole.html).
 

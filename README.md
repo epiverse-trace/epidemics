@@ -44,7 +44,7 @@ The current development version of *epidemics* can be installed from
 
 ``` r
 if(!require("pak")) install.packages("pak")
-pak::pak("epiverse-trace/epidemics")
+pak::pkg_install("epiverse-trace/epidemics")
 ```
 
 ### Installation Notes
@@ -261,9 +261,8 @@ To report a bug please open an
 
 ## Contribute
 
-Contributions to *epidemics* are welcomed. Please follow the [package
-contributing
-guide](https://github.com/epiverse-trace/epidemics/blob/main/.github/CONTRIBUTING.md).
+Contributions to *epidemics* are welcomed via [pull
+requests](https://github.com/epiverse-trace/epidemics/pulls).
 
 ## Code of conduct
 

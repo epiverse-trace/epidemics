@@ -1,4 +1,7 @@
 #' Return ODE model output as a data.table
+#'
+#' @name output_to_df
+#' @rdname output_to_df
 #' @param output The model output, which must be a two element list (for
 #' epidemic) models, with the names "x" and "time", where "x" represents the
 #' condition of each compartment at each timestep in "time".
@@ -61,6 +64,9 @@
   data
 }
 
+#' Return Ebola model output as a table
+#' @name output_to_df
+#' @rdname output_to_df
 .output_to_df_ebola <- function(output, population, compartments) {
   # calculate replicates, format output, and assign replicate numbers
   replicates <- seq_along(output)

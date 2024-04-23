@@ -1,5 +1,5 @@
 Package: epidemics
-Title: A Library of Compartmental Epidemic Scenario Models
+Title: Composable Epidemic Scenario Modelling
 Version: 0.3.0
 Authors@R: c(
     person("Pratik", "Gupte", , "pratik.gupte@lshtm.ac.uk", role = c("aut", "cre", "cph"),
@@ -21,12 +21,12 @@ Authors@R: c(
            comment = c(ORCID = "0000-0001-5782-7330"))
   )
 Description: A library of compartmental epidemic models taken from the
-    published literature, and classes to represent populations with
-    heterogeneous characteristics, public health response measures
-    including non-pharmaceutical interventions on social contacts,
-    non-pharmaceutical and pharmaceutical interventions that affect
-    disease transmissibility, vaccination regimes, and disease
-    seasonality, which can be combined to compose epidemic scenarios.
+    published literature, and classes to represent affected populations,
+    public health response measures including non-pharmaceutical
+    interventions on social contacts, non-pharmaceutical and
+    pharmaceutical interventions that affect disease transmissibility,
+    vaccination regimes, and disease seasonality, which can be combined to
+    compose epidemic scenario models.
 License: MIT + file LICENSE
 URL: https://github.com/epiverse-trace/epidemics,
     https://epiverse-trace.github.io/epidemics/

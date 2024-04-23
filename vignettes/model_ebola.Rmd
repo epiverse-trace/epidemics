@@ -288,7 +288,7 @@ We can also model the rollout of vaccination against EVD, but because this model
 This is done by using the _time dependence_ functionality of _epidemics_.
 
 ::: {.alert .alert-warning}
-**New to implementing parameter time dependence in _epidemics_?** It may help to read the [vignette on time dependence functionality](time_dependence.html) first!
+**New to implementing parameter time dependence in _epidemics_?** It may help to read the [vignette on time dependence functionality](modelling_time_dependence.html) first!
 
 **Note that** the time-dependence composable element cannot be passed as a set of scenarios.
 :::

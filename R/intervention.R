@@ -726,7 +726,7 @@ c.rate_intervention <- function(x, ...) {
 #' `intervention_on_cm()` returns the contact matrix `cm` scaled by the
 #' cumulative effect of any active interventions.
 #'
-cumulative_contacts_intervention <- function(t,
+cumulative_contacts_intervention <- function(t, # nolint: object_length_linter
                                              time_begin, time_end, reduction) {
   # determine which interventions are active, promote to numeric
   interventions_active <- as.vector(t > time_begin & t < time_end)

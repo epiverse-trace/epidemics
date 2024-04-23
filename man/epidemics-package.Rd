@@ -4,9 +4,9 @@
 \name{epidemics-package}
 \alias{epidemics}
 \alias{epidemics-package}
-\title{epidemics: A Library of Compartmental Epidemic Scenario Models}
+\title{epidemics: Composable Epidemic Scenario Modelling}
 \description{
-A library of compartmental epidemic models taken from the published literature, and classes to represent populations with heterogeneous characteristics, public health response measures including non-pharmaceutical interventions on social contacts, non-pharmaceutical and pharmaceutical interventions that affect disease transmissibility, vaccination regimes, and disease seasonality, which can be combined to compose epidemic scenarios.
+A library of compartmental epidemic models taken from the published literature, and classes to represent affected populations, public health response measures including non-pharmaceutical interventions on social contacts, non-pharmaceutical and pharmaceutical interventions that affect disease transmissibility, vaccination regimes, and disease seasonality, which can be combined to compose epidemic scenario models.
 }
 \seealso{
 Useful links:
@@ -30,8 +30,10 @@ Other contributors:
 \itemize{
   \item Adam Kucharski \email{adam.kucharski@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-8814-9421}{ORCID}) [contributor, reviewer]
   \item Tim Taylor \email{tim.taylor@hiddenelephants.co.uk} (\href{https://orcid.org/0000-0002-8587-7113}{ORCID}) [contributor, reviewer]
+  \item Banky Ahadzie \email{bahadzie@gmail.com} [contributor]
   \item Hugo Gruson \email{hugo.gruson@data.org} (\href{https://orcid.org/0000-0002-4094-1476}{ORCID}) [reviewer]
   \item Joshua W. Lambert \email{joshua.lambert@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5218-3046}{ORCID}) [reviewer]
+  \item James M. Azam \email{james.azam@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5782-7330}{ORCID}) [reviewer]
 }
 
 }

@@ -82,10 +82,16 @@
     <loc>https://epiverse-trace.github.io/epidemics/reference/cumulative_rate_intervention.html</loc>
   </url>
   <url>
+    <loc>https://epiverse-trace.github.io/epidemics/reference/dot-intervention_on_rates.html</loc>
+  </url>
+  <url>
     <loc>https://epiverse-trace.github.io/epidemics/reference/dot-model_default_cpp.html</loc>
   </url>
   <url>
     <loc>https://epiverse-trace.github.io/epidemics/reference/dot-model_diphtheria_cpp.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse-trace.github.io/epidemics/reference/dot-model_ebola_internal.html</loc>
   </url>
   <url>
     <loc>https://epiverse-trace.github.io/epidemics/reference/dot-model_vacamole_cpp.html</loc>
@@ -95,9 +101,6 @@
   </url>
   <url>
     <loc>https://epiverse-trace.github.io/epidemics/reference/dot-ode_model_vacamole.html</loc>
-  </url>
-  <url>
-    <loc>https://epiverse-trace.github.io/epidemics/reference/dot-output_to_df.html</loc>
   </url>
   <url>
     <loc>https://epiverse-trace.github.io/epidemics/reference/dot-prepare_population.html</loc>
@@ -118,9 +121,6 @@
     <loc>https://epiverse-trace.github.io/epidemics/reference/intervention_constructor.html</loc>
   </url>
   <url>
-    <loc>https://epiverse-trace.github.io/epidemics/reference/intervention_on_rates.html</loc>
-  </url>
-  <url>
     <loc>https://epiverse-trace.github.io/epidemics/reference/model_default.html</loc>
   </url>
   <url>
@@ -136,6 +136,9 @@
     <loc>https://epiverse-trace.github.io/epidemics/reference/new_infections.html</loc>
   </url>
   <url>
+    <loc>https://epiverse-trace.github.io/epidemics/reference/output_to_df.html</loc>
+  </url>
+  <url>
     <loc>https://epiverse-trace.github.io/epidemics/reference/population.html</loc>
   </url>
   <url>
@@ -143,6 +146,9 @@
   </url>
   <url>
     <loc>https://epiverse-trace.github.io/epidemics/reference/prepare_diphtheria_args.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse-trace.github.io/epidemics/reference/prepare_ebola_args.html</loc>
   </url>
   <url>
     <loc>https://epiverse-trace.github.io/epidemics/reference/prepare_vacamole_args.html</loc>

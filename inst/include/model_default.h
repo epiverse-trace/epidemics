@@ -1,4 +1,4 @@
-// Copyright 2023 'epidemics' authors. See repository licence in LICENSE.md.
+// Copyright 2024 'epidemics' authors. See repository licence in LICENSE.md.
 #ifndef INST_INCLUDE_MODEL_DEFAULT_H_
 #define INST_INCLUDE_MODEL_DEFAULT_H_
 

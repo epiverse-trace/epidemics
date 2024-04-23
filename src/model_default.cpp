@@ -1,4 +1,4 @@
-// Copyright 2023 'epidemics' authors. See repository licence in LICENSE.md.
+// Copyright 2024 'epidemics' authors. See repository licence in LICENSE.md.
 #include <Rcpp.h>
 #include <RcppEigen.h>
 #include <epidemics.h>

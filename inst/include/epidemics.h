@@ -1,4 +1,4 @@
-// Copyright 2023 'epidemics' authors. See repository licence in LICENSE.md.
+// Copyright 2024 'epidemics' authors. See repository licence in LICENSE.md.
 // Written manually to allow header export
 // copied from https://github.com/r-pkg-examples/rcpp-shared-cpp-functions
 

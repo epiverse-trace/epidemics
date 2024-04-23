@@ -1,4 +1,4 @@
-// Copyright 2023 'epidemics' authors. See repository licence in LICENSE.md.
+// Copyright 2024 'epidemics' authors. See repository licence in LICENSE.md.
 /*
     Adapted from the Vacamole model developed by Kylie Ainslie et al. at the
     National Institute for Public Health and the Environment (RIVM),

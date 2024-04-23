@@ -6,6 +6,8 @@ output:
     code_folding: show
 pkgdown:
   as_is: true
+bibliography: references.json
+link-citations: true
 vignette: >
   %\VignetteIndexEntry{Getting started with epidemic scenario modelling components}
   %\VignetteEncoding{UTF-8}
@@ -37,6 +39,19 @@ library(ggplot2)
 ## Prepare population and initial conditions
 
 Prepare population and contact data.
+
+::: {.alert .alert-info}
+### Note on social contacts data {-}
+
+**Note that** the social contacts matrices provided by the _socialmixr_[https://CRAN.R-project.org/package=socialmixr] package follow a format wherein the matrix $M_{ij}$ represents [contacts from group $i$ to group $j$](https://epiforecasts.io/socialmixr/articles/socialmixr.html#usage).
+
+However, epidemic models traditionally adopt the notation that $M_{ij}$ defines contacts to $i$ from $j$ [@wallinga2006].
+
+$q M_{ij} / n_i$ then defines the probability of infection, where $q$ is a scaling factor dependent on $R_0$ (or another measure of infection transmissibility), and $n_i$ is the population proportion of group $i$.
+The ODEs in _epidemics_ also follow this convention.
+
+For consistency with this notation, social contact matrices from _socialmixr_ need to be transposed (using `t()`) before they are used with _epidemics_.
+:::
 
 ```{r}
 # load contact and population data from socialmixr::polymod
@@ -146,3 +161,5 @@ filter(output, compartment %in% c("exposed", "infectious")) %>%
     y = "Individuals"
   )
 ```
+
+## References

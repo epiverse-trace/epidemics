@@ -8,7 +8,7 @@ message: 'To cite package "epidemics" in publications use:'
 type: software
 license: MIT
 title: 'epidemics: Composable Epidemic Scenario Modelling'
-version: 0.3.0
+version: 0.3.0.9000
 abstract: A library of compartmental epidemic models taken from the published literature,
   and classes to represent affected populations, public health response measures including
   non-pharmaceutical interventions on social contacts, non-pharmaceutical and pharmaceutical

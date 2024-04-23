@@ -43,7 +43,7 @@ Prepare population and contact data.
 ::: {.alert .alert-info}
 ### Note on social contacts data {-}
 
-**Note that** the social contacts matrices provided by the _socialmixr_[https://CRAN.R-project.org/package=socialmixr] package follow a format wherein the matrix $M_{ij}$ represents [contacts from group $i$ to group $j$](https://epiforecasts.io/socialmixr/articles/socialmixr.html#usage).
+**Note that** the social contacts matrices provided by the [_socialmixr_](https://CRAN.R-project.org/package=socialmixr) package follow a format wherein the matrix $M_{ij}$ represents [contacts from group $i$ to group $j$](https://epiforecasts.io/socialmixr/articles/socialmixr.html#usage).
 
 However, epidemic models traditionally adopt the notation that $M_{ij}$ defines contacts to $i$ from $j$ [@wallinga2006].
 

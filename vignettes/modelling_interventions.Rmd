@@ -37,7 +37,7 @@ Prepare population and contact data.
 
 _epidemics_ expects social contacts matrices $M_{ij}$ to represent contacts to $i$ from $j$ [@wallinga2006], such that $q M_{ij} / n_i$ is the probability of infection, where $q$ is a scaling factor dependent on infection transmissibility, and $n_i$ is the population proportion of group $i$.
 
-Social contacts matrices provided by the _socialmixr_[https://CRAN.R-project.org/package=socialmixr] package follow the opposite convention, where $M_{ij}$ represents [contacts from group $i$ to group $j$](https://epiforecasts.io/socialmixr/articles/socialmixr.html#usage).
+Social contacts matrices provided by the [_socialmixr_](https://CRAN.R-project.org/package=socialmixr) package follow the opposite convention, where $M_{ij}$ represents [contacts from group $i$ to group $j$](https://epiforecasts.io/socialmixr/articles/socialmixr.html#usage).
 
 Thus social contact matrices from _socialmixr_ need to be transposed (using `t()`) before they are used with _epidemics_.
 :::

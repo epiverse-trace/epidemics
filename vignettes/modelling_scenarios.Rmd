@@ -411,7 +411,6 @@ Having prepared the interventions, we create intervention sets, and pass them to
 # create intervention sets, which are combinations of contacts and rate
 # interventions
 intervention_scenarios <- list(
-  baseline = NULL,
   scenario_01 = list(
     contacts = close_schools
   ),
@@ -471,7 +470,7 @@ The function `epidemic_size()` can be applied to the nested data column `data` t
 ```{r}
 # set intervention labels
 labels <- c(
-  "No response", "Close schools", "Close workplaces", "Close both",
+  "Close schools", "Close workplaces", "Close both",
   "Mask mandate", "Masks + close schools", "Masks + close workplaces",
   "Masks + close both"
 )
@@ -489,7 +488,7 @@ epidemic_size_estimates <- mutate(
 epidemic_size_estimates
 ```
 
-This example shows how implementing interventions that reduce transmission can reduce the final size of an epidemic.
+This example shows how implementing interventions that reduce transmission can reduce the size of an epidemic.
 
 ::: {.alert .alert-info}
 ### Combinations of intervention and vaccination scenarios
@@ -523,7 +522,7 @@ beta <- with_seed(
 ```{r}
 # this example includes 100 samples of transmission rates for each intervention
 # including the baseline
-output <- model_default(
+scenarios <- model_default(
   uk_population,
   transmission_rate = beta,
   intervention = intervention_scenarios,
@@ -544,37 +543,43 @@ The **same parameters** are used for each scenario, allowing for comparability b
 The output has $M \times N \times S$ rows (and nested model outputs), for $M$ intervention sets, $N$ vaccination regimes, and $S$ infection parameter sets.
 :::
 
-### Visualising parameter uncertainty in intervention scenarios
+### Comparing response scenarios with parameter uncertainty
 
-Here, we show one way of visualising the epidemic size across scenarios, accounting for parameter uncertainty.
+When running multiple scenarios with parameter uncertainty, there may easily be hundreds of output rows corresponding to each scenario and parameter set combination. This can become challenging to handle and lead to comparisons that are not valid, such as across different parameter sets.
+
+::: {.alert .alert-info}
+The `outcomes_averted()` function can help to quickly calculate the differences in epidemic sizes between a baseline scenario and any number of alternative or comparator scenarios.
+The function ensures that alternative scenarios share the same characteristics, such as infection parameters, with the baseline scenario.
+It also ensures like-for-like comparisons between scenarios and the baselines by matching output data from each scenario to its direct counterfactual in the baseline, ensuring that the only differences in outcomes are due to the implementation of interventions.
+:::
+
+We re-use the transmission rate values drawn earlier to represent uncertainty in this parameter.
 
 ```{r message=FALSE}
-# select the data, the parameter set, and the scenario
-epidemic_size_estimates <- select(output, param_set, scenario, data) %>%
-  mutate(
-    size = map_dbl(
-      data, epidemic_size,
-      by_group = FALSE, include_deaths = FALSE
-    )
-  ) %>%
-  select(-data)
+# run a baseline scenario with no epidemic response against which to compare
+# previously generated scenario data
+baseline <- model_default(
+  uk_population,
+  transmission_rate = beta,
+  time_end = 600
+)
+```
 
-# Extract baseline and alternative scenarios
-df_scenario1 <- epidemic_size_estimates %>% filter(scenario == 1)
-df_scenarios_rest <- epidemic_size_estimates %>% filter(scenario != 1)
+We use `outcomes_averted()` to calculate the total number of cases averted across all demographic groups for each parameter set.
 
-# Calculate differences as infections averted
-df_differences <- df_scenarios_rest %>%
-  left_join(df_scenario1, by = "param_set", suffix = c("_other", "_1")) %>%
-  mutate(difference = size_1 - size_other) %>%
-  select(param_set, scenario = scenario_other, difference)
+```{r}
+intervention_effect <- outcomes_averted(
+  baseline = baseline, scenarios = scenarios,
+  by_group = FALSE,
+  summarise = FALSE
+)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates."}
 # Plot distribution of differences
 ggplot(
-  df_differences,
-  aes(x = difference, y = factor(scenario), fill = factor(scenario))
+  intervention_effect,
+  aes(x = outcomes_averted, y = factor(scenario), fill = factor(scenario))
 ) +
   stat_histinterval(
     normalize = "xy", breaks = 11,
@@ -589,12 +594,20 @@ ggplot(
   ) +
   scale_y_discrete(
     name = NULL,
-    labels = labels[-1]
+    labels = labels
   ) +
   scale_fill_discrete_qualitative(
     palette = "Dynamic"
   ) +
   theme_bw()
+```
+
+We can get more compact data suitable for tables by summarising the output to get a summary of the median cases averted along with the 95% uncertainty interval using the `summarise` argument, and we can also disaggregate the cases averted by demographic group using the `by_group` argument. Both these options are `TRUE` by default.
+
+```{r}
+outcomes_averted(
+  baseline = baseline, scenarios = scenarios
+)
 ```
 
 ## Counter-intuitive effects of time-limited interventions

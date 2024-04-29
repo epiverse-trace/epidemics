@@ -185,10 +185,14 @@ outcomes_averted <- function(baseline,
   # NOTE: make copy of data.table as assignment by reference will modify
   # original data.table
   baseline_outcomes <- data.table::copy(baseline)
-  baseline_outcomes[, "outcome" := lapply(
-    baseline_outcomes$data, epidemic_size,
-    simplify = FALSE, by_group = by_group
-  )]
+  # suppressed as most models do not track deaths
+  suppressWarnings(
+    baseline_outcomes[, "outcome" := lapply(
+      baseline_outcomes$data, epidemic_size,
+      simplify = FALSE, by_group = by_group, include_deaths = TRUE
+    )]
+  )
+
   baseline_outcomes <- baseline_outcomes[, unlist(outcome, recursive = FALSE),
     by = c("scenario", "param_set"),
   ]
@@ -197,10 +201,12 @@ outcomes_averted <- function(baseline,
   # get epidemic sizes for response scenarios; some code repetition here
   # NOTE: work with a copy
   scenario_outcomes <- data.table::copy(scenarios)
-  scenario_outcomes[, "outcome" := lapply(
-    scenario_outcomes$data, epidemic_size,
-    simplify = FALSE, by_group = by_group
-  )]
+  suppressWarnings(
+    scenario_outcomes[, "outcome" := lapply(
+      scenario_outcomes$data, epidemic_size,
+      simplify = FALSE, by_group = by_group, include_deaths = TRUE
+    )]
+  )
 
   scenario_outcomes <- scenario_outcomes[, unlist(outcome, recursive = FALSE),
     by = c("scenario", "param_set")

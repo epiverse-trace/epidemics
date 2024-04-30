@@ -19,9 +19,10 @@ articles:
   navbar: Modelling seasonality
   contents:
   - modelling_time_dependence
-- title: Other modelling vignettes
-  navbar: Other modelling vignettes
+- title: Advanced modelling
+  navbar: Advanced modelling
   contents:
+  - modelling_param_uncertainty
   - modelling_scenarios
   - finalsize_comparison
 - title: Guides to library models

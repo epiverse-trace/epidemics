@@ -55,3 +55,7 @@ reference:
     contents:
     - epidemic_size
     - new_infections
+  - title: Scenario comparison
+    desc: Functions to help with comparing intervention scenarios.
+    contents:
+    - outcomes_averted

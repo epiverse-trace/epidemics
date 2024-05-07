@@ -122,10 +122,11 @@
 #'   scenarios = scenarios
 #' )
 #'
-#' # Set summarise = FALSE to apply custom summary functions
+#' # Set summarise = FALSE to get raw difference data
 #' outcomes_averted(
 #'   baseline = baseline,
-#'   scenarios = scenarios
+#'   scenarios = scenarios,
+#'   summarise = FALSE
 #' )
 outcomes_averted <- function(baseline,
                              scenarios,

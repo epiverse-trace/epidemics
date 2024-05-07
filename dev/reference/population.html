@@ -39,7 +39,7 @@ Check whether an object is a &amp;lt;population&amp;gt;"><meta property="og:imag
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
     <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling interventions that change infection parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
@@ -47,8 +47,9 @@ Check whether an object is a &amp;lt;population&amp;gt;"><meta property="og:imag
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
     <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
+    <h6 class="dropdown-header" data-toc-skip>Advanced modelling</h6>
+    <a class="dropdown-item" href="../articles/modelling_param_uncertainty.html">Modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling intervention scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
@@ -102,21 +103,21 @@ Check whether an object is a &amp;lt;population&amp;gt;"><meta property="og:imag
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>name</dt>
+    <dl><dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p>Optional string for the population name.</p></dd>
 
 
-<dt>contact_matrix</dt>
+<dt id="arg-contact-matrix">contact_matrix<a class="anchor" aria-label="anchor" href="#arg-contact-matrix"></a></dt>
 <dd><p>A matrix giving the contacts between the demographic
 groups in the population. Must be a square matrix.</p></dd>
 
 
-<dt>demography_vector</dt>
+<dt id="arg-demography-vector">demography_vector<a class="anchor" aria-label="anchor" href="#arg-demography-vector"></a></dt>
 <dd><p>A vector of the sizes of each demographic group.
 Must have the same length as the dimensions of the contact matrix.</p></dd>
 
 
-<dt>initial_conditions</dt>
+<dt id="arg-initial-conditions">initial_conditions<a class="anchor" aria-label="anchor" href="#arg-initial-conditions"></a></dt>
 <dd><p>Matrix representing the initial proportions of each
 demographic group in the four model compartments: 'susceptible',
 'infected/infectious', 'recovered', and 'vaccinated'. Must have as many rows
@@ -126,7 +127,7 @@ proportion of individuals of demographic group \(i\) in compartment \(j\)
 .</p></dd>
 
 
-<dt>x</dt>
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>An object to be checked as a valid population.</p></dd>
 
 </dl></div>

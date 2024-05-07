@@ -41,7 +41,7 @@ at that stage of the epidemic."><meta property="og:image" content="https://epive
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
     <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling interventions that change infection parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
@@ -49,8 +49,9 @@ at that stage of the epidemic."><meta property="og:image" content="https://epive
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
     <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
+    <h6 class="dropdown-header" data-toc-skip>Advanced modelling</h6>
+    <a class="dropdown-item" href="../articles/modelling_param_uncertainty.html">Modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling intervention scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
@@ -105,12 +106,12 @@ at that stage of the epidemic.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>data</dt>
+    <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>A table of model output, typically
 the output of <code>model_de  ault()</code> or similar functions.</p></dd>
 
 
-<dt>stage</dt>
+<dt id="arg-stage">stage<a class="anchor" aria-label="anchor" href="#arg-stage"></a></dt>
 <dd><p>A numeric vector for the stage of the epidemic at which to
 return the epidemic size; here 0.0 represents the start time of the epidemic
 i.e., the initial conditions of the epidemic simulation, while 1.0 represents
@@ -120,19 +121,19 @@ the epidemic.
 This value is overridden by any values passed to the <code>time</code> argument.</p></dd>
 
 
-<dt>time</dt>
+<dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
 <dd><p>Alternative to <code>stage</code>, an integer-like vector for the timepoint
 of the epidemic at which to return the epidemic size.
 Overrides any values passed to <code>stage</code>.</p></dd>
 
 
-<dt>by_group</dt>
+<dt id="arg-by-group">by_group<a class="anchor" aria-label="anchor" href="#arg-by-group"></a></dt>
 <dd><p>A logical representing whether the epidemic size should be
 returned by demographic group, or whether a single population-wide value is
 returned. Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>include_deaths</dt>
+<dt id="arg-include-deaths">include_deaths<a class="anchor" aria-label="anchor" href="#arg-include-deaths"></a></dt>
 <dd><p>A logical value that indicates whether to count dead
 individuals in the epidemic size calculation.
 Defaults to <code>FALSE</code>. Setting <code>include_deaths = TRUE</code> makes the function look
@@ -141,7 +142,7 @@ function returns only the final number of recovered or removed individuals in
 each demographic group.</p></dd>
 
 
-<dt>simplify</dt>
+<dt id="arg-simplify">simplify<a class="anchor" aria-label="anchor" href="#arg-simplify"></a></dt>
 <dd><p>A logical determining whether the epidemic size data should
 be simplified to a vector with one element for each demographic group.
 If the length of <code>stage</code> or <code>time</code> is $&gt;$ 1, this argument is overridden and

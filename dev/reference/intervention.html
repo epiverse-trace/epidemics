@@ -63,7 +63,7 @@ overlapping intervention regimes using c() on two or more
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
     <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling interventions that change infection parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
@@ -71,8 +71,9 @@ overlapping intervention regimes using c() on two or more
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
     <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
+    <h6 class="dropdown-header" data-toc-skip>Advanced modelling</h6>
+    <a class="dropdown-item" href="../articles/modelling_param_uncertainty.html">Modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling intervention scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
@@ -143,25 +144,25 @@ overlapping intervention regimes using <code><a href="https://rdrr.io/r/base/c.h
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>name</dt>
+    <dl><dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p>String for the name of the intervention.</p></dd>
 
 
-<dt>type</dt>
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>String for the type of intervention. May be one of <code>"contacts"</code>
 or <code>"rate"</code>, for a <code>&lt;contacts_intervention&gt;</code> or <code>&lt;rate_intervention&gt;</code>
 respectively.</p></dd>
 
 
-<dt>time_begin</dt>
+<dt id="arg-time-begin">time_begin<a class="anchor" aria-label="anchor" href="#arg-time-begin"></a></dt>
 <dd><p>Single number for the start time of the intervention.</p></dd>
 
 
-<dt>time_end</dt>
+<dt id="arg-time-end">time_end<a class="anchor" aria-label="anchor" href="#arg-time-end"></a></dt>
 <dd><p>Single number for the end time of the intervention.</p></dd>
 
 
-<dt>reduction</dt>
+<dt id="arg-reduction">reduction<a class="anchor" aria-label="anchor" href="#arg-reduction"></a></dt>
 <dd><p>For <code>&lt;contacts_intervention&gt;</code>s, a matrix with as many rows as the
 number of demographic groups in the type population, and a single column.
 Each element gives the group-specific proportion reduction in contacts.</p>
@@ -171,12 +172,12 @@ in a model parameter contacts.</p>
 sub-class.</p></dd>
 
 
-<dt>x</dt>
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>An <code>&lt;intervention&gt;</code> object, or an object to be checked as an
 <code>&lt;intervention&gt;</code> object.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>intervention objects to combine with <code>x</code> to create a multi-dose
 <code>&lt;intervention&gt;</code> object.</p></dd>
 

@@ -37,7 +37,7 @@
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
     <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling interventions that change infection parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
@@ -45,8 +45,9 @@
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
     <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
+    <h6 class="dropdown-header" data-toc-skip>Advanced modelling</h6>
+    <a class="dropdown-item" href="../articles/modelling_param_uncertainty.html">Modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling intervention scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
@@ -92,18 +93,18 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>t</dt>
+    <dl><dt id="arg-t">t<a class="anchor" aria-label="anchor" href="#arg-t"></a></dt>
 <dd><p>A single number for the simulation time.</p></dd>
 
 
-<dt>interventions</dt>
+<dt id="arg-interventions">interventions<a class="anchor" aria-label="anchor" href="#arg-interventions"></a></dt>
 <dd><p>A named list of <code>list</code>-like objects that each have at
 least the three members <code>"time_begin"</code>, <code>"time_end"</code>, and <code>"reduction"</code>.
 These are used to calculate the effect on each of the named parameters in the
 simulation.</p></dd>
 
 
-<dt>parameters</dt>
+<dt id="arg-parameters">parameters<a class="anchor" aria-label="anchor" href="#arg-parameters"></a></dt>
 <dd><p>A named list of numeric parameters affected by
 <code>interventions</code>.
 This represents the model parameters, such as the transmission rate,

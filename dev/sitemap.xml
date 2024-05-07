@@ -34,6 +34,9 @@
     <loc>https://epiverse-trace.github.io/epidemics/dev/articles/modelling_multiple_interventions.html</loc>
   </url>
   <url>
+    <loc>https://epiverse-trace.github.io/epidemics/dev/articles/modelling_param_uncertainty.html</loc>
+  </url>
+  <url>
     <loc>https://epiverse-trace.github.io/epidemics/dev/articles/modelling_rate_interventions.html</loc>
   </url>
   <url>
@@ -131,6 +134,9 @@
   </url>
   <url>
     <loc>https://epiverse-trace.github.io/epidemics/dev/reference/new_infections.html</loc>
+  </url>
+  <url>
+    <loc>https://epiverse-trace.github.io/epidemics/dev/reference/outcomes_averted.html</loc>
   </url>
   <url>
     <loc>https://epiverse-trace.github.io/epidemics/dev/reference/output_to_df.html</loc>

@@ -37,7 +37,7 @@
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
     <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling interventions that change infection parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
@@ -45,8 +45,9 @@
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
     <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
+    <h6 class="dropdown-header" data-toc-skip>Advanced modelling</h6>
+    <a class="dropdown-item" href="../articles/modelling_param_uncertainty.html">Modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling intervention scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
@@ -92,12 +93,12 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>data</dt>
+    <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>A table of model output, typically
 the output of <code><a href="model_default.html">model_default()</a></code> or similar functions.</p></dd>
 
 
-<dt>compartments_from_susceptible</dt>
+<dt id="arg-compartments-from-susceptible">compartments_from_susceptible<a class="anchor" aria-label="anchor" href="#arg-compartments-from-susceptible"></a></dt>
 <dd><p>An optional argument, for a character
 vector of the names of model compartments into which individuals transition
 from the "susceptible" compartment, and which are not related to infection.
@@ -105,7 +106,7 @@ A common example is a compartment for "vaccinated" individuals who are no
 longer susceptible, but who should also not be counted as infected.</p></dd>
 
 
-<dt>by_group</dt>
+<dt id="arg-by-group">by_group<a class="anchor" aria-label="anchor" href="#arg-by-group"></a></dt>
 <dd><p>A logical representing whether the epidemic size should be
 returned by demographic group, or whether a single population-wide value is
 returned.</p></dd>

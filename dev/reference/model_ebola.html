@@ -51,7 +51,7 @@ lags behind the R implementation, and is likely to be removed."><meta property="
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
     <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling interventions that change infection parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
@@ -59,8 +59,9 @@ lags behind the R implementation, and is likely to be removed."><meta property="
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
     <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
+    <h6 class="dropdown-header" data-toc-skip>Advanced modelling</h6>
+    <a class="dropdown-item" href="../articles/modelling_param_uncertainty.html">Modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling intervention scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
@@ -126,7 +127,7 @@ lags behind the R implementation, and is likely to be removed.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>population</dt>
+    <dl><dt id="arg-population">population<a class="anchor" aria-label="anchor" href="#arg-population"></a></dt>
 <dd><p>An object of the <code>&lt;population&gt;</code> class, see <code><a href="population.html">population()</a></code>.</p>
 <p>This model only accepts a <code>&lt;population&gt;</code> without demographic structure, that
 is, the <code>demography_vector</code> must be a single number representing the total
@@ -137,7 +138,7 @@ the matrix must be square and have as many rows as demography groups, which
 is one.</p></dd>
 
 
-<dt>transmission_rate</dt>
+<dt id="arg-transmission-rate">transmission_rate<a class="anchor" aria-label="anchor" href="#arg-transmission-rate"></a></dt>
 <dd><p>A numeric vector for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \(\beta\), with
@@ -145,13 +146,13 @@ infectious individual. Often denoted as \(\beta\), with
 See <strong>Details</strong> for default values.</p></dd>
 
 
-<dt>erlang_subcompartments</dt>
+<dt id="arg-erlang-subcompartments">erlang_subcompartments<a class="anchor" aria-label="anchor" href="#arg-erlang-subcompartments"></a></dt>
 <dd><p>A numeric, integer-like vector for the number
 of Erlang sub-compartments assumed for the exposed, infectious, and
 hospitalised compartments. Defaults to 2.</p></dd>
 
 
-<dt>infectiousness_rate</dt>
+<dt id="arg-infectiousness-rate">infectiousness_rate<a class="anchor" aria-label="anchor" href="#arg-infectiousness-rate"></a></dt>
 <dd><p>A numeric vector for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \(\sigma\), with \(\sigma = 1.0 / \text{pre-infectious period}\).
@@ -160,7 +161,7 @@ population.
 See <strong>Details</strong> for default values.</p></dd>
 
 
-<dt>removal_rate</dt>
+<dt id="arg-removal-rate">removal_rate<a class="anchor" aria-label="anchor" href="#arg-removal-rate"></a></dt>
 <dd><p>A numeric vector for the rate at which infectious
 individuals transition from the infectious or hospitalised compartments to
 the funeral or removed compartments.
@@ -168,13 +169,13 @@ This model does not distinguish between recoveries and deaths.
 Denoted in Getz and Dougherty as \(\gamma^I\) (see <strong>Details</strong>).</p></dd>
 
 
-<dt>prop_community</dt>
+<dt id="arg-prop-community">prop_community<a class="anchor" aria-label="anchor" href="#arg-prop-community"></a></dt>
 <dd><p>A numeric vector for the proportion of infectious
 individuals who remain in the community and are not hospitalised for
 treatment. Defaults to 0.9.</p></dd>
 
 
-<dt>etu_risk</dt>
+<dt id="arg-etu-risk">etu_risk<a class="anchor" aria-label="anchor" href="#arg-etu-risk"></a></dt>
 <dd><p>A numeric vector for the relative risk of onward transmission
 of EVD from hospitalised individuals, with values between 0.0 and 1.0, where
 0.0 indicates that hospitalisation completely prevents onward transmission,
@@ -183,7 +184,7 @@ at all; values are relative to the baseline transmission rate \(\beta\).
 Defaults to 0.7.</p></dd>
 
 
-<dt>funeral_risk</dt>
+<dt id="arg-funeral-risk">funeral_risk<a class="anchor" aria-label="anchor" href="#arg-funeral-risk"></a></dt>
 <dd><p>A numeric vector for the relative risk of onward
 transmission of EVD from funerals of individuals who died with EVD.
 Must be between 0.0 and 1.0, where 0.0 indicates that there is no onward
@@ -192,7 +193,7 @@ the baseline transmission rate in the community \(\beta\).
 Defaults to 0.5.</p></dd>
 
 
-<dt>intervention</dt>
+<dt id="arg-intervention">intervention<a class="anchor" aria-label="anchor" href="#arg-intervention"></a></dt>
 <dd><p>An optional named list of <code>&lt;rate_intervention&gt;</code> objects
 representing optional pharmaceutical or non-pharmaceutical interventions
 applied to the model parameters listed above. May also be a list of such
@@ -200,7 +201,7 @@ lists, in which case each set of interventions is treated as a separate
 scenario. See <strong>Details</strong> below.</p></dd>
 
 
-<dt>time_dependence</dt>
+<dt id="arg-time-dependence">time_dependence<a class="anchor" aria-label="anchor" href="#arg-time-dependence"></a></dt>
 <dd><p>An optional named list where each element is a
 function with the first two arguments being the current simulation <code>time</code>,
 and <code>x</code>, a value that is dependent on <code>time</code>
@@ -212,11 +213,11 @@ See <strong>Details</strong> for more information, as well as the vignette on ti
 dependence <code>vignette("time_dependence", package = "epidemics")</code>.</p></dd>
 
 
-<dt>time_end</dt>
+<dt id="arg-time-end">time_end<a class="anchor" aria-label="anchor" href="#arg-time-end"></a></dt>
 <dd><p>A numeric, integer-like vector for the maximum number of</p></dd>
 
 
-<dt>replicates</dt>
+<dt id="arg-replicates">replicates<a class="anchor" aria-label="anchor" href="#arg-replicates"></a></dt>
 <dd><p>A single number for replicates to run. Defaults to 100.
 timesteps over which to run the model, in days. Defaults to 100 days.</p></dd>
 

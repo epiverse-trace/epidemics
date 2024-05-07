@@ -41,7 +41,7 @@ Constructor for a new &amp;lt;rate_intervention&amp;gt;"><meta property="og:imag
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
     <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling interventions that change infection parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
@@ -49,8 +49,9 @@ Constructor for a new &amp;lt;rate_intervention&amp;gt;"><meta property="og:imag
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
     <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
+    <h6 class="dropdown-header" data-toc-skip>Advanced modelling</h6>
+    <a class="dropdown-item" href="../articles/modelling_param_uncertainty.html">Modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling intervention scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
@@ -109,32 +110,32 @@ Constructor for a new &amp;lt;rate_intervention&amp;gt;"><meta property="og:imag
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>name</dt>
+    <dl><dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p>String for the name of the intervention.</p></dd>
 
 
-<dt>time_begin</dt>
+<dt id="arg-time-begin">time_begin<a class="anchor" aria-label="anchor" href="#arg-time-begin"></a></dt>
 <dd><p>A matrix with a single element giving the start time of the
 intervention.</p></dd>
 
 
-<dt>time_end</dt>
+<dt id="arg-time-end">time_end<a class="anchor" aria-label="anchor" href="#arg-time-end"></a></dt>
 <dd><p>A matrix with a single element giving the end time of the
 intervention.</p></dd>
 
 
-<dt>reduction</dt>
+<dt id="arg-reduction">reduction<a class="anchor" aria-label="anchor" href="#arg-reduction"></a></dt>
 <dd><p>A matrix with a single column and as many rows as there are
 demographic groups to be targeted by the intervention. See <code><a href="intervention.html">intervention()</a></code>
 for details on the types of intervention that can be created and the
 requirements for the type of <code>reduction</code>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Any other parameters to be passed to the constructor.</p></dd>
 
 
-<dt>class</dt>
+<dt id="arg-class">class<a class="anchor" aria-label="anchor" href="#arg-class"></a></dt>
 <dd><p>A string giving the type of the intervention; used to generate
 intervention sub-classes.</p></dd>
 

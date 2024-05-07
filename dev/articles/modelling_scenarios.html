@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="epidemics">
-<title>Modelling parameter uncertainty and epidemic scenarios • epidemics</title>
+<title>Modelling intervention scenarios • epidemics</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modelling parameter uncertainty and epidemic scenarios">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modelling intervention scenarios">
 <meta property="og:description" content="epidemics">
 <meta property="og:image" content="https://epiverse-trace.github.io/epidemics/logo.svg">
 <meta name="robots" content="noindex">
@@ -62,7 +62,7 @@
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
     <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling interventions that change infection parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
@@ -70,8 +70,9 @@
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
     <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
+    <h6 class="dropdown-header" data-toc-skip>Advanced modelling</h6>
+    <a class="dropdown-item" href="../articles/modelling_param_uncertainty.html">Modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling intervention scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
@@ -107,7 +108,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.svg" class="logo" alt=""><h1>Modelling parameter uncertainty and epidemic scenarios</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Modelling intervention scenarios</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/epiverse-trace/epidemics/blob/HEAD/vignettes/modelling_scenarios.Rmd" class="external-link"><code>vignettes/modelling_scenarios.Rmd</code></a></small>
@@ -116,23 +117,29 @@
 
     
     
+<p>Scenario modelling can guide epidemic response measures by helping to establish general principles around the potential effects of interventions, or</p>
+<blockquote>
+<p>… how might things change if policies are brought in …</p>
+<p>– <a href="https://www.gov.uk/government/publications/epidemiological-modelling-frequently-asked-questions/epidemiological-modelling-frequently-asked-questions" class="external-link">UK Scientific Advisory Group for Emergencies Epidemiological Modelling FAQ</a></p>
+</blockquote>
+<p>Scenarios differ from true forecasts in projecting much farther ahead (typically months rather than days), and large-scale scenario modelling that includes both pharmaceutical and non-pharmaceutical interventions was widely adopted during the Covid-19 pandemic and has been applied to endemic infections as well <span class="citation">(<a href="#ref-howerton2023">Howerton et al. 2023</a>; <a href="#ref-prasad2023">Prasad et al. 2023</a>)</span>.</p>
+<p>This vignettes shows how <em>epidemics</em> can be used to tun multiple scenarios of epidemic response measures, and include parameter uncertainty when running multiple scenarios.</p>
 <div class="alert alert-warning">
-<p><strong>New to <em>epidemics</em>?</strong> It may help to read the <a href="epidemics.html">“Get started”</a> vignette first!</p>
-</div>
-<p>This vignette shows how <em>epidemics</em> can conveniently be used to:</p>
-<ol style="list-style-type: decimal">
-<li>Include parameter uncertainty in an epidemic model;</li>
-<li>Run multiple scenarios of epidemic response measures;</li>
-<li>Include parameter uncertainty when running multiple scenarios.</li>
-</ol>
-<div class="alert alert-warning">
-<p><strong>NOTE:</strong> This vignette applies only to the deterministic ODE models — the default, Vacamole, and diphtheria models.
-The Ebola virus disease model included in the package is expected to receive this functionality in the near future.</p>
+<p><strong>New to modelling interventions using <em>epidemics</em>?</strong> It may help to read these vignettes first:</p>
+<ul>
+<li>
+<a href="modelling_interventions.html">“Getting started with modelling interventions targeting social contacts”</a>;</li>
+<li>
+<a href="modelling_multiple_interventions.html">“Modelling overlapping and sequential interventions targeting social contacts”</a>;</li>
+<li>
+<a href="modelling_rate_interventions.html">“Modelling interventions that change infection parameters”</a>;</li>
+<li>
+<a href="modelling_vaccination.html">“Modelling the effect of a vaccination campaign”</a>.</li>
+</ul>
 </div>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># epi modelling</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mrc-ide/EpiEstim" class="external-link">EpiEstim</a></span><span class="op">)</span> <span class="co"># for Rt estimation</span></span>
 <span></span>
 <span><span class="co"># data manipulation packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -144,21 +151,29 @@ The Ebola virus disease model included in the package is expected to receive thi
 <span></span>
 <span><span class="co"># for reproducibility</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://withr.r-lib.org" class="external-link">withr</a></span><span class="op">)</span></span></code></pre></div>
-</details><div class="section level2">
-<h2 id="modelling-parameter-uncertainty">Modelling parameter uncertainty<a class="anchor" aria-label="anchor" href="#modelling-parameter-uncertainty"></a>
-</h2>
-<p>Uncertainty in the characteristics of an epidemic is a key element and roadblock in epidemic response <span class="citation">(<a href="#ref-shea2020">Shea et al. 2020</a>)</span>. Epidemic dynamics can be influenced by two main sources of uncertainty: intrinsic randomness in the transmission process, and uncertain knowledge of the parameters underlying the transmission process. Here we focus on the latter, i.e. uncertainty in the input parameters of an epidemic model.</p>
-<p><em>epidemics</em> model functions can accept numeric vectors for all infection parameters; the model is run for each parameter combination using the same population and other model components (interventions, vaccinations) etc.
-This allows users to quickly obtain results for a range of parameter values without having to repeatedly call <code>model_*()</code> in a loop or similar; this iteration is performed internally.</p>
-<p>Some benefits of vectorising inputs:</p>
+</details><p><em>epidemics</em> model functions can accept lists of intervention sets and vaccination regimes, allowing multiple intervention, vaccination, and combined intervention-and-vaccination sets to be modelled on the same population.</p>
+<p>Some benefits of passing lists of composable elements:</p>
 <ul>
-<li><p>Inputs are checked all at once, rather than <span class="math inline">\(N\)</span> times for each element of the parameter vector — this improves performance over manual iteration;</p></li>
-<li><p>Model output is organised to make filtering by parameter values and scenarios easier (more on this below).</p></li>
+<li><p>Combinations of intervention and vaccination scenarios can be conveniently created, as model functions will automatically create all possible combinations of the arguments to <code>intervention</code> and <code>vaccination</code>;</p></li>
+<li><p>Input-checking and cross-checking is reduced by checking each element of the <code>intervention</code> and <code>vaccination</code> list independently before the combination is created (and against the <code>population</code>, for cross-checking); hence for <span class="math inline">\(N\)</span> intervention sets and <span class="math inline">\(M\)</span> vaccination regimes there are only <span class="math inline">\(N+M\)</span> cross-checks, rather than <span class="math inline">\(N \times M\)</span> cross-checks;</p></li>
+<li><p>Model output is organised to provide a scenario identifier, making subsetting easier (more on this below).</p></li>
 </ul>
-<div class="alert alert-info">
-<p><strong>Note that</strong> it is always possible to pass a single value of any infection parameter. Single values may be referred to as “scalar” values or “scalars”. Passing scalar infection parameters will yield a simple table of the model “time”, “demography group”, “compartment”, and “value”, for the number of individuals in each demographic group in each compartment at each model time point.</p>
+<div class="alert alert-warning">
+<p>It may help to read the <a href="modelling_interventions.html">“Modelling a non-pharmaceutical intervention targeting social contacts”</a> and the <a href="modelling_vaccination.html">“Modelling the effect of a vaccination campaign”</a> vignettes first!</p>
 </div>
-<p>Click on “Code” below to see the hidden code used to set up a population in this vignette. For more details on how to define populations and initial model conditions please see the <a href="epidemics.html">“Getting started with epidemic scenario modelling components”</a> vignette. In brief, we model the U.K. population with three age groups, 0 – 19, 20 – 39, &gt; 40, and social contacts stratified by age.</p>
+<div class="section level3 alert alert-info">
+<h3 id="which-model-components-can-be-passed-as-lists">Which model components can be passed as lists<a class="anchor" aria-label="anchor" href="#which-model-components-can-be-passed-as-lists"></a>
+</h3>
+<p><em>epidemics</em> currently offers the ability to pass <strong>intervention sets</strong> and <strong>vaccination regimes</strong> as lists.</p>
+<p>It is not currently possible to pass lists of <em>populations</em>, <em>seasonality</em>, or <em>population changes</em> to any models.</p>
+<p>In future, it may be possible to pass multiple populations as a list, to rapidly and conveniently model an epidemic on different populations, or to examine the effect of assumptions about the population’s social contacts or demographic structure.</p>
+</div>
+<div class="section level3">
+<h3 id="setting-up-the-epidemic-context">Setting up the epidemic context<a class="anchor" aria-label="anchor" href="#setting-up-the-epidemic-context"></a>
+</h3>
+<p>We model an influenza epidemic in the U.K. population while separating outcomes into three age groups, 0 – 19, 20 – 39, &gt; 40, with social contacts stratified by age.
+Click on “Code” below to see the hidden code used to set up a population in this vignette.
+For more details on how to define populations and initial model conditions please see the <a href="epidemics.html">“Getting started with epidemic scenario modelling components”</a> vignette.</p>
 <details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
 <span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
@@ -198,273 +213,16 @@ This allows users to quickly obtain results for a range of parameter values with
 <span>  demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
 <span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><div class="section level3">
-<h3 id="obtaining-estimates-of-disease-transmission-rate">Obtaining estimates of disease transmission rate<a class="anchor" aria-label="anchor" href="#obtaining-estimates-of-disease-transmission-rate"></a>
-</h3>
-<p>For this example, we consider influenza with pandemic potential <span class="citation">(<a href="#ref-ghani2010">Ghani et al. 2010</a>)</span>, and prepare multiple samples of the estimated <span class="math inline">\(R\)</span>. This reflects pandemic response scenarios in which <span class="math inline">\(R\)</span> estimates always come with some uncertainty (due to limitations in the data and estimation methods). Sampling from a distribution that <span class="math inline">\(R\)</span> is expected to follow allows us to better understand the extent of variance in possible epidemic outcomes.</p>
-<p>We obtain the probability distribution function (PDF) from the distribution of the serial intervals; this is a Gamma distribution with shape <span class="math inline">\(k\)</span> = 2.622 and scale <span class="math inline">\(\theta\)</span> = 0.957 <span class="citation">(<a href="#ref-ghani2010">Ghani et al. 2010</a>)</span>.</p>
-<div class="alert alert-info">
-<p>The <a href="https://epiverse-trace.github.io/epiparameter/" class="external-link">forthcoming Epiverse package <em>epiparameter</em></a> is expected to make it substantially easier to access and use epidemiological parameters, such as the serial interval, reported in the literature, making it easier to model scenarios differing in the intrinsic characteristics of the pathogen causing the outbreak.</p>
-</div>
-<p>We use this PDF to estimate the <span class="math inline">\(R\)</span> of the 2009 influenza pandemic in the U.K., using <a href="https://cran.r-project.org/package=EpiEstim" class="external-link">the <em>EpiEstim</em> package</a>.
-We use the <span class="math inline">\(R\)</span> estimate (the mean and standard deviation) from <em>EpiEstim</em> to generate 100 samples of <span class="math inline">\(R\)</span>, assuming that it is normally distributed.
-Users who are drawing parameters with greater variance may wish to draw a larger number of samples.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get 2009 influenza data for school in Pennsylvania</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Flu2009</span><span class="op">)</span></span>
-<span><span class="va">flu_early_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Flu2009</span><span class="op">$</span><span class="va">incidence</span>, <span class="va">dates</span> <span class="op">&lt;</span> <span class="st">"2009-05-10"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># get the PDF of the distribution of serial intervals</span></span>
-<span><span class="va">serial_pdf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">2.622</span>, scale <span class="op">=</span> <span class="fl">0.957</span><span class="op">)</span></span>
-<span><span class="co"># ensure probabilities add up to 1 by normalising them by the sum</span></span>
-<span><span class="va">serial_pdf</span> <span class="op">&lt;-</span> <span class="va">serial_pdf</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">serial_pdf</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Use EpiEstim to estimate R with uncertainty</span></span>
-<span><span class="co"># Uses Gamma distribution by default</span></span>
-<span><span class="va">output_R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/EpiEstim/man/estimate_R.html" class="external-link">estimate_R</a></span><span class="op">(</span></span>
-<span>  incid <span class="op">=</span> <span class="va">flu_early_data</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"non_parametric_si"</span>,</span>
-<span>  config <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/EpiEstim/man/make_config.html" class="external-link">make_config</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>si_distr <span class="op">=</span> <span class="va">serial_pdf</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Plot output to visualise</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">output_R</span>, <span class="st">"R"</span><span class="op">)</span></span></code></pre></div>
-</details><p><img src="modelling_scenarios_files/figure-html/unnamed-chunk-4-1.png"><!-- --></p>
-</div>
-<div class="section level3">
-<h3 id="passing-a-vector-of-transmission-rates">Passing a vector of transmission rates<a class="anchor" aria-label="anchor" href="#passing-a-vector-of-transmission-rates"></a>
-</h3>
-<p>Here, we generate 100 samples of <span class="math inline">\(R\)</span>, and convert to the transmission rate (often denoted <span class="math inline">\(\beta\)</span>) by dividing by the infectious period of 7 days.</p>
-<p>Since <em>EpiEstim</em> estimates <span class="math inline">\(Rt\)</span>, the instantaneous <span class="math inline">\(R\)</span>, we shall use the mean of the estimates over the time period, and the mean of the standard deviation, as parameters for a distribution from which to draw <span class="math inline">\(R\)</span> samples for the model.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># get mean mean and sd over time</span></span>
-<span><span class="va">r_estimate_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">output_R</span><span class="op">$</span><span class="va">R</span><span class="op">$</span><span class="va">`Mean(R)`</span><span class="op">)</span></span>
-<span><span class="va">r_estimate_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">output_R</span><span class="op">$</span><span class="va">R</span><span class="op">$</span><span class="va">`Std(R)`</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Generate 100 R samples</span></span>
-<span><span class="va">r_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">with_seed</a></span><span class="op">(</span></span>
-<span>  seed <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span></span>
-<span>    n <span class="op">=</span> <span class="fl">100</span>, mean <span class="op">=</span> <span class="va">r_estimate_mean</span>, sd <span class="op">=</span> <span class="va">r_estimate_sd</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">infectious_period</span> <span class="op">&lt;-</span> <span class="fl">7</span></span>
-<span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="va">r_samples</span> <span class="op">/</span> <span class="va">infectious_period</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># pass the vector of transmissibilities to the argument `transmission_rate`</span></span>
-<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  transmission_rate <span class="op">=</span> <span class="va">beta</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="fl">600</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># view the output</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">output</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    transmission_rate infectiousness_rate recovery_rate time_end param_set</span></span>
-<span><span class="co">#&gt;                &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:         0.1977482                 0.5     0.1428571      600         1</span></span>
-<span><span class="co">#&gt; 2:         0.2333557                 0.5     0.1428571      600         2</span></span>
-<span><span class="co">#&gt; 3:         0.1885540                 0.5     0.1428571      600         3</span></span>
-<span><span class="co">#&gt; 4:         0.2954036                 0.5     0.1428571      600         4</span></span>
-<span><span class="co">#&gt; 5:         0.2397671                 0.5     0.1428571      600         5</span></span>
-<span><span class="co">#&gt; 6:         0.1892204                 0.5     0.1428571      600         6</span></span>
-<span><span class="co">#&gt;         population intervention vaccination time_dependence increment scenario</span></span>
-<span><span class="co">#&gt;             &lt;list&gt;       &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 2: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 3: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 4: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 5: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 6: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt;                    data</span></span>
-<span><span class="co">#&gt;                  &lt;list&gt;</span></span>
-<span><span class="co">#&gt; 1: &lt;data.table[9015x4]&gt;</span></span>
-<span><span class="co">#&gt; 2: &lt;data.table[9015x4]&gt;</span></span>
-<span><span class="co">#&gt; 3: &lt;data.table[9015x4]&gt;</span></span>
-<span><span class="co">#&gt; 4: &lt;data.table[9015x4]&gt;</span></span>
-<span><span class="co">#&gt; 5: &lt;data.table[9015x4]&gt;</span></span>
-<span><span class="co">#&gt; 6: &lt;data.table[9015x4]&gt;</span></span></code></pre></div>
-</details><p>The output is a nested <code>&lt;data.table&gt;</code>, with the output of each run of the model for each unique <code>transmission_rate</code> contained as a <code>&lt;data.frame&gt;</code> in the list column <code>"data"</code>.</p>
-</div>
-<div class="section level3 alert alert-info">
-<h3 id="output-type-for-vector-parameter-inputs">Output type for vector parameter inputs<a class="anchor" aria-label="anchor" href="#output-type-for-vector-parameter-inputs"></a>
-</h3>
-<p>The output of <code>model_*()</code> when an infection parameter is passed as a vector is a nested <code>&lt;data.table&gt;</code>. This is similar to a nested <code>&lt;tibble&gt;</code>, and can be handled by popular data science packages, such as from the Tidyverse.</p>
-<p>More on handling nested data can be found in this <a href="https://r4ds.hadley.nz/rectangling.html#list-columns" class="external-link">section on list-columns in R for Data Science</a> and in the <a href="https://tidyr.tidyverse.org/articles/nest.html" class="external-link">documentation for nested data in the <em>tidyr</em> package</a>. Equivalent operations are possible on <code>&lt;data.table&gt;</code>s directly; see <a href="https://www.r-bloggers.com/2019/10/much-faster-unnesting-with-data-table/" class="external-link">this R Bloggers post on unnesting data</a>.</p>
-</div>
-<p>We unnest the output’s “data” column in order to plot incidence curves for each transmission rate value.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># select the parameter set and data columns with dplyr::select()</span></span>
-<span><span class="co"># add the R value for visualisation</span></span>
-<span><span class="co"># calculate new infections, and use tidyr to unnest the data column</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">param_set</span>, <span class="va">transmission_rate</span>, <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    r_value <span class="op">=</span> <span class="va">r_samples</span>,</span>
-<span>    new_infections <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">new_infections</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">new_infections</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># plot the data</span></span>
-<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">new_infections</span>, col <span class="op">=</span> <span class="va">r_value</span>, group <span class="op">=</span> <span class="va">param_set</span><span class="op">)</span>,</span>
-<span>    alpha <span class="op">=</span> <span class="fl">0.3</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co"># use qualitative scale to emphasize differences</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_fermenter</a></span><span class="op">(</span></span>
-<span>    palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
-<span>    name <span class="op">=</span> <span class="st">"R"</span>,</span>
-<span>    breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1.5</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span><span class="op">)</span>,</span>
-<span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span></span>
-<span>    name <span class="op">=</span> <span class="st">"New infections"</span>,</span>
-<span>    labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_number.html" class="external-link">label_comma</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="fl">1e-3</span>, suffix <span class="op">=</span> <span class="st">"K"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="st">"Time (days since start of epidemic)"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span></span>
-<span>    cols <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">demography_group</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    legend.position <span class="op">=</span> <span class="st">"top"</span>,</span>
-<span>    legend.key.height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"mm"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-8"></span>
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-8-1.png" alt="Incidence curves for the number of new infections on each day of the epidemic given uncertainty in the R estimate; colours indicate $R$ bins. Larger $R$ values lead to shorter epidemics with higher peaks, while lower R values lead to more spread out epidemics with lower peaks. Epidemics with $R$ &lt; 1.0 do not 'take off' and are not clearly visible. Linking incidence curves to their $R$ values in a plot allows a quick visual assessment of the potential outcomes of an epidemic whose $R$ is uncertain."><p class="caption">
-Figure 1: Incidence curves for the number of new infections on each day of the epidemic given uncertainty in the R estimate; colours indicate <span class="math inline">\(R\)</span> bins. Larger <span class="math inline">\(R\)</span> values lead to shorter epidemics with higher peaks, while lower R values lead to more spread out epidemics with lower peaks. Epidemics with <span class="math inline">\(R\)</span> &lt; 1.0 do not ‘take off’ and are not clearly visible. Linking incidence curves to their <span class="math inline">\(R\)</span> values in a plot allows a quick visual assessment of the potential outcomes of an epidemic whose <span class="math inline">\(R\)</span> is uncertain.
-</p>
-</div>
-<div class="section level3 alert alert-info">
-<h3 id="passing-parameter-sets">Passing parameter sets<a class="anchor" aria-label="anchor" href="#passing-parameter-sets"></a>
-</h3>
-<p><em>epidemics</em> model functions can accept multiple infection parameters as vectors, so long as any vectors are all of the same length, or of length 1 (scalar values) as shown below.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">100</span>, <span class="va">mean</span>, <span class="va">sd</span><span class="op">)</span></span>
-<span><span class="va">gamma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">100</span>, <span class="va">mean</span>, <span class="va">sd</span><span class="op">)</span> <span class="co"># the recovery rate</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
-<span>  <span class="va">population</span>,</span>
-<span>  transmission_rate <span class="op">=</span> <span class="va">beta</span>, <span class="co"># same length as gamma</span></span>
-<span>  infectiousness_rate <span class="op">=</span> <span class="fl">0.5</span>, <span class="co"># length 1</span></span>
-<span>  recovery_rate <span class="op">=</span> <span class="va">gamma</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 </details>
-</div>
-<div class="section level3">
-<h3 id="passing-vectors-of-epidemic-duration">Passing vectors of epidemic duration<a class="anchor" aria-label="anchor" href="#passing-vectors-of-epidemic-duration"></a>
-</h3>
-<p><em>epidemics</em> allows the duration of an model run to be varied, as this may be useful when examining how variation in the start time of an epidemic affects outcomes by a fixed end point. This example shows how to estimate potential variation in the final epidemic size over a range of epidemic start times (and hence durations, assuming a fixed end).</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># draw samples of time_end</span></span>
-<span><span class="va">max_time</span> <span class="op">&lt;-</span> <span class="fl">600</span></span>
-<span><span class="va">duration</span> <span class="op">&lt;-</span> <span class="va">max_time</span> <span class="op">-</span> <span class="fu"><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">with_seed</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">1</span>, <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html" class="external-link">rnbinom</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">1</span>, <span class="fl">0.02</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># view durations</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">duration</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="st">"Epidemic duration"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Count"</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-</details><p><img src="modelling_scenarios_files/figure-html/unnamed-chunk-10-1.png"><!-- --></p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># pass the vector of durations to `time_end`</span></span>
-<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
-<span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
-<span>  time_end <span class="op">=</span> <span class="va">duration</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># view the output</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">output</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    transmission_rate infectiousness_rate recovery_rate time_end param_set</span></span>
-<span><span class="co">#&gt;                &lt;num&gt;               &lt;num&gt;         &lt;num&gt;    &lt;num&gt;     &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:         0.1857143                 0.5     0.1428571      589         1</span></span>
-<span><span class="co">#&gt; 2:         0.1857143                 0.5     0.1428571      595         2</span></span>
-<span><span class="co">#&gt; 3:         0.1857143                 0.5     0.1428571      568         3</span></span>
-<span><span class="co">#&gt; 4:         0.1857143                 0.5     0.1428571      583         4</span></span>
-<span><span class="co">#&gt; 5:         0.1857143                 0.5     0.1428571      589         5</span></span>
-<span><span class="co">#&gt; 6:         0.1857143                 0.5     0.1428571      593         6</span></span>
-<span><span class="co">#&gt;         population intervention vaccination time_dependence increment scenario</span></span>
-<span><span class="co">#&gt;             &lt;list&gt;       &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 2: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 3: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 4: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 5: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt; 6: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
-<span><span class="co">#&gt;                    data</span></span>
-<span><span class="co">#&gt;                  &lt;list&gt;</span></span>
-<span><span class="co">#&gt; 1: &lt;data.table[8850x4]&gt;</span></span>
-<span><span class="co">#&gt; 2: &lt;data.table[8940x4]&gt;</span></span>
-<span><span class="co">#&gt; 3: &lt;data.table[8535x4]&gt;</span></span>
-<span><span class="co">#&gt; 4: &lt;data.table[8760x4]&gt;</span></span>
-<span><span class="co">#&gt; 5: &lt;data.table[8850x4]&gt;</span></span>
-<span><span class="co">#&gt; 6: &lt;data.table[8910x4]&gt;</span></span></code></pre></div>
-</details><div class="alert alert-warning">
-<p><strong>NOTE:</strong> When the duration of the model runs is varied, each model output will have a potentially distinct number of rows.</p>
-</div>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># calculate the epidemic size to view the mean and SD of sizes</span></span>
-<span><span class="va">epidemic_size_estimates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">param_set</span>, <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    size <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
-<span>        demography_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">demography_group</span><span class="op">)</span>,</span>
-<span>        size <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_size.html">epidemic_size</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>      <span class="op">)</span></span>
-<span>    <span class="op">}</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="va">size</span>, .fns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="va">mean</span>, sd <span class="op">=</span> <span class="va">sd</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    .by <span class="op">=</span> <span class="st">"demography_group"</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># view the range of epidemic sizes</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">epidemic_size_estimates</span><span class="op">$</span><span class="va">size</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1]  Inf -Inf</span></span></code></pre></div>
-</details>
-</div>
-</div>
-<div class="section level2">
-<h2 id="modelling-scenarios-of-epidemic-response">Modelling scenarios of epidemic response<a class="anchor" aria-label="anchor" href="#modelling-scenarios-of-epidemic-response"></a>
-</h2>
-<p>Users may wish to model epidemic trajectories and outcomes under multiple scenarios of response measures.</p>
-<p><em>epidemics</em> model functions can accept lists of intervention sets and vaccination regimes, allowing multiple intervention, vaccination, and combined intervention-and-vaccination sets to be modelled on the same population.</p>
-<p>Some benefits of passing lists of composable elements:</p>
-<ul>
-<li><p>Combinations of intervention and vaccination scenarios can be conveniently created, as model functions will automatically create all possible combinations of the arguments to <code>intervention</code> and <code>vaccination</code>;</p></li>
-<li><p>Input-checking and cross-checking is reduced by checking each element of the <code>intervention</code> and <code>vaccination</code> list independently before the combination is created (and against the <code>population</code>, for cross-checking); hence for <span class="math inline">\(N\)</span> intervention sets and <span class="math inline">\(M\)</span> vaccination regimes there are only <span class="math inline">\(N+M\)</span> cross-checks, rather than <span class="math inline">\(N \time M\)</span> cross-checks;</p></li>
-<li><p>Model output is organised to provide a scenario identifier, making subsetting easier (more on this below).</p></li>
-</ul>
-<div class="alert alert-warning">
-<p>It may help to read the <a href="modelling_interventions.html">“Modelling a non-pharmaceutical intervention targeting social contacts”</a> and the <a href="modelling_vaccination.html">“Modelling the effect of a vaccination campaign”</a> vignettes first!</p>
-</div>
-<div class="section level3 alert alert-info">
-<h3 id="which-model-components-can-be-passed-as-lists">Which model components can be passed as lists<a class="anchor" aria-label="anchor" href="#which-model-components-can-be-passed-as-lists"></a>
-</h3>
-<p><em>epidemics</em> currently offers the ability to pass <strong>intervention sets</strong> and <strong>vaccination regimes</strong> as lists.</p>
-<p>It is not currently possible to pass lists of <em>populations</em>, <em>seasonality</em>, or <em>population changes</em> to any models.</p>
-<p>In future, it may be possible to pass multiple populations as a list, to rapidly and conveniently model an epidemic on different populations, or to examine the effect of assumptions about the population’s social contacts or demographic structure.</p>
 </div>
 <div class="section level3">
 <h3 id="creating-a-list-of-intervention-sets">Creating a list of intervention sets<a class="anchor" aria-label="anchor" href="#creating-a-list-of-intervention-sets"></a>
 </h3>
 <p>We shall create a list of ‘intervention sets’, each set representing a scenario of epidemic response measures.</p>
 <p><strong>Note that</strong> each intervention set is simply a list of <code>&lt;intervention&gt;</code> objects; typically, a single <code>&lt;contacts_intervention&gt;</code> and any <code>&lt;rate_interventions&gt;</code> on infection parameters.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># prepare durations as starting at 25% of the way through an epidemic</span></span>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">max_time</span> <span class="op">&lt;-</span> <span class="fl">600</span></span>
+<span><span class="co"># prepare durations as starting at 25% of the way through an epidemic</span></span>
 <span><span class="co"># and ending halfway through</span></span>
 <span><span class="va">time_begin</span> <span class="op">&lt;-</span> <span class="va">max_time</span> <span class="op">/</span> <span class="fl">4</span></span>
 <span><span class="va">time_end</span> <span class="op">&lt;-</span> <span class="va">max_time</span> <span class="op">/</span> <span class="fl">2</span></span>
@@ -490,7 +248,7 @@ Figure 1: Incidence curves for the number of new infections on each day of the e
 <span></span>
 <span><span class="co"># prepare a combined intervention</span></span>
 <span><span class="va">combined_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">close_schools</span>, <span class="va">close_workplaces</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create a mask-mandate rate intervention</span></span>
 <span><span class="co"># prepare an intervention that models mask mandates for 300 days</span></span>
 <span><span class="va">mask_mandate</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
@@ -501,11 +259,10 @@ Figure 1: Incidence curves for the number of new infections on each day of the e
 <span>  reduction <span class="op">=</span> <span class="fl">0.1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </details><p>Having prepared the interventions, we create intervention sets, and pass them to a model function.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create intervention sets, which are combinations of contacts and rate</span></span>
 <span><span class="co"># interventions</span></span>
 <span><span class="va">intervention_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  baseline <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scenario_01 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    contacts <span class="op">=</span> <span class="va">close_schools</span></span>
 <span>  <span class="op">)</span>,</span>
@@ -536,7 +293,7 @@ Figure 1: Incidence curves for the number of new infections on each day of the e
 <div class="alert alert-info">
 <p><strong>Note that</strong> in this example, we use the model’s default <span class="math inline">\(R\)</span> estimate of 1.3. This is because at higher values of <span class="math inline">\(R\)</span>, we get counter-intuitive results for the effects of interventions that reduce transmission. This is explored in more detail later in this vignette.</p>
 </div>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># pass the list of intervention sets to the model function</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  <span class="va">uk_population</span>,</span>
@@ -556,11 +313,11 @@ Figure 1: Incidence curves for the number of new infections on each day of the e
 <span><span class="co">#&gt; 6:         0.1857143                 0.5     0.1428571      600         1</span></span>
 <span><span class="co">#&gt;         population intervention vaccination time_dependence increment scenario</span></span>
 <span><span class="co">#&gt;             &lt;list&gt;       &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     &lt;num&gt;    &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1: &lt;population[4]&gt;                                &lt;list[1]&gt;         1        1</span></span>
+<span><span class="co">#&gt; 1: &lt;population[4]&gt;    &lt;list[1]&gt;                   &lt;list[1]&gt;         1        1</span></span>
 <span><span class="co">#&gt; 2: &lt;population[4]&gt;    &lt;list[1]&gt;                   &lt;list[1]&gt;         1        2</span></span>
 <span><span class="co">#&gt; 3: &lt;population[4]&gt;    &lt;list[1]&gt;                   &lt;list[1]&gt;         1        3</span></span>
 <span><span class="co">#&gt; 4: &lt;population[4]&gt;    &lt;list[1]&gt;                   &lt;list[1]&gt;         1        4</span></span>
-<span><span class="co">#&gt; 5: &lt;population[4]&gt;    &lt;list[1]&gt;                   &lt;list[1]&gt;         1        5</span></span>
+<span><span class="co">#&gt; 5: &lt;population[4]&gt;    &lt;list[2]&gt;                   &lt;list[1]&gt;         1        5</span></span>
 <span><span class="co">#&gt; 6: &lt;population[4]&gt;    &lt;list[2]&gt;                   &lt;list[1]&gt;         1        6</span></span>
 <span><span class="co">#&gt;                    data</span></span>
 <span><span class="co">#&gt;                  &lt;list&gt;</span></span>
@@ -579,10 +336,10 @@ Figure 1: Incidence curves for the number of new infections on each day of the e
 This is similar to the output type when parameters are passed as vectors, but with the <code>"scenario"</code> column indicating each intervention set as a distinct scenario, which helps with grouping the model outputs in <code>"data"</code>.</p>
 </div>
 <p>The function <code><a href="../reference/epidemic_size.html">epidemic_size()</a></code> can be applied to the nested data column <code>data</code> to get the final size for each scenario.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set intervention labels</span></span>
 <span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"No response"</span>, <span class="st">"Close schools"</span>, <span class="st">"Close workplaces"</span>, <span class="st">"Close both"</span>,</span>
+<span>  <span class="st">"Close schools"</span>, <span class="st">"Close workplaces"</span>, <span class="st">"Close both"</span>,</span>
 <span>  <span class="st">"Mask mandate"</span>, <span class="st">"Masks + close schools"</span>, <span class="st">"Masks + close workplaces"</span>,</span>
 <span>  <span class="st">"Masks + close both"</span></span>
 <span><span class="op">)</span></span>
@@ -600,15 +357,14 @@ This is similar to the output type when parameters are passed as vectors, but wi
 <span><span class="va">epidemic_size_estimates</span></span>
 <span><span class="co">#&gt;                    scenario       size</span></span>
 <span><span class="co">#&gt;                      &lt;char&gt;     &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:              No response 23,084,960</span></span>
-<span><span class="co">#&gt; 2:            Close schools 21,495,236</span></span>
-<span><span class="co">#&gt; 3:         Close workplaces 22,423,830</span></span>
-<span><span class="co">#&gt; 4:               Close both  6,622,568</span></span>
-<span><span class="co">#&gt; 5:             Mask mandate 22,712,782</span></span>
-<span><span class="co">#&gt; 6:    Masks + close schools 17,215,645</span></span>
-<span><span class="co">#&gt; 7: Masks + close workplaces 20,564,673</span></span>
-<span><span class="co">#&gt; 8:       Masks + close both  2,044,188</span></span></code></pre></div>
-</details><p>This example shows how implementing interventions that reduce transmission can reduce the final size of an epidemic.</p>
+<span><span class="co">#&gt; 1:            Close schools 21,495,236</span></span>
+<span><span class="co">#&gt; 2:         Close workplaces 22,423,830</span></span>
+<span><span class="co">#&gt; 3:               Close both  6,622,568</span></span>
+<span><span class="co">#&gt; 4:             Mask mandate 22,712,782</span></span>
+<span><span class="co">#&gt; 5:    Masks + close schools 17,215,645</span></span>
+<span><span class="co">#&gt; 6: Masks + close workplaces 20,564,673</span></span>
+<span><span class="co">#&gt; 7:       Masks + close both  2,044,188</span></span></code></pre></div>
+</details><p>This example shows how implementing interventions that reduce transmission can reduce the size of an epidemic.</p>
 <div class="section level3 alert alert-info">
 <h3 id="combinations-of-intervention-and-vaccination-scenarios">Combinations of intervention and vaccination scenarios<a class="anchor" aria-label="anchor" href="#combinations-of-intervention-and-vaccination-scenarios"></a>
 </h3>
@@ -619,23 +375,22 @@ Thus for <span class="math inline">\(M\)</span> intervention sets and <span clas
 <strong>Users are advised</strong> to be mindful of the number of scenario combinations they create.</p>
 </div>
 <p>The unnesting of the output follows the same procedure as before, and is not shown here.</p>
-</div>
 <div class="section level2">
 <h2 id="modelling-epidemic-response-scenarios-with-parameter-uncertainty">Modelling epidemic response scenarios with parameter uncertainty<a class="anchor" aria-label="anchor" href="#modelling-epidemic-response-scenarios-with-parameter-uncertainty"></a>
 </h2>
 <p><em>epidemics</em> allows parameter uncertainty to be combined with scenario models of multiple intervention sets or vaccination campaigns.</p>
 <p>Here, we shall draw 100 samples of the transmission rate with a mean of 0 and a low standard deviation of 0.005.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">with_seed</a></span><span class="op">(</span></span>
 <span>  seed <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  code <span class="op">=</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">1.3</span> <span class="op">/</span> <span class="fl">7</span>, <span class="fl">0.005</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># this example includes 100 samples of transmission rates for each intervention</span></span>
 <span><span class="co"># including the baseline</span></span>
-<span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
+<span><span class="va">scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  <span class="va">uk_population</span>,</span>
 <span>  transmission_rate <span class="op">=</span> <span class="va">beta</span>,</span>
 <span>  intervention <span class="op">=</span> <span class="va">intervention_scenarios</span>,</span>
@@ -651,34 +406,35 @@ The <code>"scenario"</code> column indicates each intervention set as a distinct
 <p>The output has <span class="math inline">\(M \times N \times S\)</span> rows (and nested model outputs), for <span class="math inline">\(M\)</span> intervention sets, <span class="math inline">\(N\)</span> vaccination regimes, and <span class="math inline">\(S\)</span> infection parameter sets.</p>
 </div>
 <div class="section level3">
-<h3 id="visualising-parameter-uncertainty-in-intervention-scenarios">Visualising parameter uncertainty in intervention scenarios<a class="anchor" aria-label="anchor" href="#visualising-parameter-uncertainty-in-intervention-scenarios"></a>
+<h3 id="comparing-response-scenarios-with-parameter-uncertainty">Comparing response scenarios with parameter uncertainty<a class="anchor" aria-label="anchor" href="#comparing-response-scenarios-with-parameter-uncertainty"></a>
 </h3>
-<p>Here, we show one way of visualising the epidemic size across scenarios, accounting for parameter uncertainty.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># select the data, the parameter set, and the scenario</span></span>
-<span><span class="va">epidemic_size_estimates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">param_set</span>, <span class="va">scenario</span>, <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    size <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dbl</a></span><span class="op">(</span></span>
-<span>      <span class="va">data</span>, <span class="va">epidemic_size</span>,</span>
-<span>      by_group <span class="op">=</span> <span class="cn">FALSE</span>, include_deaths <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Extract baseline and alternative scenarios</span></span>
-<span><span class="va">df_scenario1</span> <span class="op">&lt;-</span> <span class="va">epidemic_size_estimates</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">df_scenarios_rest</span> <span class="op">&lt;-</span> <span class="va">epidemic_size_estimates</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">scenario</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Calculate differences as infections averted</span></span>
-<span><span class="va">df_differences</span> <span class="op">&lt;-</span> <span class="va">df_scenarios_rest</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">df_scenario1</span>, by <span class="op">=</span> <span class="st">"param_set"</span>, suffix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"_other"</span>, <span class="st">"_1"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>difference <span class="op">=</span> <span class="va">size_1</span> <span class="op">-</span> <span class="va">size_other</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">param_set</span>, scenario <span class="op">=</span> <span class="va">scenario_other</span>, <span class="va">difference</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<p>When running multiple scenarios with parameter uncertainty, there may easily be hundreds of output rows corresponding to each scenario and parameter set combination. This can become challenging to handle and lead to comparisons that are not valid, such as across different parameter sets.</p>
+<div class="alert alert-info">
+<p>The <code><a href="../reference/outcomes_averted.html">outcomes_averted()</a></code> function can help to quickly calculate the differences in epidemic sizes between a baseline scenario and any number of alternative or comparator scenarios.
+The function ensures that alternative scenarios share the same characteristics, such as infection parameters, with the baseline scenario.
+It also ensures like-for-like comparisons between scenarios and the baselines by matching output data from each scenario to its direct counterfactual in the baseline, ensuring that the only differences in outcomes are due to the implementation of interventions.</p>
+</div>
+<p>We re-use the transmission rate values drawn earlier to represent uncertainty in this parameter.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># run a baseline scenario with no epidemic response against which to compare</span></span>
+<span><span class="co"># previously generated scenario data</span></span>
+<span><span class="va">baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
+<span>  <span class="va">uk_population</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="va">beta</span>,</span>
+<span>  time_end <span class="op">=</span> <span class="fl">600</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</details><p>We use <code><a href="../reference/outcomes_averted.html">outcomes_averted()</a></code> to calculate the total number of cases averted across all demographic groups for each parameter set.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">intervention_effect</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outcomes_averted.html">outcomes_averted</a></span><span class="op">(</span></span>
+<span>  baseline <span class="op">=</span> <span class="va">baseline</span>, scenarios <span class="op">=</span> <span class="va">scenarios</span>,</span>
+<span>  by_group <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  summarise <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot distribution of differences</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">df_differences</span>,</span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">difference</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">scenario</span><span class="op">)</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">scenario</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">intervention_effect</span>,</span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">outcomes_averted</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">scenario</span><span class="op">)</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">scenario</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="http://mjskay.github.io/ggdist/reference/stat_histinterval.html" class="external-link">stat_histinterval</a></span><span class="op">(</span></span>
 <span>    normalize <span class="op">=</span> <span class="st">"xy"</span>, breaks <span class="op">=</span> <span class="fl">11</span>,</span>
@@ -693,18 +449,48 @@ The <code>"scenario"</code> column indicates each intervention set as a distinct
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html" class="external-link">scale_y_discrete</a></span><span class="op">(</span></span>
 <span>    name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>    labels <span class="op">=</span> <span class="va">labels</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span></span>
+<span>    labels <span class="op">=</span> <span class="va">labels</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://colorspace.R-Forge.R-project.org/reference/scale_colour_discrete_qualitative.html" class="external-link">scale_fill_discrete_qualitative</a></span><span class="op">(</span></span>
 <span>    palette <span class="op">=</span> <span class="st">"Dynamic"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-22"></span>
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-22-1.png" alt="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates."><p class="caption">
-Figure 2: Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates.
+<span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-13-1.png" alt="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates."><p class="caption">
+Figure 1: Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates.
 </p>
 </div>
+<p>We can get more compact data suitable for tables by summarising the output to get a summary of the median cases averted along with the 95% uncertainty interval using the <code>summarise</code> argument, and we can also disaggregate the cases averted by demographic group using the <code>by_group</code> argument. Both these options are <code>TRUE</code> by default.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/outcomes_averted.html">outcomes_averted</a></span><span class="op">(</span></span>
+<span>  baseline <span class="op">=</span> <span class="va">baseline</span>, scenarios <span class="op">=</span> <span class="va">scenarios</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;     scenario demography_group averted_median averted_lower averted_upper</span></span>
+<span><span class="co">#&gt;        &lt;int&gt;           &lt;char&gt;          &lt;num&gt;         &lt;num&gt;         &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:        1              40+       589048.1     146305.71     4009551.3</span></span>
+<span><span class="co">#&gt;  2:        1           [0,20)       385913.2     127262.58     3050479.1</span></span>
+<span><span class="co">#&gt;  3:        1          [20,40)       399297.9      98807.37     2944726.6</span></span>
+<span><span class="co">#&gt;  4:        2              40+       262316.9     168090.68     2009812.7</span></span>
+<span><span class="co">#&gt;  5:        2           [0,20)       159312.2      94876.04     1445639.4</span></span>
+<span><span class="co">#&gt;  6:        2          [20,40)       204989.2     146947.05     1448337.6</span></span>
+<span><span class="co">#&gt;  7:        3              40+      6353711.9    1495432.76     7625962.3</span></span>
+<span><span class="co">#&gt;  8:        3           [0,20)      4707535.8     914359.58     6140493.0</span></span>
+<span><span class="co">#&gt;  9:        3          [20,40)      4609764.7     998536.62     5722732.9</span></span>
+<span><span class="co">#&gt; 10:        4              40+       177696.7     151511.91      875323.8</span></span>
+<span><span class="co">#&gt; 11:        4           [0,20)       112334.1      96648.67      610919.2</span></span>
+<span><span class="co">#&gt; 12:        4          [20,40)       118987.6     102234.53      619858.6</span></span>
+<span><span class="co">#&gt; 13:        5              40+      2192652.7     308110.77     6268222.9</span></span>
+<span><span class="co">#&gt; 14:        5           [0,20)      1455851.1     196195.46     5117644.8</span></span>
+<span><span class="co">#&gt; 15:        5          [20,40)      1514102.3     202017.32     4744802.5</span></span>
+<span><span class="co">#&gt; 16:        6              40+       940071.4     200491.93     4941637.8</span></span>
+<span><span class="co">#&gt; 17:        6           [0,20)       597879.3     115470.48     3841185.9</span></span>
+<span><span class="co">#&gt; 18:        6          [20,40)       645238.7     156166.52     3667693.2</span></span>
+<span><span class="co">#&gt; 19:        7              40+      8036211.5    4007084.99     8359423.7</span></span>
+<span><span class="co">#&gt; 20:        7           [0,20)      6256733.1    2621049.09     6639901.1</span></span>
+<span><span class="co">#&gt; 21:        7          [20,40)      5930346.6    2750447.81     6239290.9</span></span>
+<span><span class="co">#&gt;     scenario demography_group averted_median averted_lower averted_upper</span></span></code></pre></div>
+</details>
 </div>
 </div>
 <div class="section level2">
@@ -716,11 +502,11 @@ Figure 2: Infections averted relative to no epidemic response by implementing ea
 <li><p>multiple interventions reduce epidemic final sizes more than single interventions.</p></li>
 </ul>
 <p>In this simple example we show how this need not always be the case, and that counter-intuitively, implementing more interventions can lead to a larger epidemic final size than implementing fewer interventions.</p>
-<p>This phenomenon depends on the baseline transmission rate of the infection, so we select a relatively low <span class="math inline">\(R\)</span> of 1.30 (corresponding to pandemic influenza), and a higher <span class="math inline">\(R\)</span> of 1.58 from the <span class="math inline">\(R\)</span> estimation step at the start of the vignette.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<p>This phenomenon depends on the baseline transmission rate of the infection, so we select a relatively low <span class="math inline">\(R\)</span> of 1.30 (corresponding to pandemic influenza), and a higher <span class="math inline">\(R\)</span> of 1.6 to illustrate the point.</p>
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run each scenario for two values of R</span></span>
 <span><span class="co"># no parameter uncertainty</span></span>
-<span><span class="va">r_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.3</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">r_estimate_mean</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">r_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.3</span>, <span class="fl">1.6</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  <span class="va">uk_population</span>,</span>
@@ -740,7 +526,7 @@ Figure 2: Infections averted relative to no epidemic response by implementing ea
 <span>  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">labels</span>, <span class="va">labels</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">r_value</span>, <span class="va">scenario</span>, <span class="va">size</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot the epidemic final size for each scenario for each R</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">epidemic_size_estimates</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span></span>
@@ -766,13 +552,13 @@ Figure 2: Infections averted relative to no epidemic response by implementing ea
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-24"></span>
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-24-1.png" alt="Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario."><p class="caption">
-Figure 3: Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the ‘Close both workplaces and schools’ scenario.
+<span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-16-1.png" alt="Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario."><p class="caption">
+Figure 2: Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the ‘Close both workplaces and schools’ scenario.
 </p>
 </div>
 <p>Plotting the epidemic trajectories for each scenario for each value of <span class="math inline">\(R\)</span> gives a fuller picture of why we see this unexpected effect.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get new infections per day</span></span>
 <span><span class="va">daily_incidence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>  <span class="va">output</span>,</span>
@@ -782,7 +568,7 @@ Figure 3: Counter-intuitive effects of time-limited interventions on transmissio
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">scenario</span>, <span class="va">r_value</span>, <span class="va">incidence_data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">incidence_data</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">daily_incidence</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span></span>
 <span>    geom <span class="op">=</span> <span class="st">"rect"</span>,</span>
@@ -809,9 +595,9 @@ Figure 3: Counter-intuitive effects of time-limited interventions on transmissio
 <span>    y <span class="op">=</span> <span class="st">"New infections"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 </details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-26"></span>
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-26-1.png" alt="New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the 'No response' scenario."><p class="caption">
-Figure 4: New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the ‘No response’ scenario.
+<span style="display:block;" id="fig:unnamed-chunk-18"></span>
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-18-1.png" alt="New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the 'No response' scenario."><p class="caption">
+Figure 3: New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the ‘No response’ scenario.
 </p>
 </div>
 <p>Implementing interventions on the disease transmission rate leads to a ‘flattening of the curve’ (reduced daily incidence in comparison with no response) while the interventions are active.</p>
@@ -821,12 +607,16 @@ Thus low <span class="math inline">\(R\)</span> epidemics do not run their cours
 <p>At higher <span class="math inline">\(R\)</span>, the peak of the projected incidence curve without interventions falls within the intervention period, and thus all interventions reduce new infections.
 In scenarios with multiple active interventions, a large number of susceptibles remain uninfected, compared to scenarios with fewer interventions.
 The former thus see higher incidence peaks, leading to counter-intuitively larger final epidemic sizes.</p>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div id="ref-ghani2010" class="csl-entry">
-Ghani, Azra, Marc Baguelin, Jamie Griffin, Stefan Flasche, Albert Jan Van Hoek, Simon Cauchemez, Christl Donnelly, et al. 2010. <span>“The Early Transmission Dynamics of H1N1pdm Influenza in the United Kingdom.”</span> <em>PLoS Currents</em> 1 (June): RRN1130. <a href="https://doi.org/10.1371/currents.RRN1130" class="external-link">https://doi.org/10.1371/currents.RRN1130</a>.
 </div>
-<div id="ref-shea2020" class="csl-entry">
-Shea, Katriona, Ottar N. Bjørnstad, Martin Krzywinski, and Naomi Altman. 2020. <span>“Uncertainty and the Management of Epidemics.”</span> <em>Nature Methods</em> 17 (9): 867–68. <a href="https://doi.org/10.1038/s41592-020-0943-4" class="external-link">https://doi.org/10.1038/s41592-020-0943-4</a>.
+<div class="section level2 unnumbered">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-howerton2023" class="csl-entry">
+Howerton, Emily, Lucie Contamin, Luke C. Mullany, Michelle Qin, Nicholas G. Reich, Samantha Bents, Rebecca K. Borchering, et al. 2023. <span>“Evaluation of the US COVID-19 Scenario Modeling Hub for Informing Pandemic Response Under Uncertainty.”</span> <em>Nature Communications</em> 14 (1): 7260. <a href="https://doi.org/10.1038/s41467-023-42680-x" class="external-link">https://doi.org/10.1038/s41467-023-42680-x</a>.
+</div>
+<div id="ref-prasad2023" class="csl-entry">
+Prasad, Pragati V., Molly K. Steele, Carrie Reed, Lauren Ancel Meyers, Zhanwei Du, Remy Pasco, Jorge A. Alfaro-Murillo, et al. 2023. <span>“Multimodeling Approach to Evaluating the Efficacy of Layering Pharmaceutical and Nonpharmaceutical Interventions for Influenza Pandemics.”</span> <em>Proceedings of the National Academy of Sciences</em> 120 (28): e2300590120. <a href="https://doi.org/10.1073/pnas.2300590120" class="external-link">https://doi.org/10.1073/pnas.2300590120</a>.
 </div>
 </div>
 </div>

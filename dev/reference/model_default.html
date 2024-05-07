@@ -57,7 +57,7 @@ See Details for more information.'><meta property="og:image" content="https://ep
     <h6 class="dropdown-header" data-toc-skip>Modelling interventions</h6>
     <a class="dropdown-item" href="../articles/modelling_interventions.html">Getting started with modelling interventions targeting social contacts</a>
     <a class="dropdown-item" href="../articles/modelling_multiple_interventions.html">Modelling overlapping and sequential interventions targeting social contacts</a>
-    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling other interventions that change transmission rates</a>
+    <a class="dropdown-item" href="../articles/modelling_rate_interventions.html">Modelling interventions that change infection parameters</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Modelling vaccination</h6>
     <a class="dropdown-item" href="../articles/modelling_vaccination.html">Modelling the effect of a vaccination campaign</a>
@@ -65,8 +65,9 @@ See Details for more information.'><meta property="og:image" content="https://ep
     <h6 class="dropdown-header" data-toc-skip>Modelling seasonality</h6>
     <a class="dropdown-item" href="../articles/modelling_time_dependence.html">Modelling time-dependence and seasonality in transmission dynamics</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Other modelling vignettes</h6>
-    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling parameter uncertainty and epidemic scenarios</a>
+    <h6 class="dropdown-header" data-toc-skip>Advanced modelling</h6>
+    <a class="dropdown-item" href="../articles/modelling_param_uncertainty.html">Modelling parameter uncertainty</a>
+    <a class="dropdown-item" href="../articles/modelling_scenarios.html">Modelling intervention scenarios</a>
     <a class="dropdown-item" href="../articles/finalsize_comparison.html">Reducing parameters required for final size estimation</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Guides to library models</h6>
@@ -132,13 +133,13 @@ See <strong>Details</strong> for more information.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>population</dt>
+    <dl><dt id="arg-population">population<a class="anchor" aria-label="anchor" href="#arg-population"></a></dt>
 <dd><p>An object of the <code>population</code> class, which holds a
 population contact matrix, a demography vector, and the initial conditions
 of each demographic group. See <code><a href="population.html">population()</a></code>.</p></dd>
 
 
-<dt>transmission_rate</dt>
+<dt id="arg-transmission-rate">transmission_rate<a class="anchor" aria-label="anchor" href="#arg-transmission-rate"></a></dt>
 <dd><p>A numeric for the rate at which individuals
 move from the susceptible to the exposed compartment upon contact with an
 infectious individual. Often denoted as \(\beta\), with
@@ -146,7 +147,7 @@ infectious individual. Often denoted as \(\beta\), with
 values.</p></dd>
 
 
-<dt>infectiousness_rate</dt>
+<dt id="arg-infectiousness-rate">infectiousness_rate<a class="anchor" aria-label="anchor" href="#arg-infectiousness-rate"></a></dt>
 <dd><p>A numeric for the rate at which individuals
 move from the exposed to the infectious compartment. Often denoted as
 \(\sigma\), with \(\sigma = 1.0 / \text{pre-infectious period}\).
@@ -154,14 +155,14 @@ This value does not depend upon the number of infectious individuals in the
 population. See <strong>Details</strong> for default values.</p></dd>
 
 
-<dt>recovery_rate</dt>
+<dt id="arg-recovery-rate">recovery_rate<a class="anchor" aria-label="anchor" href="#arg-recovery-rate"></a></dt>
 <dd><p>A numeric for the rate at which individuals move
 from the infectious to the recovered compartment. Often denoted as
 \(\gamma\), with \(\gamma = 1.0 / \text{infectious period}\).
 See <strong>Details</strong> for default values.</p></dd>
 
 
-<dt>intervention</dt>
+<dt id="arg-intervention">intervention<a class="anchor" aria-label="anchor" href="#arg-intervention"></a></dt>
 <dd><p>A named list of <code>&lt;intervention&gt;</code>s representing optional
 non-pharmaceutical or pharmaceutical interventions applied during the
 epidemic. Only a single intervention on social contacts of the class
@@ -170,13 +171,13 @@ Multiple <code>&lt;rate_interventions&gt;</code> on the model parameters are all
 <strong>Details</strong> for the model parameters for which interventions are supported.</p></dd>
 
 
-<dt>vaccination</dt>
+<dt id="arg-vaccination">vaccination<a class="anchor" aria-label="anchor" href="#arg-vaccination"></a></dt>
 <dd><p>A <code>&lt;vaccination&gt;</code> object representing an optional
 vaccination regime with a single dose, followed during the course of the
 epidemic, with a start and end time, and age-specific vaccination rates.</p></dd>
 
 
-<dt>time_dependence</dt>
+<dt id="arg-time-dependence">time_dependence<a class="anchor" aria-label="anchor" href="#arg-time-dependence"></a></dt>
 <dd><p>A named list where each name
 is a model parameter, and each element is a function with
 the first two arguments being the current simulation <code>time</code>, and <code>x</code>, a value
@@ -185,12 +186,12 @@ See <strong>Details</strong> for more information, as well as the vignette on ti
 dependence <code>vignette("time_dependence", package = "epidemics")</code>.</p></dd>
 
 
-<dt>time_end</dt>
+<dt id="arg-time-end">time_end<a class="anchor" aria-label="anchor" href="#arg-time-end"></a></dt>
 <dd><p>The maximum number of timesteps over which to run the model.
 Taken as days, with a default value of 100 days. May be a numeric vector.</p></dd>
 
 
-<dt>increment</dt>
+<dt id="arg-increment">increment<a class="anchor" aria-label="anchor" href="#arg-increment"></a></dt>
 <dd><p>The size of the time increment. Taken as days, with a
 default value of 1 day.</p></dd>
 

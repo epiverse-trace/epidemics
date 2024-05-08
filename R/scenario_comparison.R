@@ -2,7 +2,7 @@
 #'
 #' @param baseline A nested `<data.table>` of a single model outcome with
 #' parameter uncertainty. This is expected to be the output of a single call to
-#' deterministic model functions such as [model_default()].
+#' model functions such as [model_default()] or [model_ebola()].
 #' @param scenarios A nested `<data.table>` of any number of model outcomes with
 #' infection parameter sets identical to those in `baseline` for comparability,
 #' i.e., the `scenarios` must differ from the `baseline` only in any
@@ -21,11 +21,27 @@
 #' When `summarise = TRUE`, a `<data.table>` of the same number of
 #' rows as `scenarios`, with the columns `"scenario"`, `"averted_median"`,
 #' `"averted_lower"`, and `"averted_upper"`.
+#'
 #' When `summarise = FALSE`, a `<data.table>` with one row per `"scenario"`,
 #' parameter set (`"param_set"`), and demography group (`"demography_group`),
 #' with the additional column `"outcomes_averted"` giving the difference between
 #' the baseline and the comparator scenario for each parameter set for each
 #' demography group.
+#'
+#' @details
+#' Both deterministic and stochastic models (currently only the Ebola model) are
+#' supported.
+#'
+#' When comparing deterministic model scenarios, users are expected to ensure
+#' that outputs comparable in terms of demographic groups and parameters.
+#' The output is expected to have parameter uncertainty, and differences between
+#' each scenario and the baseline are calculated after matching on parameter
+#' sets.
+#'
+#' When comparing stochastic model scenarios, each scenario is matched against
+#' the baseline on the replicate number as well as the parameter set to reduce
+#' the effect of initial conditions on differences in outcomes.
+#'
 #' @export
 #'
 #' @examples
@@ -148,8 +164,8 @@ outcomes_averted <- function(baseline,
         colnames(baseline),
         must.include = c(
           "transmission_rate", "infectiousness_rate", "time_end",
-          "param_set", "population", "intervention", "vaccination",
-          "time_dependence", "increment", "scenario", "data"
+          "param_set", "population", "intervention",
+          "time_dependence", "scenario", "data"
         )
       )
   )
@@ -194,8 +210,15 @@ outcomes_averted <- function(baseline,
     )]
   )
 
+  # set flag for whether data has replicates; applies only to stochastic model
+  has_reps <- if ("replicate" %in% colnames(baseline[["data"]][[1L]])) {
+    "replicate"
+  } else {
+    NULL
+  }
+
   baseline_outcomes <- baseline_outcomes[, unlist(outcome, recursive = FALSE),
-    by = c("scenario", "param_set"),
+    by = c("scenario", "param_set")
   ]
   data.table::setnames(baseline_outcomes, "value", "baseline_value")
 
@@ -215,7 +238,7 @@ outcomes_averted <- function(baseline,
 
   # variables to merge on; # cannot use ifelse()
   merge_variables <- c(
-    "param_set", if (by_group) "demography_group" else NULL
+    "param_set", if (by_group) "demography_group" else NULL, has_reps
   )
 
   # merge and get difference in outcomes

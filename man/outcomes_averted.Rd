@@ -9,7 +9,7 @@ outcomes_averted(baseline, scenarios, by_group = TRUE, summarise = TRUE)
 \arguments{
 \item{baseline}{A nested \verb{<data.table>} of a single model outcome with
 parameter uncertainty. This is expected to be the output of a single call to
-deterministic model functions such as \code{\link[=model_default]{model_default()}}.}
+model functions such as \code{\link[=model_default]{model_default()}} or \code{\link[=model_ebola]{model_ebola()}}.}
 
 \item{scenarios}{A nested \verb{<data.table>} of any number of model outcomes with
 infection parameter sets identical to those in \code{baseline} for comparability,
@@ -32,6 +32,7 @@ A \verb{<data.table>}.
 When \code{summarise = TRUE}, a \verb{<data.table>} of the same number of
 rows as \code{scenarios}, with the columns \code{"scenario"}, \code{"averted_median"},
 \code{"averted_lower"}, and \code{"averted_upper"}.
+
 When \code{summarise = FALSE}, a \verb{<data.table>} with one row per \code{"scenario"},
 parameter set (\code{"param_set"}), and demography group (\verb{"demography_group}),
 with the additional column \code{"outcomes_averted"} giving the difference between
@@ -40,6 +41,20 @@ demography group.
 }
 \description{
 Calculate outcomes averted by interventions
+}
+\details{
+Both deterministic and stochastic models (currently only the Ebola model) are
+supported.
+
+When comparing deterministic model scenarios, users are expected to ensure
+that outputs comparable in terms of demographic groups and parameters.
+The output is expected to have parameter uncertainty, and differences between
+each scenario and the baseline are calculated after matching on parameter
+sets.
+
+When comparing stochastic model scenarios, each scenario is matched against
+the baseline on the replicate number as well as the parameter set to reduce
+the effect of initial conditions on differences in outcomes.
 }
 \examples{
 polymod <- socialmixr::polymod

@@ -94,7 +94,7 @@ scenarios <- model_default(
   intervention = intervention_sets
 )
 
-test_that("`outcomes_averted()`: Basic expectations", {
+test_that("`outcomes_averted()`: Basic expectations, deterministic models", {
   # expect runs without conditions
   expect_no_condition(
     outcomes_averted(
@@ -213,5 +213,178 @@ test_that("`outcomes_averted()`: Errors and messages", {
   expect_error(
     outcomes_averted(baseline, scenarios_bad_vals),
     regexp = "`scenarios` must have common infection parameter sets"
+  )
+})
+
+#### Scenario comparison for stochastic models ####
+# Prepare population and parameters
+demography_vector <- 67000 # small population
+contact_matrix <- matrix(1)
+
+# manual case counts divided by pop size rather than proportions as small sizes
+# introduce errors when converting to counts in the model code; extra
+# individuals may appear
+infectious <- 1
+exposed <- 10
+initial_conditions <- matrix(
+  c(demography_vector - infectious - exposed, exposed, infectious, 0, 0, 0) /
+    demography_vector,
+  nrow = 1
+)
+rownames(contact_matrix) <- "full_pop"
+pop <- population(
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+
+compartments <- c(
+  "susceptible", "exposed", "infectious", "hospitalised", "funeral", "removed"
+)
+
+# prepare integer values for expectations on data length
+time_end <- 100L
+replicates <- 10L
+
+# create vector of parameters
+beta <- withr::with_seed(
+  1,
+  rnorm(10, mean = 1.3 / 7, sd = 0.005)
+)
+
+baseline <- withr::with_seed(
+  1,
+  model_ebola(
+    population = pop,
+    transmission_rate = beta,
+    replicates = replicates
+  )
+)
+
+max_time <- 100
+# prepare durations as starting at 25% of the way through an epidemic
+# and ending halfway through
+time_begin <- max_time / 4
+time_end <- max_time / 2
+
+# create two interventions
+reduce_beta <- intervention(
+  type = "rate", time_begin = time_begin, time_end = time_end,
+  reduction = 0.9
+)
+
+improve_etu <- intervention(
+  type = "rate", time_begin = time_begin, time_end = time_end,
+  reduction = 0.5
+)
+
+intervention_sets <- list(
+  list(
+    transmission_rate = reduce_beta
+  ),
+  list(
+    etu_risk = improve_etu
+  ),
+  list(
+    transmission_rate = reduce_beta,
+    etu_risk = improve_etu
+  )
+)
+
+scenarios <- withr::with_seed(
+  1,
+  model_ebola(
+    population = pop,
+    transmission_rate = beta,
+    intervention = intervention_sets,
+    replicates = replicates
+  )
+)
+
+outcomes_averted(
+  baseline = baseline,
+  scenarios = scenarios, summarise = FALSE
+)
+
+test_that("`outcomes_averted()`: Basic expectations, stochastic models", {
+  # expect runs without conditions
+  expect_no_condition(
+    outcomes_averted(
+      baseline = baseline, scenarios = scenarios
+    )
+  )
+  expect_no_condition(
+    outcomes_averted(
+      baseline = baseline, scenarios = scenarios, summarise = FALSE
+    )
+  )
+  expect_no_condition(
+    outcomes_averted(
+      baseline = baseline, scenarios = scenarios, by_group = FALSE
+    )
+  )
+  expect_no_condition(
+    outcomes_averted(
+      baseline = baseline, scenarios = scenarios, by_group = FALSE,
+      summarise = FALSE
+    )
+  )
+
+  # expect return type, structure, and basic statistical correctness
+  # for default options
+  averted_default <- outcomes_averted(
+    baseline = baseline, scenarios = scenarios, by_group = TRUE
+  )
+  expect_s3_class(averted_default, "data.table")
+  expect_named(
+    averted_default,
+    c(
+      "scenario", "demography_group",
+      sprintf("averted_%s", c("median", "lower", "upper"))
+    )
+  )
+  expect_true(
+    all(averted_default$averted_median > averted_default$averted_lower &
+      averted_default$averted_median < averted_default$averted_upper)
+  )
+
+  # expectations for aggregation over full population
+  averted_aggregate <- outcomes_averted(
+    baseline = baseline, scenarios = scenarios, by_group = FALSE
+  )
+  expect_s3_class(averted_aggregate, "data.table")
+  expect_named(
+    averted_aggregate,
+    c("scenario", sprintf("averted_%s", c("median", "lower", "upper")))
+  )
+  expect_true(
+    all(averted_default$averted_median > averted_default$averted_lower &
+      averted_default$averted_median < averted_default$averted_upper)
+  )
+
+  # expectations when aggregation is not applied
+  averted_raw <- outcomes_averted(
+    baseline = baseline, scenarios = scenarios, summarise = FALSE
+  )
+  expect_s3_class(averted_aggregate, "data.table")
+  expect_named(
+    averted_raw,
+    c(
+      "scenario", "demography_group", "param_set",
+      "replicate", "outcomes_averted"
+    ),
+    ignore.order = TRUE
+  )
+
+  # expectations when aggregation is not applied
+  averted_agg_raw <- outcomes_averted(
+    baseline = baseline, scenarios = scenarios,
+    summarise = FALSE, by_group = FALSE
+  )
+  expect_s3_class(averted_agg_raw, "data.table")
+  expect_named(
+    averted_agg_raw,
+    c("scenario", "param_set", "replicate", "outcomes_averted"),
+    ignore.order = TRUE
   )
 })

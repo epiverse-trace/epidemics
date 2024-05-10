@@ -96,7 +96,7 @@
     <dl><dt id="arg-baseline">baseline<a class="anchor" aria-label="anchor" href="#arg-baseline"></a></dt>
 <dd><p>A nested <code>&lt;data.table&gt;</code> of a single model outcome with
 parameter uncertainty. This is expected to be the output of a single call to
-deterministic model functions such as <code><a href="model_default.html">model_default()</a></code>.</p></dd>
+model functions such as <code><a href="model_default.html">model_default()</a></code> or <code><a href="model_ebola.html">model_ebola()</a></code>.</p></dd>
 
 
 <dt id="arg-scenarios">scenarios<a class="anchor" aria-label="anchor" href="#arg-scenarios"></a></dt>
@@ -128,12 +128,27 @@ matching by parameter set.</p></dd>
 <p>A <code>&lt;data.table&gt;</code>.
 When <code>summarise = TRUE</code>, a <code>&lt;data.table&gt;</code> of the same number of
 rows as <code>scenarios</code>, with the columns <code>"scenario"</code>, <code>"averted_median"</code>,
-<code>"averted_lower"</code>, and <code>"averted_upper"</code>.
-When <code>summarise = FALSE</code>, a <code>&lt;data.table&gt;</code> with one row per <code>"scenario"</code>,
+<code>"averted_lower"</code>, and <code>"averted_upper"</code>.</p>
+
+
+<p>When <code>summarise = FALSE</code>, a <code>&lt;data.table&gt;</code> with one row per <code>"scenario"</code>,
 parameter set (<code>"param_set"</code>), and demography group (<code>"demography_group</code>),
 with the additional column <code>"outcomes_averted"</code> giving the difference between
 the baseline and the comparator scenario for each parameter set for each
 demography group.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Both deterministic and stochastic models (currently only the Ebola model) are
+supported.</p>
+<p>When comparing deterministic model scenarios, users are expected to ensure
+that outputs comparable in terms of demographic groups and parameters.
+The output is expected to have parameter uncertainty, and differences between
+each scenario and the baseline are calculated after matching on parameter
+sets.</p>
+<p>When comparing stochastic model scenarios, each scenario is matched against
+the baseline on the replicate number as well as the parameter set to reduce
+the effect of initial conditions on differences in outcomes.</p>
     </div>
 
     <div class="section level2">

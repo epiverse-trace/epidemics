@@ -112,8 +112,8 @@ struct epidemic_default {
     vax_nu_current =
         vaccination::current_nu(t, vax_nu, vax_time_begin, vax_time_end);
 
-    // NB: Casting initial conditions matrix columns to arrays is necessary
-    // for vectorised operations
+    /// NOTE: Casting initial conditions matrix columns to arrays is necessary
+    /// for vectorised operations
 
     // compartmental transitions without accounting for contacts
     Eigen::ArrayXd sToE = model_params_temp.at("transmission_rate") *
@@ -124,7 +124,9 @@ struct epidemic_default {
         model_params_temp.at("recovery_rate") * x.col(2).array();
 
     /// NOTE: vax_nu_current holds COUNTS, not rates. See issue #198 for details
-    Eigen::ArrayXd sToV = vax_nu_current.col(0).array();
+    // S -> V is the group-wise minimum of doses or individuals
+    // preventing negative values in S
+    Eigen::ArrayXd sToV = x.col(0).array().min(vax_nu_current.col(0).array());
 
     // compartmental changes accounting for contacts (for dS and dE)
     // β: transmission_rate; ν: vaccination COUNTS, see issue #198

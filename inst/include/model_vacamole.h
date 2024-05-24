@@ -143,10 +143,11 @@ struct epidemic_vacamole {
                           (cm_temp * (x.col(5) + x.col(6))).array();
 
     /// NOTE: vax_nu_current holds COUNTS, not rates. See issue #198 for details
+    // individuals vaccinated are the group-wise minimum of doses or individuals
     // Susceptible to vaccinated with one dose
-    Eigen::ArrayXd sToV1 = vax_nu_current.col(0).array();
+    Eigen::ArrayXd sToV1 = x.col(0).array().min(vax_nu_current.col(0).array());
     // Vaccinated one dose to vaccinated with two doses
-    Eigen::ArrayXd v1ToV2 = vax_nu_current.col(1).array();
+    Eigen::ArrayXd v1ToV2 = x.col(1).array().min(vax_nu_current.col(1).array());
 
     // Vaccinated one dose to exposed - same as susceptible to exposed
     Eigen::ArrayXd v1ToE = model_params_temp.at("transmission_rate") *

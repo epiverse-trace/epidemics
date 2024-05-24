@@ -343,6 +343,31 @@ test_that("Vacamole model: two dose vaccination and stats. correctness", {
     data[grepl("dose", data$compartment, fixed = TRUE) &
       time %in% seq(50, 55), ]
   )
+
+  # expect that high vaccination rates (± 1% per day, e.g. Covid-19 vax)
+  # give statistically correct results (no negative susceptibles at any time)
+  high_rate_vax <- vaccination(
+    nu = matrix(
+      c(1e-2, 1e-2), # 1% per day
+      nrow = 2, ncol = 2, byrow = TRUE
+    ),
+    time_begin = matrix(
+      c(0, 50),
+      nrow = 2, ncol = 2, byrow = TRUE # second dose given from t = 50 onwards
+    ),
+    time_end = matrix(
+      100,
+      nrow = 2, ncol = 2
+    )
+  )
+  data <- model_vacamole(
+    uk_population,
+    vaccination = high_rate_vax, time_end = 600
+  )
+  checkmate::expect_numeric(
+    data[grepl("susceptible", data$compartment, fixed = TRUE), ]$value,
+    lower = 0
+  )
 })
 
 test_that("Vacamole model: time dependence", {

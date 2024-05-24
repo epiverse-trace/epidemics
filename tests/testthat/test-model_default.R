@@ -243,6 +243,22 @@ test_that("Default model: vaccination and stats. correctness", {
   expect_true(
     all(epidemic_size(data_baseline) > epidemic_size(data))
   )
+
+  # expect that high vaccination rates (± 1% per day, e.g. Covid-19 vax)
+  # give statistically correct results (no negative susceptibles at any time)
+  high_rate_vax <- vaccination(
+    time_begin = matrix(200, nrow(contact_matrix)),
+    time_end = matrix(200 + 150, nrow(contact_matrix)),
+    nu = matrix(0.01, nrow = nrow(contact_matrix))
+  )
+  data <- model_default(
+    uk_population,
+    vaccination = high_rate_vax, time_end = 600
+  )
+  checkmate::expect_numeric(
+    data[grepl("susceptible", data$compartment, fixed = TRUE), ]$value,
+    lower = 0
+  )
 })
 
 test_that("Default model: time dependence", {

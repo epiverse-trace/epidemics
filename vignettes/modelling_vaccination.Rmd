@@ -22,8 +22,6 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(epidemics)
-library(dplyr)
-library(ggplot2)
 ```
 
 ## Prepare population and initial conditions
@@ -96,7 +94,15 @@ vaccinate_elders <- vaccination(
 vaccinate_elders
 ```
 
-## Run epidemic model
+::: {.alert .alert-warning}
+**Note that** when the vaccination rate is high, the number of individuals who could _potentially_ transition from 'susceptible' to 'vaccinated' may be greater than the number of individuals in the 'susceptible' compartment: $dS_{i_{t}} = \nu_{i_t}S_{i_{0}} > S_{i_{t}}$ for each demographic group $i$ at time $t$.
+
+This could realistically occur when there are more doses available than individuals eligible to receive them, for instance towards the end of an epidemic.
+
+_epidemics_ automatically handles such situations by setting $dS_{i_{t}}$ to be the minimum of doses or eligible individuals: : $dS_{i_t} = \text{Min}(\nu_{i_t}S_{i_0}, S_{i_t})$, such that $S_{i_{t+1}}$ does not take a negative value.
+:::
+
+The `<vaccination>` object can be passed to the `vaccination` argument of a model function call.
 
 ```{r}
 # run an epidemic model using `epidemic`
@@ -107,42 +113,6 @@ output <- model_default(
 )
 ```
 
-## Prepare data and visualise infections
-
-Plot epidemic over time, showing only the number of individuals in the exposed, infected, and vaccinated compartments.
-
-```{r class.source = 'fold-hide'}
-# plot figure of epidemic curve
-filter(output, compartment %in% c("exposed", "infectious")) %>%
-  ggplot(
-    aes(
-      x = time,
-      y = value,
-      col = demography_group,
-      linetype = compartment
-    )
-  ) +
-  geom_line() +
-  scale_y_continuous(
-    labels = scales::comma
-  ) +
-  scale_colour_brewer(
-    palette = "Dark2",
-    name = "Age group"
-  ) +
-  expand_limits(
-    y = c(0, 500e3)
-  ) +
-  coord_cartesian(
-    expand = FALSE
-  ) +
-  theme_bw() +
-  theme(
-    legend.position = "top"
-  ) +
-  labs(
-    x = "Simulation time (days)",
-    linetype = "Compartment",
-    y = "Individuals"
-  )
-```
+::: {.alert .alert-info}
+**Note that** vaccination modelling is currently only supported for the 'default' (`model_default()`) and 'Vacamole' (`model_vacamole()`) models.
+:::

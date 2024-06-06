@@ -1,8 +1,38 @@
 # epidemics (development version)
 
+## Model functions
+
+1. Internal model functions for the models which allow vaccination have been corrected to prevent vaccination introducing negative values of susceptibles; tests added to check for this (#235, initially reported by @avallecam).
+
+## Helper functions
+
+1. Added the `epidemic_peak()` function to calculate the timing and size of the largest peak in each compartment in an scenario model (#240) by @bahadzie.
+
+2. Added the `outcomes_averted()` function to compare epidemic scenarios (e.g. with and without interventions or vaccination) (#225, #230).
+
 ## Documentation
 
 1. Adds a developer-focused vignette on how to modify epidemics and model structures to address potential modelling requests or tasks (#210).
+
+2. Splits up the 'Modelling uncertainty and scenarios' vignette into separate vignettes on uncertainty and scenario comparisons (#225).
+
+3. Removed unnecessary plots from the vignette on modelling vaccination (#235).
+
+4. Fixed link to _socialmixr_ package in the 'Get started' and 'Modelling interventions' vignettes.
+
+5. Updated and added documentation for all new or modified functions.
+
+6. Updated references JSON file.
+
+## Package
+
+1. Updated Codecov GitHub Actions workflow to restore code coverage reporting.
+
+2. Updated package title and citation file. 
+
+3. Updated `_pkgdown.yaml` with new vignette and updated section titles.
+
+4. Updated WORDLIST.
 
 # epidemics 0.3.0
 

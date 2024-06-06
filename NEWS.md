@@ -1,4 +1,4 @@
-# epidemics (development version)
+# epidemics 0.4.0
 
 ## Model functions
 

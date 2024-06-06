@@ -34,6 +34,7 @@ jobs:
             any::gh
             any::lintr
             any::purrr
+            any::cyclocomp
             epiverse-trace/etdev
           needs: check
 

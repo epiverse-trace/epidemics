@@ -1,6 +1,6 @@
 Package: epidemics
 Title: Composable Epidemic Scenario Modelling
-Version: 0.3.0.9000
+Version: 0.4.0
 Authors@R: c(
     person("Pratik", "Gupte", , "pratik.gupte@lshtm.ac.uk", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-5294-7819")),
@@ -18,7 +18,9 @@ Authors@R: c(
     person("Joshua W.", "Lambert", , "joshua.lambert@lshtm.ac.uk", role = "rev",
            comment = c(ORCID = "0000-0001-5218-3046")),
     person("James M.", "Azam", , "james.azam@lshtm.ac.uk", role = "rev",
-           comment = c(ORCID = "0000-0001-5782-7330"))
+           comment = c(ORCID = "0000-0001-5782-7330")),
+    person("Alexis", "Robert", , "alexis.robert@lshtm.ac.uk", role = "rev",
+           comment = c(ORCID = "0000-0002-4516-2965"))
   )
 Description: A library of compartmental epidemic models taken from the
     published literature, and classes to represent affected populations,

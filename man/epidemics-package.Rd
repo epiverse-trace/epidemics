@@ -34,6 +34,7 @@ Other contributors:
   \item Hugo Gruson \email{hugo.gruson@data.org} (\href{https://orcid.org/0000-0002-4094-1476}{ORCID}) [reviewer]
   \item Joshua W. Lambert \email{joshua.lambert@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5218-3046}{ORCID}) [reviewer]
   \item James M. Azam \email{james.azam@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5782-7330}{ORCID}) [reviewer]
+  \item Alexis Robert \email{alexis.robert@lshtm.ac.uk} (\href{https://orcid.org/0000-0002-4516-2965}{ORCID}) [reviewer]
 }
 
 }

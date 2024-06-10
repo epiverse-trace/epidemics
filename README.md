@@ -48,6 +48,13 @@ if(!require("pak")) install.packages("pak")
 pak::pkg_install("epiverse-trace/epidemics")
 ```
 
+Alternatively, install pre-compiled binaries from [the Epiverse TRACE
+R-universe](https://epiverse-trace.r-universe.dev/epidemics)
+
+``` r
+install.packages("epidemics", repos = c("https://epiverse-trace.r-universe.dev", "https://cloud.r-project.org"))
+```
+
 ### Installation Notes
 
 1.  Some users who are also using or developing packages that use Stan

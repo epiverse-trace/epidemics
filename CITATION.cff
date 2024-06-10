@@ -8,7 +8,7 @@ message: 'To cite package "epidemics" in publications use:'
 type: software
 license: MIT
 title: 'epidemics: Composable Epidemic Scenario Modelling'
-version: 0.3.0.9000
+version: 0.4.0
 abstract: A library of compartmental epidemic models taken from the published literature,
   and classes to represent affected populations, public health response measures including
   non-pharmaceutical interventions on social contacts, non-pharmaceutical and pharmaceutical
@@ -30,10 +30,10 @@ authors:
 repository-code: https://github.com/epiverse-trace/epidemics
 url: https://epiverse-trace.github.io/epidemics/
 contact:
-- family-names: Gupte
-  given-names: Pratik
-  email: pratik.gupte@lshtm.ac.uk
-  orcid: https://orcid.org/0000-0001-5294-7819
+- family-names: Eggo
+  given-names: Rosalind
+  email: rosalind.eggo@lshtm.ac.uk
+  orcid: https://orcid.org/0000-0002-0362-6717
 keywords:
 - decision-support
 - epidemic-modelling

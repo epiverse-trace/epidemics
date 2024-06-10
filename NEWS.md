@@ -1,5 +1,7 @@
 # epidemics 0.4.0
 
+Maintainer is changing to @rozeggo.
+
 ## Model functions
 
 1. Internal model functions for the models which allow vaccination have been corrected to prevent vaccination introducing negative values of susceptibles; tests added to check for this (#235, initially reported by @avallecam).

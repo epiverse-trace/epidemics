@@ -2,9 +2,9 @@ Package: epidemics
 Title: Composable Epidemic Scenario Modelling
 Version: 0.4.0
 Authors@R: c(
-    person("Pratik", "Gupte", , "pratik.gupte@lshtm.ac.uk", role = c("aut", "cre", "cph"),
+    person("Pratik", "Gupte", , "pratik.gupte@lshtm.ac.uk", role = c("aut", "cph"),
            comment = c(ORCID = "0000-0001-5294-7819")),
-    person("Rosalind", "Eggo", , "rosalind.eggo@lshtm.ac.uk", role = c("aut", "cph"),
+    person("Rosalind", "Eggo", , "rosalind.eggo@lshtm.ac.uk", role = c("aut", "cph", "cre"),
            comment = c(ORCID = "0000-0002-0362-6717")),
     person("Edwin", "Van Leeuwen", , "edwin.vanleeuwen@ukhsa.gov.uk", role = c("aut", "cph"),
            comment = c(ORCID = "0000-0002-2383-5305")),

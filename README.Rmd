@@ -42,6 +42,12 @@ if(!require("pak")) install.packages("pak")
 pak::pkg_install("{{ gh_repo }}")
 ```
 
+Alternatively, install pre-compiled binaries from [the Epiverse TRACE R-universe](https://epiverse-trace.r-universe.dev/epidemics)
+
+```r
+install.packages("epidemics", repos = c("https://epiverse-trace.r-universe.dev", "https://cloud.r-project.org"))
+```
+
 ### Installation Notes
 
 1. Some users who are also using or developing packages that use Stan might face issues if they have modified their toolchain to accommodate packages such as [_cmdstanr_](https://mc-stan.org/cmdstanr/); see [this resolved issue](https://github.com/stan-dev/cmdstanr/issues/790) for a starting point if you face similar problems.

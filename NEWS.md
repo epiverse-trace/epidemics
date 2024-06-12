@@ -1,3 +1,5 @@
+# epidemics (development version)
+
 # epidemics 0.4.0
 
 Maintainer is changing to @rozeggo.

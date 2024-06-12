@@ -1,0 +1,23 @@
+pandoc: 3.1.11
+pkgdown: 2.0.9
+pkgdown_sha: ~
+articles:
+  design-principles: design-principles.html
+  developer-walkthrough: developer-walkthrough.html
+  epidemics: epidemics.html
+  finalsize_comparison: finalsize_comparison.html
+  model_diphtheria: model_diphtheria.html
+  model_ebola: model_ebola.html
+  model_vacamole: model_vacamole.html
+  modelling_interventions: modelling_interventions.html
+  modelling_multiple_interventions: modelling_multiple_interventions.html
+  modelling_param_uncertainty: modelling_param_uncertainty.html
+  modelling_rate_interventions: modelling_rate_interventions.html
+  modelling_scenarios: modelling_scenarios.html
+  modelling_time_dependence: modelling_time_dependence.html
+  modelling_vaccination: modelling_vaccination.html
+last_built: 2024-06-12T11:16Z
+urls:
+  reference: https://epiverse-trace.github.io/epidemics/reference
+  article: https://epiverse-trace.github.io/epidemics/articles
+

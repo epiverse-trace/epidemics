@@ -18,7 +18,7 @@ status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.
 *epidemics* is an R package that provides a convenient interface to a
 library of compartmental models that can help to model epidemic
 scenarios for directly transmitted respiratory infections such as
-influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus
+influenza or COVID-19 as well haemorrhagic fevers such as Ebola virus
 disease.
 
 The models in *epidemics* implement methods outlined in Bjørnstad et al.

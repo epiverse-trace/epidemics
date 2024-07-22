@@ -108,9 +108,9 @@ time_end <- max_time / 2
 close_schools <- intervention(
   name = "School closure",
   type = "contacts",
-  time_begin = time_begin,
-  time_end = time_end,
-  reduction = matrix(c(0.3, 0.01, 0.01))
+  time_begin = 200,
+  time_end = 260,
+  reduction = matrix(c(0.15,0.15,0.15)) #c(0.3, 0.01, 0.01)
 )
 
 # prepare an intervention which mostly affects adults 20 -- 65
@@ -119,7 +119,7 @@ close_workplaces <- intervention(
   type = "contacts",
   time_begin = time_begin,
   time_end = time_end,
-  reduction = matrix(c(0.01, 0.3, 0.01))
+  reduction = matrix(c(0,0,0)) #c(0.01, 0.3, 0.01)
 )
 
 vaccinate_elders <- vaccination(
@@ -162,17 +162,18 @@ seirv_model <- odin::odin({
   # Contact matrix with time-dependent interventions
   # Then multiply across interventions - need to check this
   contact_reduction[,] <- if (t > intervention_start[i] && t < intervention_end[i]) (1.0 - intervention_effect[i,j]) else 1
-  contact_reduction[,] <- log(contact_reduction[i,j])
-  contact_reduction_total[] <- exp(sum(contact_reduction[i,])) #exp(sum(log(contact_reduction[,j])))
+  contact_reduction_log[,] <- log(contact_reduction[i,j])
+  contact_reduction_total_log[] <- sum(contact_reduction_log[i,]) 
+  contact_reduction_total[] <- exp(contact_reduction_total_log[i]) 
   
   # Specify how transmission varies over time
   # FOI is contacts * infectious * transmission rate
   # returns a matrix, must be converted to a vector/1D array
-  lambda_prod[, ] <- C[i, j] * I[j] * beta #* contact_reduction_total[j] * contact_reduction_total[i]
+  lambda_prod[, ] <- C[i, j] * I[j] * beta * contact_reduction_total[j] * contact_reduction_total[i]
   lambda[] <- sum(lambda_prod[i, ])
 
   # Vaccination - indexing over age groups
-  vax_rate[] <- 0 #if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0
+  vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0
 
   # ODEs
   deriv(S[]) <- -lambda[i] * S[i] - vax_rate[i] * S[i]
@@ -223,6 +224,8 @@ seirv_model <- odin::odin({
   dim(R) <- n_age
   dim(V) <- n_age
   dim(contact_reduction) <- c(n_intervention, n_age)
+  dim(contact_reduction_log) <- c(n_intervention, n_age)
+  dim(contact_reduction_total_log) <- c(n_age)
   dim(contact_reduction_total) <- c(n_age)
   dim(intervention_start) <- n_intervention
   dim(intervention_end) <- n_intervention
@@ -294,7 +297,8 @@ model_default_odin <- function(population,
     intervention_end <- as.numeric(intervention$time_end)
     intervention_effect <- t(intervention$reduction) # row is the intervention
   }
-  # DEBUG intervention_effect = 0*intervention_effect
+  
+  #intervention_effect = 0*intervention_effect # DEBUG 
   
   n_intervention = length(intervention_start)
 
@@ -306,6 +310,8 @@ model_default_odin <- function(population,
     vax_end <- as.numeric(vaccination$time_end)
     vax_nu <- as.numeric(vaccination$nu)
   }
+  
+  vax_nu <- 0*vax_nu # DEBUG
 
   # Initialize and run the model
   model <- seirv_model$new(
@@ -331,6 +337,7 @@ model_default_odin <- function(population,
   result <- model$run(time_points)
 
   # Convert result to data.table format
+  # NOTE: This needs some more work
   dt <- as.data.table(result)
   compartments <- c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
   age_groups <- rownames(population$contact_matrix)

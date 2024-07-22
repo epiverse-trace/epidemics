@@ -1,0 +1,392 @@
+---
+title: "Modelling intervention scenarios"
+output:
+  bookdown::html_vignette2:
+    fig_caption: yes
+    code_folding: show
+pkgdown:
+  as_is: true
+bibliography: references.json
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Modelling intervention scenarios}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 6,
+  fig.height = 4,
+  dpi = 150
+)
+```
+
+Scenario modelling can guide epidemic response measures by helping to establish general principles around the potential effects of interventions. Here is an example of the main scenario modelling vignette with an odin backend
+
+```{r setup}
+# epi modelling
+library(epidemics)
+
+# data manipulation packages
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(ggplot2)
+library(colorspace)
+library(ggdist)
+library(odin)
+
+# for reproducibility
+library(withr)
+```
+
+### Setting up the epidemic context
+
+```{r class.source = 'fold-hide'}
+# load contact and population data from socialmixr::polymod
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
+  polymod,
+  countries = "United Kingdom",
+  age.limits = c(0, 20, 40),
+  symmetric = TRUE
+)
+
+# prepare contact matrix
+contact_matrix <- t(contact_data$matrix)
+
+# prepare the demography vector
+demography_vector <- contact_data$demography$population
+names(demography_vector) <- rownames(contact_matrix)
+
+# initial conditions
+initial_i <- 1e-6
+initial_conditions <- c(
+  S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
+)
+
+# build for all age groups
+initial_conditions <- rbind(
+  initial_conditions,
+  initial_conditions,
+  initial_conditions
+)
+# assign rownames for clarity
+rownames(initial_conditions) <- rownames(contact_matrix)
+
+# UK population created from hidden code
+uk_population <- population(
+  name = "UK",
+  contact_matrix = contact_matrix,
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions
+)
+```
+
+### Creating a list of intervention sets
+
+We shall create a list of 'intervention sets', each set representing a scenario of epidemic response measures.
+
+**Note that** each intervention set is simply a list of `<intervention>` objects; typically, a single `<contacts_intervention>` and any `<rate_interventions>` on infection parameters.
+
+```{r}
+max_time <- 600
+# prepare durations as starting at 25% of the way through an epidemic
+# and ending halfway through
+time_begin <- max_time / 4
+time_end <- max_time / 2
+
+# create three distinct contact interventions
+# prepare an intervention that models school closures for 180 days
+close_schools <- intervention(
+  name = "School closure",
+  type = "contacts",
+  time_begin = time_begin,
+  time_end = time_end,
+  reduction = matrix(c(0.3, 0.01, 0.01))
+)
+
+# prepare an intervention which mostly affects adults 20 -- 65
+close_workplaces <- intervention(
+  name = "Workplace closure",
+  type = "contacts",
+  time_begin = time_begin,
+  time_end = time_end,
+  reduction = matrix(c(0.01, 0.3, 0.01))
+)
+
+vaccinate_elders <- vaccination(
+  name = "vaccinate elders",
+  time_begin = matrix(100, nrow(contact_matrix)),
+  time_end = matrix(250, nrow(contact_matrix)),
+  nu = matrix(c(0, 0, 0.0001))
+)
+
+# prepare a combined intervention
+combined_intervention <- c(close_schools, close_workplaces)
+
+# create a mask-mandate rate intervention
+# prepare an intervention that models mask mandates for 300 days
+mask_mandate <- intervention(
+  name = "mask mandate",
+  type = "rate",
+  time_begin = time_begin,
+  time_end = time_end,
+  reduction = 0.1
+)
+
+# create intervention sets, which are combinations of contacts and rate
+# interventions
+scenario_07 = list(
+    contacts = combined_intervention,
+    transmission_rate = mask_mandate
+)
+```
+
+
+Now we define the odin model
+```{r}
+seirv_model <- odin::odin({
+  # Time-dependent parameters
+  # beta <- interpolate(beta_t, beta_y, "linear")
+  # sigma <- interpolate(sigma_t, sigma_y, "linear")
+  # gamma <- interpolate(gamma_t, gamma_y, "linear")
+
+  # Contact matrix with time-dependent interventions
+  # Then multiply across interventions - need to check this
+  contact_reduction[,] <- if (t > intervention_start[i] && t < intervention_end[i]) (1.0 - intervention_effect[i,j]) else 1
+  contact_reduction[,] <- log(contact_reduction[i,j])
+  contact_reduction_total[] <- exp(sum(contact_reduction[i,])) #exp(sum(log(contact_reduction[,j])))
+  
+  # Specify how transmission varies over time
+  # FOI is contacts * infectious * transmission rate
+  # returns a matrix, must be converted to a vector/1D array
+  lambda_prod[, ] <- C[i, j] * I[j] * beta #* contact_reduction_total[j] * contact_reduction_total[i]
+  lambda[] <- sum(lambda_prod[i, ])
+
+  # Vaccination - indexing over age groups
+  vax_rate[] <- 0 #if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0
+
+  # ODEs
+  deriv(S[]) <- -lambda[i] * S[i] - vax_rate[i] * S[i]
+  deriv(E[]) <- lambda[i] * S[i] - sigma * E[i]
+  deriv(I[]) <- sigma * E[i] - gamma * I[i]
+  deriv(R[]) <- gamma * I[i]
+  deriv(V[]) <- vax_rate[i] * S[i]
+
+  # Initial conditions
+  initial(S[]) <- init_S[i]
+  initial(E[]) <- init_E[i]
+  initial(I[]) <- init_I[i]
+  initial(R[]) <- init_R[i]
+  initial(V[]) <- init_V[i]
+
+  # User-defined parameters
+  C[, ] <- user()
+  n_age <- user()
+  n_intervention <- user()
+  beta <- user()
+  sigma <- user()
+  gamma <- user()
+  # beta_t[] <- user()
+  # beta_y[] <- user()
+  # sigma_t[] <- user()
+  # sigma_y[] <- user()
+  # gamma_t[] <- user()
+  # gamma_y[] <- user()
+  intervention_start[] <- user()
+  intervention_end[] <- user()
+  intervention_effect[, ] <- user()
+  vax_start[] <- user()
+  vax_end[] <- user()
+  vax_nu[] <- user()
+  init_S[] <- user()
+  init_E[] <- user()
+  init_I[] <- user()
+  init_R[] <- user()
+  init_V[] <- user()
+
+  # Dimensions
+  dim(C) <- c(n_age, n_age)
+  dim(lambda_prod) <- c(n_age, n_age)
+  dim(lambda) <- n_age
+  dim(S) <- n_age
+  dim(E) <- n_age
+  dim(I) <- n_age
+  dim(R) <- n_age
+  dim(V) <- n_age
+  dim(contact_reduction) <- c(n_intervention, n_age)
+  dim(contact_reduction_total) <- c(n_age)
+  dim(intervention_start) <- n_intervention
+  dim(intervention_end) <- n_intervention
+  dim(intervention_effect) <- c(n_intervention, n_age)
+  dim(vax_rate) <- n_age
+  dim(vax_start) <- n_age
+  dim(vax_end) <- n_age
+  dim(vax_nu) <- n_age
+  dim(init_S) <- n_age
+  dim(init_E) <- n_age
+  dim(init_I) <- n_age
+  dim(init_R) <- n_age
+  dim(init_V) <- n_age
+})
+```
+
+Create an odin wrapper function
+```{r}
+model_default_odin <- function(population,
+                               transmission_rate = 1.5 / 7.0,
+                               infectiousness_rate = 1.0 / 3.0,
+                               recovery_rate = 1.0 / 7.0,
+                               intervention = NULL,
+                               vaccination = NULL,
+                               time_dependence = NULL,
+                               time_end = 100,
+                               increment = 1) {
+  # Input validation (similar to model_default)
+  # ... (add input validation code here)
+  
+  # DEBUG: population=uk_population; intervention=combined_intervention; vaccination = vaccinate_elders; time_end = 600
+  
+  # transmission_rate = 1.5 / 7.0; infectiousness_rate = 1.0 / 3.0; recovery_rate = 1.0 / 7.0; increment = 1
+
+  # Prepare model parameters
+  # Scale initial conditions for odin model
+  initial_conditions <- population$initial_conditions*demography_vector
+  n_age <- nrow(population$contact_matrix)
+  time_points <- seq(0, time_end, by = increment)
+  
+  # prepare contact matrix, divide by leading eigenvalue and rowwise by popsize
+  contact_matrix_norm <- population$contact_matrix
+  contact_matrix_norm <- (contact_matrix_norm / max(Re(eigen(contact_matrix_norm)$values))) /
+  population$demography_vector
+
+
+  # Apply time dependence if provided
+    # beta_t <- sigma_t <- gamma_t <- time_points
+  # beta_y <- rep(transmission_rate, length(time_points))
+  # sigma_y <- rep(infectiousness_rate, length(time_points))
+  # gamma_y <- rep(recovery_rate, length(time_points))
+  # if (!is.null(time_dependence)) {
+  #   if (!is.null(time_dependence$transmission_rate)) {
+  #     beta_y <- sapply(time_points, function(t) time_dependence$transmission_rate(t, transmission_rate))
+  #   }
+  #   if (!is.null(time_dependence$infectiousness_rate)) {
+  #     sigma_y <- sapply(time_points, function(t) time_dependence$infectiousness_rate(t, infectiousness_rate))
+  #   }
+  #   if (!is.null(time_dependence$recovery_rate)) {
+  #     gamma_y <- sapply(time_points, function(t) time_dependence$recovery_rate(t, recovery_rate))
+  #   }
+  # }
+
+  # Prepare intervention parameters
+  intervention_start <- intervention_end <- 0
+  intervention_effect <- rep(0, n_age)
+  if (!is.null(intervention)) {
+    intervention_start <- as.numeric(intervention$time_begin)
+    intervention_end <- as.numeric(intervention$time_end)
+    intervention_effect <- t(intervention$reduction) # row is the intervention
+  }
+  # DEBUG intervention_effect = 0*intervention_effect
+  
+  n_intervention = length(intervention_start)
+
+  # Prepare vaccination parameters
+  vax_start <- vax_end <- rep(0, n_age)
+  vax_nu <- rep(0, n_age)
+  if (!is.null(vaccination)) {
+    vax_start <- as.numeric(vaccination$time_begin)
+    vax_end <- as.numeric(vaccination$time_end)
+    vax_nu <- as.numeric(vaccination$nu)
+  }
+
+  # Initialize and run the model
+  model <- seirv_model$new(
+    C = contact_matrix_norm,
+    n_age = n_age,
+    n_intervention = n_intervention,
+    beta = transmission_rate,
+    sigma = infectiousness_rate,
+    gamma = recovery_rate,
+    intervention_start = intervention_start,
+    intervention_end = intervention_end,
+    intervention_effect = intervention_effect,
+    vax_start = vax_start,
+    vax_end = vax_end,
+    vax_nu = vax_nu,
+    init_S = initial_conditions[,1],
+    init_E = initial_conditions[,2],
+    init_I = initial_conditions[,3],
+    init_R = initial_conditions[,4],
+    init_V = initial_conditions[,5]
+  )
+
+  result <- model$run(time_points)
+
+  # Convert result to data.table format
+  dt <- as.data.table(result)
+  compartments <- c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
+  age_groups <- rownames(population$contact_matrix)
+
+  dt_long <- melt(dt, id.vars = "t", variable.name = "temp", value.name = "value")
+  dt_long[, c("compartment", "age_group") := tstrsplit(temp, "_")]
+  dt_long[, temp := NULL]
+  dt_long[, compartment := factor(compartment, levels = LETTERS[1:5], labels = compartments)]
+  dt_long[, age_group := factor(age_group, levels = seq_len(n_age), labels = age_groups)]
+  setnames(dt_long, "t", "time")
+
+  # Return the data.table
+  return(dt_long)
+}
+```
+
+
+```{r}
+y <- result
+
+# convert to data.table and plot infectious in each age class
+y <- as.data.table(y)
+y <- melt(y, id.vars = c("t"))
+
+ggplot(y[variable %like% "I"]) +
+  geom_vline(
+    xintercept = c(close_schools[["time_begin"]], close_schools[["time_end"]]),
+    colour = "red",
+    linetype = "dashed",
+    linewidth = 0.2
+  ) +
+  annotate(
+    geom = "text",
+    label = "Schools closed",
+    colour = "red",
+    x = 230, y = 400e3,
+    angle = 90,
+    vjust = "outward"
+  ) +
+  geom_line(
+    aes(t, value, col = variable) 
+  ) +
+  scale_colour_brewer(
+    palette = "Dark2",
+    labels = rownames(contact_matrix),
+    name = "Age group"
+  ) +
+  scale_y_continuous(
+    labels = scales::comma,
+    name = "Individuals infected"
+  ) +
+  labs(
+    x = "Model time (days)"
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "top"
+  )
+```

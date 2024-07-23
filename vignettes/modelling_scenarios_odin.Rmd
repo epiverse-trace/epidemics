@@ -444,6 +444,14 @@ ggplot() +
     colour = "red",
     linetype = "dotted"
   ) +
+  geom_vline(
+    xintercept = c(
+      vaccinate_elders$time_begin,
+      vaccinate_elders$time_end
+    ),
+    colour = "blue",
+    linetype = "dotted"
+  ) +
   annotate(
     geom = "text",
     x = mean(c(close_schools$time_begin, close_schools$time_end)),
@@ -462,19 +470,10 @@ ggplot() +
   ) +
   annotate(
     geom = "text",
-    x = mean(c(close_schools$time_begin, close_schools$time_end)),
+    x = mean(c(vaccinate_elders$time_begin, vaccinate_elders$time_end)),
     y = 50000,
-    label = "Elderly vaccinated"
-  ) +
-  annotate(
-    geom = "text",
-    x = mean(c(
-      close_workplaces$time_begin,
-      close_workplaces$time_end
-    )),
-    y = 30000,
-    colour = "red",
-    label = "Workplaces\nclosed"
+    colour = "blue",
+    label = "Vaccinate\nelderly"
   ) +
   geom_line(
     data = data_baseline_infections,

@@ -123,8 +123,8 @@ combined_intervention <- c(close_schools, close_workplaces)
 vaccinate_elders <- vaccination(
   name = "vaccinate elders",
   time_begin = matrix(400, nrow(contact_matrix)),
-  time_end = matrix(450, nrow(contact_matrix)),
-  nu = matrix(c(0, 0, 0)) # assume zero for now
+  time_end = matrix(500, nrow(contact_matrix)),
+  nu = matrix(c(0, 0, 0.02)) # assume zero for now
 )
 
 vaccinate_young <- vaccination(
@@ -182,10 +182,10 @@ seirv_model <- odin::odin({
   lambda[] <- sum(lambda_prod[i, ])
 
   # Vaccination - indexing over age groups
-  vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0
+  vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0 
 
   # ODEs
-  deriv(S[]) <- -lambda[i] * S[i] - vax_rate[i] * S[i]
+  deriv(S[]) <- - (lambda[i] * S[i]) - (vax_rate[i] * S[i])
   deriv(E[]) <- lambda[i] * S[i] - sigma * E[i]
   deriv(I[]) <- sigma * E[i] - gamma * I[i]
   deriv(R[]) <- gamma * I[i]
@@ -421,7 +421,7 @@ output <- model_default_odin(population=uk_population,
                               time_end = 600,
                               increment = 1)
 
-data_infections <- new_infections(output, by_group = TRUE)
+data_infections <- new_infections(output, by_group = TRUE, compartments_from_susceptible="vaccinated")
 ```
 
 Plot the results
@@ -449,6 +449,22 @@ ggplot() +
     x = mean(c(close_schools$time_begin, close_schools$time_end)),
     y = 50000,
     label = "Schools closed"
+  ) +
+  annotate(
+    geom = "text",
+    x = mean(c(
+      close_workplaces$time_begin,
+      close_workplaces$time_end
+    )),
+    y = 30000,
+    colour = "red",
+    label = "Workplaces\nclosed"
+  ) +
+  annotate(
+    geom = "text",
+    x = mean(c(close_schools$time_begin, close_schools$time_end)),
+    y = 50000,
+    label = "Elderly vaccinated"
   ) +
   annotate(
     geom = "text",

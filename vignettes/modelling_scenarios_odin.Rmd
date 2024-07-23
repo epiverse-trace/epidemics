@@ -127,12 +127,13 @@ vaccinate_elders <- vaccination(
   name = "vaccinate elders",
   time_begin = matrix(100, nrow(contact_matrix)),
   time_end = matrix(250, nrow(contact_matrix)),
-  nu = matrix(c(0, 0, 0.0001))
+  nu = matrix(c(0, 0, 0)) # assume zero for now
 )
 
 # prepare a combined intervention
 combined_intervention <- c(close_schools, close_workplaces)
 
+# NOT CURRENTLY USED:
 # create a mask-mandate rate intervention
 # prepare an intervention that models mask mandates for 300 days
 mask_mandate <- intervention(
@@ -247,21 +248,18 @@ seirv_model <- odin::odin({
 
 Create an odin wrapper function
 ```{r}
-# model_default_odin <- function(population,
-#                                transmission_rate = 1.5 / 7.0,
-#                                infectiousness_rate = 1.0 / 3.0,
-#                                recovery_rate = 1.0 / 7.0,
-#                                intervention = NULL,
-#                                vaccination = NULL,
-#                                time_dependence = NULL,
-#                                time_end = 100,
-#                                increment = 1) {
-  # Input validation (similar to model_default)
-  # ... (add input validation code here)
+model_default_odin <- function(population,
+                               transmission_rate = 1.5 / 7.0,
+                               infectiousness_rate = 1.0 / 3.0,
+                               recovery_rate = 1.0 / 7.0,
+                               intervention = NULL,
+                               vaccination = NULL,
+                               time_dependence = NULL,
+                               time_end = 100,
+                               increment = 1) {
   
-  # DEBUG: 
-  population=uk_population; intervention=combined_intervention; vaccination = vaccinate_elders; time_end = 600
-  transmission_rate = 1.5 / 7.0; infectiousness_rate = 1.0 / 3.0; recovery_rate = 1.0 / 7.0; increment = 1
+  # Input validation (TO DO: take from model_default)
+  # ... (add input validation code here)
 
   # Prepare model parameters
   # Scale initial conditions for odin model
@@ -313,8 +311,6 @@ Create an odin wrapper function
     vax_end <- as.numeric(vaccination$time_end)
     vax_nu <- as.numeric(vaccination$nu)
   }
-  
-  vax_nu <- 0*vax_nu # DEBUG
 
   # Initialize and run the model
   model <- seirv_model$new(
@@ -338,34 +334,69 @@ Create an odin wrapper function
   )
 
   result <- model$run(time_points)
+  
+  # Add scenario information
+  dt <- as.data.table(result)
+  setnames(dt, "t", "time")
 
-#   # Convert result to data.table format
-#   # NOTE: This needs some more work
-#   dt <- as.data.table(result)
-#   compartments <- c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
-#   age_groups <- rownames(population$contact_matrix)
-# 
-#   dt_long <- melt(dt, id.vars = "t", variable.name = "temp", value.name = "value")
-#   dt_long[, c("compartment", "age_group") := tstrsplit(temp, "_")]
-#   dt_long[, temp := NULL]
-#   dt_long[, compartment := factor(compartment, levels = LETTERS[1:5], labels = compartments)]
-#   dt_long[, age_group := factor(age_group, levels = seq_len(n_age), labels = age_groups)]
-#   setnames(dt_long, "t", "time")
-# 
-#   # Return the data.table
-#   return(dt_long)
-# }
+  # Melt the data table to long format
+  long_dt <- melt(dt, id.vars = "time", 
+                  variable.name = "temp", 
+                  value.name = "value")
+  
+  # Split the 'temp' column into compartment and demography group
+  long_dt[, c("compartment", "demography_group") := tstrsplit(temp, "\\[", keep = 1:2)]
+  
+  # Clean up the demography group
+  long_dt[, demography_group := gsub("\\]", "", demography_group)]
+  
+  # Map compartment abbreviations to full names
+  compartment_map <- c("S" = "susceptible", "E" = "exposed", "I" = "infectious", 
+                       "R" = "recovered", "V" = "vaccinated")
+  long_dt[, compartment := compartment_map[compartment]]
+  
+  # Map demography group numbers to age ranges
+  demography_map <- c("1" = "[0,20)", "2" = "[20,40)", "3" = "40+")
+  long_dt[, demography_group := demography_map[demography_group]]
+  
+  # Select and order columns
+  formatted_output <- long_dt[, .(time, demography_group, compartment, value)]
+  
+  # Order the rows
+  setorder(formatted_output, time, demography_group, compartment)
+  
+  # Set column classes
+  formatted_output[, `:=`(
+    time = as.numeric(time),
+    demography_group = as.character(demography_group),
+    compartment = as.character(compartment),
+    value = as.numeric(value)
+  )]
+
+  # return data.table
+  formatted_output[]
+  
+}
 ```
 
+Run the model
+```{r}
+output <- model_default_odin(population=uk_population,
+                              transmission_rate = 1.5 / 7.0,
+                              infectiousness_rate = 1.0 / 3.0,
+                              recovery_rate = 1.0 / 7.0,
+                              intervention = combined_intervention,
+                              vaccination = vaccinate_elders,
+                              time_dependence = NULL,
+                              time_end = 600,
+                              increment = 1)
+```
+
+Plot the results
 
 ```{r}
-y <- result
-
-# convert to data.table and plot infectious in each age class
-y <- as.data.table(y)
-y <- melt(y, id.vars = c("t"))
-
-ggplot(y[variable %like% "I"]) +
+filter(output, compartment == "infectious") %>%
+ggplot() +
   geom_vline(
     xintercept = c(close_schools[["time_begin"]], close_schools[["time_end"]]),
     colour = "red",
@@ -376,12 +407,12 @@ ggplot(y[variable %like% "I"]) +
     geom = "text",
     label = "Schools closed",
     colour = "red",
-    x = 230, y = 400e3,
+    x = close_schools[["time_begin"]]+30, y = 400e3,
     angle = 90,
     vjust = "outward"
   ) +
   geom_line(
-    aes(t, value, col = variable) 
+    aes(time, value, colour = demography_group)
   ) +
   scale_colour_brewer(
     palette = "Dark2",

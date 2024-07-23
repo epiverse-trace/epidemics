@@ -166,6 +166,8 @@ seirv_model <- odin::odin({
   contact_reduction_total_log[] <- sum(contact_reduction_log[i,]) 
   contact_reduction_total[] <- exp(contact_reduction_total_log[i]) 
   
+  # contact_reduction_total[,] <- sum(contact_reduction[1,i]) # DEBUG
+
   # Specify how transmission varies over time
   # FOI is contacts * infectious * transmission rate
   # returns a matrix, must be converted to a vector/1D array
@@ -244,21 +246,21 @@ seirv_model <- odin::odin({
 
 Create an odin wrapper function
 ```{r}
-model_default_odin <- function(population,
-                               transmission_rate = 1.5 / 7.0,
-                               infectiousness_rate = 1.0 / 3.0,
-                               recovery_rate = 1.0 / 7.0,
-                               intervention = NULL,
-                               vaccination = NULL,
-                               time_dependence = NULL,
-                               time_end = 100,
-                               increment = 1) {
+# model_default_odin <- function(population,
+#                                transmission_rate = 1.5 / 7.0,
+#                                infectiousness_rate = 1.0 / 3.0,
+#                                recovery_rate = 1.0 / 7.0,
+#                                intervention = NULL,
+#                                vaccination = NULL,
+#                                time_dependence = NULL,
+#                                time_end = 100,
+#                                increment = 1) {
   # Input validation (similar to model_default)
   # ... (add input validation code here)
   
-  # DEBUG: population=uk_population; intervention=combined_intervention; vaccination = vaccinate_elders; time_end = 600
-  
-  # transmission_rate = 1.5 / 7.0; infectiousness_rate = 1.0 / 3.0; recovery_rate = 1.0 / 7.0; increment = 1
+  # DEBUG: 
+  population=uk_population; intervention=combined_intervention; vaccination = vaccinate_elders; time_end = 600
+  transmission_rate = 1.5 / 7.0; infectiousness_rate = 1.0 / 3.0; recovery_rate = 1.0 / 7.0; increment = 1
 
   # Prepare model parameters
   # Scale initial conditions for odin model
@@ -336,22 +338,22 @@ model_default_odin <- function(population,
 
   result <- model$run(time_points)
 
-  # Convert result to data.table format
-  # NOTE: This needs some more work
-  dt <- as.data.table(result)
-  compartments <- c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
-  age_groups <- rownames(population$contact_matrix)
-
-  dt_long <- melt(dt, id.vars = "t", variable.name = "temp", value.name = "value")
-  dt_long[, c("compartment", "age_group") := tstrsplit(temp, "_")]
-  dt_long[, temp := NULL]
-  dt_long[, compartment := factor(compartment, levels = LETTERS[1:5], labels = compartments)]
-  dt_long[, age_group := factor(age_group, levels = seq_len(n_age), labels = age_groups)]
-  setnames(dt_long, "t", "time")
-
-  # Return the data.table
-  return(dt_long)
-}
+#   # Convert result to data.table format
+#   # NOTE: This needs some more work
+#   dt <- as.data.table(result)
+#   compartments <- c("susceptible", "exposed", "infectious", "recovered", "vaccinated")
+#   age_groups <- rownames(population$contact_matrix)
+# 
+#   dt_long <- melt(dt, id.vars = "t", variable.name = "temp", value.name = "value")
+#   dt_long[, c("compartment", "age_group") := tstrsplit(temp, "_")]
+#   dt_long[, temp := NULL]
+#   dt_long[, compartment := factor(compartment, levels = LETTERS[1:5], labels = compartments)]
+#   dt_long[, age_group := factor(age_group, levels = seq_len(n_age), labels = age_groups)]
+#   setnames(dt_long, "t", "time")
+# 
+#   # Return the data.table
+#   return(dt_long)
+# }
 ```
 
 

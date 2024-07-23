@@ -122,9 +122,9 @@ combined_intervention <- c(close_schools, close_workplaces)
 
 vaccinate_elders <- vaccination(
   name = "vaccinate elders",
-  time_begin = matrix(100, nrow(contact_matrix)),
-  time_end = matrix(250, nrow(contact_matrix)),
-  nu = matrix(c(0, 0, 0.05)) # assume zero for now
+  time_begin = matrix(400, nrow(contact_matrix)),
+  time_end = matrix(450, nrow(contact_matrix)),
+  nu = matrix(c(0, 0, 0)) # assume zero for now
 )
 
 vaccinate_young <- vaccination(

@@ -56,7 +56,7 @@ polymod <- socialmixr::polymod
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
-  age.limits = c(0, 20, 40),
+  age.limits = c(0, 20, 65),
   symmetric = TRUE
 )
 
@@ -68,7 +68,7 @@ demography_vector <- contact_data$demography$population
 names(demography_vector) <- rownames(contact_matrix)
 
 # initial conditions
-initial_i <- 1e-6
+initial_i <- 1e-4
 initial_conditions <- c(
   S = 1 - initial_i, E = 0, I = initial_i, R = 0, V = 0
 )
@@ -98,29 +98,23 @@ We shall create a list of 'intervention sets', each set representing a scenario 
 **Note that** each intervention set is simply a list of `<intervention>` objects; typically, a single `<contacts_intervention>` and any `<rate_interventions>` on infection parameters.
 
 ```{r}
-max_time <- 600
-# prepare durations as starting at 25% of the way through an epidemic
-# and ending halfway through
-time_begin <- max_time / 4
-time_end <- max_time / 2
-
 # create three distinct contact interventions
 # prepare an intervention that models school closures for 180 days
 close_schools <- intervention(
   name = "School closure",
   type = "contacts",
-  time_begin = 200,
-  time_end = 260,
-  reduction = matrix(c(0.15,0.15,0.15)) #c(0.3, 0.01, 0.01)
+  time_begin = 60,
+  time_end = 60 + 180,
+  reduction = matrix(c(0.3, 0.01, 0.01)) #c()
 )
 
 # prepare an intervention which mostly affects adults 20 -- 65
 close_workplaces <- intervention(
   name = "Workplace closure",
   type = "contacts",
-  time_begin = time_begin,
-  time_end = time_end,
-  reduction = matrix(c(0,0,0)) #c(0.01, 0.3, 0.01)
+  time_begin = 80,
+  time_end = 140,
+  reduction = matrix(c(0.01, 0.3, 0.01)) #c()
 )
 
 vaccinate_elders <- vaccination(
@@ -136,20 +130,20 @@ combined_intervention <- c(close_schools, close_workplaces)
 # NOT CURRENTLY USED:
 # create a mask-mandate rate intervention
 # prepare an intervention that models mask mandates for 300 days
-mask_mandate <- intervention(
-  name = "mask mandate",
-  type = "rate",
-  time_begin = time_begin,
-  time_end = time_end,
-  reduction = 0.1
-)
+# mask_mandate <- intervention(
+#   name = "mask mandate",
+#   type = "rate",
+#   time_begin = time_begin,
+#   time_end = time_end,
+#   reduction = 0.1
+# )
 
 # create intervention sets, which are combinations of contacts and rate
 # interventions
-scenario_07 = list(
-    contacts = combined_intervention,
-    transmission_rate = mask_mandate
-)
+# scenario_07 = list(
+#     contacts = combined_intervention,
+#     transmission_rate = mask_mandate
+# )
 ```
 
 
@@ -200,6 +194,8 @@ seirv_model <- odin::odin({
   beta <- user()
   sigma <- user()
   gamma <- user()
+  
+  # Not currently used (can re-add for time-dependent parameters)
   # beta_t[] <- user()
   # beta_y[] <- user()
   # sigma_t[] <- user()
@@ -291,6 +287,7 @@ model_default_odin <- function(population,
   # }
 
   # Prepare intervention parameters
+  # TO DO: Make the default a matrix so that the odin model compiles correctly
   intervention_start <- intervention_end <- 0
   intervention_effect <- rep(0, n_age)
   if (!is.null(intervention)) {
@@ -382,46 +379,69 @@ model_default_odin <- function(population,
 Run the model
 ```{r}
 output <- model_default_odin(population=uk_population,
-                              transmission_rate = 1.5 / 7.0,
-                              infectiousness_rate = 1.0 / 3.0,
+                              transmission_rate = 1.3 / 7.0,
+                              infectiousness_rate = 1.0 / 2,
                               recovery_rate = 1.0 / 7.0,
                               intervention = combined_intervention,
                               vaccination = vaccinate_elders,
                               time_dependence = NULL,
                               time_end = 600,
                               increment = 1)
+
+data_baseline_infections <- new_infections(output, by_group = TRUE)
 ```
 
 Plot the results
 
 ```{r}
-filter(output, compartment == "infectious") %>%
+#filter(output, compartment == "infectious") %>%
 ggplot() +
+    geom_vline(
+    xintercept = c(
+      close_schools$time_begin,
+      close_schools$time_end
+    ),
+    linetype = "dotted"
+  ) +
   geom_vline(
-    xintercept = c(close_schools[["time_begin"]], close_schools[["time_end"]]),
+    xintercept = c(
+      close_workplaces$time_begin,
+      close_workplaces$time_end
+    ),
     colour = "red",
-    linetype = "dashed",
-    linewidth = 0.2
+    linetype = "dotted"
   ) +
   annotate(
     geom = "text",
-    label = "Schools closed",
+    x = mean(c(close_schools$time_begin, close_schools$time_end)),
+    y = 50000,
+    label = "Schools closed"
+  ) +
+  annotate(
+    geom = "text",
+    x = mean(c(
+      close_workplaces$time_begin,
+      close_workplaces$time_end
+    )),
+    y = 30000,
     colour = "red",
-    x = close_schools[["time_begin"]]+30, y = 400e3,
-    angle = 90,
-    vjust = "outward"
+    label = "Workplaces\nclosed"
   ) +
   geom_line(
-    aes(time, value, colour = demography_group)
+    data = data_baseline_infections,
+    aes(time, new_infections, colour = demography_group)
   ) +
   scale_colour_brewer(
     palette = "Dark2",
     labels = rownames(contact_matrix),
     name = "Age group"
   ) +
-  scale_y_continuous(
+  scale_y_sqrt(
     labels = scales::comma,
-    name = "Individuals infected"
+    breaks = c(10^seq(3, 5), 5e4)
+  ) +
+  coord_cartesian(
+    expand = FALSE
   ) +
   labs(
     x = "Model time (days)"

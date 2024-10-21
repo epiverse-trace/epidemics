@@ -47,7 +47,7 @@ test_that("Default odin model: basic expectations, scalar arguments", {
   expect_no_condition(model_default_odin(uk_population))
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default(uk_population)
+  data <- model_default_odin(uk_population)
   expect_s3_class(data, "data.frame")
   expect_identical(length(data), 4L)
   expect_named(
@@ -91,13 +91,13 @@ test_that("Default odin model: basic expectations, scalar arguments", {
 })
 
 # NOTE: statistical correctness is not expected to change for vectorised input
-test_that("Default model: statistical correctness, parameters", {
+test_that("Default odin model: statistical correctness, parameters", {
   # expect final size increases with transmission_rate
   size_beta_low <- epidemic_size(
-    model_default(uk_population, transmission_rate = 1.3 / 7.0)
+    model_default_odin(uk_population, transmission_rate = 1.3 / 7.0)
   )
   size_beta_high <- epidemic_size(
-    model_default(uk_population, transmission_rate = 1.5 / 7.0)
+    model_default_odin(uk_population, transmission_rate = 1.5 / 7.0)
   )
   expect_true(
     all(size_beta_high > size_beta_low)
@@ -105,10 +105,10 @@ test_that("Default model: statistical correctness, parameters", {
 
   # expect final size increases with infectiousness rate (lower incubation time)
   size_sigma_low <- epidemic_size(
-    model_default(uk_population, infectiousness_rate = 1 / 5)
+    model_default_odin(uk_population, infectiousness_rate = 1 / 5)
   )
   size_sigma_high <- epidemic_size(
-    model_default(uk_population, infectiousness_rate = 1 / 2)
+    model_default_odin(uk_population, infectiousness_rate = 1 / 2)
   )
   expect_true(
     all(size_sigma_high > size_sigma_low)
@@ -129,9 +129,9 @@ test_that("Default model: statistical correctness, parameters", {
     demography_vector = demography_vector,
     initial_conditions = initial_conditions_high
   )
-  size_infections_low <- epidemic_size(model_default(uk_population))
+  size_infections_low <- epidemic_size(model_default_odin(uk_population))
   size_infections_high <- epidemic_size(
-    model_default(uk_population_high_infections)
+    model_default_odin(uk_population_high_infections)
   )
   expect_true(
     all(size_infections_high > size_infections_low)

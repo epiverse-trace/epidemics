@@ -185,6 +185,8 @@ test_that("Default odin model: contacts interventions and stats. correctness", {
     intervention = list(contacts = combined_interventions)
   )
   # expect epidemic size is lower for combined intervention
+  # Epidemic size differs depending on model_default() or model_default_odin().
+  # Not sure how large of a discrepancy is expected.
   expect_true(
     all(epidemic_size(data_combined) < epidemic_size(data))
   )

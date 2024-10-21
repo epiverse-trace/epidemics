@@ -139,23 +139,23 @@ test_that("Default odin model: statistical correctness, parameters", {
 })
 
 # prepare baseline for comparison of against intervention scenarios
-data_baseline <- model_default(uk_population)
+data_baseline <- model_default_odin(uk_population)
 
-test_that("Default model: contacts interventions and stats. correctness", {
+test_that("Default odin model: contacts interventions and stats. correctness", {
   intervention <- intervention(
     "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
   )
   # repeat some basic checks from default case with no intervention
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_default(
+    model_default_odin(
       uk_population,
       intervention = list(contacts = intervention)
     )
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default(
+  data <- model_default_odin(
     uk_population,
     intervention = list(contacts = intervention)
   )
@@ -175,12 +175,12 @@ test_that("Default model: contacts interventions and stats. correctness", {
   combined_interventions <- c(intervention, intervention_02)
 
   expect_no_condition(
-    model_default(
+    model_default_odin(
       uk_population,
       intervention = list(contacts = combined_interventions)
     )
   )
-  data_combined <- model_default(
+  data_combined <- model_default_odin(
     uk_population,
     intervention = list(contacts = combined_interventions)
   )

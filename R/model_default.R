@@ -502,7 +502,10 @@ model_default_odin <- function(population,
       time_end = 1e5 + 1,
       reduction = matrix(rep(0, n_age))
     )
-    intervention <- c(intervention, null_intervention, null_intervention)
+    if (is(intervention, "list")) {
+      intervention <- intervention[[1]]
+    }
+    intervention <- c(null_intervention, null_intervention, intervention)
     intervention_start <- as.numeric(intervention$time_begin)
     intervention_end <- as.numeric(intervention$time_end)
     intervention_effect <- t(intervention$reduction) # row is the intervention

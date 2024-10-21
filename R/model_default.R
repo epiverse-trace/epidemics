@@ -352,3 +352,243 @@ model_default <- function(population,
   # return a list
   list(c(dS, dE, dI, dR, dV))
 }
+
+#' @importFrom odin odin
+#' @export
+seirv_model <- odin::odin({
+  # Time-dependent parameters
+  # beta <- interpolate(beta_t, beta_y, "linear")
+  # sigma <- interpolate(sigma_t, sigma_y, "linear")
+  # gamma <- interpolate(gamma_t, gamma_y, "linear")
+
+  # Contact matrix with time-dependent interventions
+  # Then multiply across interventions - need to check this
+  contact_reduction[, ] <- if (t > intervention_start[i] && t < intervention_end[i]) (1.0 - intervention_effect[i, j]) else 1 # nolint: line_length_linter.
+  contact_reduction_log[, ] <- log(contact_reduction[i, j] + 1e-10) # Avoid zero
+  contact_reduction_total_log[] <- sum(contact_reduction_log[, i])
+  contact_reduction_total[] <- exp(contact_reduction_total_log[i])
+
+  # Specify how transmission varies over time
+  # FOI is contacts * infectious * transmission rate
+  # returns a matrix, must be converted to a vector/1D array
+  lambda_prod[, ] <- C[i, j] * I[j] * beta * contact_reduction_total[j] * contact_reduction_total[i] # nolint: line_length_linter.
+  lambda[] <- sum(lambda_prod[i, ])
+
+  # Vaccination - indexing over age groups
+  vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0
+
+  # ODEs
+  deriv(S[]) <- -(lambda[i] * S[i]) - (vax_rate[i] * S[i])
+  deriv(E[]) <- lambda[i] * S[i] - sigma * E[i]
+  deriv(I[]) <- sigma * E[i] - gamma * I[i]
+  deriv(R[]) <- gamma * I[i]
+  deriv(V[]) <- vax_rate[i] * S[i]
+
+  # Initial conditions
+  initial(S[]) <- init_S[i]
+  initial(E[]) <- init_E[i]
+  initial(I[]) <- init_I[i]
+  initial(R[]) <- init_R[i]
+  initial(V[]) <- init_V[i]
+
+  # User-defined parameters
+  C[, ] <- user()
+  n_age <- user()
+  n_intervention <- user()
+  beta <- user()
+  sigma <- user()
+  gamma <- user()
+
+  # Not currently used (can re-add for time-dependent parameters)
+  # beta_t[] <- user()
+  # beta_y[] <- user()
+  # sigma_t[] <- user()
+  # sigma_y[] <- user()
+  # gamma_t[] <- user()
+  # gamma_y[] <- user()
+  intervention_start[] <- user()
+  intervention_end[] <- user()
+  intervention_effect[, ] <- user()
+  vax_start[] <- user()
+  vax_end[] <- user()
+  vax_nu[] <- user()
+  init_S[] <- user()
+  init_E[] <- user()
+  init_I[] <- user()
+  init_R[] <- user()
+  init_V[] <- user()
+
+  # Dimensions
+  dim(C) <- c(n_age, n_age)
+  dim(lambda_prod) <- c(n_age, n_age)
+  dim(lambda) <- n_age
+  dim(S) <- n_age
+  dim(E) <- n_age
+  dim(I) <- n_age
+  dim(R) <- n_age
+  dim(V) <- n_age
+  dim(contact_reduction) <- c(n_intervention, n_age)
+  dim(contact_reduction_log) <- c(n_intervention, n_age)
+  dim(contact_reduction_total_log) <- c(n_age)
+  dim(contact_reduction_total) <- c(n_age)
+  dim(intervention_start) <- n_intervention
+  dim(intervention_end) <- n_intervention
+  dim(intervention_effect) <- c(n_intervention, n_age)
+  dim(vax_rate) <- n_age
+  dim(vax_start) <- n_age
+  dim(vax_end) <- n_age
+  dim(vax_nu) <- n_age
+  dim(init_S) <- n_age
+  dim(init_E) <- n_age
+  dim(init_I) <- n_age
+  dim(init_R) <- n_age
+  dim(init_V) <- n_age
+})
+
+#' @export
+model_default_odin <- function(population,
+                               transmission_rate = 1.5 / 7.0,
+                               infectiousness_rate = 1.0 / 2.0,
+                               recovery_rate = 1.0 / 7.0,
+                               intervention = NULL,
+                               vaccination = NULL,
+                               time_dependence = NULL,
+                               time_end = 100,
+                               increment = 1) {
+  # get compartment names
+  compartments <- c(
+    "susceptible", "exposed", "infectious", "recovered", "vaccinated"
+  )
+  assert_population(population, compartments)
+
+  # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
+  checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
+  checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
+  checkmate::assert_integerish(time_end, lower = 0)
+
+  # check the time end and increment
+  # restrict increment to lower limit of 1e-6
+  checkmate::assert_integerish(time_end, lower = 0)
+  checkmate::assert_number(increment, lower = 1e-3, finite = TRUE)
+
+  # Prepare model parameters
+  # Scale initial conditions for odin model
+  initial_conditions <- population$initial_conditions * population$demography_vector # nolint: line_length_linter.
+  n_age <- nrow(population$contact_matrix)
+  time_points <- seq(0, time_end, by = increment)
+
+  # prepare contact matrix, divide by leading eigenvalue and rowwise by popsize
+  contact_matrix_norm <- population$contact_matrix
+  contact_matrix_norm <- (contact_matrix_norm / max(Re(eigen(contact_matrix_norm)$values))) / # nolint: line_length_linter.
+    population$demography_vector
+
+
+  # Prepare intervention parameters
+  # Add null intervention if needed as odin model requires matrix input
+  intervention_start <- intervention_end <- 0
+  intervention_effect <- rep(0, n_age)
+  if (!is.null(intervention) && length(intervention$time_begin) >= 2) {
+    intervention_start <- as.numeric(intervention$time_begin)
+    intervention_end <- as.numeric(intervention$time_end)
+    intervention_effect <- t(intervention$reduction) # row is the intervention
+  }
+  # If zero or one intervention
+  if (!is.null(intervention) || length(intervention$time_begin) < 2) {
+    null_intervention <- intervention(
+      name = "Null closure",
+      type = "contacts",
+      time_begin = 1e5,
+      time_end = 1e5 + 1,
+      reduction = matrix(rep(0, n_age))
+    )
+    intervention <- c(intervention, null_intervention, null_intervention)
+    intervention_start <- as.numeric(intervention$time_begin)
+    intervention_end <- as.numeric(intervention$time_end)
+    intervention_effect <- t(intervention$reduction) # row is the intervention
+  }
+
+  n_intervention <- length(intervention_start)
+
+  # Prepare vaccination parameters
+  vax_start <- vax_end <- rep(0, n_age)
+  vax_nu <- rep(0, n_age)
+  if (!is.null(vaccination)) {
+    vax_start <- as.numeric(vaccination$time_begin)
+    vax_end <- as.numeric(vaccination$time_end)
+    vax_nu <- as.numeric(vaccination$nu)
+  }
+
+  # Initialize and run the model
+  model <- seirv_model$new(
+    C = contact_matrix_norm,
+    n_age = n_age,
+    n_intervention = n_intervention,
+    beta = transmission_rate,
+    sigma = infectiousness_rate,
+    gamma = recovery_rate,
+    intervention_start = intervention_start,
+    intervention_end = intervention_end,
+    intervention_effect = intervention_effect,
+    vax_start = vax_start,
+    vax_end = vax_end,
+    vax_nu = vax_nu,
+    init_S = initial_conditions[, 1],
+    init_E = initial_conditions[, 2],
+    init_I = initial_conditions[, 3],
+    init_R = initial_conditions[, 4],
+    init_V = initial_conditions[, 5]
+  )
+
+  result <- model$run(time_points)
+
+  # Add scenario information
+  dt <- data.table::as.data.table(result)
+  # declaring variables below to avoid data.table related lintr messages
+  temp <- value <- temp_compartment <- temp_demography <-
+    compartment <- demography_group <- `:=` <- NULL
+
+  age_group_mappings <- paste0(
+    seq_len(n_age),
+    row.names(population$contact_matrix)
+  )
+  names(age_group_mappings) <- seq_len(n_age)
+
+  mapping <- c( # prepend numbers to help during sorting. Will remove later
+    S = "1susceptible", E = "2exposed", I = "3infectious",
+    R = "4recovered", V = "5vaccinated", age_group_mappings
+  )
+
+  # Melt the data table to long format
+  data.table::melt(dt,
+    id.vars = "t",
+    variable.name = "temp", # e.g. S[1], ..., V[3]
+    value.name = "value"
+  )[ # piping the data.table way. Possible because melt outputs a data.table
+    , list(
+      time = t, # alternative to using data.table::setnames(dt, "t", "time")
+      temp_compartment = substring(temp, 1L, 1L), # e.g. S[1] -> S
+      temp_demography = substring(temp, 3L, 3L), # e.g. S[1] -> 1
+      value
+    )
+  ][ # |> the DT way (piping the data.table way)
+    ,
+    list(
+      time,
+      demography_group = mapping[temp_demography], # e.g. 1[0,20), 2[20,65), ...
+      compartment = mapping[temp_compartment], # e.g. 1susceptible, 2exposed
+      value
+    )
+  ][ # |> the DT way
+    order(time, compartment, demography_group) # prepending numbers helps here
+  ][ # |> the DT way
+    ,
+    `:=`( # used as the prefix form to update multiple columns
+      # remove prepended numbers from `mapping`
+      demography_group = substring(demography_group, 2L), # e.g. [0,20), ...
+      compartment = substring(compartment, 2L) # e.g. susceptible, exposed, ...
+    )
+  ][ # |> the DT way
+    # added because the previous operation used `:=` which doesn't output
+  ]
+}

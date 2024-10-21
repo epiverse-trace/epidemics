@@ -137,7 +137,8 @@ test_that("New infections: aggregation over demographic group", {
   # expect that setting `by_group = FALSE` is identical to manual aggregation
   data_new_infections_agg <- new_infections(data, by_group = FALSE)
   data_infections_manual_agg <- aggregate(
-    data_new_infections, new_infections ~ time,
+    new_infections ~ time,
+    data_new_infections, 
     FUN = sum
   )
   expect_identical(

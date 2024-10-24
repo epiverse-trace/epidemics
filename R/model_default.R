@@ -455,7 +455,73 @@ model_default_odin <- function(population,
                                time_dependence = NULL,
                                time_end = 100,
                                increment = 1) {
-  # get compartment names
+  # # get compartment names
+  # compartments <- c(
+  #   "susceptible", "exposed", "infectious", "recovered", "vaccinated"
+  # )
+  # assert_population(population, compartments)
+
+  # # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
+  # checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
+  # checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
+  # checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
+  # checkmate::assert_integerish(time_end, lower = 0)
+
+  # # check the time end and increment
+  # # restrict increment to lower limit of 1e-6
+  # checkmate::assert_integerish(time_end, lower = 0)
+  # checkmate::assert_number(increment, lower = 1e-3, finite = TRUE)
+
+  # # Prepare model parameters
+  # # Scale initial conditions for odin model
+  # initial_conditions <- population$initial_conditions * population$demography_vector # nolint: line_length_linter.
+  # n_age <- nrow(population$contact_matrix)
+  # time_points <- seq(0, time_end, by = increment)
+
+  # # prepare contact matrix, divide by leading eigenvalue and rowwise by popsize
+  # contact_matrix_norm <- population$contact_matrix
+  # contact_matrix_norm <- (contact_matrix_norm / max(Re(eigen(contact_matrix_norm)$values))) / # nolint: line_length_linter.
+  #   population$demography_vector
+
+
+  # # Prepare intervention parameters
+  # # Add null intervention if needed as odin model requires matrix input
+  # intervention_start <- intervention_end <- 0
+  # intervention_effect <- rep(0, n_age)
+  # if (!is.null(intervention) && length(intervention$time_begin) >= 2) {
+  #   intervention_start <- as.numeric(intervention$time_begin)
+  #   intervention_end <- as.numeric(intervention$time_end)
+  #   intervention_effect <- t(intervention$reduction) # row is the intervention
+  # }
+  # # If zero or one intervention
+  # if (!is.null(intervention) || length(intervention$time_begin) < 2) {
+  #   null_intervention <- intervention(
+  #     name = "Null closure",
+  #     type = "contacts",
+  #     time_begin = 1e5,
+  #     time_end = 1e5 + 1,
+  #     reduction = matrix(rep(0, n_age))
+  #   )
+  #   if (is(intervention, "list")) {
+  #     intervention <- intervention[[1]]
+  #   }
+  #   intervention <- c(null_intervention, null_intervention, intervention)
+  #   intervention_start <- as.numeric(intervention$time_begin)
+  #   intervention_end <- as.numeric(intervention$time_end)
+  #   intervention_effect <- t(intervention$reduction) # row is the intervention
+  # }
+
+  # n_intervention <- length(intervention_start)
+
+  # # Prepare vaccination parameters
+  # vax_start <- vax_end <- rep(0, n_age)
+  # vax_nu <- rep(0, n_age)
+  # if (!is.null(vaccination)) {
+  #   vax_start <- as.numeric(vaccination$time_begin)
+  #   vax_end <- as.numeric(vaccination$time_end)
+  #   vax_nu <- as.numeric(vaccination$nu)
+  # }
+
   compartments <- c(
     "susceptible", "exposed", "infectious", "recovered", "vaccinated"
   )
@@ -472,77 +538,195 @@ model_default_odin <- function(population,
   checkmate::assert_integerish(time_end, lower = 0)
   checkmate::assert_number(increment, lower = 1e-3, finite = TRUE)
 
-  # Prepare model parameters
-  # Scale initial conditions for odin model
-  initial_conditions <- population$initial_conditions * population$demography_vector # nolint: line_length_linter.
-  n_age <- nrow(population$contact_matrix)
-  time_points <- seq(0, time_end, by = increment)
+  # check all vector lengths are equal or 1L
+  params <- list(
+    transmission_rate = transmission_rate,
+    infectiousness_rate = infectiousness_rate,
+    recovery_rate = recovery_rate,
+    time_end = time_end
+  )
+  # take parameter names here as names(DT) updates by reference!
+  param_names <- names(params)
 
-  # prepare contact matrix, divide by leading eigenvalue and rowwise by popsize
-  contact_matrix_norm <- population$contact_matrix
-  contact_matrix_norm <- (contact_matrix_norm / max(Re(eigen(contact_matrix_norm)$values))) / # nolint: line_length_linter.
-    population$demography_vector
-
-
-  # Prepare intervention parameters
-  # Add null intervention if needed as odin model requires matrix input
-  intervention_start <- intervention_end <- 0
-  intervention_effect <- rep(0, n_age)
-  if (!is.null(intervention) && length(intervention$time_begin) >= 2) {
-    intervention_start <- as.numeric(intervention$time_begin)
-    intervention_end <- as.numeric(intervention$time_end)
-    intervention_effect <- t(intervention$reduction) # row is the intervention
-  }
-  # If zero or one intervention
-  if (!is.null(intervention) || length(intervention$time_begin) < 2) {
-    null_intervention <- intervention(
-      name = "Null closure",
-      type = "contacts",
-      time_begin = 1e5,
-      time_end = 1e5 + 1,
-      reduction = matrix(rep(0, n_age))
+  # Check if `intervention` is a single intervention set or a list of such sets
+  # NULL is allowed;
+  is_lofints <- checkmate::test_list(
+    intervention, "intervention",
+    all.missing = FALSE, null.ok = TRUE
+  )
+  # allow some NULLs (a valid no intervention scenario) but not all NULLs
+  is_lofls <- checkmate::test_list(
+    intervention,
+    types = c("list", "null"), all.missing = FALSE
+  ) &&
+    # Check that all elements of intervention sets are either `<intervention>`
+    # or NULL
+    all(
+      vapply(
+        unlist(intervention, recursive = FALSE),
+        FUN = function(x) {
+          is_intervention(x) || is.null(x)
+        }, TRUE
+      )
     )
-    if (is(intervention, "list")) {
-      intervention <- intervention[[1]]
-    }
-    intervention <- c(null_intervention, null_intervention, intervention)
-    intervention_start <- as.numeric(intervention$time_begin)
-    intervention_end <- as.numeric(intervention$time_end)
-    intervention_effect <- t(intervention$reduction) # row is the intervention
+
+  # Check if parameters can be recycled;
+  stopifnot(
+    "All parameters must be of the same length, or must have length 1" =
+      .test_recyclable(params),
+    "`intervention` must be a list of <intervention>s or a list of such lists" =
+      is_lofints || is_lofls,
+    # Check if `vaccination` is a single vaccination, NULL, or a list
+    "`vaccination` must be a <vaccination> or a list of <vaccination>s" =
+      is_vaccination(vaccination) || checkmate::test_list(
+        vaccination,
+        types = c("vaccination", "null"), null.ok = TRUE
+      )
+  )
+
+  # make lists if not lists
+  population <- list(population) # NOTE: currently not list, but see issue #181
+  if (is_lofints) {
+    intervention <- list(intervention)
+  }
+  if (is_vaccination(vaccination) || is.null(vaccination)) {
+    vaccination <- list(vaccination)
   }
 
-  n_intervention <- length(intervention_start)
+  # check that time-dependence functions are passed as a list with at least the
+  # arguments `time` and `x`, in order as the first two args
+  # NOTE: this functionality is not vectorised;
+  # convert to list for data.table list column
+  checkmate::assert_list(
+    time_dependence, "function",
+    null.ok = TRUE,
+    any.missing = FALSE, names = "unique"
+  )
+  # lapply on null returns an empty list
+  invisible(
+    lapply(time_dependence, checkmate::assert_function,
+      args = c("time", "x"), ordered = TRUE
+    )
+  )
+  time_dependence <- list(
+    .cross_check_timedep(
+      time_dependence,
+      c("transmission_rate", "infectiousness_rate", "recovery_rate")
+    )
+  )
 
-  # Prepare vaccination parameters
-  vax_start <- vax_end <- rep(0, n_age)
-  vax_nu <- rep(0, n_age)
-  if (!is.null(vaccination)) {
-    vax_start <- as.numeric(vaccination$time_begin)
-    vax_end <- as.numeric(vaccination$time_end)
-    vax_nu <- as.numeric(vaccination$nu)
+  # collect parameters and add a parameter set identifier
+  params <- data.table::as.data.table(params)
+  params[, "param_set" := .I]
+
+  # this nested data.table will be returned
+  model_output <- data.table::CJ(
+    population = population,
+    intervention = intervention,
+    vaccination = vaccination,
+    time_dependence = time_dependence,
+    increment = increment,
+    sorted = FALSE
+  )
+
+  # process the population, interventions, and vaccinations, after
+  # cross-checking them agains the relevant population
+  model_output[, args := apply(model_output, 1, function(x) {
+    .check_prepare_args_default(c(x))
+  })]
+  model_output[, "scenario" := .I]
+
+  # combine infection parameters and scenarios
+  # NOTE: join X[Y] must have params as X as list cols not supported for X
+  model_output <- params[, as.list(model_output), by = names(params)]
+
+  # collect model arguments in column data, then overwrite
+  model_output[, args := apply(model_output, 1, function(x) {
+    c(x[["args"]], x[param_names]) # avoid including col "param_set"
+  })]
+
+  population <- model_output$population[[1]]
+  C <- population$contact_matrix
+  n_age <- nrow(C)
+  intervention <- model_output$intervention[[1]][[1]]
+  intervention_type <- strsplit(class(intervention)[1], "_", fixed = TRUE)[[1]][1]
+  intervention_reduction <- ifelse(intervention_type == "rate", 0, matrix(rep(0, n_age)))
+  null_intervention <- intervention(
+    name = "Null closure",
+    type = intervention_type,
+    time_begin = 1e5,
+    time_end = 1e5 + 1,
+    reduction = intervention_reduction
+  )
+  # Always add null intervention to cater for odin
+  intervention <- c(null_intervention, intervention)
+
+  n_intervention <- length(intervention$time_begin)
+
+  intervention_start <- as.numeric(intervention$time_begin)
+  intervention_end <- as.numeric(intervention$time_end)
+  if (intervention_type == "rate") {
+    intervention_effect <- matrix(rep(intervention$reduction, n_age), ncol = n_age)
+  } else {
+    intervention_effect <- t(intervention$reduction)
   }
+  # row is the intervention
+
+
+  print(intervention_effect)
+  #       [,1] [,2]
+  # npi_1  0.5  0.0
+  # npi_2  0.1  0.5
+  print(class(intervention_effect))
+  # [1] "matrix" "array"
+  print(intervention_start)
+  # [1] 0 0
+  print(class(intervention_start))
+  # [1] "numeric"
+  print(intervention_end)
+  # [1] 100 100
+  print(class(intervention_end))
+  # [1] "numeric"
+  beta <- model_output$transmission_rate
+  sigma <- model_output$infectiousness_rate
+  gamma <- model_output$recovery_rate
+  vaccination <- model_output$vaccination[[1]]
+  if (is.null(vaccination)) {
+    vax_start <- vax_end <- vax_nu <- rep(0, n_age)
+    # vax_nu <- rep(0, n_age)
+    # vax_start <- as.numeric(vaccination$time_begin)
+    # vax_end <- as.numeric(vaccination$time_end)
+    # vax_nu <- as.numeric(vaccination$nu)
+  }
+  initial_conditions <- population$initial_conditions
+  init_S <- initial_conditions[, 1]
+  init_E <- initial_conditions[, 2]
+  init_I <- initial_conditions[, 3]
+  init_R <- initial_conditions[, 4]
+  init_V <- initial_conditions[, 5]
 
   # Initialize and run the model
   model <- seirv_model$new(
-    C = contact_matrix_norm,
+    C = C,
     n_age = n_age,
     n_intervention = n_intervention,
-    beta = transmission_rate,
-    sigma = infectiousness_rate,
-    gamma = recovery_rate,
+    beta = beta,
+    sigma = sigma,
+    gamma = gamma,
     intervention_start = intervention_start,
     intervention_end = intervention_end,
     intervention_effect = intervention_effect,
     vax_start = vax_start,
     vax_end = vax_end,
     vax_nu = vax_nu,
-    init_S = initial_conditions[, 1],
-    init_E = initial_conditions[, 2],
-    init_I = initial_conditions[, 3],
-    init_R = initial_conditions[, 4],
-    init_V = initial_conditions[, 5]
+    init_S = init_S,
+    init_E = init_E,
+    init_I = init_I,
+    init_R = init_R,
+    init_V = init_V
   )
 
+  time_points <- seq(0, time_end, by = increment)
   result <- model$run(time_points)
 
   # Add scenario information

@@ -580,17 +580,17 @@ test_that("Default model: multi-parameter, multi-composables", {
   )
 })
 
-test_that("Default model: errors on vectorised input", {
+test_that("Default odin model: errors on vectorised input", {
   # expect errors on poorly specified vector inputs
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       transmission_rate = beta[-1], recovery_rate = gamma
     ),
     regexp = "All parameters must be of the same length, or must have length 1"
   )
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       intervention = list(
         NULL,
@@ -601,7 +601,7 @@ test_that("Default model: errors on vectorised input", {
       "`intervention` must be a list of <intervention>s or a list of such lists"
   )
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       vaccination = list(
         NULL,
@@ -613,7 +613,7 @@ test_that("Default model: errors on vectorised input", {
 
   # expect time-dependence cannot be vectorised
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       time_dependence = list(
         time_dep_01 = list(

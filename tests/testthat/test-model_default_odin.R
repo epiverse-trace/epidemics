@@ -300,53 +300,53 @@ test_that("Default model: time dependence", {
 test_that("Default model: errors and warnings, scalar arguments", {
   # expect errors on basic input checking
   expect_error(
-    model_default(population = "population"),
+    model_default_odin(population = "population"),
     regexp = "(Assertion on 'population' failed)*(Must inherit)*(population)"
   )
   expect_error(
-    model_default(population = population),
+    model_default_odin(population = population),
     regexp = "(Assertion on 'population' failed)*(Must inherit)*(population)"
   )
   pop_wrong_compartments <- uk_population
   pop_wrong_compartments$initial_conditions <- initial_conditions[, -1]
   expect_error(
-    model_default(pop_wrong_compartments),
+    model_default_odin(pop_wrong_compartments),
     regexp = "(Assertion on)*(initial_conditions)*failed"
   )
 
   # expect errors for infection parameters
   expect_error(
-    model_default(uk_population, transmission_rate = "0.19"),
+    model_default_odin(uk_population, transmission_rate = "0.19"),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_default(uk_population, infectiousness_rate = list(0.2)),
+    model_default_odin(uk_population, infectiousness_rate = list(0.2)),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_default(uk_population, recovery_rate = "0.19"),
+    model_default_odin(uk_population, recovery_rate = "0.19"),
     regexp = "Must be of type 'numeric'"
   )
 
   # expect error on time parameters
   expect_error(
-    model_default(uk_population, time_end = "100"),
+    model_default_odin(uk_population, time_end = "100"),
     regexp = "Must be of type 'integerish'"
   )
   expect_error(
-    model_default(uk_population, time_end = 100.5),
+    model_default_odin(uk_population, time_end = 100.5),
     regexp = "Must be of type 'integerish'"
   )
   expect_error(
-    model_default(uk_population, time_end = c(100, -100, 10)),
+    model_default_odin(uk_population, time_end = c(100, -100, 10)),
     regexp = "(Element)*(is not >= 0)"
   )
   expect_error(
-    model_default(uk_population, increment = "0.1"),
+    model_default_odin(uk_population, increment = "0.1"),
     regexp = "Must be of type 'number'"
   )
   expect_error(
-    model_default(uk_population, increment = c(0.1, 0.2)),
+    model_default_odin(uk_population, increment = c(0.1, 0.2)),
     regexp = "Must have length 1"
   )
 
@@ -355,13 +355,13 @@ test_that("Default model: errors and warnings, scalar arguments", {
     "school_closure", "contacts", 0, time_end, 0.5 # needs two effects
   )
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       intervention = list(contacts = intervention)
     )
   )
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       intervention = list(transmission_rate = intervention)
     ),
@@ -375,7 +375,7 @@ test_that("Default model: errors and warnings, scalar arguments", {
     time_end = matrix(100, nrow = 2, ncol = 2)
   )
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       vaccination = vax_double_dose
     ),
@@ -384,28 +384,28 @@ test_that("Default model: errors and warnings, scalar arguments", {
 
   # expect error on poorly specified time-dependence function list
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       time_dependence = function(x) x
     ),
     regexp = "Must be of type 'list'"
   )
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       time_dependence = list(function(x) x)
     ),
     regexp = "Must have names"
   )
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       time_dependence = list(transmission_rate = function(x) x)
     ),
     regexp = "Must have first formal arguments \\(ordered\\): time,x."
   )
   expect_error(
-    model_default(
+    model_default_odin(
       uk_population,
       time_dependence = list(transmission_rate = NULL)
     ),

@@ -113,19 +113,25 @@ uk_population <- population(
 uk_population
 ```
 
-## Run epidemic model
+## Compare epidemic models with {odin} and C++
 
 ```{r}
 # run an epidemic model using `epidemic`
+start_time <- Sys.time()
 output <- model_default(
   population = uk_population,
   time_end = 600, increment = 1.0
 )
+time_1 <- Sys.time()
 
 output_odin <- model_default_odin(
   population = uk_population,
   time_end = 600, increment = 1.0
 )
+time_2 <- Sys.time()
+
+print(paste("Original:",signif(as.numeric(time_1-start_time),3)))
+print(paste("odin:",signif(as.numeric(time_2-time_1),3)))
 
 library(data.table)
 all.equal(output, output_odin, tolerance = 0.3) # FALSE

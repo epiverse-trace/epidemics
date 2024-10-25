@@ -192,7 +192,7 @@ test_that("Default odin model: contacts interventions and stats. correctness", {
   )
 })
 
-test_that("Default model: rate interventions", {
+test_that("Default odin model: rate interventions", {
   intervention_01 <- intervention(
     "mask_mandate", "rate", 0, time_end, 0.5
   )
@@ -203,14 +203,14 @@ test_that("Default model: rate interventions", {
   # repeat some basic checks from default case with no intervention
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_default(
+    model_default_odin(
       uk_population,
       intervention = list(transmission_rate = intervention)
     )
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default(
+  data <- model_default_odin(
     uk_population,
     intervention = list(transmission_rate = intervention)
   )

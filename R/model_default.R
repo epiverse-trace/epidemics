@@ -455,7 +455,6 @@ model_default_odin <- function(population,
                                time_dependence = NULL,
                                time_end = 100,
                                increment = 1) {
-
   compartments <- c(
     "susceptible", "exposed", "infectious", "recovered", "vaccinated"
   )
@@ -586,6 +585,15 @@ model_default_odin <- function(population,
   intervention_start <- as.numeric(args$npi_time_begin)
   intervention_end <- as.numeric(args$npi_time_end)
   intervention_effect <- t(args$npi_cr)
+
+  if (any(args$rate_interventions[[1]]$reduction > 0)) {
+    # if you get here contacts is a null intervention. replace with rate values
+    intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
+    intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
+    intervention_effect <- t(
+      matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+    )
+  }
   n_intervention <- length(intervention_start)
 
   beta <- model_output$transmission_rate

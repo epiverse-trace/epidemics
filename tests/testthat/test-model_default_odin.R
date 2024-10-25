@@ -297,7 +297,7 @@ test_that("Default model: time dependence", {
   )
 })
 
-test_that("Default model: errors and warnings, scalar arguments", {
+test_that("Default odin model: errors and warnings, scalar arguments", {
   # expect errors on basic input checking
   expect_error(
     model_default_odin(population = "population"),

@@ -454,6 +454,7 @@ model_default_odin <- function(population,
                                time_dependence = NULL,
                                time_end = 100,
                                increment = 1) {
+  # get compartment names
   compartments <- c(
     "susceptible", "exposed", "infectious", "recovered", "vaccinated"
   )
@@ -463,7 +464,6 @@ model_default_odin <- function(population,
   checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
-  checkmate::assert_integerish(time_end, lower = 0)
 
   # check the time end and increment
   # restrict increment to lower limit of 1e-6

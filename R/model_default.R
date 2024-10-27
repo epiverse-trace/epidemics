@@ -446,7 +446,7 @@ seirv_model <- odin::odin({
 
 #' @export
 model_default_odin <- function(population,
-                               transmission_rate = 1.5 / 7.0,
+                               transmission_rate = 1.3 / 7.0,
                                infectiousness_rate = 1.0 / 2.0,
                                recovery_rate = 1.0 / 7.0,
                                intervention = NULL,

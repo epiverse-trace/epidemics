@@ -377,11 +377,11 @@ seirv_model <- odin::odin({
   vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0
 
   # ODEs
-  deriv(S[]) <- -(lambda[i] * S[i]) - (vax_rate[i] * S[i])
+  deriv(S[]) <- -(lambda[i] * S[i]) - min(vax_rate[i],S[i])
   deriv(E[]) <- lambda[i] * S[i] - sigma * E[i]
   deriv(I[]) <- sigma * E[i] - gamma * I[i]
   deriv(R[]) <- gamma * I[i]
-  deriv(V[]) <- vax_rate[i] * S[i]
+  deriv(V[]) <- min(vax_rate[i],S[i])
 
   # Initial conditions
   initial(S[]) <- init_S[i]

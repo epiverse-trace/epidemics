@@ -227,11 +227,11 @@ test_that("Default model: vaccination and stats. correctness", {
   # repeat some basic checks from default case with no vaccination
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_default_odin(uk_population, vaccination = single_vaccination)
+    model_default(uk_population, vaccination = single_vaccination)
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default_odin(uk_population, vaccination = single_vaccination)
+  data <- model_default(uk_population, vaccination = single_vaccination)
   expect_s3_class(data, "data.frame")
   expect_identical(length(data), 4L)
 
@@ -253,7 +253,7 @@ test_that("Default model: vaccination and stats. correctness", {
     time_end = matrix(200 + 150, nrow(contact_matrix)),
     nu = matrix(0.01, nrow = nrow(contact_matrix))
   )
-  data <- model_default_odin(
+  data <- model_default(
     uk_population,
     vaccination = high_rate_vax, time_end = 600
   )
@@ -418,17 +418,17 @@ beta <- rnorm(10, 1.3 / 7, sd = 0.01)
 sigma <- rnorm(10, 0.5, sd = 0.01)
 gamma <- rnorm(10, 1 / 7, sd = 0.01)
 
-test_that("Default model: infection parameters as vectors", {
+test_that("Default odin model: infection parameters as vectors", {
   # expect no conditions when vectors are passed
   expect_no_condition(
-    model_default(
+    model_default_odin(
       uk_population,
       transmission_rate = beta, infectiousness_rate = sigma,
       recovery_rate = gamma
     )
   )
   # expect output structure is a nested data.table
-  output <- model_default(
+  output <- model_default_odin(
     uk_population,
     transmission_rate = beta, infectiousness_rate = sigma,
     recovery_rate = gamma

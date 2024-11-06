@@ -377,11 +377,11 @@ seirv_model <- odin::odin({
   vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0
 
   # ODEs
-  deriv(S[]) <- -(lambda[i] * S[i]) - min(vax_rate[i],S[i])
+  deriv(S[]) <- -(lambda[i] * S[i]) - min(vax_rate[i], S[i])
   deriv(E[]) <- lambda[i] * S[i] - sigma * E[i]
   deriv(I[]) <- sigma * E[i] - gamma * I[i]
   deriv(R[]) <- gamma * I[i]
-  deriv(V[]) <- min(vax_rate[i],S[i])
+  deriv(V[]) <- min(vax_rate[i], S[i])
 
   # Initial conditions
   initial(S[]) <- init_S[i]
@@ -577,109 +577,122 @@ model_default_odin <- function(population,
     c(x[["args"]], x[param_names]) # avoid including col "param_set"
   })]
 
-  args <- model_output$args[[1]]
-  C <- args$contact_matrix
-  n_age <- nrow(C)
+  model_output[, "data" := lapply(args, function(args) {
+    C <- args$contact_matrix
+    n_age <- nrow(C)
 
-  intervention_start <- as.numeric(args$npi_time_begin)
-  intervention_end <- as.numeric(args$npi_time_end)
-  intervention_effect <- t(args$npi_cr)
+    intervention_start <- as.numeric(args$npi_time_begin)
+    intervention_end <- as.numeric(args$npi_time_end)
+    intervention_effect <- t(args$npi_cr)
 
-  if (any(args$rate_interventions[[1]]$reduction > 0)) {
-    # if you get here contacts is a null intervention. replace with rate values
-    intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
-    intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
-    intervention_effect <- t(
-      matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+    if (any(args$rate_interventions[[1]]$reduction > 0)) {
+      # here contacts is a null intervention. replace with rate values
+      intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
+      intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
+      intervention_effect <- t(
+        matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+      )
+    }
+    n_intervention <- length(intervention_start)
+
+    beta <- args$transmission_rate
+    sigma <- args$infectiousness_rate
+    gamma <- args$recovery_rate
+    vax_start <- as.numeric(args$vax_time_begin)
+    vax_end <- as.numeric(args$vax_time_end)
+    vax_nu <- as.numeric(args$vax_nu)
+
+    initial_conditions <- args$initial_state
+    init_S <- initial_conditions[, 1]
+    init_E <- initial_conditions[, 2]
+    init_I <- initial_conditions[, 3]
+    init_R <- initial_conditions[, 4]
+    init_V <- initial_conditions[, 5]
+
+    # Initialize and run the model
+    model <- seirv_model$new(
+      C = C,
+      n_age = n_age,
+      n_intervention = n_intervention,
+      beta = beta,
+      sigma = sigma,
+      gamma = gamma,
+      intervention_start = intervention_start,
+      intervention_end = intervention_end,
+      intervention_effect = intervention_effect,
+      vax_start = vax_start,
+      vax_end = vax_end,
+      vax_nu = vax_nu,
+      init_S = init_S,
+      init_E = init_E,
+      init_I = init_I,
+      init_R = init_R,
+      init_V = init_V
     )
+
+    time_points <- seq(0, args$time_end, by = args$increment)
+    result <- model$run(time_points)
+
+    # Add scenario information
+    dt <- data.table::as.data.table(result)
+    # declaring variables below to avoid data.table related lintr messages
+    temp <- value <- temp_compartment <- temp_demography <-
+      compartment <- demography_group <- `:=` <- NULL
+
+    age_group_mappings <- paste0(
+      seq_len(n_age),
+      row.names(C)
+    )
+    names(age_group_mappings) <- seq_len(n_age)
+
+    mapping <- c( # prepend numbers to help during sorting. Will remove later
+      S = "1susceptible", E = "2exposed", I = "3infectious",
+      R = "4recovered", V = "5vaccinated", age_group_mappings
+    )
+
+    # Melt the data table to long format
+    data.table::melt(dt,
+      id.vars = "t",
+      variable.name = "temp", # e.g. S[1], ..., V[3]
+      value.name = "value"
+    )[ # piping the data.table way. Possible because melt outputs a data.table
+      , list(
+        time = t, # alternative to using data.table::setnames(dt, "t", "time")
+        temp_compartment = substring(temp, 1L, 1L), # e.g. S[1] -> S
+        temp_demography = substring(temp, 3L, 3L), # e.g. S[1] -> 1
+        value
+      )
+    ][ # |> the DT way (piping the data.table way)
+      ,
+      list(
+        time,
+        demography_group = mapping[temp_demography], # e.g. 1[0,20), 2[20,65),
+        compartment = mapping[temp_compartment], # e.g. 1susceptible, 2exposed
+        value
+      )
+    ][ # |> the DT way
+      order(time, compartment, demography_group) # prepending numbers helps here
+    ][ # |> the DT way
+      ,
+      `:=`( # used as the prefix form to update multiple columns
+        # remove prepended numbers from `mapping`
+        demography_group = substring(demography_group, 2L), # e.g. [0,20), ...
+        compartment = substring(compartment, 2L) # e.g. susceptible, exposed,
+      )
+    ][ # |> the DT way
+      # added because the previous operation used `:=` which doesn't output
+    ]
+  })]
+
+  # remove temporary arguments
+  model_output$args <- NULL
+
+  # check for single row output, i.e., scalar arguments, and return data.table
+  # do not return the parameters in this case
+  if (nrow(model_output) == 1L) {
+    model_output <- model_output[["data"]][[1L]] # hardcoded for special case
   }
-  n_intervention <- length(intervention_start)
 
-  beta <- model_output$transmission_rate
-  sigma <- model_output$infectiousness_rate
-  gamma <- model_output$recovery_rate
-  vax_start <- as.numeric(args$vax_time_begin)
-  vax_end <- as.numeric(args$vax_time_end)
-  vax_nu <- as.numeric(args$vax_nu)
-
-  initial_conditions <- args$initial_state
-  init_S <- initial_conditions[, 1]
-  init_E <- initial_conditions[, 2]
-  init_I <- initial_conditions[, 3]
-  init_R <- initial_conditions[, 4]
-  init_V <- initial_conditions[, 5]
-
-  # Initialize and run the model
-  model <- seirv_model$new(
-    C = C,
-    n_age = n_age,
-    n_intervention = n_intervention,
-    beta = beta,
-    sigma = sigma,
-    gamma = gamma,
-    intervention_start = intervention_start,
-    intervention_end = intervention_end,
-    intervention_effect = intervention_effect,
-    vax_start = vax_start,
-    vax_end = vax_end,
-    vax_nu = vax_nu,
-    init_S = init_S,
-    init_E = init_E,
-    init_I = init_I,
-    init_R = init_R,
-    init_V = init_V
-  )
-
-  time_points <- seq(0, time_end, by = increment)
-  result <- model$run(time_points)
-
-  # Add scenario information
-  dt <- data.table::as.data.table(result)
-  # declaring variables below to avoid data.table related lintr messages
-  temp <- value <- temp_compartment <- temp_demography <-
-    compartment <- demography_group <- `:=` <- NULL
-
-  age_group_mappings <- paste0(
-    seq_len(n_age),
-    row.names(C)
-  )
-  names(age_group_mappings) <- seq_len(n_age)
-
-  mapping <- c( # prepend numbers to help during sorting. Will remove later
-    S = "1susceptible", E = "2exposed", I = "3infectious",
-    R = "4recovered", V = "5vaccinated", age_group_mappings
-  )
-
-  # Melt the data table to long format
-  data.table::melt(dt,
-    id.vars = "t",
-    variable.name = "temp", # e.g. S[1], ..., V[3]
-    value.name = "value"
-  )[ # piping the data.table way. Possible because melt outputs a data.table
-    , list(
-      time = t, # alternative to using data.table::setnames(dt, "t", "time")
-      temp_compartment = substring(temp, 1L, 1L), # e.g. S[1] -> S
-      temp_demography = substring(temp, 3L, 3L), # e.g. S[1] -> 1
-      value
-    )
-  ][ # |> the DT way (piping the data.table way)
-    ,
-    list(
-      time,
-      demography_group = mapping[temp_demography], # e.g. 1[0,20), 2[20,65), ...
-      compartment = mapping[temp_compartment], # e.g. 1susceptible, 2exposed
-      value
-    )
-  ][ # |> the DT way
-    order(time, compartment, demography_group) # prepending numbers helps here
-  ][ # |> the DT way
-    ,
-    `:=`( # used as the prefix form to update multiple columns
-      # remove prepended numbers from `mapping`
-      demography_group = substring(demography_group, 2L), # e.g. [0,20), ...
-      compartment = substring(compartment, 2L) # e.g. susceptible, exposed, ...
-    )
-  ][ # |> the DT way
-    # added because the previous operation used `:=` which doesn't output
-  ]
+  # return data.table
+  model_output[]
 }

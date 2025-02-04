@@ -120,7 +120,7 @@
 #'
 #' data
 #' @export
-model_default_cpp <- function(population,
+model_default <- function(population,
                           transmission_rate = 1.3 / 7.0,
                           infectiousness_rate = 1.0 / 2.0,
                           recovery_rate = 1.0 / 7.0,
@@ -362,9 +362,10 @@ seirv_model <- odin::odin({
 
   # Contact matrix with time-dependent interventions
   # Then multiply across interventions - need to check this
-  contact_reduction[, ] <- if (t > intervention_start[i] && t < intervention_end[i]) intervention_effect[i, j] else 0 # nolint: line_length_linter.
-  contact_reduction_sum[] <- sum(contact_reduction[, i])
-  contact_reduction_total[] <- 1 - min(contact_reduction_sum[i],1)
+  contact_reduction[, ] <- if (t > intervention_start[i] && t < intervention_end[i]) (1.0 - intervention_effect[i, j]) else 1 # nolint: line_length_linter.
+  contact_reduction_log[, ] <- log(contact_reduction[i, j] + 1e-10) # Avoid zero
+  contact_reduction_total_log[] <- sum(contact_reduction_log[, i])
+  contact_reduction_total[] <- exp(contact_reduction_total_log[i])
 
   # Specify how transmission varies over time
   # FOI is contacts * infectious * transmission rate
@@ -426,7 +427,8 @@ seirv_model <- odin::odin({
   dim(R) <- n_age
   dim(V) <- n_age
   dim(contact_reduction) <- c(n_intervention, n_age)
-  dim(contact_reduction_sum) <- c(n_age)
+  dim(contact_reduction_log) <- c(n_intervention, n_age)
+  dim(contact_reduction_total_log) <- c(n_age)
   dim(contact_reduction_total) <- c(n_age)
   dim(intervention_start) <- n_intervention
   dim(intervention_end) <- n_intervention
@@ -443,7 +445,7 @@ seirv_model <- odin::odin({
 })
 
 #' @export
-model_default <- function(population,
+model_default_odin <- function(population,
                                transmission_rate = 1.3 / 7.0,
                                infectiousness_rate = 1.0 / 2.0,
                                recovery_rate = 1.0 / 7.0,
@@ -587,7 +589,9 @@ model_default <- function(population,
       # here contacts is a null intervention. replace with rate values
       intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
       intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
-      intervention_effect <- matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+      intervention_effect <- t(
+        matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+      )
     }
     n_intervention <- length(intervention_start)
 

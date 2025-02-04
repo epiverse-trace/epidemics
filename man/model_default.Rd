@@ -2,10 +2,9 @@
 % Please edit documentation in R/model_default.R
 \name{model_default}
 \alias{model_default}
-\alias{model_default_cpp}
 \title{Model an SEIR-V epidemic with interventions}
 \usage{
-model_default_cpp(
+model_default(
   population,
   transmission_rate = 1.3/7,
   infectiousness_rate = 1/2,

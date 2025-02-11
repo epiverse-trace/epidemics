@@ -227,11 +227,11 @@ test_that("Default model: vaccination and stats. correctness", {
   # repeat some basic checks from default case with no vaccination
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_default(uk_population, vaccination = single_vaccination)
+    model_default_odin(uk_population, vaccination = single_vaccination)
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default(uk_population, vaccination = single_vaccination)
+  data <- model_default_odin(uk_population, vaccination = single_vaccination)
   expect_s3_class(data, "data.frame")
   expect_identical(length(data), 4L)
 
@@ -253,7 +253,7 @@ test_that("Default model: vaccination and stats. correctness", {
     time_end = matrix(200 + 150, nrow(contact_matrix)),
     nu = matrix(0.01, nrow = nrow(contact_matrix))
   )
-  data <- model_default(
+  data <- model_default_odin(
     uk_population,
     vaccination = high_rate_vax, time_end = 600
   )
@@ -277,14 +277,14 @@ test_that("Default model: time dependence", {
   # repeat some basic checks from default case with no time_dependence
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_default(
+    model_default_odin(
       uk_population,
       time_dependence = time_dependence
     )
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default(
+  data <- model_default_odin(
     uk_population,
     time_dependence = time_dependence
   )
@@ -481,11 +481,11 @@ test_that("Default model: composable elements as lists", {
   )
 
   expect_no_condition(
-    model_default(uk_population, intervention = npi_list)
+    model_default_odin(uk_population, intervention = npi_list)
   )
 
   # expect output is a nested data.frame-like object
-  output <- model_default(uk_population, intervention = npi_list)
+  output <- model_default_odin(uk_population, intervention = npi_list)
   expect_s3_class(output, c("data.frame", "data.table"))
   expect_identical(nrow(output), length(npi_list))
   checkmate::expect_list(output$data, types = "data.frame", any.missing = FALSE)
@@ -534,7 +534,7 @@ test_that("Default model: multi-parameter, multi-composables", {
   )
   # reuse parameter sets from earlier tests
   expect_no_condition(
-    model_default(
+    model_default_odin(
       uk_population,
       transmission_rate = beta, recovery_rate = gamma,
       intervention = npi_list
@@ -542,7 +542,7 @@ test_that("Default model: multi-parameter, multi-composables", {
   )
 
   # expect output is a nested data.frame-like object
-  output <- model_default(
+  output <- model_default_odin(
     uk_population,
     transmission_rate = beta, recovery_rate = gamma,
     intervention = npi_list

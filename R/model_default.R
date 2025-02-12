@@ -352,8 +352,7 @@ model_default <- function(population,
   list(c(dS, dE, dI, dR, dV))
 }
 
-#' @importFrom odin odin
-#' @export
+#' @keywords internal
 seirv_model <- odin::odin({
   # Time-dependent parameters
   # beta <- interpolate(beta_t, beta_y, "linear")
@@ -362,10 +361,9 @@ seirv_model <- odin::odin({
 
   # Contact matrix with time-dependent interventions
   # Then multiply across interventions - need to check this
-  contact_reduction[, ] <- if (t > intervention_start[i] && t < intervention_end[i]) (1.0 - intervention_effect[i, j]) else 1 # nolint: line_length_linter.
-  contact_reduction_log[, ] <- log(contact_reduction[i, j] + 1e-10) # Avoid zero
-  contact_reduction_total_log[] <- sum(contact_reduction_log[, i])
-  contact_reduction_total[] <- exp(contact_reduction_total_log[i])
+  contact_reduction[, ] <- if (t > intervention_start[i] && t < intervention_end[i]) intervention_effect[i, j] else 0 # nolint: line_length_linter.
+  contact_reduction_sum[] <- sum(contact_reduction[, i])
+  contact_reduction_total[] <- 1 - min(contact_reduction_sum[i], 1)
 
   # Specify how transmission varies over time
   # FOI is contacts * infectious * transmission rate
@@ -377,11 +375,11 @@ seirv_model <- odin::odin({
   vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0
 
   # ODEs
-  deriv(S[]) <- -(lambda[i] * S[i]) - (vax_rate[i] * S[i])
+  deriv(S[]) <- -(lambda[i] * S[i]) - min(vax_rate[i], S[i])
   deriv(E[]) <- lambda[i] * S[i] - sigma * E[i]
   deriv(I[]) <- sigma * E[i] - gamma * I[i]
   deriv(R[]) <- gamma * I[i]
-  deriv(V[]) <- vax_rate[i] * S[i]
+  deriv(V[]) <- min(vax_rate[i], S[i])
 
   # Initial conditions
   initial(S[]) <- init_S[i]
@@ -427,8 +425,7 @@ seirv_model <- odin::odin({
   dim(R) <- n_age
   dim(V) <- n_age
   dim(contact_reduction) <- c(n_intervention, n_age)
-  dim(contact_reduction_log) <- c(n_intervention, n_age)
-  dim(contact_reduction_total_log) <- c(n_age)
+  dim(contact_reduction_sum) <- c(n_age)
   dim(contact_reduction_total) <- c(n_age)
   dim(intervention_start) <- n_intervention
   dim(intervention_end) <- n_intervention
@@ -444,6 +441,128 @@ seirv_model <- odin::odin({
   dim(init_V) <- n_age
 })
 
+
+#' @title Model an SEIR-V epidemic with interventions
+#'
+#' @name model_default_odin
+#' @rdname model_default_odin
+#'
+#' @description Simulate an epidemic using a deterministic, compartmental
+#' epidemic model with the compartments
+#' "susceptible", "exposed", "infectious", "recovered", and "vaccinated".
+#' This model can accommodate heterogeneity in social contacts among demographic
+#' groups, as well as differences in the sizes of demographic groups.
+#'
+#' The `population`, `transmission_rate`, `infectiousness_rate`, and
+#' `recovery_rate`
+#' arguments are mandatory, while passing an `intervention` and `vaccination`
+#' are optional and can be used to simulate scenarios with different epidemic
+#' responses or different levels of the same type of response.
+#' See **Details** for more information.
+#'
+#' @param population An object of the `population` class, which holds a
+#' population contact matrix, a demography vector, and the initial conditions
+#' of each demographic group. See [population()].
+#' @param transmission_rate A numeric for the rate at which individuals
+#' move from the susceptible to the exposed compartment upon contact with an
+#' infectious individual. Often denoted as \eqn{\beta}, with
+#' \eqn{\beta = R_0 / \text{infectious period}}. See **Details** for default
+#' values.
+#' @param infectiousness_rate A numeric for the rate at which individuals
+#' move from the exposed to the infectious compartment. Often denoted as
+#' \eqn{\sigma}, with \eqn{\sigma = 1.0 / \text{pre-infectious period}}.
+#' This value does not depend upon the number of infectious individuals in the
+#' population. See **Details** for default values.
+#' @param recovery_rate A numeric for the rate at which individuals move
+#' from the infectious to the recovered compartment. Often denoted as
+#' \eqn{\gamma}, with \eqn{\gamma = 1.0 / \text{infectious period}}.
+#' See **Details** for default values.
+#' @param intervention A named list of `<intervention>`s representing optional
+#' non-pharmaceutical or pharmaceutical interventions applied during the
+#' epidemic. Only a single intervention on social contacts of the class
+#' `<contacts_intervention>` is allowed as the named element "contacts".
+#' Multiple `<rate_interventions>` on the model parameters are allowed; see
+#' **Details** for the model parameters for which interventions are supported.
+#' @param vaccination A `<vaccination>` object representing an optional
+#' vaccination regime with a single dose, followed during the course of the
+#' epidemic, with a start and end time, and age-specific vaccination rates.
+#' @param time_dependence A named list where each name
+#' is a model parameter, and each element is a function with
+#' the first two arguments being the current simulation `time`, and `x`, a value
+#' that is dependent on `time` (`x` represents a model parameter).
+#' See **Details** for more information, as well as the vignette on time-
+#' dependence \code{vignette("time_dependence", package = "epidemics")}.
+#' @param time_end The maximum number of timesteps over which to run the model.
+#' Taken as days, with a default value of 100 days. May be a numeric vector.
+#' @param increment The size of the time increment. Taken as days, with a
+#' default value of 1 day.
+#' @details
+#'
+#' # Details: SEIRV model suitable for directly transmitted infections
+#'
+#' ## Model parameters
+#'
+#' This model only allows for single, population-wide rates of
+#' transitions between compartments per model run.
+#'
+#' However, model parameters may be passed as numeric vectors. These vectors
+#' must follow Tidyverse recycling rules: all vectors must have the same length,
+#' or, vectors of length 1 will be recycled to the length of any other vector.
+#'
+#' The default values are:
+#'
+#' - Transmission rate (\eqn{\beta}, `transmission_rate`): 0.186, assuming an
+#' \eqn{R_0} = 1.3 and an infectious period of 7 days.
+#'
+#' - Infectiousness rate (\eqn{\sigma}, `infectiousness_rate`): 0.5, assuming
+#' a pre-infectious period of 2 days.
+#'
+#' - Recovery rate (\eqn{\gamma}, `recovery_rate`): 0.143, assuming an
+#' infectious period of 7 days.
+#'
+#' @return A `<data.table>`.
+#' If the model parameters and composable elements are all scalars, a single
+#' `<data.table>` with the columns "time", "compartment", "age_group", and
+#' "value", giving the number of individuals per demographic group
+#' in each compartment at each timestep in long (or "tidy") format is returned.
+#'
+#' If the model parameters or composable elements are lists or list-like,
+#' a nested `<data.table>` is returned with a list column "data", which holds
+#' the compartmental values described above.
+#' Other columns hold parameters and composable elements relating to the model
+#' run. Columns "scenario" and "param_set" identify combinations of composable
+#' elements (population, interventions, vaccination regimes), and infection
+#' parameters, respectively.
+#' @examples
+#' # create a population
+#' uk_population <- population(
+#'   name = "UK population",
+#'   contact_matrix = matrix(1),
+#'   demography_vector = 67e6,
+#'   initial_conditions = matrix(
+#'     c(0.9999, 0.0001, 0, 0, 0),
+#'     nrow = 1, ncol = 5L
+#'   )
+#' )
+#'
+#' # run epidemic simulation with no vaccination or intervention
+#' # and three discrete values of transmission rate
+#' data <- model_default_odin(
+#'   population = uk_population,
+#'   transmission_rate = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
+#' )
+#'
+#' # view some data
+#' data
+#'
+#' # run epidemic simulations with differences in the end time
+#' # may be useful when considering different start dates with a fixed end point
+#' data <- model_default_odin(
+#'   population = uk_population,
+#'   time_end = c(50, 100, 150)
+#' )
+#'
+#' data
 #' @export
 model_default_odin <- function(population,
                                transmission_rate = 1.3 / 7.0,
@@ -639,7 +758,7 @@ model_default_odin <- function(population,
     dt <- data.table::as.data.table(result)
     # declaring variables below to avoid data.table related lintr messages
     temp <- value <- temp_compartment <- temp_demography <-
-      compartment <- demography_group <- `:=` <- NULL
+      compartment <- demography_group <- `:=` <- time <- NULL
 
     age_group_mappings <- paste0(
       seq_len(n_age),

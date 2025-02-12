@@ -1,5 +1,5 @@
 ---
-title: "Modelling intervention scenarios"
+title: "Modelling intervention scenarios - odin"
 output:
   bookdown::html_vignette2:
     fig_caption: yes
@@ -9,7 +9,7 @@ pkgdown:
 bibliography: references.json
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Modelling intervention scenarios}
+  %\VignetteIndexEntry{Modelling intervention scenarios - odin}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

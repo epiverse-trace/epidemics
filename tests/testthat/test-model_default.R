@@ -42,7 +42,7 @@ compartments <- c(
   "susceptible", "exposed", "infectious", "recovered", "vaccinated"
 )
 
-test_that("Default odin model: basic expectations, scalar arguments", {
+test_that("Default model: basic expectations, scalar arguments", {
   # expect run with no conditions for default arguments
   expect_no_condition(model_default(uk_population))
 
@@ -91,7 +91,7 @@ test_that("Default odin model: basic expectations, scalar arguments", {
 })
 
 # NOTE: statistical correctness is not expected to change for vectorised input
-test_that("Default odin model: statistical correctness, parameters", {
+test_that("Default model: statistical correctness, parameters", {
   # expect final size increases with transmission_rate
   size_beta_low <- epidemic_size(
     model_default(uk_population, transmission_rate = 1.3 / 7.0)
@@ -141,7 +141,7 @@ test_that("Default odin model: statistical correctness, parameters", {
 # prepare baseline for comparison of against intervention scenarios
 data_baseline <- model_default(uk_population)
 
-test_that("Default odin model: contacts interventions and stats. correctness", {
+test_that("Default model: contacts interventions and stats. correctness", {
   intervention <- intervention(
     "school_closure", "contacts", 0, time_end, c(0.5, 0.0)
   )
@@ -192,7 +192,7 @@ test_that("Default odin model: contacts interventions and stats. correctness", {
   )
 })
 
-test_that("Default odin model: rate interventions", {
+test_that("Default model: rate interventions", {
   intervention_01 <- intervention(
     "mask_mandate", "rate", 0, time_end, 0.5
   )
@@ -297,7 +297,7 @@ test_that("Default model: time dependence", {
   )
 })
 
-test_that("Default odin model: errors and warnings, scalar arguments", {
+test_that("Default model: errors and warnings, scalar arguments", {
   # expect errors on basic input checking
   expect_error(
     model_default(population = "population"),
@@ -418,7 +418,7 @@ beta <- rnorm(10, 1.3 / 7, sd = 0.01)
 sigma <- rnorm(10, 0.5, sd = 0.01)
 gamma <- rnorm(10, 1 / 7, sd = 0.01)
 
-test_that("Default odin model: infection parameters as vectors", {
+test_that("Default model: infection parameters as vectors", {
   # expect no conditions when vectors are passed
   expect_no_condition(
     model_default(
@@ -580,7 +580,7 @@ test_that("Default model: multi-parameter, multi-composables", {
   )
 })
 
-test_that("Default odin model: errors on vectorised input", {
+test_that("Default model: errors on vectorised input", {
   # expect errors on poorly specified vector inputs
   expect_error(
     model_default(

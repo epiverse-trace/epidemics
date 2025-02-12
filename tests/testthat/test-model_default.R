@@ -44,10 +44,10 @@ compartments <- c(
 
 test_that("Default odin model: basic expectations, scalar arguments", {
   # expect run with no conditions for default arguments
-  expect_no_condition(model_default_odin(uk_population))
+  expect_no_condition(model_default(uk_population))
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default_odin(uk_population)
+  data <- model_default(uk_population)
   expect_s3_class(data, "data.frame")
   expect_identical(length(data), 4L)
   expect_named(
@@ -94,10 +94,10 @@ test_that("Default odin model: basic expectations, scalar arguments", {
 test_that("Default odin model: statistical correctness, parameters", {
   # expect final size increases with transmission_rate
   size_beta_low <- epidemic_size(
-    model_default_odin(uk_population, transmission_rate = 1.3 / 7.0)
+    model_default(uk_population, transmission_rate = 1.3 / 7.0)
   )
   size_beta_high <- epidemic_size(
-    model_default_odin(uk_population, transmission_rate = 1.5 / 7.0)
+    model_default(uk_population, transmission_rate = 1.5 / 7.0)
   )
   expect_true(
     all(size_beta_high > size_beta_low)
@@ -105,10 +105,10 @@ test_that("Default odin model: statistical correctness, parameters", {
 
   # expect final size increases with infectiousness rate (lower incubation time)
   size_sigma_low <- epidemic_size(
-    model_default_odin(uk_population, infectiousness_rate = 1 / 5)
+    model_default(uk_population, infectiousness_rate = 1 / 5)
   )
   size_sigma_high <- epidemic_size(
-    model_default_odin(uk_population, infectiousness_rate = 1 / 2)
+    model_default(uk_population, infectiousness_rate = 1 / 2)
   )
   expect_true(
     all(size_sigma_high > size_sigma_low)
@@ -129,9 +129,9 @@ test_that("Default odin model: statistical correctness, parameters", {
     demography_vector = demography_vector,
     initial_conditions = initial_conditions_high
   )
-  size_infections_low <- epidemic_size(model_default_odin(uk_population))
+  size_infections_low <- epidemic_size(model_default(uk_population))
   size_infections_high <- epidemic_size(
-    model_default_odin(uk_population_high_infections)
+    model_default(uk_population_high_infections)
   )
   expect_true(
     all(size_infections_high > size_infections_low)
@@ -139,7 +139,7 @@ test_that("Default odin model: statistical correctness, parameters", {
 })
 
 # prepare baseline for comparison of against intervention scenarios
-data_baseline <- model_default_odin(uk_population)
+data_baseline <- model_default(uk_population)
 
 test_that("Default odin model: contacts interventions and stats. correctness", {
   intervention <- intervention(
@@ -148,14 +148,14 @@ test_that("Default odin model: contacts interventions and stats. correctness", {
   # repeat some basic checks from default case with no intervention
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_default_odin(
+    model_default(
       uk_population,
       intervention = list(contacts = intervention)
     )
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default_odin(
+  data <- model_default(
     uk_population,
     intervention = list(contacts = intervention)
   )
@@ -175,17 +175,17 @@ test_that("Default odin model: contacts interventions and stats. correctness", {
   combined_interventions <- c(intervention, intervention_02)
 
   expect_no_condition(
-    model_default_odin(
+    model_default(
       uk_population,
       intervention = list(contacts = combined_interventions)
     )
   )
-  data_combined <- model_default_odin(
+  data_combined <- model_default(
     uk_population,
     intervention = list(contacts = combined_interventions)
   )
   # expect epidemic size is lower for combined intervention
-  # Epidemic size differs depending on model_default() or model_default_odin().
+  # Epidemic size differs depending on model_default() or model_default().
   # Not sure how large of a discrepancy is expected.
   expect_true(
     all(epidemic_size(data_combined) < epidemic_size(data))
@@ -203,14 +203,14 @@ test_that("Default odin model: rate interventions", {
   # repeat some basic checks from default case with no intervention
   # expect run with no conditions for default arguments
   expect_no_condition(
-    model_default_odin(
+    model_default(
       uk_population,
       intervention = list(transmission_rate = intervention)
     )
   )
 
   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default_odin(
+  data <- model_default(
     uk_population,
     intervention = list(transmission_rate = intervention)
   )
@@ -300,53 +300,53 @@ test_that("Default model: time dependence", {
 test_that("Default odin model: errors and warnings, scalar arguments", {
   # expect errors on basic input checking
   expect_error(
-    model_default_odin(population = "population"),
+    model_default(population = "population"),
     regexp = "(Assertion on 'population' failed)*(Must inherit)*(population)"
   )
   expect_error(
-    model_default_odin(population = population),
+    model_default(population = population),
     regexp = "(Assertion on 'population' failed)*(Must inherit)*(population)"
   )
   pop_wrong_compartments <- uk_population
   pop_wrong_compartments$initial_conditions <- initial_conditions[, -1]
   expect_error(
-    model_default_odin(pop_wrong_compartments),
+    model_default(pop_wrong_compartments),
     regexp = "(Assertion on)*(initial_conditions)*failed"
   )
 
   # expect errors for infection parameters
   expect_error(
-    model_default_odin(uk_population, transmission_rate = "0.19"),
+    model_default(uk_population, transmission_rate = "0.19"),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_default_odin(uk_population, infectiousness_rate = list(0.2)),
+    model_default(uk_population, infectiousness_rate = list(0.2)),
     regexp = "Must be of type 'numeric'"
   )
   expect_error(
-    model_default_odin(uk_population, recovery_rate = "0.19"),
+    model_default(uk_population, recovery_rate = "0.19"),
     regexp = "Must be of type 'numeric'"
   )
 
   # expect error on time parameters
   expect_error(
-    model_default_odin(uk_population, time_end = "100"),
+    model_default(uk_population, time_end = "100"),
     regexp = "Must be of type 'integerish'"
   )
   expect_error(
-    model_default_odin(uk_population, time_end = 100.5),
+    model_default(uk_population, time_end = 100.5),
     regexp = "Must be of type 'integerish'"
   )
   expect_error(
-    model_default_odin(uk_population, time_end = c(100, -100, 10)),
+    model_default(uk_population, time_end = c(100, -100, 10)),
     regexp = "(Element)*(is not >= 0)"
   )
   expect_error(
-    model_default_odin(uk_population, increment = "0.1"),
+    model_default(uk_population, increment = "0.1"),
     regexp = "Must be of type 'number'"
   )
   expect_error(
-    model_default_odin(uk_population, increment = c(0.1, 0.2)),
+    model_default(uk_population, increment = c(0.1, 0.2)),
     regexp = "Must have length 1"
   )
 
@@ -355,13 +355,13 @@ test_that("Default odin model: errors and warnings, scalar arguments", {
     "school_closure", "contacts", 0, time_end, 0.5 # needs two effects
   )
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       intervention = list(contacts = intervention)
     )
   )
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       intervention = list(transmission_rate = intervention)
     ),
@@ -375,7 +375,7 @@ test_that("Default odin model: errors and warnings, scalar arguments", {
     time_end = matrix(100, nrow = 2, ncol = 2)
   )
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       vaccination = vax_double_dose
     ),
@@ -384,28 +384,28 @@ test_that("Default odin model: errors and warnings, scalar arguments", {
 
   # expect error on poorly specified time-dependence function list
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       time_dependence = function(x) x
     ),
     regexp = "Must be of type 'list'"
   )
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       time_dependence = list(function(x) x)
     ),
     regexp = "Must have names"
   )
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       time_dependence = list(transmission_rate = function(x) x)
     ),
     regexp = "Must have first formal arguments \\(ordered\\): time,x."
   )
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       time_dependence = list(transmission_rate = NULL)
     ),
@@ -421,14 +421,14 @@ gamma <- rnorm(10, 1 / 7, sd = 0.01)
 test_that("Default odin model: infection parameters as vectors", {
   # expect no conditions when vectors are passed
   expect_no_condition(
-    model_default_odin(
+    model_default(
       uk_population,
       transmission_rate = beta, infectiousness_rate = sigma,
       recovery_rate = gamma
     )
   )
   # expect output structure is a nested data.table
-  output <- model_default_odin(
+  output <- model_default(
     uk_population,
     transmission_rate = beta, infectiousness_rate = sigma,
     recovery_rate = gamma
@@ -583,14 +583,14 @@ test_that("Default model: multi-parameter, multi-composables", {
 test_that("Default odin model: errors on vectorised input", {
   # expect errors on poorly specified vector inputs
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       transmission_rate = beta[-1], recovery_rate = gamma
     ),
     regexp = "All parameters must be of the same length, or must have length 1"
   )
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       intervention = list(
         NULL,
@@ -601,7 +601,7 @@ test_that("Default odin model: errors on vectorised input", {
       "`intervention` must be a list of <intervention>s or a list of such lists"
   )
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       vaccination = list(
         NULL,
@@ -613,7 +613,7 @@ test_that("Default odin model: errors on vectorised input", {
 
   # expect time-dependence cannot be vectorised
   expect_error(
-    model_default_odin(
+    model_default(
       uk_population,
       time_dependence = list(
         time_dep_01 = list(

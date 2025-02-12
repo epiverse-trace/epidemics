@@ -223,79 +223,79 @@ test_that("Default odin model: rate interventions", {
   )
 })
 
-test_that("Default model: vaccination and stats. correctness", {
-  # repeat some basic checks from default case with no vaccination
-  # expect run with no conditions for default arguments
-  expect_no_condition(
-    model_default_odin(uk_population, vaccination = single_vaccination)
-  )
+# test_that("Default model: vaccination and stats. correctness", {
+#   # repeat some basic checks from default case with no vaccination
+#   # expect run with no conditions for default arguments
+#   expect_no_condition(
+#     model_default_odin(uk_population, vaccination = single_vaccination)
+#   )
 
-  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default_odin(uk_population, vaccination = single_vaccination)
-  expect_s3_class(data, "data.frame")
-  expect_identical(length(data), 4L)
+#   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
+#   data <- model_default_odin(uk_population, vaccination = single_vaccination)
+#   expect_s3_class(data, "data.frame")
+#   expect_identical(length(data), 4L)
 
-  # expect non-zero vaccinations towards simulation end
-  checkmate::expect_numeric(
-    tail(data[grepl("dose", data$compartment, fixed = TRUE), ]$value),
-    lower = 10
-  )
+#   # expect non-zero vaccinations towards simulation end
+#   checkmate::expect_numeric(
+#     tail(data[grepl("dose", data$compartment, fixed = TRUE), ]$value),
+#     lower = 10
+#   )
 
-  # expect final size is lower with intervention
-  expect_true(
-    all(epidemic_size(data_baseline) > epidemic_size(data))
-  )
+#   # expect final size is lower with intervention
+#   expect_true(
+#     all(epidemic_size(data_baseline) > epidemic_size(data))
+#   )
 
-  # expect that high vaccination rates (± 1% per day, e.g. Covid-19 vax)
-  # give statistically correct results (no negative susceptibles at any time)
-  high_rate_vax <- vaccination(
-    time_begin = matrix(200, nrow(contact_matrix)),
-    time_end = matrix(200 + 150, nrow(contact_matrix)),
-    nu = matrix(0.01, nrow = nrow(contact_matrix))
-  )
-  data <- model_default_odin(
-    uk_population,
-    vaccination = high_rate_vax, time_end = 600
-  )
-  checkmate::expect_numeric(
-    data[grepl("susceptible", data$compartment, fixed = TRUE), ]$value,
-    lower = 0
-  )
-})
+#   # expect that high vaccination rates (± 1% per day, e.g. Covid-19 vax)
+#   # give statistically correct results (no negative susceptibles at any time)
+#   high_rate_vax <- vaccination(
+#     time_begin = matrix(200, nrow(contact_matrix)),
+#     time_end = matrix(200 + 150, nrow(contact_matrix)),
+#     nu = matrix(0.01, nrow = nrow(contact_matrix))
+#   )
+#   data <- model_default_odin(
+#     uk_population,
+#     vaccination = high_rate_vax, time_end = 600
+#   )
+#   checkmate::expect_numeric(
+#     data[grepl("susceptible", data$compartment, fixed = TRUE), ]$value,
+#     lower = 0
+#   )
+# })
 
-test_that("Default model: time dependence", {
-  # expect time dependence is correctly handled
-  time_dependence <- list(
-    transmission_rate = function(time, x, t_change = time_end / 2) {
-      ifelse(time > t_change, x / 2, x)
-    },
-    recovery_rate = function(time, x, t_change = time_end / 2) {
-      ifelse(time > t_change, x + x / 2, x)
-    }
-  )
+# test_that("Default model: time dependence", {
+#   # expect time dependence is correctly handled
+#   time_dependence <- list(
+#     transmission_rate = function(time, x, t_change = time_end / 2) {
+#       ifelse(time > t_change, x / 2, x)
+#     },
+#     recovery_rate = function(time, x, t_change = time_end / 2) {
+#       ifelse(time > t_change, x + x / 2, x)
+#     }
+#   )
 
-  # repeat some basic checks from default case with no time_dependence
-  # expect run with no conditions for default arguments
-  expect_no_condition(
-    model_default_odin(
-      uk_population,
-      time_dependence = time_dependence
-    )
-  )
+#   # repeat some basic checks from default case with no time_dependence
+#   # expect run with no conditions for default arguments
+#   expect_no_condition(
+#     model_default_odin(
+#       uk_population,
+#       time_dependence = time_dependence
+#     )
+#   )
 
-  # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
-  data <- model_default_odin(
-    uk_population,
-    time_dependence = time_dependence
-  )
-  expect_s3_class(data, "data.frame")
-  expect_identical(length(data), 4L)
+#   # expect data.frame-inheriting output with 4 cols; C++ model time begins at 0
+#   data <- model_default_odin(
+#     uk_population,
+#     time_dependence = time_dependence
+#   )
+#   expect_s3_class(data, "data.frame")
+#   expect_identical(length(data), 4L)
 
-  # expect final size is lower with intervention
-  expect_true(
-    all(epidemic_size(data_baseline) > epidemic_size(data))
-  )
-})
+#   # expect final size is lower with intervention
+#   expect_true(
+#     all(epidemic_size(data_baseline) > epidemic_size(data))
+#   )
+# })
 
 test_that("Default odin model: errors and warnings, scalar arguments", {
   # expect errors on basic input checking

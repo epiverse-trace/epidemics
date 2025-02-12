@@ -589,14 +589,13 @@ model_default_odin <- function(population,
       # here contacts is a null intervention. replace with rate values
       intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
       intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
-      intervention_effect <- t(
-        matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+      intervention_effect <- matrix(
+        rep(args$rate_interventions[[1]]$reduction, n_age),
+        ncol = n_age
       )
     }
     n_intervention <- length(intervention_start)
-    print(intervention_effect)
-    print(length(intervention_effect))
-    print(length(intervention_start))
+
 
     beta <- args$transmission_rate
     sigma <- args$infectiousness_rate

@@ -228,9 +228,9 @@ model_stochastic_seir <- function(population,
   
   # set up rates
   rates <- list(
-    SE = transmission_rate,
-    EI = infectiousness_rate,
-    IR = recovery_rate
+    transmission_rate   = transmission_rate,
+    infectiousness_rate = infectiousness_rate,
+    recovery_rate       = recovery_rate
   )
   
   # adjust the contact to includes rates and population information 
@@ -238,8 +238,8 @@ model_stochastic_seir <- function(population,
   contact_matrix <- diag( 1 / mean( contact_matrix) / n_groups / pop ) %*% contact_matrix
   
   # add time dependence to rates and contat matrix
-  time_dep_rate <- .process_time_dependent_rates( contact_matrix, rates, time_end, intervention )
-  rates <- time_dep_rate$rate
+  time_dep_rate  <- .process_time_dependent_rates( contact_matrix, rates, time_end, intervention )
+  rates          <- time_dep_rate$rates
   contact_matrix <- time_dep_rate$contact_matrix
     
   # set up flows
@@ -262,10 +262,10 @@ model_stochastic_seir <- function(population,
   
   for( tdx in 1:time_end ) {
     # calculate the transisiotns between compartments
-    infectious_contacts <- ( ( contact_matrix[[ tdx ]] * rates[[ tdx ]]$SE ) %*% states[[ "infectious" ]] ) 
+    infectious_contacts <- ( ( contact_matrix[[ tdx ]] * rates$transmission_rate[ tdx ] ) %*% states[[ "infectious" ]] ) 
     flows[[ "SE" ]] <- matrix( rbinom( n_cells, states[[ "susceptible" ]], infectious_contacts ), nrow = n_groups )
-    flows[[ "EI" ]] <- matrix( rbinom( n_cells, states[[ "exposed" ]], rates[[ tdx ]]$EI ), nrow = n_groups )
-    flows[[ "IR" ]] <- matrix( rbinom( n_cells, states[[ "infectious" ]], rates[[ tdx ]]$IR ), nrow = n_groups )
+    flows[[ "EI" ]] <- matrix( rbinom( n_cells, states[[ "exposed" ]], rates$infectiousness_rate[ tdx ] ), nrow = n_groups )
+    flows[[ "IR" ]] <- matrix( rbinom( n_cells, states[[ "infectious" ]], rates$recovery_rate[ tdx ] ), nrow = n_groups )
     
     # update the number in each state
     states[[ "susceptible" ]] <- states[[ "susceptible" ]] - flows[[ "SE" ]]
@@ -296,25 +296,50 @@ model_stochastic_seir <- function(population,
 #' each step of the simulation
 #' @keywords internal
 .process_time_dependent_rates <- function( contact_matrix, rates, time_end, interventions ) {
-  # start with simply copying them
-  
-  # apply the interventions
-  supported_classes <- c( "contacts_intervention" )
+  # contact reductions
+  n_groups <- nrow( contact_matrix )
   contact_reduction <- lapply( 1:time_end, function( x ) rep( 1, nrow( contact_matrix ) ) )
-  for( intervention in interventions ) {
-    # check we support this type
+  intervention      <- interventions[[ "contacts" ]] 
+  
+  if( !is.null( intervention ) ) {
+    # check it is of the correct type
     type <- class( intervention )[1]
-    checkmate::assert( type %in% supported_classes, name = sprintf( "<%s> interventions not supported", type ) )
-   
-    if( type == "contacts_intervention" ) {
-      times    <- seq( intervention$time_begin, intervention$time_end ) 
-      red_func <- function( x ) x - as.vector( intervention$reduction )
+    checkmate::assert( type == "contacts_intervention", name = "contacts_inteverntion expected" )
+    
+    for( jdx in seq( 1, length( intervention$time_begin ) ) ) {
+      # apply them
+      times    <- seq( intervention$time_begin[jdx], intervention$time_end[jdx] ) 
+      red_func <- function( x ) x - as.vector( intervention$reduction[,jdx] )
       contact_reduction[ times ] <- lapply( contact_reduction[ times ], red_func )
     } 
+    
+    # the cumulative effect of interventions is capped at 100%
+    contact_reduction <- lapply( contact_reduction, function( x ) pmax( x, 0 ) )
   }
-  
+  # apply reductions
   contact_matrix <- lapply( contact_reduction, function( x ) diag( x ) %*% contact_matrix )
-  rates          <- lapply( 1:time_end, function( x ) rates )
+  
+  # rate reductions
+  for( rate_type in names( rates ) ) {
+    rate_reduction <- rep( 1, time_end )
+    intervention   <- interventions[[ rate_type ]] 
+    if( !is.null( intervention) ) {
+      # check it is of the correct type
+      type <- class( intervention )[1]
+      checkmate::assert( type == "rate_intervention", name = "rate_inteverntion expected" )
+      
+      for( jdx in seq( 1, length( intervention$time_begin ) ) ) {
+        # apply them
+        times    <- seq( intervention$time_begin[jdx], intervention$time_end[jdx] ) 
+        rate_reduction[ times ] <- rate_reduction[ times ] - intervention$reduction[jdx]
+      }   
+      
+      # the cumulative effect of interventions is capped at 100%
+      rate_reduction <- pmax( rate_reduction, 0 )
+    }
+    # apply reductions
+    rates[[ rate_type ]] <- rates[[ rate_type ]] * rate_reduction
+  }
   
   return( list( contact_matrix = contact_matrix, rates = rates ) )
 }

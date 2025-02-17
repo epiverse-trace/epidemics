@@ -180,7 +180,7 @@ model_stochastic_seir <- function(population,
   )
 
   # make lists if not lists
-  if (is_lofints) {
+  if (!is_lofints) {
     intervention <- list(intervention)
   }
 
@@ -238,7 +238,7 @@ model_stochastic_seir <- function(population,
   contact_matrix <- diag( 1 / mean( contact_matrix) / n_groups / pop ) %*% contact_matrix
   
   # add time dependence to rates and contat matrix
-  time_dep_rate <- .process_time_dependent_rates( contact_matrix, rates, time_end, interventions )
+  time_dep_rate <- .process_time_dependent_rates( contact_matrix, rates, time_end, intervention )
   rates <- time_dep_rate$rate
   contact_matrix <- time_dep_rate$contact_matrix
     
@@ -295,9 +295,25 @@ model_stochastic_seir <- function(population,
 #' @return A list of the contact matrix and transition rates applicable for 
 #' each step of the simulation
 #' @keywords internal
-.process_time_dependent_rates = function( contact_matrix, rates, time_end, interventions ) {
+.process_time_dependent_rates <- function( contact_matrix, rates, time_end, interventions ) {
   # start with simply copying them
-  contact_matrix <- lapply( 1:time_end, function( x ) contact_matrix )
+  
+  # apply the interventions
+  supported_classes <- c( "contacts_intervention" )
+  contact_reduction <- lapply( 1:time_end, function( x ) rep( 1, nrow( contact_matrix ) ) )
+  for( intervention in interventions ) {
+    # check we support this type
+    type <- class( intervention )[1]
+    checkmate::assert( type %in% supported_classes, name = sprintf( "<%s> interventions not supported", type ) )
+   
+    if( type == "contacts_intervention" ) {
+      times    <- seq( intervention$time_begin, intervention$time_end ) 
+      red_func <- function( x ) x - as.vector( intervention$reduction )
+      contact_reduction[ times ] <- lapply( contact_reduction[ times ], red_func )
+    } 
+  }
+  
+  contact_matrix <- lapply( contact_reduction, function( x ) diag( x ) %*% contact_matrix )
   rates          <- lapply( 1:time_end, function( x ) rates )
   
   return( list( contact_matrix = contact_matrix, rates = rates ) )

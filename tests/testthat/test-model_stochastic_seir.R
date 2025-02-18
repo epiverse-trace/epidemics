@@ -1,4 +1,8 @@
 #### Tests for the stochastic SEIR model ####
+
+base_seed <- .Random.seed
+set.seed(1)
+
 # Prepare contact matrix and demography vector
 polymod <- socialmixr::polymod
 contact_data <- socialmixr::contact_matrix(
@@ -291,3 +295,7 @@ test_that("Stochastic SEIR model: errors and warnings, scalar arguments", {
     )
   )
 })
+
+# reset seed not to disturb other tests
+.Random.seed <- base_seed
+

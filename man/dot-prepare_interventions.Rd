@@ -13,7 +13,7 @@
 
 \item{time_end}{The length of the simulation}
 
-\item{interventions}{The interverntions applied}
+\item{interventions}{The interventions to be applied}
 }
 \value{
 A list of the contact matrix and transition rates applicable for

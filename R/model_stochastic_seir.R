@@ -39,12 +39,6 @@
 #' `<contacts_intervention>` is allowed as the named element "contacts".
 #' Multiple `<rate_interventions>` on the model parameters are allowed; see
 #' **Details** for the model parameters for which interventions are supported.
-#' @param time_dependence A named list where each name
-#' is a model parameter, and each element is a function with
-#' the first two arguments being the current simulation `time`, and `x`, a value
-#' that is dependent on `time` (`x` represents a model parameter).
-#' See **Details** for more information, as well as the vignette on time-
-#' dependence \code{vignette("time_dependence", package = "epidemics")}.
 #' @param time_end The maximum number of timesteps over which to run the model.
 #' Taken as days, with a default value of 100 days. May be a numeric vector.
 #' @details
@@ -120,7 +114,6 @@ model_stochastic_seir <- function(population,
                           infectiousness_rate = 1.0 / 2.0,
                           recovery_rate = 1.0 / 7.0,
                           intervention = NULL,
-                          time_dependence = NULL,
                           time_end = 100 ,
                           n_samples = 1000 ) {
   # get compartment names
@@ -134,77 +127,13 @@ model_stochastic_seir <- function(population,
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
   checkmate::assert_integerish(time_end, lower = 0)
-
-  # check the time end 
-  # restrict increment to lower limit of 1e-6
-  checkmate::assert_integerish(time_end, lower = 0)
-
-  # check all vector lengths are equal or 1L
-  params <- list(
-    transmission_rate = transmission_rate,
-    infectiousness_rate = infectiousness_rate,
-    recovery_rate = recovery_rate,
-    time_end = time_end
-  )
-  # take parameter names here as names(DT) updates by reference!
-  param_names <- names(params)
-
-  # Check if `intervention` is a single intervention set or a list of such sets
-  # NULL is allowed;
-  is_lofints <- checkmate::test_list(
-    intervention, "intervention",
-    all.missing = FALSE, null.ok = TRUE
-  )
-  # allow some NULLs (a valid no intervention scenario) but not all NULLs
-  is_lofls <- checkmate::test_list(
-    intervention,
-    types = c("list", "null"), all.missing = FALSE
-  ) &&
-    # Check that all elements of intervention sets are either `<intervention>`
-    # or NULL
-    all(
-      vapply(
-        unlist(intervention, recursive = FALSE),
-        FUN = function(x) {
-          is_intervention(x) || is.null(x)
-        }, TRUE
-      )
-    )
-
-  # Check if parameters can be recycled;
-  stopifnot(
-    "All parameters must be of the same length, or must have length 1" =
-      .test_recyclable(params),
-    "`intervention` must be a list of <intervention>s or a list of such lists" =
-      is_lofints || is_lofls
-  )
-
-  # make lists if not lists
-  if (!is_lofints) {
-    intervention <- list(intervention)
-  }
-
-  # check that time-dependence functions are passed as a list with at least the
-  # arguments `time` and `x`, in order as the first two args
-  # NOTE: this functionality is not vectorised;
-  # convert to list for data.table list column
-  checkmate::assert_list(
-    time_dependence, "function",
-    null.ok = TRUE,
-    any.missing = FALSE, names = "unique"
-  )
-  # lapply on null returns an empty list
-  invisible(
-    lapply(time_dependence, checkmate::assert_function,
-      args = c("time", "x"), ordered = TRUE
-    )
-  )
-  time_dependence <- list(
-    .cross_check_timedep(
-      time_dependence,
-      c("transmission_rate", "infectiousness_rate", "recovery_rate")
-    )
-  )
+  checkmate::assert_integerish(n_samples, lower = 1)
+  
+  # only support scalar parameters
+  checkmate::assert_scalar(transmission_rate)
+  checkmate::assert_scalar(infectiousness_rate)
+  checkmate::assert_scalar(recovery_rate)
+  checkmate::assert_scalar(n_samples)
   
   # set up matrices for the state
   n_groups <- length( population$demography_vector )
@@ -235,10 +164,11 @@ model_stochastic_seir <- function(population,
   
   # adjust the contact to includes rates and population information 
   contact_matrix <- population$contact_matrix
+  group_names    <- colnames( contact_matrix )
   contact_matrix <- diag( 1 / mean( contact_matrix) / n_groups / pop ) %*% contact_matrix
   
   # add time dependence to rates and contat matrix
-  time_dep_rate  <- .process_time_dependent_rates( contact_matrix, rates, time_end, intervention )
+  time_dep_rate  <- .prepare_interventions( contact_matrix, rates, time_end, intervention )
   rates          <- time_dep_rate$rates
   contact_matrix <- time_dep_rate$contact_matrix
     
@@ -253,10 +183,10 @@ model_stochastic_seir <- function(population,
   outputs <- vector( mode = "list", length = time_end + 1 )
   output_template <- data.table(
     sample           = rep( 1:n_samples, each = n_groups, length( compartments ) ),
-    demography_group = rep( names( pop ), n_samples * length( compartments ) ),
+    demography_group = rep( group_names, n_samples * length( compartments ) ),
     compartment      = rep( compartments, each = n_groups * n_samples )
   )
-  outputs[[ 1 ]] <- copy( output_template )
+  outputs[[ 1 ]] <- data.table::copy( output_template )
   outputs[[ 1 ]][ , time := 0 ]
   outputs[[ 1 ]][ , value := unlist( lapply( states, as.vector ) )]
   
@@ -274,16 +204,16 @@ model_stochastic_seir <- function(population,
     states[[ "recovered" ]]   <- states[[ "recovered" ]] + flows[[ "IR" ]] 
     
     # record output in a new data table
-    outputs[[ tdx+1 ]] <- copy( output_template )
+    outputs[[ tdx+1 ]] <- data.table::copy( output_template )
     outputs[[ tdx+1 ]][ , time := tdx ]
     outputs[[ tdx+1 ]][ , value := unlist( lapply( states, as.vector ) )]
   }
-  outputs <- rbindlist( outputs )
+  outputs <- data.table::rbindlist( outputs )
 
   return( outputs )
 }
 
-#' .process_time_dependent_rates
+#' .prepare_interventions
 #'
 #' @description Converts interventions in to time dependent changes in parameters
 #' and transmission rates
@@ -295,7 +225,7 @@ model_stochastic_seir <- function(population,
 #' @return A list of the contact matrix and transition rates applicable for 
 #' each step of the simulation
 #' @keywords internal
-.process_time_dependent_rates <- function( contact_matrix, rates, time_end, interventions ) {
+.prepare_interventions <- function( contact_matrix, rates, time_end, interventions ) {
   # contact reductions
   n_groups <- nrow( contact_matrix )
   contact_reduction <- lapply( 1:time_end, function( x ) rep( 1, nrow( contact_matrix ) ) )
@@ -304,9 +234,14 @@ model_stochastic_seir <- function(population,
   if( !is.null( intervention ) ) {
     # check it is of the correct type
     type <- class( intervention )[1]
+    
     checkmate::assert( type == "contacts_intervention", name = "contacts_inteverntion expected" )
+    checkmate::assert( nrow( intervention$reduction ) == nrow( contact_matrix), name = "incorrect rows in reduction of contact_intervention")
     
     for( jdx in seq( 1, length( intervention$time_begin ) ) ) {
+      if( intervention$time_begin[jdx] > intervention$time_end[jdx] ) 
+        next;
+      
       # apply them
       times    <- seq( intervention$time_begin[jdx], intervention$time_end[jdx] ) 
       red_func <- function( x ) x - as.vector( intervention$reduction[,jdx] )
@@ -329,6 +264,9 @@ model_stochastic_seir <- function(population,
       checkmate::assert( type == "rate_intervention", name = "rate_inteverntion expected" )
       
       for( jdx in seq( 1, length( intervention$time_begin ) ) ) {
+        if( intervention$time_begin[jdx] > intervention$time_end[jdx] ) 
+          next;
+        
         # apply them
         times    <- seq( intervention$time_begin[jdx], intervention$time_end[jdx] ) 
         rate_reduction[ times ] <- rate_reduction[ times ] - intervention$reduction[jdx]

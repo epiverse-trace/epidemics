@@ -10,7 +10,6 @@ model_stochastic_seir(
   infectiousness_rate = 1/2,
   recovery_rate = 1/7,
   intervention = NULL,
-  time_dependence = NULL,
   time_end = 100,
   n_samples = 1000
 )
@@ -44,37 +43,30 @@ epidemic. Only a single intervention on social contacts of the class
 Multiple \verb{<rate_interventions>} on the model parameters are allowed; see
 \strong{Details} for the model parameters for which interventions are supported.}
 
-\item{time_dependence}{A named list where each name
-is a model parameter, and each element is a function with
-the first two arguments being the current simulation \code{time}, and \code{x}, a value
-that is dependent on \code{time} (\code{x} represents a model parameter).
-See \strong{Details} for more information, as well as the vignette on time-
-dependence \code{vignette("time_dependence", package = "epidemics")}.}
-
 \item{time_end}{The maximum number of timesteps over which to run the model.
-Taken as days, with a default value of 100 days. May be a numeric vector.}
+Taken as days, with a default value of 100 days.}
+
+\item{n_samples}{The number of stochastic replicates of the model (default = 1,000).}
 }
 \value{
 A \verb{<data.table>}.
-If the model parameters and composable elements are all scalars, a single
-\verb{<data.table>} with the columns "time", "compartment", "age_group", and
-"value", giving the number of individuals per demographic group
+\verb{<data.table>} with the columns "sample", time", "compartment", "age_group",
+and"value", giving the number of individuals per demographic group
 in each compartment at each timestep in long (or "tidy") format is returned.
-
-If the model parameters or composable elements are lists or list-like,
-a nested \verb{<data.table>} is returned with a list column "data", which holds
-the compartmental values described above.
-Other columns hold parameters and composable elements relating to the model
-run. Columns "scenario" and "param_set" identify combinations of composable
-elements (population, interventions), and infection
-parameters, respectively.
 }
 \description{
-Simulate an epidemic using a stochastic, compartmental
+Simulate an epidemic using a stochastic compartmental
 epidemic model with the compartments
-"susceptible", "exposed", "infectious", and "recovered"
-This model can accommodate heterogeneity in social contacts among demographic
+"susceptible", "exposed", "infectious", and "recovered".
+The model can accommodate heterogeneity in social contacts among demographic
 groups, as well as differences in the sizes of demographic groups.
+Each individual within a compartment is assumed to be independent of the
+others, with inter-compartment transition times being geometrically distributed.
+For exposures to infections, the compartments are assumed to be well-mixed,
+thus the level of exposure felt be each individual within a compartment is
+the same. Again, we assume individuals within a compartment are independent
+of others in the compartment, thus the number of new infections is binomially
+distributed.
 
 The \code{population}, \code{transmission_rate}, \code{infectiousness_rate}, and
 \code{recovery_rate}
@@ -88,10 +80,8 @@ See \strong{Details} for more information.
 
 This model only allows for single, population-wide rates of
 transitions between compartments per model run.
-
-However, model parameters may be passed as numeric vectors. These vectors
-must follow Tidyverse recycling rules: all vectors must have the same length,
-or, vectors of length 1 will be recycled to the length of any other vector.
+Additionally, the transmission, infectiousness and recovery rates must
+be scalars.
 
 The default values are:
 \itemize{
@@ -112,27 +102,17 @@ uk_population <- population(
   contact_matrix = matrix(1),
   demography_vector = 67e6,
   initial_conditions = matrix(
-    c(0.9999, 0.0001, 0, 0, 0),
-    nrow = 1, ncol = 5L
+    c(0.9999, 0.0001, 0, 0),
+    nrow = 1, ncol = 4L
   )
 )
 
 # run epidemic simulation with no vaccination or intervention
-# and three discrete values of transmission rate
-data <- model_default(
+data <- model_stochastic_seir(
   population = uk_population,
-  transmission_rate = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
+  transmission_rate = 1.5 / 7.0
 )
 
 # view some data
-data
-
-# run epidemic simulations with differences in the end time
-# may be useful when considering different start dates with a fixed end point
-data <- model_stochastic_seir(
-  population = uk_population,
-  time_end = c(50, 100, 150)
-)
-
 data
 }

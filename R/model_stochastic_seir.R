@@ -3,11 +3,18 @@
 #' @name model_stochastic_seir
 #' @rdname model_stochastic_seir
 #'
-#' @description Simulate an epidemic using a stochastic, compartmental
+#' @description Simulate an epidemic using a stochastic compartmental
 #' epidemic model with the compartments
-#' "susceptible", "exposed", "infectious", and "recovered"
-#' This model can accommodate heterogeneity in social contacts among demographic
+#' "susceptible", "exposed", "infectious", and "recovered".
+#' The model can accommodate heterogeneity in social contacts among demographic
 #' groups, as well as differences in the sizes of demographic groups.
+#' Each individual within a compartment is assumed to be independent of the
+#' others, with inter-compartment transition times being geometrically distributed.
+#' For exposures to infections, the compartments are assumed to be well-mixed,  
+#' thus the level of exposure felt be each individual within a compartment is
+#' the same. Again, we assume individuals within a compartment are independent 
+#' of others in the compartment, thus the number of new infections is binomially
+#' distributed. 
 #'
 #' The `population`, `transmission_rate`, `infectiousness_rate`, and
 #' `recovery_rate`
@@ -40,7 +47,8 @@
 #' Multiple `<rate_interventions>` on the model parameters are allowed; see
 #' **Details** for the model parameters for which interventions are supported.
 #' @param time_end The maximum number of timesteps over which to run the model.
-#' Taken as days, with a default value of 100 days. May be a numeric vector.
+#' Taken as days, with a default value of 100 days. 
+#' @param n_samples The number of stochastic replicates of the model (default = 1,000).
 #' @details
 #'
 #' # Details: Stochastic SEIR model suitable for directly transmitted infections
@@ -49,10 +57,8 @@
 #'
 #' This model only allows for single, population-wide rates of
 #' transitions between compartments per model run.
-#'
-#' However, model parameters may be passed as numeric vectors. These vectors
-#' must follow Tidyverse recycling rules: all vectors must have the same length,
-#' or, vectors of length 1 will be recycled to the length of any other vector.
+#' Additionally, the transmission, infectiousness and recovery rates must
+#' be scalars.
 #'
 #' The default values are:
 #'
@@ -66,18 +72,11 @@
 #' infectious period of 7 days.
 #'
 #' @return A `<data.table>`.
-#' If the model parameters and composable elements are all scalars, a single
-#' `<data.table>` with the columns "time", "compartment", "age_group", and
-#' "value", giving the number of individuals per demographic group
+#' `<data.table>` with the columns "sample", time", "compartment", "age_group", 
+#' and"value", giving the number of individuals per demographic group
 #' in each compartment at each timestep in long (or "tidy") format is returned.
 #'
-#' If the model parameters or composable elements are lists or list-like,
-#' a nested `<data.table>` is returned with a list column "data", which holds
-#' the compartmental values described above.
-#' Other columns hold parameters and composable elements relating to the model
-#' run. Columns "scenario" and "param_set" identify combinations of composable
-#' elements (population, interventions), and infection
-#' parameters, respectively.
+#
 #' @examples
 #' # create a population
 #' uk_population <- population(
@@ -85,28 +84,18 @@
 #'   contact_matrix = matrix(1),
 #'   demography_vector = 67e6,
 #'   initial_conditions = matrix(
-#'     c(0.9999, 0.0001, 0, 0, 0),
-#'     nrow = 1, ncol = 5L
+#'     c(0.9999, 0.0001, 0, 0),
+#'     nrow = 1, ncol = 4L
 #'   )
 #' )
 #'
 #' # run epidemic simulation with no vaccination or intervention
-#' # and three discrete values of transmission rate
 #' data <- model_stochastic_seir(
 #'   population = uk_population,
-#'   transmission_rate = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
+#'   transmission_rate = 1.5 / 7.0
 #' )
 #'
 #' # view some data
-#' data
-#'
-#' # run epidemic simulations with differences in the end time
-#' # may be useful when considering different start dates with a fixed end point
-#' data <- model_stochastic_seir(
-#'   population = uk_population,
-#'   time_end = c(50, 100, 150)
-#' )
-#'
 #' data
 #' @export
 model_stochastic_seir <- function(population,
@@ -165,7 +154,7 @@ model_stochastic_seir <- function(population,
   # adjust the contact to includes rates and population information 
   contact_matrix <- population$contact_matrix
   group_names    <- colnames( contact_matrix )
-  contact_matrix <- diag( 1 / mean( contact_matrix) / n_groups / pop ) %*% contact_matrix
+  contact_matrix <- diag( 1 / mean( contact_matrix) / n_groups / pop, nrow = n_groups ) %*% contact_matrix
   
   # add time dependence to rates and contat matrix
   time_dep_rate  <- .prepare_interventions( contact_matrix, rates, time_end, intervention )
@@ -252,7 +241,7 @@ model_stochastic_seir <- function(population,
     contact_reduction <- lapply( contact_reduction, function( x ) pmax( x, 0 ) )
   }
   # apply reductions
-  contact_matrix <- lapply( contact_reduction, function( x ) diag( x ) %*% contact_matrix )
+  contact_matrix <- lapply( contact_reduction, function( x ) diag( x, nrow = n_groups ) %*% contact_matrix )
   
   # rate reductions
   for( rate_type in names( rates ) ) {

@@ -176,15 +176,17 @@ model_stochastic_seir <- function(population,
     compartment      = rep( compartments, each = n_groups * n_samples )
   )
   outputs[[ 1 ]] <- data.table::copy( output_template )
+  time  <- NA # HACK TO PREVENT CHECK PACKAGE COMPLAINING ABOUT 
+  value <- NA # data.table SYNTAX
   outputs[[ 1 ]][ , time := 0 ]
   outputs[[ 1 ]][ , value := unlist( lapply( states, as.vector ) )]
   
   for( tdx in 1:time_end ) {
     # calculate the transisiotns between compartments
     infectious_contacts <- ( ( contact_matrix[[ tdx ]] * rates$transmission_rate[ tdx ] ) %*% states[[ "infectious" ]] ) 
-    flows[[ "SE" ]] <- matrix( rbinom( n_cells, states[[ "susceptible" ]], infectious_contacts ), nrow = n_groups )
-    flows[[ "EI" ]] <- matrix( rbinom( n_cells, states[[ "exposed" ]], rates$infectiousness_rate[ tdx ] ), nrow = n_groups )
-    flows[[ "IR" ]] <- matrix( rbinom( n_cells, states[[ "infectious" ]], rates$recovery_rate[ tdx ] ), nrow = n_groups )
+    flows[[ "SE" ]] <- matrix( stats::rbinom( n_cells, states[[ "susceptible" ]], infectious_contacts ), nrow = n_groups )
+    flows[[ "EI" ]] <- matrix( stats::rbinom( n_cells, states[[ "exposed" ]], rates$infectiousness_rate[ tdx ] ), nrow = n_groups )
+    flows[[ "IR" ]] <- matrix( stats::rbinom( n_cells, states[[ "infectious" ]], rates$recovery_rate[ tdx ] ), nrow = n_groups )
     
     # update the number in each state
     states[[ "susceptible" ]] <- states[[ "susceptible" ]] - flows[[ "SE" ]]
@@ -209,7 +211,7 @@ model_stochastic_seir <- function(population,
 #' @param contact_matrix The base contact matrix
 #' @param rates The base transition rates
 #' @param time_end The length of the simulation
-#' @param interventions The interverntions applied
+#' @param interventions The interventions to be applied
 #'
 #' @return A list of the contact matrix and transition rates applicable for 
 #' each step of the simulation

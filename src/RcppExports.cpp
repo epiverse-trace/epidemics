@@ -91,15 +91,3 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-
-static const R_CallMethodDef CallEntries[] = {
-    {"_epidemics_model_default_internal", (DL_FUNC) &_epidemics_model_default_internal, 15},
-    {"_epidemics_model_diphtheria_internal", (DL_FUNC) &_epidemics_model_diphtheria_internal, 14},
-    {"_epidemics_model_vacamole_internal", (DL_FUNC) &_epidemics_model_vacamole_internal, 20},
-    {NULL, NULL, 0}
-};
-
-RcppExport void R_init_epidemics(DllInfo *dll) {
-    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-    R_useDynamicSymbols(dll, FALSE);
-}

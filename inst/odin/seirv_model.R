@@ -16,14 +16,14 @@ lambda_prod[, ] <- C[i, j] * I[j] * beta * contact_reduction_total[j] * contact_
 lambda[] <- sum(lambda_prod[i, ])
 
 # Vaccination - indexing over age groups
-vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i] else 0
+vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i]/S[i] else 0
 
 # ODEs
-deriv(S[]) <- -(lambda[i] * S[i]) - min(vax_rate[i], S[i])
+deriv(S[]) <- if(vax_rate[i] + lambda[i] < 1) -(lambda[i] + vax_rate[i]) * S[i] else - S[i]
 deriv(E[]) <- lambda[i] * S[i] - sigma * E[i]
 deriv(I[]) <- sigma * E[i] - gamma * I[i]
 deriv(R[]) <- gamma * I[i]
-deriv(V[]) <- min(vax_rate[i], S[i])
+deriv(V[]) <- if(vax_rate[i] + lambda[i] < 1) vax_rate[i] * S[i] else S[i]*(1-lambda[i])
 
 # Initial conditions
 initial(S[]) <- init_S[i]

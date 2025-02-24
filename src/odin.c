@@ -533,15 +533,12 @@ void seirv_model_rhs(seirv_model_internal* internal, double t, double * state, d
     dstatedt[internal->offset_variable_R + i - 1] = internal->gamma * I[i - 1];
   }
   for (int i = 1; i <= internal->dim_vax_rate; ++i) {
-    internal->vax_rate[i - 1] = (t >= internal->vax_start[i - 1] && t < internal->vax_end[i - 1] ? internal->vax_nu[i - 1] : 0);
+    internal->vax_rate[i - 1] = (t >= internal->vax_start[i - 1] && t < internal->vax_end[i - 1] ? internal->vax_nu[i - 1] / (double) S[i - 1] : 0);
   }
   for (int i = 1; i <= internal->dim_contact_reduction_1; ++i) {
     for (int j = 1; j <= internal->dim_contact_reduction_2; ++j) {
       internal->contact_reduction[i - 1 + internal->dim_contact_reduction_1 * (j - 1)] = (t > internal->intervention_start[i - 1] && t < internal->intervention_end[i - 1] ? internal->intervention_effect[internal->dim_intervention_effect_1 * (j - 1) + i - 1] : 0);
     }
-  }
-  for (int i = 1; i <= internal->dim_V; ++i) {
-    dstatedt[internal->offset_variable_V + i - 1] = fmin(internal->vax_rate[i - 1], S[i - 1]);
   }
   for (int i = 1; i <= internal->dim_contact_reduction_sum; ++i) {
     internal->contact_reduction_sum[i - 1] = odin_sum2(internal->contact_reduction, 0, internal->dim_contact_reduction_1, i - 1, i, internal->dim_contact_reduction_1);
@@ -561,7 +558,10 @@ void seirv_model_rhs(seirv_model_internal* internal, double t, double * state, d
     dstatedt[internal->dim_S + i - 1] = internal->lambda[i - 1] * S[i - 1] - internal->sigma * E[i - 1];
   }
   for (int i = 1; i <= internal->dim_S; ++i) {
-    dstatedt[0 + i - 1] = -((internal->lambda[i - 1] * S[i - 1])) - fmin(internal->vax_rate[i - 1], S[i - 1]);
+    dstatedt[0 + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] < 1 ? -((internal->lambda[i - 1] + internal->vax_rate[i - 1])) * S[i - 1] : -(S[i - 1]));
+  }
+  for (int i = 1; i <= internal->dim_V; ++i) {
+    dstatedt[internal->offset_variable_V + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] < 1 ? internal->vax_rate[i - 1] * S[i - 1] : S[i - 1] * (1 - internal->lambda[i - 1]));
   }
 }
 void seirv_model_rhs_dde(size_t neq, double t, double * state, double * dstatedt, void * internal) {

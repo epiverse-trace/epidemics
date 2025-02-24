@@ -627,7 +627,6 @@ model_default <- function(population,
     }
     n_intervention <- length(intervention_start)
 
-
     beta <- args$transmission_rate
     sigma <- args$infectiousness_rate
     gamma <- args$recovery_rate

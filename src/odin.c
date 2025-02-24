@@ -5,12 +5,80 @@
 #include <Rinternals.h>
 #include <stdbool.h>
 #include <R_ext/Rdynload.h>
+#ifndef CINTERPOLTE_CINTERPOLATE_H_
+#define CINTERPOLTE_CINTERPOLATE_H_
+
+// Allow use from C++
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// There are only three functions in the interface; allocation,
+// evaluation and freeing.
+
+// Allocate an interpolation object.
+//
+//   type: The mode of interpolation. Must be one of "constant",
+//       "linear" or "spline" (an R error is thrown if a different
+//       value is given).
+//
+//   n: The number of `x` points to interpolate over
+//
+//   ny: the number of `y` points per `x` point.  This is 1 in the
+//       case of zimple interpolation as used by Rs `interpolate()`
+//
+//   x: an array of `x` values of length `n`
+//
+//   y: an array of `ny` sets of `y` values.  This is in R's matrix
+//       order (i.e., the first `n` values are the first series to
+//       interpolate over).
+//
+//   fail_on_extrapolate: if true, when an extrapolation occurs throw
+//       an error; if false return NA_REAL
+//
+//   auto_free: automatically clean up the interpolation object on
+//       return to R. This uses `R_alloc` for allocations rather than
+//       `Calloc` so freeing will always happen (even on error
+//       elsewhere in the code). However, this prevents returning back
+//       a pointer to R that will last longer than the call into C
+//       code.
+//
+// The return value is an opaque pointer that can be passed through to
+// `cinterpolate_eval` and `cinterpolate_free`
+void *cinterpolate_alloc(const char *type, size_t n, size_t ny,
+                         double *x, double *y, bool fail_on_extrapolate,
+                         bool auto_free);
+
+// Evaluate the interpolated function at a new `x` point.
+//
+//   x: A new, single, `x` point to interpolate `y` values to
+//
+//   obj: The interpolation object, as returned by `cinterpolate_alloc`
+//
+//   y: An array of length `ny` to store the interpolated values
+//
+// The return value is 0 if the interpolation is successful (with x
+// lying within the range of values that the interpolation function
+// supports), -1 otherwise
+int cinterpolate_eval(double x, void *obj, double *y);
+
+// Clean up all allocated memory
+//
+//   obj: The interpolation object, as returned by `cinterpolate_alloc`
+void cinterpolate_free(void *obj);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
 typedef struct seirv_model_internal {
-  double beta;
+  double *beta;
   double *C;
   double *contact_reduction;
   double *contact_reduction_sum;
   double *contact_reduction_total;
+  int dim_beta;
   int dim_C;
   int dim_C_1;
   int dim_C_2;
@@ -20,6 +88,7 @@ typedef struct seirv_model_internal {
   int dim_contact_reduction_sum;
   int dim_contact_reduction_total;
   int dim_E;
+  int dim_gamma;
   int dim_I;
   int dim_init_E;
   int dim_init_I;
@@ -37,12 +106,14 @@ typedef struct seirv_model_internal {
   int dim_lambda_prod_2;
   int dim_R;
   int dim_S;
+  int dim_sigma;
+  int dim_time;
   int dim_V;
   int dim_vax_end;
   int dim_vax_nu;
   int dim_vax_rate;
   int dim_vax_start;
-  double gamma;
+  double *gamma;
   double *init_E;
   double *init_I;
   double *init_R;
@@ -53,6 +124,9 @@ typedef struct seirv_model_internal {
   double *initial_R;
   double *initial_S;
   double *initial_V;
+  void *interpolate_beta_t;
+  void *interpolate_gamma_t;
+  void *interpolate_sigma_t;
   double *intervention_effect;
   double *intervention_end;
   double *intervention_start;
@@ -60,10 +134,12 @@ typedef struct seirv_model_internal {
   double *lambda_prod;
   int n_age;
   int n_intervention;
+  int n_time;
   int offset_variable_I;
   int offset_variable_R;
   int offset_variable_V;
-  double sigma;
+  double *sigma;
+  double *time;
   double *vax_end;
   double *vax_nu;
   double *vax_rate;
@@ -104,6 +180,7 @@ SEXP user_get_array_check(SEXP el, bool is_integer, const char *name,
                           double min, double max);
 SEXP user_get_array_check_rank(SEXP user, const char *name, int rank,
                                bool required);
+void interpolate_check_y(size_t nx, size_t ny, size_t i, const char *name_arg, const char *name_target);
 double scalar_real(SEXP x, const char * name);
 double odin_sum1(double *x, size_t from, size_t to);
 double odin_sum2(double* x, int from_i, int to_i, int from_j, int to_j, int dim_x_1);
@@ -121,10 +198,18 @@ seirv_model_internal* seirv_model_get_internal(SEXP internal_p, int closed_error
 void seirv_model_finalise(SEXP internal_p) {
   seirv_model_internal *internal = seirv_model_get_internal(internal_p, 0);
   if (internal_p) {
+    cinterpolate_free(internal->interpolate_beta_t);
+    cinterpolate_free(internal->interpolate_gamma_t);
+    cinterpolate_free(internal->interpolate_sigma_t);
+    internal->interpolate_beta_t = NULL;
+    internal->interpolate_gamma_t = NULL;
+    internal->interpolate_sigma_t = NULL;
+    R_Free(internal->beta);
     R_Free(internal->C);
     R_Free(internal->contact_reduction);
     R_Free(internal->contact_reduction_sum);
     R_Free(internal->contact_reduction_total);
+    R_Free(internal->gamma);
     R_Free(internal->init_E);
     R_Free(internal->init_I);
     R_Free(internal->init_R);
@@ -140,6 +225,8 @@ void seirv_model_finalise(SEXP internal_p) {
     R_Free(internal->intervention_start);
     R_Free(internal->lambda);
     R_Free(internal->lambda_prod);
+    R_Free(internal->sigma);
+    R_Free(internal->time);
     R_Free(internal->vax_end);
     R_Free(internal->vax_nu);
     R_Free(internal->vax_rate);
@@ -150,10 +237,12 @@ void seirv_model_finalise(SEXP internal_p) {
 }
 SEXP seirv_model_create(SEXP user) {
   seirv_model_internal *internal = (seirv_model_internal*) R_Calloc(1, seirv_model_internal);
+  internal->beta = NULL;
   internal->C = NULL;
   internal->contact_reduction = NULL;
   internal->contact_reduction_sum = NULL;
   internal->contact_reduction_total = NULL;
+  internal->gamma = NULL;
   internal->init_E = NULL;
   internal->init_I = NULL;
   internal->init_R = NULL;
@@ -169,13 +258,15 @@ SEXP seirv_model_create(SEXP user) {
   internal->intervention_start = NULL;
   internal->lambda = NULL;
   internal->lambda_prod = NULL;
+  internal->sigma = NULL;
+  internal->time = NULL;
   internal->vax_end = NULL;
   internal->vax_nu = NULL;
   internal->vax_rate = NULL;
   internal->vax_start = NULL;
-  internal->beta = NA_REAL;
+  internal->beta = NULL;
   internal->C = NULL;
-  internal->gamma = NA_REAL;
+  internal->gamma = NULL;
   internal->init_E = NULL;
   internal->init_I = NULL;
   internal->init_R = NULL;
@@ -186,7 +277,9 @@ SEXP seirv_model_create(SEXP user) {
   internal->intervention_start = NULL;
   internal->n_age = NA_INTEGER;
   internal->n_intervention = NA_INTEGER;
-  internal->sigma = NA_REAL;
+  internal->n_time = NA_INTEGER;
+  internal->sigma = NULL;
+  internal->time = NULL;
   internal->vax_end = NULL;
   internal->vax_nu = NULL;
   internal->vax_start = NULL;
@@ -206,8 +299,10 @@ void seirv_model_initmod_desolve(void(* odeparms) (int *, double *)) {
 }
 SEXP seirv_model_contents(SEXP internal_p) {
   seirv_model_internal *internal = seirv_model_get_internal(internal_p, 1);
-  SEXP contents = PROTECT(allocVector(VECSXP, 62));
-  SET_VECTOR_ELT(contents, 0, ScalarReal(internal->beta));
+  SEXP contents = PROTECT(allocVector(VECSXP, 71));
+  SEXP beta = PROTECT(allocVector(REALSXP, internal->dim_beta));
+  memcpy(REAL(beta), internal->beta, internal->dim_beta * sizeof(double));
+  SET_VECTOR_ELT(contents, 0, beta);
   SEXP C = PROTECT(allocVector(REALSXP, internal->dim_C));
   memcpy(REAL(C), internal->C, internal->dim_C * sizeof(double));
   odin_set_dim(C, 2, internal->dim_C_1, internal->dim_C_2);
@@ -222,177 +317,197 @@ SEXP seirv_model_contents(SEXP internal_p) {
   SEXP contact_reduction_total = PROTECT(allocVector(REALSXP, internal->dim_contact_reduction_total));
   memcpy(REAL(contact_reduction_total), internal->contact_reduction_total, internal->dim_contact_reduction_total * sizeof(double));
   SET_VECTOR_ELT(contents, 4, contact_reduction_total);
-  SET_VECTOR_ELT(contents, 5, ScalarInteger(internal->dim_C));
-  SET_VECTOR_ELT(contents, 6, ScalarInteger(internal->dim_C_1));
-  SET_VECTOR_ELT(contents, 7, ScalarInteger(internal->dim_C_2));
-  SET_VECTOR_ELT(contents, 8, ScalarInteger(internal->dim_contact_reduction));
-  SET_VECTOR_ELT(contents, 9, ScalarInteger(internal->dim_contact_reduction_1));
-  SET_VECTOR_ELT(contents, 10, ScalarInteger(internal->dim_contact_reduction_2));
-  SET_VECTOR_ELT(contents, 11, ScalarInteger(internal->dim_contact_reduction_sum));
-  SET_VECTOR_ELT(contents, 12, ScalarInteger(internal->dim_contact_reduction_total));
-  SET_VECTOR_ELT(contents, 13, ScalarInteger(internal->dim_E));
-  SET_VECTOR_ELT(contents, 14, ScalarInteger(internal->dim_I));
-  SET_VECTOR_ELT(contents, 15, ScalarInteger(internal->dim_init_E));
-  SET_VECTOR_ELT(contents, 16, ScalarInteger(internal->dim_init_I));
-  SET_VECTOR_ELT(contents, 17, ScalarInteger(internal->dim_init_R));
-  SET_VECTOR_ELT(contents, 18, ScalarInteger(internal->dim_init_S));
-  SET_VECTOR_ELT(contents, 19, ScalarInteger(internal->dim_init_V));
-  SET_VECTOR_ELT(contents, 20, ScalarInteger(internal->dim_intervention_effect));
-  SET_VECTOR_ELT(contents, 21, ScalarInteger(internal->dim_intervention_effect_1));
-  SET_VECTOR_ELT(contents, 22, ScalarInteger(internal->dim_intervention_effect_2));
-  SET_VECTOR_ELT(contents, 23, ScalarInteger(internal->dim_intervention_end));
-  SET_VECTOR_ELT(contents, 24, ScalarInteger(internal->dim_intervention_start));
-  SET_VECTOR_ELT(contents, 25, ScalarInteger(internal->dim_lambda));
-  SET_VECTOR_ELT(contents, 26, ScalarInteger(internal->dim_lambda_prod));
-  SET_VECTOR_ELT(contents, 27, ScalarInteger(internal->dim_lambda_prod_1));
-  SET_VECTOR_ELT(contents, 28, ScalarInteger(internal->dim_lambda_prod_2));
-  SET_VECTOR_ELT(contents, 29, ScalarInteger(internal->dim_R));
-  SET_VECTOR_ELT(contents, 30, ScalarInteger(internal->dim_S));
-  SET_VECTOR_ELT(contents, 31, ScalarInteger(internal->dim_V));
-  SET_VECTOR_ELT(contents, 32, ScalarInteger(internal->dim_vax_end));
-  SET_VECTOR_ELT(contents, 33, ScalarInteger(internal->dim_vax_nu));
-  SET_VECTOR_ELT(contents, 34, ScalarInteger(internal->dim_vax_rate));
-  SET_VECTOR_ELT(contents, 35, ScalarInteger(internal->dim_vax_start));
-  SET_VECTOR_ELT(contents, 36, ScalarReal(internal->gamma));
+  SET_VECTOR_ELT(contents, 5, ScalarInteger(internal->dim_beta));
+  SET_VECTOR_ELT(contents, 6, ScalarInteger(internal->dim_C));
+  SET_VECTOR_ELT(contents, 7, ScalarInteger(internal->dim_C_1));
+  SET_VECTOR_ELT(contents, 8, ScalarInteger(internal->dim_C_2));
+  SET_VECTOR_ELT(contents, 9, ScalarInteger(internal->dim_contact_reduction));
+  SET_VECTOR_ELT(contents, 10, ScalarInteger(internal->dim_contact_reduction_1));
+  SET_VECTOR_ELT(contents, 11, ScalarInteger(internal->dim_contact_reduction_2));
+  SET_VECTOR_ELT(contents, 12, ScalarInteger(internal->dim_contact_reduction_sum));
+  SET_VECTOR_ELT(contents, 13, ScalarInteger(internal->dim_contact_reduction_total));
+  SET_VECTOR_ELT(contents, 14, ScalarInteger(internal->dim_E));
+  SET_VECTOR_ELT(contents, 15, ScalarInteger(internal->dim_gamma));
+  SET_VECTOR_ELT(contents, 16, ScalarInteger(internal->dim_I));
+  SET_VECTOR_ELT(contents, 17, ScalarInteger(internal->dim_init_E));
+  SET_VECTOR_ELT(contents, 18, ScalarInteger(internal->dim_init_I));
+  SET_VECTOR_ELT(contents, 19, ScalarInteger(internal->dim_init_R));
+  SET_VECTOR_ELT(contents, 20, ScalarInteger(internal->dim_init_S));
+  SET_VECTOR_ELT(contents, 21, ScalarInteger(internal->dim_init_V));
+  SET_VECTOR_ELT(contents, 22, ScalarInteger(internal->dim_intervention_effect));
+  SET_VECTOR_ELT(contents, 23, ScalarInteger(internal->dim_intervention_effect_1));
+  SET_VECTOR_ELT(contents, 24, ScalarInteger(internal->dim_intervention_effect_2));
+  SET_VECTOR_ELT(contents, 25, ScalarInteger(internal->dim_intervention_end));
+  SET_VECTOR_ELT(contents, 26, ScalarInteger(internal->dim_intervention_start));
+  SET_VECTOR_ELT(contents, 27, ScalarInteger(internal->dim_lambda));
+  SET_VECTOR_ELT(contents, 28, ScalarInteger(internal->dim_lambda_prod));
+  SET_VECTOR_ELT(contents, 29, ScalarInteger(internal->dim_lambda_prod_1));
+  SET_VECTOR_ELT(contents, 30, ScalarInteger(internal->dim_lambda_prod_2));
+  SET_VECTOR_ELT(contents, 31, ScalarInteger(internal->dim_R));
+  SET_VECTOR_ELT(contents, 32, ScalarInteger(internal->dim_S));
+  SET_VECTOR_ELT(contents, 33, ScalarInteger(internal->dim_sigma));
+  SET_VECTOR_ELT(contents, 34, ScalarInteger(internal->dim_time));
+  SET_VECTOR_ELT(contents, 35, ScalarInteger(internal->dim_V));
+  SET_VECTOR_ELT(contents, 36, ScalarInteger(internal->dim_vax_end));
+  SET_VECTOR_ELT(contents, 37, ScalarInteger(internal->dim_vax_nu));
+  SET_VECTOR_ELT(contents, 38, ScalarInteger(internal->dim_vax_rate));
+  SET_VECTOR_ELT(contents, 39, ScalarInteger(internal->dim_vax_start));
+  SEXP gamma = PROTECT(allocVector(REALSXP, internal->dim_gamma));
+  memcpy(REAL(gamma), internal->gamma, internal->dim_gamma * sizeof(double));
+  SET_VECTOR_ELT(contents, 40, gamma);
   SEXP init_E = PROTECT(allocVector(REALSXP, internal->dim_init_E));
   memcpy(REAL(init_E), internal->init_E, internal->dim_init_E * sizeof(double));
-  SET_VECTOR_ELT(contents, 37, init_E);
+  SET_VECTOR_ELT(contents, 41, init_E);
   SEXP init_I = PROTECT(allocVector(REALSXP, internal->dim_init_I));
   memcpy(REAL(init_I), internal->init_I, internal->dim_init_I * sizeof(double));
-  SET_VECTOR_ELT(contents, 38, init_I);
+  SET_VECTOR_ELT(contents, 42, init_I);
   SEXP init_R = PROTECT(allocVector(REALSXP, internal->dim_init_R));
   memcpy(REAL(init_R), internal->init_R, internal->dim_init_R * sizeof(double));
-  SET_VECTOR_ELT(contents, 39, init_R);
+  SET_VECTOR_ELT(contents, 43, init_R);
   SEXP init_S = PROTECT(allocVector(REALSXP, internal->dim_init_S));
   memcpy(REAL(init_S), internal->init_S, internal->dim_init_S * sizeof(double));
-  SET_VECTOR_ELT(contents, 40, init_S);
+  SET_VECTOR_ELT(contents, 44, init_S);
   SEXP init_V = PROTECT(allocVector(REALSXP, internal->dim_init_V));
   memcpy(REAL(init_V), internal->init_V, internal->dim_init_V * sizeof(double));
-  SET_VECTOR_ELT(contents, 41, init_V);
+  SET_VECTOR_ELT(contents, 45, init_V);
   SEXP initial_E = PROTECT(allocVector(REALSXP, internal->dim_E));
   memcpy(REAL(initial_E), internal->initial_E, internal->dim_E * sizeof(double));
-  SET_VECTOR_ELT(contents, 42, initial_E);
+  SET_VECTOR_ELT(contents, 46, initial_E);
   SEXP initial_I = PROTECT(allocVector(REALSXP, internal->dim_I));
   memcpy(REAL(initial_I), internal->initial_I, internal->dim_I * sizeof(double));
-  SET_VECTOR_ELT(contents, 43, initial_I);
+  SET_VECTOR_ELT(contents, 47, initial_I);
   SEXP initial_R = PROTECT(allocVector(REALSXP, internal->dim_R));
   memcpy(REAL(initial_R), internal->initial_R, internal->dim_R * sizeof(double));
-  SET_VECTOR_ELT(contents, 44, initial_R);
+  SET_VECTOR_ELT(contents, 48, initial_R);
   SEXP initial_S = PROTECT(allocVector(REALSXP, internal->dim_S));
   memcpy(REAL(initial_S), internal->initial_S, internal->dim_S * sizeof(double));
-  SET_VECTOR_ELT(contents, 45, initial_S);
+  SET_VECTOR_ELT(contents, 49, initial_S);
   SEXP initial_V = PROTECT(allocVector(REALSXP, internal->dim_V));
   memcpy(REAL(initial_V), internal->initial_V, internal->dim_V * sizeof(double));
-  SET_VECTOR_ELT(contents, 46, initial_V);
+  SET_VECTOR_ELT(contents, 50, initial_V);
   SEXP intervention_effect = PROTECT(allocVector(REALSXP, internal->dim_intervention_effect));
   memcpy(REAL(intervention_effect), internal->intervention_effect, internal->dim_intervention_effect * sizeof(double));
   odin_set_dim(intervention_effect, 2, internal->dim_intervention_effect_1, internal->dim_intervention_effect_2);
-  SET_VECTOR_ELT(contents, 47, intervention_effect);
+  SET_VECTOR_ELT(contents, 54, intervention_effect);
   SEXP intervention_end = PROTECT(allocVector(REALSXP, internal->dim_intervention_end));
   memcpy(REAL(intervention_end), internal->intervention_end, internal->dim_intervention_end * sizeof(double));
-  SET_VECTOR_ELT(contents, 48, intervention_end);
+  SET_VECTOR_ELT(contents, 55, intervention_end);
   SEXP intervention_start = PROTECT(allocVector(REALSXP, internal->dim_intervention_start));
   memcpy(REAL(intervention_start), internal->intervention_start, internal->dim_intervention_start * sizeof(double));
-  SET_VECTOR_ELT(contents, 49, intervention_start);
+  SET_VECTOR_ELT(contents, 56, intervention_start);
   SEXP lambda = PROTECT(allocVector(REALSXP, internal->dim_lambda));
   memcpy(REAL(lambda), internal->lambda, internal->dim_lambda * sizeof(double));
-  SET_VECTOR_ELT(contents, 50, lambda);
+  SET_VECTOR_ELT(contents, 57, lambda);
   SEXP lambda_prod = PROTECT(allocVector(REALSXP, internal->dim_lambda_prod));
   memcpy(REAL(lambda_prod), internal->lambda_prod, internal->dim_lambda_prod * sizeof(double));
   odin_set_dim(lambda_prod, 2, internal->dim_lambda_prod_1, internal->dim_lambda_prod_2);
-  SET_VECTOR_ELT(contents, 51, lambda_prod);
-  SET_VECTOR_ELT(contents, 52, ScalarInteger(internal->n_age));
-  SET_VECTOR_ELT(contents, 53, ScalarInteger(internal->n_intervention));
-  SET_VECTOR_ELT(contents, 54, ScalarInteger(internal->offset_variable_I));
-  SET_VECTOR_ELT(contents, 55, ScalarInteger(internal->offset_variable_R));
-  SET_VECTOR_ELT(contents, 56, ScalarInteger(internal->offset_variable_V));
-  SET_VECTOR_ELT(contents, 57, ScalarReal(internal->sigma));
+  SET_VECTOR_ELT(contents, 58, lambda_prod);
+  SET_VECTOR_ELT(contents, 59, ScalarInteger(internal->n_age));
+  SET_VECTOR_ELT(contents, 60, ScalarInteger(internal->n_intervention));
+  SET_VECTOR_ELT(contents, 61, ScalarInteger(internal->n_time));
+  SET_VECTOR_ELT(contents, 62, ScalarInteger(internal->offset_variable_I));
+  SET_VECTOR_ELT(contents, 63, ScalarInteger(internal->offset_variable_R));
+  SET_VECTOR_ELT(contents, 64, ScalarInteger(internal->offset_variable_V));
+  SEXP sigma = PROTECT(allocVector(REALSXP, internal->dim_sigma));
+  memcpy(REAL(sigma), internal->sigma, internal->dim_sigma * sizeof(double));
+  SET_VECTOR_ELT(contents, 65, sigma);
+  SEXP time = PROTECT(allocVector(REALSXP, internal->dim_time));
+  memcpy(REAL(time), internal->time, internal->dim_time * sizeof(double));
+  SET_VECTOR_ELT(contents, 66, time);
   SEXP vax_end = PROTECT(allocVector(REALSXP, internal->dim_vax_end));
   memcpy(REAL(vax_end), internal->vax_end, internal->dim_vax_end * sizeof(double));
-  SET_VECTOR_ELT(contents, 58, vax_end);
+  SET_VECTOR_ELT(contents, 67, vax_end);
   SEXP vax_nu = PROTECT(allocVector(REALSXP, internal->dim_vax_nu));
   memcpy(REAL(vax_nu), internal->vax_nu, internal->dim_vax_nu * sizeof(double));
-  SET_VECTOR_ELT(contents, 59, vax_nu);
+  SET_VECTOR_ELT(contents, 68, vax_nu);
   SEXP vax_rate = PROTECT(allocVector(REALSXP, internal->dim_vax_rate));
   memcpy(REAL(vax_rate), internal->vax_rate, internal->dim_vax_rate * sizeof(double));
-  SET_VECTOR_ELT(contents, 60, vax_rate);
+  SET_VECTOR_ELT(contents, 69, vax_rate);
   SEXP vax_start = PROTECT(allocVector(REALSXP, internal->dim_vax_start));
   memcpy(REAL(vax_start), internal->vax_start, internal->dim_vax_start * sizeof(double));
-  SET_VECTOR_ELT(contents, 61, vax_start);
-  SEXP nms = PROTECT(allocVector(STRSXP, 62));
+  SET_VECTOR_ELT(contents, 70, vax_start);
+  SEXP nms = PROTECT(allocVector(STRSXP, 71));
   SET_STRING_ELT(nms, 0, mkChar("beta"));
   SET_STRING_ELT(nms, 1, mkChar("C"));
   SET_STRING_ELT(nms, 2, mkChar("contact_reduction"));
   SET_STRING_ELT(nms, 3, mkChar("contact_reduction_sum"));
   SET_STRING_ELT(nms, 4, mkChar("contact_reduction_total"));
-  SET_STRING_ELT(nms, 5, mkChar("dim_C"));
-  SET_STRING_ELT(nms, 6, mkChar("dim_C_1"));
-  SET_STRING_ELT(nms, 7, mkChar("dim_C_2"));
-  SET_STRING_ELT(nms, 8, mkChar("dim_contact_reduction"));
-  SET_STRING_ELT(nms, 9, mkChar("dim_contact_reduction_1"));
-  SET_STRING_ELT(nms, 10, mkChar("dim_contact_reduction_2"));
-  SET_STRING_ELT(nms, 11, mkChar("dim_contact_reduction_sum"));
-  SET_STRING_ELT(nms, 12, mkChar("dim_contact_reduction_total"));
-  SET_STRING_ELT(nms, 13, mkChar("dim_E"));
-  SET_STRING_ELT(nms, 14, mkChar("dim_I"));
-  SET_STRING_ELT(nms, 15, mkChar("dim_init_E"));
-  SET_STRING_ELT(nms, 16, mkChar("dim_init_I"));
-  SET_STRING_ELT(nms, 17, mkChar("dim_init_R"));
-  SET_STRING_ELT(nms, 18, mkChar("dim_init_S"));
-  SET_STRING_ELT(nms, 19, mkChar("dim_init_V"));
-  SET_STRING_ELT(nms, 20, mkChar("dim_intervention_effect"));
-  SET_STRING_ELT(nms, 21, mkChar("dim_intervention_effect_1"));
-  SET_STRING_ELT(nms, 22, mkChar("dim_intervention_effect_2"));
-  SET_STRING_ELT(nms, 23, mkChar("dim_intervention_end"));
-  SET_STRING_ELT(nms, 24, mkChar("dim_intervention_start"));
-  SET_STRING_ELT(nms, 25, mkChar("dim_lambda"));
-  SET_STRING_ELT(nms, 26, mkChar("dim_lambda_prod"));
-  SET_STRING_ELT(nms, 27, mkChar("dim_lambda_prod_1"));
-  SET_STRING_ELT(nms, 28, mkChar("dim_lambda_prod_2"));
-  SET_STRING_ELT(nms, 29, mkChar("dim_R"));
-  SET_STRING_ELT(nms, 30, mkChar("dim_S"));
-  SET_STRING_ELT(nms, 31, mkChar("dim_V"));
-  SET_STRING_ELT(nms, 32, mkChar("dim_vax_end"));
-  SET_STRING_ELT(nms, 33, mkChar("dim_vax_nu"));
-  SET_STRING_ELT(nms, 34, mkChar("dim_vax_rate"));
-  SET_STRING_ELT(nms, 35, mkChar("dim_vax_start"));
-  SET_STRING_ELT(nms, 36, mkChar("gamma"));
-  SET_STRING_ELT(nms, 37, mkChar("init_E"));
-  SET_STRING_ELT(nms, 38, mkChar("init_I"));
-  SET_STRING_ELT(nms, 39, mkChar("init_R"));
-  SET_STRING_ELT(nms, 40, mkChar("init_S"));
-  SET_STRING_ELT(nms, 41, mkChar("init_V"));
-  SET_STRING_ELT(nms, 42, mkChar("initial_E"));
-  SET_STRING_ELT(nms, 43, mkChar("initial_I"));
-  SET_STRING_ELT(nms, 44, mkChar("initial_R"));
-  SET_STRING_ELT(nms, 45, mkChar("initial_S"));
-  SET_STRING_ELT(nms, 46, mkChar("initial_V"));
-  SET_STRING_ELT(nms, 47, mkChar("intervention_effect"));
-  SET_STRING_ELT(nms, 48, mkChar("intervention_end"));
-  SET_STRING_ELT(nms, 49, mkChar("intervention_start"));
-  SET_STRING_ELT(nms, 50, mkChar("lambda"));
-  SET_STRING_ELT(nms, 51, mkChar("lambda_prod"));
-  SET_STRING_ELT(nms, 52, mkChar("n_age"));
-  SET_STRING_ELT(nms, 53, mkChar("n_intervention"));
-  SET_STRING_ELT(nms, 54, mkChar("offset_variable_I"));
-  SET_STRING_ELT(nms, 55, mkChar("offset_variable_R"));
-  SET_STRING_ELT(nms, 56, mkChar("offset_variable_V"));
-  SET_STRING_ELT(nms, 57, mkChar("sigma"));
-  SET_STRING_ELT(nms, 58, mkChar("vax_end"));
-  SET_STRING_ELT(nms, 59, mkChar("vax_nu"));
-  SET_STRING_ELT(nms, 60, mkChar("vax_rate"));
-  SET_STRING_ELT(nms, 61, mkChar("vax_start"));
+  SET_STRING_ELT(nms, 5, mkChar("dim_beta"));
+  SET_STRING_ELT(nms, 6, mkChar("dim_C"));
+  SET_STRING_ELT(nms, 7, mkChar("dim_C_1"));
+  SET_STRING_ELT(nms, 8, mkChar("dim_C_2"));
+  SET_STRING_ELT(nms, 9, mkChar("dim_contact_reduction"));
+  SET_STRING_ELT(nms, 10, mkChar("dim_contact_reduction_1"));
+  SET_STRING_ELT(nms, 11, mkChar("dim_contact_reduction_2"));
+  SET_STRING_ELT(nms, 12, mkChar("dim_contact_reduction_sum"));
+  SET_STRING_ELT(nms, 13, mkChar("dim_contact_reduction_total"));
+  SET_STRING_ELT(nms, 14, mkChar("dim_E"));
+  SET_STRING_ELT(nms, 15, mkChar("dim_gamma"));
+  SET_STRING_ELT(nms, 16, mkChar("dim_I"));
+  SET_STRING_ELT(nms, 17, mkChar("dim_init_E"));
+  SET_STRING_ELT(nms, 18, mkChar("dim_init_I"));
+  SET_STRING_ELT(nms, 19, mkChar("dim_init_R"));
+  SET_STRING_ELT(nms, 20, mkChar("dim_init_S"));
+  SET_STRING_ELT(nms, 21, mkChar("dim_init_V"));
+  SET_STRING_ELT(nms, 22, mkChar("dim_intervention_effect"));
+  SET_STRING_ELT(nms, 23, mkChar("dim_intervention_effect_1"));
+  SET_STRING_ELT(nms, 24, mkChar("dim_intervention_effect_2"));
+  SET_STRING_ELT(nms, 25, mkChar("dim_intervention_end"));
+  SET_STRING_ELT(nms, 26, mkChar("dim_intervention_start"));
+  SET_STRING_ELT(nms, 27, mkChar("dim_lambda"));
+  SET_STRING_ELT(nms, 28, mkChar("dim_lambda_prod"));
+  SET_STRING_ELT(nms, 29, mkChar("dim_lambda_prod_1"));
+  SET_STRING_ELT(nms, 30, mkChar("dim_lambda_prod_2"));
+  SET_STRING_ELT(nms, 31, mkChar("dim_R"));
+  SET_STRING_ELT(nms, 32, mkChar("dim_S"));
+  SET_STRING_ELT(nms, 33, mkChar("dim_sigma"));
+  SET_STRING_ELT(nms, 34, mkChar("dim_time"));
+  SET_STRING_ELT(nms, 35, mkChar("dim_V"));
+  SET_STRING_ELT(nms, 36, mkChar("dim_vax_end"));
+  SET_STRING_ELT(nms, 37, mkChar("dim_vax_nu"));
+  SET_STRING_ELT(nms, 38, mkChar("dim_vax_rate"));
+  SET_STRING_ELT(nms, 39, mkChar("dim_vax_start"));
+  SET_STRING_ELT(nms, 40, mkChar("gamma"));
+  SET_STRING_ELT(nms, 41, mkChar("init_E"));
+  SET_STRING_ELT(nms, 42, mkChar("init_I"));
+  SET_STRING_ELT(nms, 43, mkChar("init_R"));
+  SET_STRING_ELT(nms, 44, mkChar("init_S"));
+  SET_STRING_ELT(nms, 45, mkChar("init_V"));
+  SET_STRING_ELT(nms, 46, mkChar("initial_E"));
+  SET_STRING_ELT(nms, 47, mkChar("initial_I"));
+  SET_STRING_ELT(nms, 48, mkChar("initial_R"));
+  SET_STRING_ELT(nms, 49, mkChar("initial_S"));
+  SET_STRING_ELT(nms, 50, mkChar("initial_V"));
+  SET_STRING_ELT(nms, 51, mkChar("interpolate_beta_t"));
+  SET_STRING_ELT(nms, 52, mkChar("interpolate_gamma_t"));
+  SET_STRING_ELT(nms, 53, mkChar("interpolate_sigma_t"));
+  SET_STRING_ELT(nms, 54, mkChar("intervention_effect"));
+  SET_STRING_ELT(nms, 55, mkChar("intervention_end"));
+  SET_STRING_ELT(nms, 56, mkChar("intervention_start"));
+  SET_STRING_ELT(nms, 57, mkChar("lambda"));
+  SET_STRING_ELT(nms, 58, mkChar("lambda_prod"));
+  SET_STRING_ELT(nms, 59, mkChar("n_age"));
+  SET_STRING_ELT(nms, 60, mkChar("n_intervention"));
+  SET_STRING_ELT(nms, 61, mkChar("n_time"));
+  SET_STRING_ELT(nms, 62, mkChar("offset_variable_I"));
+  SET_STRING_ELT(nms, 63, mkChar("offset_variable_R"));
+  SET_STRING_ELT(nms, 64, mkChar("offset_variable_V"));
+  SET_STRING_ELT(nms, 65, mkChar("sigma"));
+  SET_STRING_ELT(nms, 66, mkChar("time"));
+  SET_STRING_ELT(nms, 67, mkChar("vax_end"));
+  SET_STRING_ELT(nms, 68, mkChar("vax_nu"));
+  SET_STRING_ELT(nms, 69, mkChar("vax_rate"));
+  SET_STRING_ELT(nms, 70, mkChar("vax_start"));
   setAttrib(contents, R_NamesSymbol, nms);
-  UNPROTECT(25);
+  UNPROTECT(29);
   return contents;
 }
 SEXP seirv_model_set_user(SEXP internal_p, SEXP user) {
   seirv_model_internal *internal = seirv_model_get_internal(internal_p, 1);
-  internal->beta = user_get_scalar_double(user, "beta", internal->beta, NA_REAL, NA_REAL);
-  internal->gamma = user_get_scalar_double(user, "gamma", internal->gamma, NA_REAL, NA_REAL);
   internal->n_age = user_get_scalar_int(user, "n_age", internal->n_age, NA_REAL, NA_REAL);
   internal->n_intervention = user_get_scalar_int(user, "n_intervention", internal->n_intervention, NA_REAL, NA_REAL);
-  internal->sigma = user_get_scalar_double(user, "sigma", internal->sigma, NA_REAL, NA_REAL);
+  internal->n_time = user_get_scalar_int(user, "n_time", internal->n_time, NA_REAL, NA_REAL);
+  internal->dim_beta = internal->n_time;
   internal->dim_C_1 = internal->n_age;
   internal->dim_C_2 = internal->n_age;
   internal->dim_contact_reduction_1 = internal->n_intervention;
@@ -400,6 +515,7 @@ SEXP seirv_model_set_user(SEXP internal_p, SEXP user) {
   internal->dim_contact_reduction_sum = internal->n_age;
   internal->dim_contact_reduction_total = internal->n_age;
   internal->dim_E = internal->n_age;
+  internal->dim_gamma = internal->n_time;
   internal->dim_I = internal->n_age;
   internal->dim_init_E = internal->n_age;
   internal->dim_init_I = internal->n_age;
@@ -415,6 +531,8 @@ SEXP seirv_model_set_user(SEXP internal_p, SEXP user) {
   internal->dim_lambda_prod_2 = internal->n_age;
   internal->dim_R = internal->n_age;
   internal->dim_S = internal->n_age;
+  internal->dim_sigma = internal->n_time;
+  internal->dim_time = internal->n_time;
   internal->dim_V = internal->n_age;
   internal->dim_vax_end = internal->n_age;
   internal->dim_vax_nu = internal->n_age;
@@ -438,10 +556,12 @@ SEXP seirv_model_set_user(SEXP internal_p, SEXP user) {
   internal->lambda = (double*) R_Calloc(internal->dim_lambda, double);
   R_Free(internal->vax_rate);
   internal->vax_rate = (double*) R_Calloc(internal->dim_vax_rate, double);
+  internal->beta = (double*) user_get_array(user, false, internal->beta, "beta", NA_REAL, NA_REAL, 1, internal->dim_beta);
   internal->dim_C = internal->dim_C_1 * internal->dim_C_2;
   internal->dim_contact_reduction = internal->dim_contact_reduction_1 * internal->dim_contact_reduction_2;
   internal->dim_intervention_effect = internal->dim_intervention_effect_1 * internal->dim_intervention_effect_2;
   internal->dim_lambda_prod = internal->dim_lambda_prod_1 * internal->dim_lambda_prod_2;
+  internal->gamma = (double*) user_get_array(user, false, internal->gamma, "gamma", NA_REAL, NA_REAL, 1, internal->dim_gamma);
   internal->init_E = (double*) user_get_array(user, false, internal->init_E, "init_E", NA_REAL, NA_REAL, 1, internal->dim_init_E);
   internal->init_I = (double*) user_get_array(user, false, internal->init_I, "init_I", NA_REAL, NA_REAL, 1, internal->dim_init_I);
   internal->init_R = (double*) user_get_array(user, false, internal->init_R, "init_R", NA_REAL, NA_REAL, 1, internal->dim_init_R);
@@ -452,6 +572,8 @@ SEXP seirv_model_set_user(SEXP internal_p, SEXP user) {
   internal->offset_variable_I = internal->dim_E + internal->dim_S;
   internal->offset_variable_R = internal->dim_E + internal->dim_I + internal->dim_S;
   internal->offset_variable_V = internal->dim_E + internal->dim_I + internal->dim_R + internal->dim_S;
+  internal->sigma = (double*) user_get_array(user, false, internal->sigma, "sigma", NA_REAL, NA_REAL, 1, internal->dim_sigma);
+  internal->time = (double*) user_get_array(user, false, internal->time, "time", NA_REAL, NA_REAL, 1, internal->dim_time);
   internal->vax_end = (double*) user_get_array(user, false, internal->vax_end, "vax_end", NA_REAL, NA_REAL, 1, internal->dim_vax_end);
   internal->vax_nu = (double*) user_get_array(user, false, internal->vax_nu, "vax_nu", NA_REAL, NA_REAL, 1, internal->dim_vax_nu);
   internal->vax_start = (double*) user_get_array(user, false, internal->vax_start, "vax_start", NA_REAL, NA_REAL, 1, internal->dim_vax_start);
@@ -475,6 +597,15 @@ SEXP seirv_model_set_user(SEXP internal_p, SEXP user) {
   for (int i = 1; i <= internal->dim_V; ++i) {
     internal->initial_V[i - 1] = internal->init_V[i - 1];
   }
+  interpolate_check_y(internal->dim_time, internal->dim_beta, 0, "beta", "beta_t");
+  cinterpolate_free(internal->interpolate_beta_t);
+  internal->interpolate_beta_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->beta, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_gamma, 0, "gamma", "gamma_t");
+  cinterpolate_free(internal->interpolate_gamma_t);
+  internal->interpolate_gamma_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->gamma, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_sigma, 0, "sigma", "sigma_t");
+  cinterpolate_free(internal->interpolate_sigma_t);
+  internal->interpolate_sigma_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->sigma, true, false);
   internal->intervention_effect = (double*) user_get_array(user, false, internal->intervention_effect, "intervention_effect", NA_REAL, NA_REAL, 2, internal->dim_intervention_effect_1, internal->dim_intervention_effect_2);
   return R_NilValue;
 }
@@ -507,6 +638,15 @@ SEXP seirv_model_metadata(SEXP internal_p) {
   UNPROTECT(2);
   SET_VECTOR_ELT(ret, 1, R_NilValue);
   SET_VECTOR_ELT(ret, 2, ScalarInteger(0));
+  SEXP interpolate_t = PROTECT(allocVector(VECSXP, 3));
+  SEXP interpolate_t_nms = PROTECT(allocVector(STRSXP, 3));
+  setAttrib(interpolate_t, R_NamesSymbol, interpolate_t_nms);
+  SET_VECTOR_ELT(interpolate_t, 0, ScalarReal(internal->time[0]));
+  SET_VECTOR_ELT(interpolate_t, 1, ScalarReal(internal->time[internal->dim_time - 1]));
+  SET_STRING_ELT(interpolate_t_nms, 0, mkChar("min"));
+  SET_STRING_ELT(interpolate_t_nms, 1, mkChar("max"));
+  SET_VECTOR_ELT(ret, 3, interpolate_t);
+  UNPROTECT(2);
   UNPROTECT(2);
   return ret;
 }
@@ -526,36 +666,42 @@ void seirv_model_rhs(seirv_model_internal* internal, double t, double * state, d
   double * S = state + 0;
   double * E = state + internal->dim_S;
   double * I = state + internal->offset_variable_I;
-  for (int i = 1; i <= internal->dim_I; ++i) {
-    dstatedt[internal->offset_variable_I + i - 1] = internal->sigma * E[i - 1] - internal->gamma * I[i - 1];
-  }
-  for (int i = 1; i <= internal->dim_R; ++i) {
-    dstatedt[internal->offset_variable_R + i - 1] = internal->gamma * I[i - 1];
-  }
   for (int i = 1; i <= internal->dim_vax_rate; ++i) {
-    internal->vax_rate[i - 1] = (t >= internal->vax_start[i - 1] && t < internal->vax_end[i - 1] ? internal->vax_nu[i - 1] / (double) S[i - 1] : 0);
+    internal->vax_rate[i - 1] = (t >= internal->vax_start[i - 1] && t <= internal->vax_end[i - 1] ? internal->vax_nu[i - 1] / (double) S[i - 1] : 0);
   }
+  double beta_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_beta_t, &beta_t);
   for (int i = 1; i <= internal->dim_contact_reduction_1; ++i) {
     for (int j = 1; j <= internal->dim_contact_reduction_2; ++j) {
-      internal->contact_reduction[i - 1 + internal->dim_contact_reduction_1 * (j - 1)] = (t > internal->intervention_start[i - 1] && t < internal->intervention_end[i - 1] ? internal->intervention_effect[internal->dim_intervention_effect_1 * (j - 1) + i - 1] : 0);
+      internal->contact_reduction[i - 1 + internal->dim_contact_reduction_1 * (j - 1)] = (t >= internal->intervention_start[i - 1] && t <= internal->intervention_end[i - 1] ? internal->intervention_effect[internal->dim_intervention_effect_1 * (j - 1) + i - 1] : 0);
     }
   }
+  double gamma_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_gamma_t, &gamma_t);
+  double sigma_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_sigma_t, &sigma_t);
   for (int i = 1; i <= internal->dim_contact_reduction_sum; ++i) {
     internal->contact_reduction_sum[i - 1] = odin_sum2(internal->contact_reduction, 0, internal->dim_contact_reduction_1, i - 1, i, internal->dim_contact_reduction_1);
+  }
+  for (int i = 1; i <= internal->dim_I; ++i) {
+    dstatedt[internal->offset_variable_I + i - 1] = sigma_t * E[i - 1] - gamma_t * I[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R; ++i) {
+    dstatedt[internal->offset_variable_R + i - 1] = gamma_t * I[i - 1];
   }
   for (int i = 1; i <= internal->dim_contact_reduction_total; ++i) {
     internal->contact_reduction_total[i - 1] = 1 - fmin(internal->contact_reduction_sum[i - 1], 1);
   }
   for (int i = 1; i <= internal->dim_lambda_prod_1; ++i) {
     for (int j = 1; j <= internal->dim_lambda_prod_2; ++j) {
-      internal->lambda_prod[i - 1 + internal->dim_lambda_prod_1 * (j - 1)] = internal->C[internal->dim_C_1 * (j - 1) + i - 1] * I[j - 1] * internal->beta * internal->contact_reduction_total[j - 1] * internal->contact_reduction_total[i - 1];
+      internal->lambda_prod[i - 1 + internal->dim_lambda_prod_1 * (j - 1)] = internal->C[internal->dim_C_1 * (j - 1) + i - 1] * I[j - 1] * beta_t * internal->contact_reduction_total[j - 1] * internal->contact_reduction_total[i - 1];
     }
   }
   for (int i = 1; i <= internal->dim_lambda; ++i) {
     internal->lambda[i - 1] = odin_sum2(internal->lambda_prod, i - 1, i, 0, internal->dim_lambda_prod_2, internal->dim_lambda_prod_1);
   }
   for (int i = 1; i <= internal->dim_E; ++i) {
-    dstatedt[internal->dim_S + i - 1] = internal->lambda[i - 1] * S[i - 1] - internal->sigma * E[i - 1];
+    dstatedt[internal->dim_S + i - 1] = internal->lambda[i - 1] * S[i - 1] - sigma_t * E[i - 1];
   }
   for (int i = 1; i <= internal->dim_S; ++i) {
     dstatedt[0 + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] < 1 ? -((internal->lambda[i - 1] + internal->vax_rate[i - 1])) * S[i - 1] : -(S[i - 1]));
@@ -839,6 +985,19 @@ SEXP user_get_array_check_rank(SEXP user, const char *name, int rank,
   }
   return el;
 }
+void interpolate_check_y(size_t nx, size_t ny, size_t i, const char *name_arg, const char *name_target) {
+  if (nx != ny) {
+    if (i == 0) {
+      // vector case
+      Rf_error("Expected %s to have length %d (for '%s')",
+               name_arg, (int)nx, name_target);
+    } else {
+      // array case
+      Rf_error("Expected dimension %d of %s to have size %d (for '%s')",
+               (int)i, name_arg, (int)nx, name_target);
+    }
+  }
+}
 double scalar_real(SEXP x, const char * name) {
   if (Rf_length(x) != 1) {
     Rf_error("Expected a scalar for '%s'", name);
@@ -869,4 +1028,43 @@ double odin_sum2(double* x, int from_i, int to_i, int from_j, int to_j, int dim_
     }
   }
   return tot;
+}
+// This construction is to help odin
+#ifndef CINTERPOLTE_CINTERPOLATE_H_
+#endif
+
+
+void * cinterpolate_alloc(const char *type, size_t n, size_t ny,
+                          double *x, double *y, bool fail_on_extrapolate,
+                          bool auto_clean) {
+  typedef void* interpolate_alloc_t(const char *, size_t, size_t,
+                                    double*, double*, bool, bool);
+  static interpolate_alloc_t *fun;
+  if (fun == NULL) {
+    fun = (interpolate_alloc_t*)
+      R_GetCCallable("cinterpolate", "interpolate_alloc");
+  }
+  return fun(type, n, ny, x, y, fail_on_extrapolate, auto_clean);
+}
+
+
+int cinterpolate_eval(double x, void *obj, double *y) {
+  typedef int interpolate_eval_t(double, void*, double*);
+  static interpolate_eval_t *fun;
+  if (fun == NULL) {
+    fun = (interpolate_eval_t*)
+      R_GetCCallable("cinterpolate", "interpolate_eval");
+  }
+  return fun(x, obj, y);
+}
+
+
+void cinterpolate_free(void *obj) {
+  typedef int interpolate_free_t(void*);
+  static interpolate_free_t *fun;
+  if (fun == NULL) {
+    fun = (interpolate_free_t*)
+      R_GetCCallable("cinterpolate", "interpolate_free");
+  }
+  fun(obj);
 }

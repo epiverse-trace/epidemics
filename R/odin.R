@@ -20,8 +20,8 @@ seirv_model_ <- R6::R6Class(
     dll = "epidemics",
     user = c("beta", "C", "gamma", "init_E", "init_I", "init_R", "init_S",
              "init_V", "intervention_effect", "intervention_end",
-             "intervention_start", "n_age", "n_intervention", "sigma",
-             "vax_end", "vax_nu", "vax_start"),
+             "intervention_start", "n_age", "n_intervention", "n_time",
+             "sigma", "time", "vax_end", "vax_nu", "vax_start"),
 
     ## This is never called, but is used to ensure that R finds our
     ## symbols that we will use from the package; without this they

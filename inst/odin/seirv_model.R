@@ -1,28 +1,28 @@
 # Time-dependent parameters
-# beta <- interpolate(beta_t, beta_y, "linear")
-# sigma <- interpolate(sigma_t, sigma_y, "linear")
-# gamma <- interpolate(gamma_t, gamma_y, "linear")
+beta_t <- interpolate(time, beta, "linear")
+sigma_t <- interpolate(time, sigma, "linear")
+gamma_t <- interpolate(time, gamma, "linear")
 
 # Contact matrix with time-dependent interventions
 # Then multiply across interventions - need to check this
-contact_reduction[, ] <- if (t > intervention_start[i] && t < intervention_end[i]) intervention_effect[i, j] else 0 # nolint: line_length_linter.
+contact_reduction[, ] <- if (t >= intervention_start[i] && t <= intervention_end[i]) intervention_effect[i, j] else 0 # nolint: line_length_linter.
 contact_reduction_sum[] <- sum(contact_reduction[, i])
 contact_reduction_total[] <- 1 - min(contact_reduction_sum[i],1)
 
 # Specify how transmission varies over time
 # FOI is contacts * infectious * transmission rate
 # returns a matrix, must be converted to a vector/1D array
-lambda_prod[, ] <- C[i, j] * I[j] * beta * contact_reduction_total[j] * contact_reduction_total[i] # nolint: line_length_linter.
+lambda_prod[, ] <- C[i, j] * I[j] * beta_t * contact_reduction_total[j] * contact_reduction_total[i] # nolint: line_length_linter.
 lambda[] <- sum(lambda_prod[i, ])
 
 # Vaccination - indexing over age groups
-vax_rate[] <- if (t >= vax_start[i] && t < vax_end[i]) vax_nu[i]/S[i] else 0
+vax_rate[] <- if (t >= vax_start[i] && t <= vax_end[i]) vax_nu[i]/S[i] else 0
 
 # ODEs
 deriv(S[]) <- if(vax_rate[i] + lambda[i] < 1) -(lambda[i] + vax_rate[i]) * S[i] else - S[i]
-deriv(E[]) <- lambda[i] * S[i] - sigma * E[i]
-deriv(I[]) <- sigma * E[i] - gamma * I[i]
-deriv(R[]) <- gamma * I[i]
+deriv(E[]) <- lambda[i] * S[i] - sigma_t * E[i]
+deriv(I[]) <- sigma_t * E[i] - gamma_t * I[i]
+deriv(R[]) <- gamma_t * I[i]
 deriv(V[]) <- if(vax_rate[i] + lambda[i] < 1) vax_rate[i] * S[i] else S[i]*(1-lambda[i])
 
 # Initial conditions
@@ -36,17 +36,17 @@ initial(V[]) <- init_V[i]
 C[, ] <- user()
 n_age <- user()
 n_intervention <- user()
-beta <- user()
-sigma <- user()
-gamma <- user()
+beta[] <- user()
+sigma[] <- user()
+gamma[] <- user()
 
 # Not currently used (can re-add for time-dependent parameters)
-# beta_t[] <- user()
-# beta_y[] <- user()
-# sigma_t[] <- user()
-# sigma_y[] <- user()
-# gamma_t[] <- user()
-# gamma_y[] <- user()
+dim(time) <- n_time
+dim(beta) <- n_time
+dim(sigma) <- n_time
+dim(gamma) <- n_time
+n_time <- user()
+time[] <- user()
 intervention_start[] <- user()
 intervention_end[] <- user()
 intervention_effect[, ] <- user()

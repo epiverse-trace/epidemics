@@ -609,6 +609,9 @@ model_default <- function(population,
   })]
 
   model_output[, "data" := lapply(args, function(args) {
+    time_points <- seq(0, args$time_end, by = args$increment)
+    n_time <- length(time_points)
+    
     C <- args$contact_matrix
     n_age <- nrow(C)
 
@@ -627,9 +630,23 @@ model_default <- function(population,
     }
     n_intervention <- length(intervention_start)
 
+    time_dependent_params <- Map(
+      args[names(args$time_dependence)],
+      args$time_dependence,
+      f = function(x, func) {
+        func(time = time_points, x = x)
+      }
+    )
+    # assign time-modified param values
+    args[names(time_dependent_params)] <- time_dependent_params
     beta <- args$transmission_rate
     sigma <- args$infectiousness_rate
     gamma <- args$recovery_rate
+
+    if(length(beta) == 1) beta <- rep(beta, n_time)
+    if(length(sigma) == 1) sigma <- rep(sigma, n_time)
+    if(length(gamma) == 1) gamma <- rep(gamma, n_time)
+    
     vax_start <- as.numeric(args$vax_time_begin)
     vax_end <- as.numeric(args$vax_time_end)
     vax_nu <- as.numeric(args$vax_nu)
@@ -643,6 +660,8 @@ model_default <- function(population,
 
     # Initialize and run the model
     model <- seirv_model$new(
+      time = time_points,
+      n_time = n_time,
       C = C,
       n_age = n_age,
       n_intervention = n_intervention,
@@ -661,8 +680,7 @@ model_default <- function(population,
       init_R = init_R,
       init_V = init_V
     )
-
-    time_points <- seq(0, args$time_end, by = args$increment)
+    
     result <- model$run(time_points)
 
     # Add scenario information

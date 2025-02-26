@@ -615,21 +615,17 @@ model_default <- function(population,
     C <- args$contact_matrix
     n_age <- nrow(C)
 
-    intervention_start <- as.numeric(args$npi_time_begin)
-    intervention_end <- as.numeric(args$npi_time_end)
-    intervention_effect <- t(args$npi_cr)
-
-    if (any(args$rate_interventions[[1]]$reduction > 0)) {
-      # here contacts is a null intervention. replace with rate values
-      intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
-      intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
-      intervention_effect <- matrix(
-        rep(args$rate_interventions[[1]]$reduction, n_age),
-        ncol = n_age
-      )
-    }
-    n_intervention <- length(intervention_start)
-
+    contact_intervention_start <- as.numeric(args$npi_time_begin)
+    contact_intervention_end <- as.numeric(args$npi_time_end)
+    contact_intervention_effect <- t(args$npi_cr)
+    
+    rate_intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
+    rate_intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
+    rate_intervention_effect <- matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+    
+    n_contact_intervention <- length(contact_intervention_start)
+    n_rate_intervention <- length(rate_intervention_start)
+    
     time_dependent_params <- Map(
       args[names(args$time_dependence)],
       args$time_dependence,
@@ -664,13 +660,17 @@ model_default <- function(population,
       n_time = n_time,
       C = C,
       n_age = n_age,
-      n_intervention = n_intervention,
+      n_contact_intervention = n_contact_intervention,
+      n_rate_intervention = n_rate_intervention,
       beta = beta,
       sigma = sigma,
       gamma = gamma,
-      intervention_start = intervention_start,
-      intervention_end = intervention_end,
-      intervention_effect = intervention_effect,
+      rate_intervention_start = rate_intervention_start,
+      rate_intervention_end = rate_intervention_end,
+      rate_intervention_effect = rate_intervention_effect,
+      contact_intervention_start = contact_intervention_start,
+      contact_intervention_end = contact_intervention_end,
+      contact_intervention_effect = contact_intervention_effect,
       vax_start = vax_start,
       vax_end = vax_end,
       vax_nu = vax_nu,

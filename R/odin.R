@@ -18,10 +18,13 @@ seirv_model_ <- R6::R6Class(
       rhs_desolve = "seirv_model_rhs_desolve",
       initmod_desolve = "seirv_model_initmod_desolve"),
     dll = "epidemics",
-    user = c("beta", "C", "gamma", "init_E", "init_I", "init_R", "init_S",
-             "init_V", "intervention_effect", "intervention_end",
-             "intervention_start", "n_age", "n_intervention", "n_time",
-             "sigma", "time", "vax_end", "vax_nu", "vax_start"),
+    user = c("beta", "C", "contact_intervention_effect",
+             "contact_intervention_end", "contact_intervention_start",
+             "gamma", "init_E", "init_I", "init_R", "init_S", "init_V",
+             "n_age", "n_contact_intervention", "n_rate_intervention",
+             "n_time", "rate_intervention_effect", "rate_intervention_end",
+             "rate_intervention_start", "sigma", "time", "vax_end", "vax_nu",
+             "vax_start"),
 
     ## This is never called, but is used to ensure that R finds our
     ## symbols that we will use from the package; without this they

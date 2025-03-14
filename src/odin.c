@@ -72,6 +72,86 @@ void cinterpolate_free(void *obj);
 #endif
 
 #endif
+typedef struct diphtheria_internal {
+  double *beta;
+  int dim_beta;
+  int dim_E;
+  int dim_eta;
+  int dim_gamma;
+  int dim_H;
+  int dim_I;
+  int dim_init_E;
+  int dim_init_H;
+  int dim_init_I;
+  int dim_init_R;
+  int dim_init_S;
+  int dim_lambda;
+  int dim_lambda_prod;
+  int dim_lambda_prod_1;
+  int dim_lambda_prod_2;
+  int dim_pop_change;
+  int dim_pop_change_1;
+  int dim_pop_change_2;
+  int dim_pop_change_t;
+  int dim_r;
+  int dim_R;
+  int dim_rate_intervention_effect;
+  int dim_rate_intervention_effect_1;
+  int dim_rate_intervention_effect_2;
+  int dim_rate_intervention_end;
+  int dim_rate_intervention_start;
+  int dim_rate_reduction;
+  int dim_rate_reduction_1;
+  int dim_rate_reduction_2;
+  int dim_rate_reduction_sum;
+  int dim_rate_reduction_total;
+  int dim_S;
+  int dim_sigma;
+  int dim_tau1;
+  int dim_tau2;
+  int dim_time;
+  double *eta;
+  double *gamma;
+  double *init_E;
+  double *init_H;
+  double *init_I;
+  double *init_R;
+  double *init_S;
+  double *initial_E;
+  double *initial_H;
+  double *initial_I;
+  double *initial_R;
+  double *initial_S;
+  void *interpolate_beta_t;
+  void *interpolate_eta_t;
+  void *interpolate_gamma_t;
+  void *interpolate_pop_change_t;
+  void *interpolate_r_t;
+  void *interpolate_sigma_t;
+  void *interpolate_tau1_t;
+  void *interpolate_tau2_t;
+  double *lambda;
+  double *lambda_prod;
+  int n_age;
+  int n_rate_intervention;
+  int n_time;
+  int offset_variable_H;
+  int offset_variable_I;
+  int offset_variable_R;
+  double *pop_change;
+  double *pop_change_t;
+  double *r;
+  double *rate_intervention_effect;
+  double *rate_intervention_end;
+  double *rate_intervention_start;
+  double *rate_reduction;
+  double *rate_reduction_sum;
+  double *rate_reduction_total;
+  double *sigma;
+  double *tau1;
+  double *tau2;
+  double *time;
+} diphtheria_internal;
 typedef struct seirv_model_internal {
   double *beta;
   double *C;
@@ -162,6 +242,168 @@ typedef struct seirv_model_internal {
   double *vax_rate;
   double *vax_start;
 } seirv_model_internal;
+typedef struct vacamole_internal {
+  double *beta;
+  double *beta_vax;
+  double *C;
+  double *contact_intervention_effect;
+  double *contact_intervention_end;
+  double *contact_intervention_start;
+  double *contact_reduction;
+  double *contact_reduction_sum;
+  double *contact_reduction_total;
+  int dim_beta;
+  int dim_beta_vax;
+  int dim_C;
+  int dim_C_1;
+  int dim_C_2;
+  int dim_contact_intervention_effect;
+  int dim_contact_intervention_effect_1;
+  int dim_contact_intervention_effect_2;
+  int dim_contact_intervention_end;
+  int dim_contact_intervention_start;
+  int dim_contact_reduction;
+  int dim_contact_reduction_1;
+  int dim_contact_reduction_2;
+  int dim_contact_reduction_sum;
+  int dim_contact_reduction_total;
+  int dim_D;
+  int dim_E;
+  int dim_eta;
+  int dim_eta_vax;
+  int dim_EV;
+  int dim_gamma;
+  int dim_H;
+  int dim_HV;
+  int dim_I;
+  int dim_init_D;
+  int dim_init_E;
+  int dim_init_EV;
+  int dim_init_H;
+  int dim_init_HV;
+  int dim_init_I;
+  int dim_init_IV;
+  int dim_init_R;
+  int dim_init_S;
+  int dim_init_V1;
+  int dim_init_V2;
+  int dim_IV;
+  int dim_lambda;
+  int dim_lambda_prod;
+  int dim_lambda_prod_1;
+  int dim_lambda_prod_2;
+  int dim_lambda_prod_vax;
+  int dim_lambda_prod_vax_1;
+  int dim_lambda_prod_vax_2;
+  int dim_lambda_vax;
+  int dim_omega;
+  int dim_omega_vax;
+  int dim_R;
+  int dim_rate_intervention_effect;
+  int dim_rate_intervention_effect_1;
+  int dim_rate_intervention_effect_2;
+  int dim_rate_intervention_end;
+  int dim_rate_intervention_start;
+  int dim_rate_reduction;
+  int dim_rate_reduction_1;
+  int dim_rate_reduction_2;
+  int dim_rate_reduction_sum;
+  int dim_rate_reduction_total;
+  int dim_S;
+  int dim_sigma;
+  int dim_time;
+  int dim_V1;
+  int dim_V2;
+  int dim_vax_end;
+  int dim_vax_end_1;
+  int dim_vax_end_2;
+  int dim_vax_nu;
+  int dim_vax_nu_1;
+  int dim_vax_nu_2;
+  int dim_vax_rate_S;
+  int dim_vax_rate_V1;
+  int dim_vax_start;
+  int dim_vax_start_1;
+  int dim_vax_start_2;
+  double *eta;
+  double *eta_vax;
+  double *gamma;
+  double *init_D;
+  double *init_E;
+  double *init_EV;
+  double *init_H;
+  double *init_HV;
+  double *init_I;
+  double *init_IV;
+  double *init_R;
+  double *init_S;
+  double *init_V1;
+  double *init_V2;
+  double *initial_D;
+  double *initial_E;
+  double *initial_EV;
+  double *initial_H;
+  double *initial_HV;
+  double *initial_I;
+  double *initial_IV;
+  double *initial_R;
+  double *initial_S;
+  double *initial_V1;
+  double *initial_V2;
+  void *interpolate_beta_t;
+  void *interpolate_beta_vax_t;
+  void *interpolate_eta_t;
+  void *interpolate_eta_vax_t;
+  void *interpolate_gamma_t;
+  void *interpolate_omega_t;
+  void *interpolate_omega_vax_t;
+  void *interpolate_sigma_t;
+  double *lambda;
+  double *lambda_prod;
+  double *lambda_prod_vax;
+  double *lambda_vax;
+  int n_age;
+  int n_contact_intervention;
+  int n_rate_intervention;
+  int n_time;
+  int offset_variable_D;
+  int offset_variable_EV;
+  int offset_variable_H;
+  int offset_variable_HV;
+  int offset_variable_I;
+  int offset_variable_IV;
+  int offset_variable_R;
+  int offset_variable_V1;
+  int offset_variable_V2;
+  double *omega;
+  double *omega_vax;
+  double *rate_intervention_effect;
+  double *rate_intervention_end;
+  double *rate_intervention_start;
+  double *rate_reduction;
+  double *rate_reduction_sum;
+  double *rate_reduction_total;
+  double *sigma;
+  double *time;
+  double *vax_end;
+  double *vax_nu;
+  double *vax_rate_S;
+  double *vax_rate_V1;
+  double *vax_start;
+} vacamole_internal;
+diphtheria_internal* diphtheria_get_internal(SEXP internal_p, int closed_error);
+static void diphtheria_finalise(SEXP internal_p);
+SEXP diphtheria_create(SEXP user);
+void diphtheria_initmod_desolve(void(* odeparms) (int *, double *));
+SEXP diphtheria_contents(SEXP internal_p);
+SEXP diphtheria_set_user(SEXP internal_p, SEXP user);
+SEXP diphtheria_set_initial(SEXP internal_p, SEXP t_ptr, SEXP state_ptr, SEXP diphtheria_use_dde_ptr);
+SEXP diphtheria_metadata(SEXP internal_p);
+SEXP diphtheria_initial_conditions(SEXP internal_p, SEXP t_ptr);
+void diphtheria_rhs(diphtheria_internal* internal, double t, double * state, double * dstatedt, double * output);
+void diphtheria_rhs_dde(size_t neq, double t, double * state, double * dstatedt, void * internal);
+void diphtheria_rhs_desolve(int * neq, double * t, double * state, double * dstatedt, double * output, int * np);
+SEXP diphtheria_rhs_r(SEXP internal_p, SEXP t, SEXP state);
 seirv_model_internal* seirv_model_get_internal(SEXP internal_p, int closed_error);
 static void seirv_model_finalise(SEXP internal_p);
 SEXP seirv_model_create(SEXP user);
@@ -175,6 +417,19 @@ void seirv_model_rhs(seirv_model_internal* internal, double t, double * state, d
 void seirv_model_rhs_dde(size_t neq, double t, double * state, double * dstatedt, void * internal);
 void seirv_model_rhs_desolve(int * neq, double * t, double * state, double * dstatedt, double * output, int * np);
 SEXP seirv_model_rhs_r(SEXP internal_p, SEXP t, SEXP state);
+vacamole_internal* vacamole_get_internal(SEXP internal_p, int closed_error);
+static void vacamole_finalise(SEXP internal_p);
+SEXP vacamole_create(SEXP user);
+void vacamole_initmod_desolve(void(* odeparms) (int *, double *));
+SEXP vacamole_contents(SEXP internal_p);
+SEXP vacamole_set_user(SEXP internal_p, SEXP user);
+SEXP vacamole_set_initial(SEXP internal_p, SEXP t_ptr, SEXP state_ptr, SEXP vacamole_use_dde_ptr);
+SEXP vacamole_metadata(SEXP internal_p);
+SEXP vacamole_initial_conditions(SEXP internal_p, SEXP t_ptr);
+void vacamole_rhs(vacamole_internal* internal, double t, double * state, double * dstatedt, double * output);
+void vacamole_rhs_dde(size_t neq, double t, double * state, double * dstatedt, void * internal);
+void vacamole_rhs_desolve(int * neq, double * t, double * state, double * dstatedt, double * output, int * np);
+SEXP vacamole_rhs_r(SEXP internal_p, SEXP t, SEXP state);
 double user_get_scalar_double(SEXP user, const char *name,
                               double default_value, double min, double max);
 int user_get_scalar_int(SEXP user, const char *name,
@@ -201,6 +456,597 @@ void interpolate_check_y(size_t nx, size_t ny, size_t i, const char *name_arg, c
 double scalar_real(SEXP x, const char * name);
 double odin_sum1(double *x, size_t from, size_t to);
 double odin_sum2(double* x, int from_i, int to_i, int from_j, int to_j, int dim_x_1);
+diphtheria_internal* diphtheria_get_internal(SEXP internal_p, int closed_error) {
+  diphtheria_internal *internal = NULL;
+  if (TYPEOF(internal_p) != EXTPTRSXP) {
+    Rf_error("Expected an external pointer");
+  }
+  internal = (diphtheria_internal*) R_ExternalPtrAddr(internal_p);
+  if (!internal && closed_error) {
+    Rf_error("Pointer has been invalidated");
+  }
+  return internal;
+}
+void diphtheria_finalise(SEXP internal_p) {
+  diphtheria_internal *internal = diphtheria_get_internal(internal_p, 0);
+  if (internal_p) {
+    cinterpolate_free(internal->interpolate_beta_t);
+    cinterpolate_free(internal->interpolate_eta_t);
+    cinterpolate_free(internal->interpolate_gamma_t);
+    cinterpolate_free(internal->interpolate_pop_change_t);
+    cinterpolate_free(internal->interpolate_r_t);
+    cinterpolate_free(internal->interpolate_sigma_t);
+    cinterpolate_free(internal->interpolate_tau1_t);
+    cinterpolate_free(internal->interpolate_tau2_t);
+    internal->interpolate_beta_t = NULL;
+    internal->interpolate_eta_t = NULL;
+    internal->interpolate_gamma_t = NULL;
+    internal->interpolate_pop_change_t = NULL;
+    internal->interpolate_r_t = NULL;
+    internal->interpolate_sigma_t = NULL;
+    internal->interpolate_tau1_t = NULL;
+    internal->interpolate_tau2_t = NULL;
+    R_Free(internal->beta);
+    R_Free(internal->eta);
+    R_Free(internal->gamma);
+    R_Free(internal->init_E);
+    R_Free(internal->init_H);
+    R_Free(internal->init_I);
+    R_Free(internal->init_R);
+    R_Free(internal->init_S);
+    R_Free(internal->initial_E);
+    R_Free(internal->initial_H);
+    R_Free(internal->initial_I);
+    R_Free(internal->initial_R);
+    R_Free(internal->initial_S);
+    R_Free(internal->lambda);
+    R_Free(internal->lambda_prod);
+    R_Free(internal->pop_change);
+    R_Free(internal->pop_change_t);
+    R_Free(internal->r);
+    R_Free(internal->rate_intervention_effect);
+    R_Free(internal->rate_intervention_end);
+    R_Free(internal->rate_intervention_start);
+    R_Free(internal->rate_reduction);
+    R_Free(internal->rate_reduction_sum);
+    R_Free(internal->rate_reduction_total);
+    R_Free(internal->sigma);
+    R_Free(internal->tau1);
+    R_Free(internal->tau2);
+    R_Free(internal->time);
+    R_Free(internal);
+    R_ClearExternalPtr(internal_p);
+  }
+}
+SEXP diphtheria_create(SEXP user) {
+  diphtheria_internal *internal = (diphtheria_internal*) R_Calloc(1, diphtheria_internal);
+  internal->beta = NULL;
+  internal->eta = NULL;
+  internal->gamma = NULL;
+  internal->init_E = NULL;
+  internal->init_H = NULL;
+  internal->init_I = NULL;
+  internal->init_R = NULL;
+  internal->init_S = NULL;
+  internal->initial_E = NULL;
+  internal->initial_H = NULL;
+  internal->initial_I = NULL;
+  internal->initial_R = NULL;
+  internal->initial_S = NULL;
+  internal->interpolate_pop_change_t = NULL;
+  internal->lambda = NULL;
+  internal->lambda_prod = NULL;
+  internal->pop_change = NULL;
+  internal->pop_change_t = NULL;
+  internal->r = NULL;
+  internal->rate_intervention_effect = NULL;
+  internal->rate_intervention_end = NULL;
+  internal->rate_intervention_start = NULL;
+  internal->rate_reduction = NULL;
+  internal->rate_reduction_sum = NULL;
+  internal->rate_reduction_total = NULL;
+  internal->sigma = NULL;
+  internal->tau1 = NULL;
+  internal->tau2 = NULL;
+  internal->time = NULL;
+  internal->beta = NULL;
+  internal->eta = NULL;
+  internal->gamma = NULL;
+  internal->init_E = NULL;
+  internal->init_H = NULL;
+  internal->init_I = NULL;
+  internal->init_R = NULL;
+  internal->init_S = NULL;
+  internal->n_age = NA_INTEGER;
+  internal->n_rate_intervention = NA_INTEGER;
+  internal->n_time = NA_INTEGER;
+  internal->pop_change = NULL;
+  internal->r = NULL;
+  internal->rate_intervention_effect = NULL;
+  internal->rate_intervention_end = NULL;
+  internal->rate_intervention_start = NULL;
+  internal->sigma = NULL;
+  internal->tau1 = NULL;
+  internal->tau2 = NULL;
+  internal->time = NULL;
+  SEXP ptr = PROTECT(R_MakeExternalPtr(internal, R_NilValue, R_NilValue));
+  R_RegisterCFinalizer(ptr, diphtheria_finalise);
+  UNPROTECT(1);
+  return ptr;
+}
+static diphtheria_internal *diphtheria_internal_ds;
+void diphtheria_initmod_desolve(void(* odeparms) (int *, double *)) {
+  static DL_FUNC get_desolve_gparms = NULL;
+  if (get_desolve_gparms == NULL) {
+    get_desolve_gparms =
+      R_GetCCallable("deSolve", "get_deSolve_gparms");
+  }
+  diphtheria_internal_ds = diphtheria_get_internal(get_desolve_gparms(), 1);
+}
+SEXP diphtheria_contents(SEXP internal_p) {
+  diphtheria_internal *internal = diphtheria_get_internal(internal_p, 1);
+  SEXP contents = PROTECT(allocVector(VECSXP, 78));
+  SEXP beta = PROTECT(allocVector(REALSXP, internal->dim_beta));
+  memcpy(REAL(beta), internal->beta, internal->dim_beta * sizeof(double));
+  SET_VECTOR_ELT(contents, 0, beta);
+  SET_VECTOR_ELT(contents, 1, ScalarInteger(internal->dim_beta));
+  SET_VECTOR_ELT(contents, 2, ScalarInteger(internal->dim_E));
+  SET_VECTOR_ELT(contents, 3, ScalarInteger(internal->dim_eta));
+  SET_VECTOR_ELT(contents, 4, ScalarInteger(internal->dim_gamma));
+  SET_VECTOR_ELT(contents, 5, ScalarInteger(internal->dim_H));
+  SET_VECTOR_ELT(contents, 6, ScalarInteger(internal->dim_I));
+  SET_VECTOR_ELT(contents, 7, ScalarInteger(internal->dim_init_E));
+  SET_VECTOR_ELT(contents, 8, ScalarInteger(internal->dim_init_H));
+  SET_VECTOR_ELT(contents, 9, ScalarInteger(internal->dim_init_I));
+  SET_VECTOR_ELT(contents, 10, ScalarInteger(internal->dim_init_R));
+  SET_VECTOR_ELT(contents, 11, ScalarInteger(internal->dim_init_S));
+  SET_VECTOR_ELT(contents, 12, ScalarInteger(internal->dim_lambda));
+  SET_VECTOR_ELT(contents, 13, ScalarInteger(internal->dim_lambda_prod));
+  SET_VECTOR_ELT(contents, 14, ScalarInteger(internal->dim_lambda_prod_1));
+  SET_VECTOR_ELT(contents, 15, ScalarInteger(internal->dim_lambda_prod_2));
+  SET_VECTOR_ELT(contents, 16, ScalarInteger(internal->dim_pop_change));
+  SET_VECTOR_ELT(contents, 17, ScalarInteger(internal->dim_pop_change_1));
+  SET_VECTOR_ELT(contents, 18, ScalarInteger(internal->dim_pop_change_2));
+  SET_VECTOR_ELT(contents, 19, ScalarInteger(internal->dim_pop_change_t));
+  SET_VECTOR_ELT(contents, 20, ScalarInteger(internal->dim_r));
+  SET_VECTOR_ELT(contents, 21, ScalarInteger(internal->dim_R));
+  SET_VECTOR_ELT(contents, 22, ScalarInteger(internal->dim_rate_intervention_effect));
+  SET_VECTOR_ELT(contents, 23, ScalarInteger(internal->dim_rate_intervention_effect_1));
+  SET_VECTOR_ELT(contents, 24, ScalarInteger(internal->dim_rate_intervention_effect_2));
+  SET_VECTOR_ELT(contents, 25, ScalarInteger(internal->dim_rate_intervention_end));
+  SET_VECTOR_ELT(contents, 26, ScalarInteger(internal->dim_rate_intervention_start));
+  SET_VECTOR_ELT(contents, 27, ScalarInteger(internal->dim_rate_reduction));
+  SET_VECTOR_ELT(contents, 28, ScalarInteger(internal->dim_rate_reduction_1));
+  SET_VECTOR_ELT(contents, 29, ScalarInteger(internal->dim_rate_reduction_2));
+  SET_VECTOR_ELT(contents, 30, ScalarInteger(internal->dim_rate_reduction_sum));
+  SET_VECTOR_ELT(contents, 31, ScalarInteger(internal->dim_rate_reduction_total));
+  SET_VECTOR_ELT(contents, 32, ScalarInteger(internal->dim_S));
+  SET_VECTOR_ELT(contents, 33, ScalarInteger(internal->dim_sigma));
+  SET_VECTOR_ELT(contents, 34, ScalarInteger(internal->dim_tau1));
+  SET_VECTOR_ELT(contents, 35, ScalarInteger(internal->dim_tau2));
+  SET_VECTOR_ELT(contents, 36, ScalarInteger(internal->dim_time));
+  SEXP eta = PROTECT(allocVector(REALSXP, internal->dim_eta));
+  memcpy(REAL(eta), internal->eta, internal->dim_eta * sizeof(double));
+  SET_VECTOR_ELT(contents, 37, eta);
+  SEXP gamma = PROTECT(allocVector(REALSXP, internal->dim_gamma));
+  memcpy(REAL(gamma), internal->gamma, internal->dim_gamma * sizeof(double));
+  SET_VECTOR_ELT(contents, 38, gamma);
+  SEXP init_E = PROTECT(allocVector(REALSXP, internal->dim_init_E));
+  memcpy(REAL(init_E), internal->init_E, internal->dim_init_E * sizeof(double));
+  SET_VECTOR_ELT(contents, 39, init_E);
+  SEXP init_H = PROTECT(allocVector(REALSXP, internal->dim_init_H));
+  memcpy(REAL(init_H), internal->init_H, internal->dim_init_H * sizeof(double));
+  SET_VECTOR_ELT(contents, 40, init_H);
+  SEXP init_I = PROTECT(allocVector(REALSXP, internal->dim_init_I));
+  memcpy(REAL(init_I), internal->init_I, internal->dim_init_I * sizeof(double));
+  SET_VECTOR_ELT(contents, 41, init_I);
+  SEXP init_R = PROTECT(allocVector(REALSXP, internal->dim_init_R));
+  memcpy(REAL(init_R), internal->init_R, internal->dim_init_R * sizeof(double));
+  SET_VECTOR_ELT(contents, 42, init_R);
+  SEXP init_S = PROTECT(allocVector(REALSXP, internal->dim_init_S));
+  memcpy(REAL(init_S), internal->init_S, internal->dim_init_S * sizeof(double));
+  SET_VECTOR_ELT(contents, 43, init_S);
+  SEXP initial_E = PROTECT(allocVector(REALSXP, internal->dim_E));
+  memcpy(REAL(initial_E), internal->initial_E, internal->dim_E * sizeof(double));
+  SET_VECTOR_ELT(contents, 44, initial_E);
+  SEXP initial_H = PROTECT(allocVector(REALSXP, internal->dim_H));
+  memcpy(REAL(initial_H), internal->initial_H, internal->dim_H * sizeof(double));
+  SET_VECTOR_ELT(contents, 45, initial_H);
+  SEXP initial_I = PROTECT(allocVector(REALSXP, internal->dim_I));
+  memcpy(REAL(initial_I), internal->initial_I, internal->dim_I * sizeof(double));
+  SET_VECTOR_ELT(contents, 46, initial_I);
+  SEXP initial_R = PROTECT(allocVector(REALSXP, internal->dim_R));
+  memcpy(REAL(initial_R), internal->initial_R, internal->dim_R * sizeof(double));
+  SET_VECTOR_ELT(contents, 47, initial_R);
+  SEXP initial_S = PROTECT(allocVector(REALSXP, internal->dim_S));
+  memcpy(REAL(initial_S), internal->initial_S, internal->dim_S * sizeof(double));
+  SET_VECTOR_ELT(contents, 48, initial_S);
+  SEXP lambda = PROTECT(allocVector(REALSXP, internal->dim_lambda));
+  memcpy(REAL(lambda), internal->lambda, internal->dim_lambda * sizeof(double));
+  SET_VECTOR_ELT(contents, 57, lambda);
+  SEXP lambda_prod = PROTECT(allocVector(REALSXP, internal->dim_lambda_prod));
+  memcpy(REAL(lambda_prod), internal->lambda_prod, internal->dim_lambda_prod * sizeof(double));
+  odin_set_dim(lambda_prod, 2, internal->dim_lambda_prod_1, internal->dim_lambda_prod_2);
+  SET_VECTOR_ELT(contents, 58, lambda_prod);
+  SET_VECTOR_ELT(contents, 59, ScalarInteger(internal->n_age));
+  SET_VECTOR_ELT(contents, 60, ScalarInteger(internal->n_rate_intervention));
+  SET_VECTOR_ELT(contents, 61, ScalarInteger(internal->n_time));
+  SET_VECTOR_ELT(contents, 62, ScalarInteger(internal->offset_variable_H));
+  SET_VECTOR_ELT(contents, 63, ScalarInteger(internal->offset_variable_I));
+  SET_VECTOR_ELT(contents, 64, ScalarInteger(internal->offset_variable_R));
+  SEXP pop_change = PROTECT(allocVector(REALSXP, internal->dim_pop_change));
+  memcpy(REAL(pop_change), internal->pop_change, internal->dim_pop_change * sizeof(double));
+  odin_set_dim(pop_change, 2, internal->dim_pop_change_1, internal->dim_pop_change_2);
+  SET_VECTOR_ELT(contents, 65, pop_change);
+  SEXP pop_change_t = PROTECT(allocVector(REALSXP, internal->dim_pop_change_t));
+  memcpy(REAL(pop_change_t), internal->pop_change_t, internal->dim_pop_change_t * sizeof(double));
+  SET_VECTOR_ELT(contents, 66, pop_change_t);
+  SEXP r = PROTECT(allocVector(REALSXP, internal->dim_r));
+  memcpy(REAL(r), internal->r, internal->dim_r * sizeof(double));
+  SET_VECTOR_ELT(contents, 67, r);
+  SEXP rate_intervention_effect = PROTECT(allocVector(REALSXP, internal->dim_rate_intervention_effect));
+  memcpy(REAL(rate_intervention_effect), internal->rate_intervention_effect, internal->dim_rate_intervention_effect * sizeof(double));
+  odin_set_dim(rate_intervention_effect, 2, internal->dim_rate_intervention_effect_1, internal->dim_rate_intervention_effect_2);
+  SET_VECTOR_ELT(contents, 68, rate_intervention_effect);
+  SEXP rate_intervention_end = PROTECT(allocVector(REALSXP, internal->dim_rate_intervention_end));
+  memcpy(REAL(rate_intervention_end), internal->rate_intervention_end, internal->dim_rate_intervention_end * sizeof(double));
+  SET_VECTOR_ELT(contents, 69, rate_intervention_end);
+  SEXP rate_intervention_start = PROTECT(allocVector(REALSXP, internal->dim_rate_intervention_start));
+  memcpy(REAL(rate_intervention_start), internal->rate_intervention_start, internal->dim_rate_intervention_start * sizeof(double));
+  SET_VECTOR_ELT(contents, 70, rate_intervention_start);
+  SEXP rate_reduction = PROTECT(allocVector(REALSXP, internal->dim_rate_reduction));
+  memcpy(REAL(rate_reduction), internal->rate_reduction, internal->dim_rate_reduction * sizeof(double));
+  odin_set_dim(rate_reduction, 2, internal->dim_rate_reduction_1, internal->dim_rate_reduction_2);
+  SET_VECTOR_ELT(contents, 71, rate_reduction);
+  SEXP rate_reduction_sum = PROTECT(allocVector(REALSXP, internal->dim_rate_reduction_sum));
+  memcpy(REAL(rate_reduction_sum), internal->rate_reduction_sum, internal->dim_rate_reduction_sum * sizeof(double));
+  SET_VECTOR_ELT(contents, 72, rate_reduction_sum);
+  SEXP rate_reduction_total = PROTECT(allocVector(REALSXP, internal->dim_rate_reduction_total));
+  memcpy(REAL(rate_reduction_total), internal->rate_reduction_total, internal->dim_rate_reduction_total * sizeof(double));
+  SET_VECTOR_ELT(contents, 73, rate_reduction_total);
+  SEXP sigma = PROTECT(allocVector(REALSXP, internal->dim_sigma));
+  memcpy(REAL(sigma), internal->sigma, internal->dim_sigma * sizeof(double));
+  SET_VECTOR_ELT(contents, 74, sigma);
+  SEXP tau1 = PROTECT(allocVector(REALSXP, internal->dim_tau1));
+  memcpy(REAL(tau1), internal->tau1, internal->dim_tau1 * sizeof(double));
+  SET_VECTOR_ELT(contents, 75, tau1);
+  SEXP tau2 = PROTECT(allocVector(REALSXP, internal->dim_tau2));
+  memcpy(REAL(tau2), internal->tau2, internal->dim_tau2 * sizeof(double));
+  SET_VECTOR_ELT(contents, 76, tau2);
+  SEXP time = PROTECT(allocVector(REALSXP, internal->dim_time));
+  memcpy(REAL(time), internal->time, internal->dim_time * sizeof(double));
+  SET_VECTOR_ELT(contents, 77, time);
+  SEXP nms = PROTECT(allocVector(STRSXP, 78));
+  SET_STRING_ELT(nms, 0, mkChar("beta"));
+  SET_STRING_ELT(nms, 1, mkChar("dim_beta"));
+  SET_STRING_ELT(nms, 2, mkChar("dim_E"));
+  SET_STRING_ELT(nms, 3, mkChar("dim_eta"));
+  SET_STRING_ELT(nms, 4, mkChar("dim_gamma"));
+  SET_STRING_ELT(nms, 5, mkChar("dim_H"));
+  SET_STRING_ELT(nms, 6, mkChar("dim_I"));
+  SET_STRING_ELT(nms, 7, mkChar("dim_init_E"));
+  SET_STRING_ELT(nms, 8, mkChar("dim_init_H"));
+  SET_STRING_ELT(nms, 9, mkChar("dim_init_I"));
+  SET_STRING_ELT(nms, 10, mkChar("dim_init_R"));
+  SET_STRING_ELT(nms, 11, mkChar("dim_init_S"));
+  SET_STRING_ELT(nms, 12, mkChar("dim_lambda"));
+  SET_STRING_ELT(nms, 13, mkChar("dim_lambda_prod"));
+  SET_STRING_ELT(nms, 14, mkChar("dim_lambda_prod_1"));
+  SET_STRING_ELT(nms, 15, mkChar("dim_lambda_prod_2"));
+  SET_STRING_ELT(nms, 16, mkChar("dim_pop_change"));
+  SET_STRING_ELT(nms, 17, mkChar("dim_pop_change_1"));
+  SET_STRING_ELT(nms, 18, mkChar("dim_pop_change_2"));
+  SET_STRING_ELT(nms, 19, mkChar("dim_pop_change_t"));
+  SET_STRING_ELT(nms, 20, mkChar("dim_r"));
+  SET_STRING_ELT(nms, 21, mkChar("dim_R"));
+  SET_STRING_ELT(nms, 22, mkChar("dim_rate_intervention_effect"));
+  SET_STRING_ELT(nms, 23, mkChar("dim_rate_intervention_effect_1"));
+  SET_STRING_ELT(nms, 24, mkChar("dim_rate_intervention_effect_2"));
+  SET_STRING_ELT(nms, 25, mkChar("dim_rate_intervention_end"));
+  SET_STRING_ELT(nms, 26, mkChar("dim_rate_intervention_start"));
+  SET_STRING_ELT(nms, 27, mkChar("dim_rate_reduction"));
+  SET_STRING_ELT(nms, 28, mkChar("dim_rate_reduction_1"));
+  SET_STRING_ELT(nms, 29, mkChar("dim_rate_reduction_2"));
+  SET_STRING_ELT(nms, 30, mkChar("dim_rate_reduction_sum"));
+  SET_STRING_ELT(nms, 31, mkChar("dim_rate_reduction_total"));
+  SET_STRING_ELT(nms, 32, mkChar("dim_S"));
+  SET_STRING_ELT(nms, 33, mkChar("dim_sigma"));
+  SET_STRING_ELT(nms, 34, mkChar("dim_tau1"));
+  SET_STRING_ELT(nms, 35, mkChar("dim_tau2"));
+  SET_STRING_ELT(nms, 36, mkChar("dim_time"));
+  SET_STRING_ELT(nms, 37, mkChar("eta"));
+  SET_STRING_ELT(nms, 38, mkChar("gamma"));
+  SET_STRING_ELT(nms, 39, mkChar("init_E"));
+  SET_STRING_ELT(nms, 40, mkChar("init_H"));
+  SET_STRING_ELT(nms, 41, mkChar("init_I"));
+  SET_STRING_ELT(nms, 42, mkChar("init_R"));
+  SET_STRING_ELT(nms, 43, mkChar("init_S"));
+  SET_STRING_ELT(nms, 44, mkChar("initial_E"));
+  SET_STRING_ELT(nms, 45, mkChar("initial_H"));
+  SET_STRING_ELT(nms, 46, mkChar("initial_I"));
+  SET_STRING_ELT(nms, 47, mkChar("initial_R"));
+  SET_STRING_ELT(nms, 48, mkChar("initial_S"));
+  SET_STRING_ELT(nms, 49, mkChar("interpolate_beta_t"));
+  SET_STRING_ELT(nms, 50, mkChar("interpolate_eta_t"));
+  SET_STRING_ELT(nms, 51, mkChar("interpolate_gamma_t"));
+  SET_STRING_ELT(nms, 52, mkChar("interpolate_pop_change_t"));
+  SET_STRING_ELT(nms, 53, mkChar("interpolate_r_t"));
+  SET_STRING_ELT(nms, 54, mkChar("interpolate_sigma_t"));
+  SET_STRING_ELT(nms, 55, mkChar("interpolate_tau1_t"));
+  SET_STRING_ELT(nms, 56, mkChar("interpolate_tau2_t"));
+  SET_STRING_ELT(nms, 57, mkChar("lambda"));
+  SET_STRING_ELT(nms, 58, mkChar("lambda_prod"));
+  SET_STRING_ELT(nms, 59, mkChar("n_age"));
+  SET_STRING_ELT(nms, 60, mkChar("n_rate_intervention"));
+  SET_STRING_ELT(nms, 61, mkChar("n_time"));
+  SET_STRING_ELT(nms, 62, mkChar("offset_variable_H"));
+  SET_STRING_ELT(nms, 63, mkChar("offset_variable_I"));
+  SET_STRING_ELT(nms, 64, mkChar("offset_variable_R"));
+  SET_STRING_ELT(nms, 65, mkChar("pop_change"));
+  SET_STRING_ELT(nms, 66, mkChar("pop_change_t"));
+  SET_STRING_ELT(nms, 67, mkChar("r"));
+  SET_STRING_ELT(nms, 68, mkChar("rate_intervention_effect"));
+  SET_STRING_ELT(nms, 69, mkChar("rate_intervention_end"));
+  SET_STRING_ELT(nms, 70, mkChar("rate_intervention_start"));
+  SET_STRING_ELT(nms, 71, mkChar("rate_reduction"));
+  SET_STRING_ELT(nms, 72, mkChar("rate_reduction_sum"));
+  SET_STRING_ELT(nms, 73, mkChar("rate_reduction_total"));
+  SET_STRING_ELT(nms, 74, mkChar("sigma"));
+  SET_STRING_ELT(nms, 75, mkChar("tau1"));
+  SET_STRING_ELT(nms, 76, mkChar("tau2"));
+  SET_STRING_ELT(nms, 77, mkChar("time"));
+  setAttrib(contents, R_NamesSymbol, nms);
+  UNPROTECT(30);
+  return contents;
+}
+SEXP diphtheria_set_user(SEXP internal_p, SEXP user) {
+  diphtheria_internal *internal = diphtheria_get_internal(internal_p, 1);
+  internal->n_age = user_get_scalar_int(user, "n_age", internal->n_age, NA_REAL, NA_REAL);
+  internal->n_rate_intervention = user_get_scalar_int(user, "n_rate_intervention", internal->n_rate_intervention, NA_REAL, NA_REAL);
+  internal->n_time = user_get_scalar_int(user, "n_time", internal->n_time, NA_REAL, NA_REAL);
+  internal->dim_beta = internal->n_time;
+  internal->dim_E = internal->n_age;
+  internal->dim_eta = internal->n_time;
+  internal->dim_gamma = internal->n_time;
+  internal->dim_H = internal->n_age;
+  internal->dim_I = internal->n_age;
+  internal->dim_init_E = internal->n_age;
+  internal->dim_init_H = internal->n_age;
+  internal->dim_init_I = internal->n_age;
+  internal->dim_init_R = internal->n_age;
+  internal->dim_init_S = internal->n_age;
+  internal->dim_lambda = internal->n_age;
+  internal->dim_lambda_prod_1 = internal->n_age;
+  internal->dim_lambda_prod_2 = internal->n_age;
+  internal->dim_pop_change_1 = internal->n_time;
+  internal->dim_pop_change_2 = internal->n_age;
+  internal->dim_pop_change_t = internal->n_age;
+  internal->dim_r = internal->n_time;
+  internal->dim_R = internal->n_age;
+  internal->dim_rate_intervention_effect_1 = internal->n_rate_intervention;
+  internal->dim_rate_intervention_effect_2 = internal->n_age;
+  internal->dim_rate_intervention_end = internal->n_rate_intervention;
+  internal->dim_rate_intervention_start = internal->n_rate_intervention;
+  internal->dim_rate_reduction_1 = internal->n_rate_intervention;
+  internal->dim_rate_reduction_2 = internal->n_age;
+  internal->dim_rate_reduction_sum = internal->n_age;
+  internal->dim_rate_reduction_total = internal->n_age;
+  internal->dim_S = internal->n_age;
+  internal->dim_sigma = internal->n_time;
+  internal->dim_tau1 = internal->n_time;
+  internal->dim_tau2 = internal->n_time;
+  internal->dim_time = internal->n_time;
+  R_Free(internal->initial_E);
+  internal->initial_E = (double*) R_Calloc(internal->dim_E, double);
+  R_Free(internal->initial_H);
+  internal->initial_H = (double*) R_Calloc(internal->dim_H, double);
+  R_Free(internal->initial_I);
+  internal->initial_I = (double*) R_Calloc(internal->dim_I, double);
+  R_Free(internal->initial_R);
+  internal->initial_R = (double*) R_Calloc(internal->dim_R, double);
+  R_Free(internal->initial_S);
+  internal->initial_S = (double*) R_Calloc(internal->dim_S, double);
+  R_Free(internal->lambda);
+  internal->lambda = (double*) R_Calloc(internal->dim_lambda, double);
+  R_Free(internal->pop_change_t);
+  internal->pop_change_t = (double*) R_Calloc(internal->dim_pop_change_t, double);
+  R_Free(internal->rate_reduction_sum);
+  internal->rate_reduction_sum = (double*) R_Calloc(internal->dim_rate_reduction_sum, double);
+  R_Free(internal->rate_reduction_total);
+  internal->rate_reduction_total = (double*) R_Calloc(internal->dim_rate_reduction_total, double);
+  internal->beta = (double*) user_get_array(user, false, internal->beta, "beta", NA_REAL, NA_REAL, 1, internal->dim_beta);
+  internal->dim_lambda_prod = internal->dim_lambda_prod_1 * internal->dim_lambda_prod_2;
+  internal->dim_pop_change = internal->dim_pop_change_1 * internal->dim_pop_change_2;
+  internal->dim_rate_intervention_effect = internal->dim_rate_intervention_effect_1 * internal->dim_rate_intervention_effect_2;
+  internal->dim_rate_reduction = internal->dim_rate_reduction_1 * internal->dim_rate_reduction_2;
+  internal->eta = (double*) user_get_array(user, false, internal->eta, "eta", NA_REAL, NA_REAL, 1, internal->dim_eta);
+  internal->gamma = (double*) user_get_array(user, false, internal->gamma, "gamma", NA_REAL, NA_REAL, 1, internal->dim_gamma);
+  internal->init_E = (double*) user_get_array(user, false, internal->init_E, "init_E", NA_REAL, NA_REAL, 1, internal->dim_init_E);
+  internal->init_H = (double*) user_get_array(user, false, internal->init_H, "init_H", NA_REAL, NA_REAL, 1, internal->dim_init_H);
+  internal->init_I = (double*) user_get_array(user, false, internal->init_I, "init_I", NA_REAL, NA_REAL, 1, internal->dim_init_I);
+  internal->init_R = (double*) user_get_array(user, false, internal->init_R, "init_R", NA_REAL, NA_REAL, 1, internal->dim_init_R);
+  internal->init_S = (double*) user_get_array(user, false, internal->init_S, "init_S", NA_REAL, NA_REAL, 1, internal->dim_init_S);
+  internal->offset_variable_H = internal->dim_E + internal->dim_I + internal->dim_S;
+  internal->offset_variable_I = internal->dim_E + internal->dim_S;
+  internal->offset_variable_R = internal->dim_E + internal->dim_H + internal->dim_I + internal->dim_S;
+  internal->r = (double*) user_get_array(user, false, internal->r, "r", NA_REAL, NA_REAL, 1, internal->dim_r);
+  internal->rate_intervention_end = (double*) user_get_array(user, false, internal->rate_intervention_end, "rate_intervention_end", NA_REAL, NA_REAL, 1, internal->dim_rate_intervention_end);
+  internal->rate_intervention_start = (double*) user_get_array(user, false, internal->rate_intervention_start, "rate_intervention_start", NA_REAL, NA_REAL, 1, internal->dim_rate_intervention_start);
+  internal->sigma = (double*) user_get_array(user, false, internal->sigma, "sigma", NA_REAL, NA_REAL, 1, internal->dim_sigma);
+  internal->tau1 = (double*) user_get_array(user, false, internal->tau1, "tau1", NA_REAL, NA_REAL, 1, internal->dim_tau1);
+  internal->tau2 = (double*) user_get_array(user, false, internal->tau2, "tau2", NA_REAL, NA_REAL, 1, internal->dim_tau2);
+  internal->time = (double*) user_get_array(user, false, internal->time, "time", NA_REAL, NA_REAL, 1, internal->dim_time);
+  R_Free(internal->lambda_prod);
+  internal->lambda_prod = (double*) R_Calloc(internal->dim_lambda_prod, double);
+  R_Free(internal->rate_reduction);
+  internal->rate_reduction = (double*) R_Calloc(internal->dim_rate_reduction, double);
+  for (int i = 1; i <= internal->dim_E; ++i) {
+    internal->initial_E[i - 1] = internal->init_E[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_H; ++i) {
+    internal->initial_H[i - 1] = internal->init_H[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_I; ++i) {
+    internal->initial_I[i - 1] = internal->init_I[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R; ++i) {
+    internal->initial_R[i - 1] = internal->init_R[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_S; ++i) {
+    internal->initial_S[i - 1] = internal->init_S[i - 1];
+  }
+  interpolate_check_y(internal->dim_time, internal->dim_beta, 0, "beta", "beta_t");
+  cinterpolate_free(internal->interpolate_beta_t);
+  internal->interpolate_beta_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->beta, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_eta, 0, "eta", "eta_t");
+  cinterpolate_free(internal->interpolate_eta_t);
+  internal->interpolate_eta_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->eta, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_gamma, 0, "gamma", "gamma_t");
+  cinterpolate_free(internal->interpolate_gamma_t);
+  internal->interpolate_gamma_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->gamma, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_r, 0, "r", "r_t");
+  cinterpolate_free(internal->interpolate_r_t);
+  internal->interpolate_r_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->r, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_sigma, 0, "sigma", "sigma_t");
+  cinterpolate_free(internal->interpolate_sigma_t);
+  internal->interpolate_sigma_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->sigma, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_tau1, 0, "tau1", "tau1_t");
+  cinterpolate_free(internal->interpolate_tau1_t);
+  internal->interpolate_tau1_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->tau1, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_tau2, 0, "tau2", "tau2_t");
+  cinterpolate_free(internal->interpolate_tau2_t);
+  internal->interpolate_tau2_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->tau2, true, false);
+  internal->pop_change = (double*) user_get_array(user, false, internal->pop_change, "pop_change", NA_REAL, NA_REAL, 2, internal->dim_pop_change_1, internal->dim_pop_change_2);
+  internal->rate_intervention_effect = (double*) user_get_array(user, false, internal->rate_intervention_effect, "rate_intervention_effect", NA_REAL, NA_REAL, 2, internal->dim_rate_intervention_effect_1, internal->dim_rate_intervention_effect_2);
+  interpolate_check_y(internal->dim_time, internal->dim_pop_change_1, 1, "pop_change", "pop_change_t");
+  interpolate_check_y(internal->dim_pop_change_t, internal->dim_pop_change_2, 2, "pop_change", "pop_change_t");
+  cinterpolate_free(internal->interpolate_pop_change_t);
+  internal->interpolate_pop_change_t = cinterpolate_alloc("linear", internal->dim_time, internal->dim_pop_change_t, internal->time, internal->pop_change, true, false);
+  return R_NilValue;
+}
+SEXP diphtheria_set_initial(SEXP internal_p, SEXP t_ptr, SEXP state_ptr, SEXP diphtheria_use_dde_ptr) {
+  return R_NilValue;
+}
+SEXP diphtheria_metadata(SEXP internal_p) {
+  diphtheria_internal *internal = diphtheria_get_internal(internal_p, 1);
+  SEXP ret = PROTECT(allocVector(VECSXP, 4));
+  SEXP nms = PROTECT(allocVector(STRSXP, 4));
+  SET_STRING_ELT(nms, 0, mkChar("variable_order"));
+  SET_STRING_ELT(nms, 1, mkChar("output_order"));
+  SET_STRING_ELT(nms, 2, mkChar("n_out"));
+  SET_STRING_ELT(nms, 3, mkChar("interpolate_t"));
+  setAttrib(ret, R_NamesSymbol, nms);
+  SEXP variable_length = PROTECT(allocVector(VECSXP, 5));
+  SEXP variable_names = PROTECT(allocVector(STRSXP, 5));
+  setAttrib(variable_length, R_NamesSymbol, variable_names);
+  SET_VECTOR_ELT(variable_length, 0, ScalarInteger(internal->dim_S));
+  SET_VECTOR_ELT(variable_length, 1, ScalarInteger(internal->dim_E));
+  SET_VECTOR_ELT(variable_length, 2, ScalarInteger(internal->dim_I));
+  SET_VECTOR_ELT(variable_length, 3, ScalarInteger(internal->dim_H));
+  SET_VECTOR_ELT(variable_length, 4, ScalarInteger(internal->dim_R));
+  SET_STRING_ELT(variable_names, 0, mkChar("S"));
+  SET_STRING_ELT(variable_names, 1, mkChar("E"));
+  SET_STRING_ELT(variable_names, 2, mkChar("I"));
+  SET_STRING_ELT(variable_names, 3, mkChar("H"));
+  SET_STRING_ELT(variable_names, 4, mkChar("R"));
+  SET_VECTOR_ELT(ret, 0, variable_length);
+  UNPROTECT(2);
+  SET_VECTOR_ELT(ret, 1, R_NilValue);
+  SET_VECTOR_ELT(ret, 2, ScalarInteger(0));
+  SEXP interpolate_t = PROTECT(allocVector(VECSXP, 3));
+  SEXP interpolate_t_nms = PROTECT(allocVector(STRSXP, 3));
+  setAttrib(interpolate_t, R_NamesSymbol, interpolate_t_nms);
+  SET_VECTOR_ELT(interpolate_t, 0, ScalarReal(internal->time[0]));
+  SET_VECTOR_ELT(interpolate_t, 1, ScalarReal(internal->time[internal->dim_time - 1]));
+  SET_STRING_ELT(interpolate_t_nms, 0, mkChar("min"));
+  SET_STRING_ELT(interpolate_t_nms, 1, mkChar("max"));
+  SET_VECTOR_ELT(ret, 3, interpolate_t);
+  UNPROTECT(2);
+  UNPROTECT(2);
+  return ret;
+}
+SEXP diphtheria_initial_conditions(SEXP internal_p, SEXP t_ptr) {
+  diphtheria_internal *internal = diphtheria_get_internal(internal_p, 1);
+  SEXP r_state = PROTECT(allocVector(REALSXP, internal->dim_E + internal->dim_H + internal->dim_I + internal->dim_R + internal->dim_S));
+  double * state = REAL(r_state);
+  memcpy(state + 0, internal->initial_S, internal->dim_S * sizeof(double));
+  memcpy(state + internal->dim_S, internal->initial_E, internal->dim_E * sizeof(double));
+  memcpy(state + internal->offset_variable_I, internal->initial_I, internal->dim_I * sizeof(double));
+  memcpy(state + internal->offset_variable_H, internal->initial_H, internal->dim_H * sizeof(double));
+  memcpy(state + internal->offset_variable_R, internal->initial_R, internal->dim_R * sizeof(double));
+  UNPROTECT(1);
+  return r_state;
+}
+void diphtheria_rhs(diphtheria_internal* internal, double t, double * state, double * dstatedt, double * output) {
+  double * S = state + 0;
+  double * E = state + internal->dim_S;
+  double * I = state + internal->offset_variable_I;
+  double * H = state + internal->offset_variable_H;
+  double * R = state + internal->offset_variable_R;
+  double beta_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_beta_t, &beta_t);
+  double eta_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_eta_t, &eta_t);
+  double gamma_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_gamma_t, &gamma_t);
+  double r_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_r_t, &r_t);
+  for (int i = 1; i <= internal->dim_rate_reduction_1; ++i) {
+    for (int j = 1; j <= internal->dim_rate_reduction_2; ++j) {
+      internal->rate_reduction[i - 1 + internal->dim_rate_reduction_1 * (j - 1)] = (t > internal->rate_intervention_start[i - 1] && t < internal->rate_intervention_end[i - 1] ? internal->rate_intervention_effect[internal->dim_rate_intervention_effect_1 * (j - 1) + i - 1] : 0);
+    }
+  }
+  double sigma_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_sigma_t, &sigma_t);
+  double tau1_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_tau1_t, &tau1_t);
+  double tau2_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_tau2_t, &tau2_t);
+  for (int i = 1; i <= internal->dim_H; ++i) {
+    dstatedt[internal->offset_variable_H + i - 1] = tau1_t * eta_t * r_t * I[i - 1] - tau2_t * H[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_I; ++i) {
+    dstatedt[internal->offset_variable_I + i - 1] = sigma_t * E[i - 1] - eta_t * tau1_t * r_t * I[i - 1] - gamma_t * I[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R; ++i) {
+    dstatedt[internal->offset_variable_R + i - 1] = gamma_t * I[i - 1] + tau2_t * H[i - 1];
+  }
+  cinterpolate_eval(t, internal->interpolate_pop_change_t, internal->pop_change_t);
+  for (int i = 1; i <= internal->dim_rate_reduction_sum; ++i) {
+    internal->rate_reduction_sum[i - 1] = odin_sum2(internal->rate_reduction, 0, internal->dim_rate_reduction_1, i - 1, i, internal->dim_rate_reduction_1);
+  }
+  for (int i = 1; i <= internal->dim_rate_reduction_total; ++i) {
+    internal->rate_reduction_total[i - 1] = 1 - fmin(internal->rate_reduction_sum[i - 1], 1);
+  }
+  for (int i = 1; i <= internal->dim_lambda_prod_1; ++i) {
+    for (int j = 1; j <= internal->dim_lambda_prod_2; ++j) {
+      internal->lambda_prod[i - 1 + internal->dim_lambda_prod_1 * (j - 1)] = beta_t * I[j - 1] * internal->rate_reduction_total[i - 1] / (double) (odin_sum1(S, 0, internal->dim_S) + odin_sum1(E, 0, internal->dim_E) + odin_sum1(I, 0, internal->dim_I) + odin_sum1(H, 0, internal->dim_H) + odin_sum1(R, 0, internal->dim_R));
+    }
+  }
+  for (int i = 1; i <= internal->dim_lambda; ++i) {
+    internal->lambda[i - 1] = odin_sum2(internal->lambda_prod, i - 1, i, 0, internal->dim_lambda_prod_2, internal->dim_lambda_prod_1);
+  }
+  for (int i = 1; i <= internal->dim_E; ++i) {
+    dstatedt[internal->dim_S + i - 1] = internal->lambda[i - 1] * S[i - 1] - sigma_t * E[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_S; ++i) {
+    dstatedt[0 + i - 1] = -(internal->lambda[i - 1]) * S[i - 1] + internal->pop_change_t[i - 1];
+  }
+}
+void diphtheria_rhs_dde(size_t neq, double t, double * state, double * dstatedt, void * internal) {
+  diphtheria_rhs((diphtheria_internal*)internal, t, state, dstatedt, NULL);
+}
+void diphtheria_rhs_desolve(int * neq, double * t, double * state, double * dstatedt, double * output, int * np) {
+  diphtheria_rhs(diphtheria_internal_ds, *t, state, dstatedt, output);
+}
+SEXP diphtheria_rhs_r(SEXP internal_p, SEXP t, SEXP state) {
+  SEXP dstatedt = PROTECT(allocVector(REALSXP, LENGTH(state)));
+  diphtheria_internal *internal = diphtheria_get_internal(internal_p, 1);
+  double *output = NULL;
+  diphtheria_rhs(internal, scalar_real(t, "t"), REAL(state), REAL(dstatedt), output);
+  UNPROTECT(1);
+  return dstatedt;
+}
 seirv_model_internal* seirv_model_get_internal(SEXP internal_p, int closed_error) {
   seirv_model_internal *internal = NULL;
   if (TYPEOF(internal_p) != EXTPTRSXP) {
@@ -768,7 +1614,7 @@ void seirv_model_rhs(seirv_model_internal* internal, double t, double * state, d
   double * E = state + internal->dim_S;
   double * I = state + internal->offset_variable_I;
   for (int i = 1; i <= internal->dim_vax_rate; ++i) {
-    internal->vax_rate[i - 1] = (t >= internal->vax_start[i - 1] && t <= internal->vax_end[i - 1] ? internal->vax_nu[i - 1] / (double) S[i - 1] : 0);
+    internal->vax_rate[i - 1] = (S[i - 1] == 0 ? 0 : (t >= internal->vax_start[i - 1] && t <= internal->vax_end[i - 1] ? internal->vax_nu[i - 1] / (double) S[i - 1] : 0));
   }
   double beta_t = 0.0;
   cinterpolate_eval(t, internal->interpolate_beta_t, &beta_t);
@@ -816,10 +1662,10 @@ void seirv_model_rhs(seirv_model_internal* internal, double t, double * state, d
     dstatedt[internal->dim_S + i - 1] = internal->lambda[i - 1] * S[i - 1] - sigma_t * E[i - 1];
   }
   for (int i = 1; i <= internal->dim_S; ++i) {
-    dstatedt[0 + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] < 1 ? -((internal->lambda[i - 1] + internal->vax_rate[i - 1])) * S[i - 1] : -(S[i - 1]));
+    dstatedt[0 + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] <= 1 ? -((internal->lambda[i - 1] + internal->vax_rate[i - 1])) * S[i - 1] : -(S[i - 1]));
   }
   for (int i = 1; i <= internal->dim_V; ++i) {
-    dstatedt[internal->offset_variable_V + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] < 1 ? internal->vax_rate[i - 1] * S[i - 1] : S[i - 1] * (1 - internal->lambda[i - 1]));
+    dstatedt[internal->offset_variable_V + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] <= 1 ? internal->vax_rate[i - 1] * S[i - 1] : S[i - 1] * (1 - internal->lambda[i - 1]));
   }
 }
 void seirv_model_rhs_dde(size_t neq, double t, double * state, double * dstatedt, void * internal) {
@@ -833,6 +1679,1024 @@ SEXP seirv_model_rhs_r(SEXP internal_p, SEXP t, SEXP state) {
   seirv_model_internal *internal = seirv_model_get_internal(internal_p, 1);
   double *output = NULL;
   seirv_model_rhs(internal, scalar_real(t, "t"), REAL(state), REAL(dstatedt), output);
+  UNPROTECT(1);
+  return dstatedt;
+}
+vacamole_internal* vacamole_get_internal(SEXP internal_p, int closed_error) {
+  vacamole_internal *internal = NULL;
+  if (TYPEOF(internal_p) != EXTPTRSXP) {
+    Rf_error("Expected an external pointer");
+  }
+  internal = (vacamole_internal*) R_ExternalPtrAddr(internal_p);
+  if (!internal && closed_error) {
+    Rf_error("Pointer has been invalidated");
+  }
+  return internal;
+}
+void vacamole_finalise(SEXP internal_p) {
+  vacamole_internal *internal = vacamole_get_internal(internal_p, 0);
+  if (internal_p) {
+    cinterpolate_free(internal->interpolate_beta_t);
+    cinterpolate_free(internal->interpolate_beta_vax_t);
+    cinterpolate_free(internal->interpolate_eta_t);
+    cinterpolate_free(internal->interpolate_eta_vax_t);
+    cinterpolate_free(internal->interpolate_gamma_t);
+    cinterpolate_free(internal->interpolate_omega_t);
+    cinterpolate_free(internal->interpolate_omega_vax_t);
+    cinterpolate_free(internal->interpolate_sigma_t);
+    internal->interpolate_beta_t = NULL;
+    internal->interpolate_beta_vax_t = NULL;
+    internal->interpolate_eta_t = NULL;
+    internal->interpolate_eta_vax_t = NULL;
+    internal->interpolate_gamma_t = NULL;
+    internal->interpolate_omega_t = NULL;
+    internal->interpolate_omega_vax_t = NULL;
+    internal->interpolate_sigma_t = NULL;
+    R_Free(internal->beta);
+    R_Free(internal->beta_vax);
+    R_Free(internal->C);
+    R_Free(internal->contact_intervention_effect);
+    R_Free(internal->contact_intervention_end);
+    R_Free(internal->contact_intervention_start);
+    R_Free(internal->contact_reduction);
+    R_Free(internal->contact_reduction_sum);
+    R_Free(internal->contact_reduction_total);
+    R_Free(internal->eta);
+    R_Free(internal->eta_vax);
+    R_Free(internal->gamma);
+    R_Free(internal->init_D);
+    R_Free(internal->init_E);
+    R_Free(internal->init_EV);
+    R_Free(internal->init_H);
+    R_Free(internal->init_HV);
+    R_Free(internal->init_I);
+    R_Free(internal->init_IV);
+    R_Free(internal->init_R);
+    R_Free(internal->init_S);
+    R_Free(internal->init_V1);
+    R_Free(internal->init_V2);
+    R_Free(internal->initial_D);
+    R_Free(internal->initial_E);
+    R_Free(internal->initial_EV);
+    R_Free(internal->initial_H);
+    R_Free(internal->initial_HV);
+    R_Free(internal->initial_I);
+    R_Free(internal->initial_IV);
+    R_Free(internal->initial_R);
+    R_Free(internal->initial_S);
+    R_Free(internal->initial_V1);
+    R_Free(internal->initial_V2);
+    R_Free(internal->lambda);
+    R_Free(internal->lambda_prod);
+    R_Free(internal->lambda_prod_vax);
+    R_Free(internal->lambda_vax);
+    R_Free(internal->omega);
+    R_Free(internal->omega_vax);
+    R_Free(internal->rate_intervention_effect);
+    R_Free(internal->rate_intervention_end);
+    R_Free(internal->rate_intervention_start);
+    R_Free(internal->rate_reduction);
+    R_Free(internal->rate_reduction_sum);
+    R_Free(internal->rate_reduction_total);
+    R_Free(internal->sigma);
+    R_Free(internal->time);
+    R_Free(internal->vax_end);
+    R_Free(internal->vax_nu);
+    R_Free(internal->vax_rate_S);
+    R_Free(internal->vax_rate_V1);
+    R_Free(internal->vax_start);
+    R_Free(internal);
+    R_ClearExternalPtr(internal_p);
+  }
+}
+SEXP vacamole_create(SEXP user) {
+  vacamole_internal *internal = (vacamole_internal*) R_Calloc(1, vacamole_internal);
+  internal->beta = NULL;
+  internal->beta_vax = NULL;
+  internal->C = NULL;
+  internal->contact_intervention_effect = NULL;
+  internal->contact_intervention_end = NULL;
+  internal->contact_intervention_start = NULL;
+  internal->contact_reduction = NULL;
+  internal->contact_reduction_sum = NULL;
+  internal->contact_reduction_total = NULL;
+  internal->eta = NULL;
+  internal->eta_vax = NULL;
+  internal->gamma = NULL;
+  internal->init_D = NULL;
+  internal->init_E = NULL;
+  internal->init_EV = NULL;
+  internal->init_H = NULL;
+  internal->init_HV = NULL;
+  internal->init_I = NULL;
+  internal->init_IV = NULL;
+  internal->init_R = NULL;
+  internal->init_S = NULL;
+  internal->init_V1 = NULL;
+  internal->init_V2 = NULL;
+  internal->initial_D = NULL;
+  internal->initial_E = NULL;
+  internal->initial_EV = NULL;
+  internal->initial_H = NULL;
+  internal->initial_HV = NULL;
+  internal->initial_I = NULL;
+  internal->initial_IV = NULL;
+  internal->initial_R = NULL;
+  internal->initial_S = NULL;
+  internal->initial_V1 = NULL;
+  internal->initial_V2 = NULL;
+  internal->lambda = NULL;
+  internal->lambda_prod = NULL;
+  internal->lambda_prod_vax = NULL;
+  internal->lambda_vax = NULL;
+  internal->omega = NULL;
+  internal->omega_vax = NULL;
+  internal->rate_intervention_effect = NULL;
+  internal->rate_intervention_end = NULL;
+  internal->rate_intervention_start = NULL;
+  internal->rate_reduction = NULL;
+  internal->rate_reduction_sum = NULL;
+  internal->rate_reduction_total = NULL;
+  internal->sigma = NULL;
+  internal->time = NULL;
+  internal->vax_end = NULL;
+  internal->vax_nu = NULL;
+  internal->vax_rate_S = NULL;
+  internal->vax_rate_V1 = NULL;
+  internal->vax_start = NULL;
+  internal->beta = NULL;
+  internal->beta_vax = NULL;
+  internal->C = NULL;
+  internal->contact_intervention_effect = NULL;
+  internal->contact_intervention_end = NULL;
+  internal->contact_intervention_start = NULL;
+  internal->eta = NULL;
+  internal->eta_vax = NULL;
+  internal->gamma = NULL;
+  internal->init_D = NULL;
+  internal->init_E = NULL;
+  internal->init_EV = NULL;
+  internal->init_H = NULL;
+  internal->init_HV = NULL;
+  internal->init_I = NULL;
+  internal->init_IV = NULL;
+  internal->init_R = NULL;
+  internal->init_S = NULL;
+  internal->init_V1 = NULL;
+  internal->init_V2 = NULL;
+  internal->n_age = NA_INTEGER;
+  internal->n_contact_intervention = NA_INTEGER;
+  internal->n_rate_intervention = NA_INTEGER;
+  internal->n_time = NA_INTEGER;
+  internal->omega = NULL;
+  internal->omega_vax = NULL;
+  internal->rate_intervention_effect = NULL;
+  internal->rate_intervention_end = NULL;
+  internal->rate_intervention_start = NULL;
+  internal->sigma = NULL;
+  internal->time = NULL;
+  internal->vax_end = NULL;
+  internal->vax_nu = NULL;
+  internal->vax_start = NULL;
+  SEXP ptr = PROTECT(R_MakeExternalPtr(internal, R_NilValue, R_NilValue));
+  R_RegisterCFinalizer(ptr, vacamole_finalise);
+  UNPROTECT(1);
+  return ptr;
+}
+static vacamole_internal *vacamole_internal_ds;
+void vacamole_initmod_desolve(void(* odeparms) (int *, double *)) {
+  static DL_FUNC get_desolve_gparms = NULL;
+  if (get_desolve_gparms == NULL) {
+    get_desolve_gparms =
+      R_GetCCallable("deSolve", "get_deSolve_gparms");
+  }
+  vacamole_internal_ds = vacamole_get_internal(get_desolve_gparms(), 1);
+}
+SEXP vacamole_contents(SEXP internal_p) {
+  vacamole_internal *internal = vacamole_get_internal(internal_p, 1);
+  SEXP contents = PROTECT(allocVector(VECSXP, 147));
+  SEXP beta = PROTECT(allocVector(REALSXP, internal->dim_beta));
+  memcpy(REAL(beta), internal->beta, internal->dim_beta * sizeof(double));
+  SET_VECTOR_ELT(contents, 0, beta);
+  SEXP beta_vax = PROTECT(allocVector(REALSXP, internal->dim_beta_vax));
+  memcpy(REAL(beta_vax), internal->beta_vax, internal->dim_beta_vax * sizeof(double));
+  SET_VECTOR_ELT(contents, 1, beta_vax);
+  SEXP C = PROTECT(allocVector(REALSXP, internal->dim_C));
+  memcpy(REAL(C), internal->C, internal->dim_C * sizeof(double));
+  odin_set_dim(C, 2, internal->dim_C_1, internal->dim_C_2);
+  SET_VECTOR_ELT(contents, 2, C);
+  SEXP contact_intervention_effect = PROTECT(allocVector(REALSXP, internal->dim_contact_intervention_effect));
+  memcpy(REAL(contact_intervention_effect), internal->contact_intervention_effect, internal->dim_contact_intervention_effect * sizeof(double));
+  odin_set_dim(contact_intervention_effect, 2, internal->dim_contact_intervention_effect_1, internal->dim_contact_intervention_effect_2);
+  SET_VECTOR_ELT(contents, 3, contact_intervention_effect);
+  SEXP contact_intervention_end = PROTECT(allocVector(REALSXP, internal->dim_contact_intervention_end));
+  memcpy(REAL(contact_intervention_end), internal->contact_intervention_end, internal->dim_contact_intervention_end * sizeof(double));
+  SET_VECTOR_ELT(contents, 4, contact_intervention_end);
+  SEXP contact_intervention_start = PROTECT(allocVector(REALSXP, internal->dim_contact_intervention_start));
+  memcpy(REAL(contact_intervention_start), internal->contact_intervention_start, internal->dim_contact_intervention_start * sizeof(double));
+  SET_VECTOR_ELT(contents, 5, contact_intervention_start);
+  SEXP contact_reduction = PROTECT(allocVector(REALSXP, internal->dim_contact_reduction));
+  memcpy(REAL(contact_reduction), internal->contact_reduction, internal->dim_contact_reduction * sizeof(double));
+  odin_set_dim(contact_reduction, 2, internal->dim_contact_reduction_1, internal->dim_contact_reduction_2);
+  SET_VECTOR_ELT(contents, 6, contact_reduction);
+  SEXP contact_reduction_sum = PROTECT(allocVector(REALSXP, internal->dim_contact_reduction_sum));
+  memcpy(REAL(contact_reduction_sum), internal->contact_reduction_sum, internal->dim_contact_reduction_sum * sizeof(double));
+  SET_VECTOR_ELT(contents, 7, contact_reduction_sum);
+  SEXP contact_reduction_total = PROTECT(allocVector(REALSXP, internal->dim_contact_reduction_total));
+  memcpy(REAL(contact_reduction_total), internal->contact_reduction_total, internal->dim_contact_reduction_total * sizeof(double));
+  SET_VECTOR_ELT(contents, 8, contact_reduction_total);
+  SET_VECTOR_ELT(contents, 9, ScalarInteger(internal->dim_beta));
+  SET_VECTOR_ELT(contents, 10, ScalarInteger(internal->dim_beta_vax));
+  SET_VECTOR_ELT(contents, 11, ScalarInteger(internal->dim_C));
+  SET_VECTOR_ELT(contents, 12, ScalarInteger(internal->dim_C_1));
+  SET_VECTOR_ELT(contents, 13, ScalarInteger(internal->dim_C_2));
+  SET_VECTOR_ELT(contents, 14, ScalarInteger(internal->dim_contact_intervention_effect));
+  SET_VECTOR_ELT(contents, 15, ScalarInteger(internal->dim_contact_intervention_effect_1));
+  SET_VECTOR_ELT(contents, 16, ScalarInteger(internal->dim_contact_intervention_effect_2));
+  SET_VECTOR_ELT(contents, 17, ScalarInteger(internal->dim_contact_intervention_end));
+  SET_VECTOR_ELT(contents, 18, ScalarInteger(internal->dim_contact_intervention_start));
+  SET_VECTOR_ELT(contents, 19, ScalarInteger(internal->dim_contact_reduction));
+  SET_VECTOR_ELT(contents, 20, ScalarInteger(internal->dim_contact_reduction_1));
+  SET_VECTOR_ELT(contents, 21, ScalarInteger(internal->dim_contact_reduction_2));
+  SET_VECTOR_ELT(contents, 22, ScalarInteger(internal->dim_contact_reduction_sum));
+  SET_VECTOR_ELT(contents, 23, ScalarInteger(internal->dim_contact_reduction_total));
+  SET_VECTOR_ELT(contents, 24, ScalarInteger(internal->dim_D));
+  SET_VECTOR_ELT(contents, 25, ScalarInteger(internal->dim_E));
+  SET_VECTOR_ELT(contents, 26, ScalarInteger(internal->dim_eta));
+  SET_VECTOR_ELT(contents, 27, ScalarInteger(internal->dim_eta_vax));
+  SET_VECTOR_ELT(contents, 28, ScalarInteger(internal->dim_EV));
+  SET_VECTOR_ELT(contents, 29, ScalarInteger(internal->dim_gamma));
+  SET_VECTOR_ELT(contents, 30, ScalarInteger(internal->dim_H));
+  SET_VECTOR_ELT(contents, 31, ScalarInteger(internal->dim_HV));
+  SET_VECTOR_ELT(contents, 32, ScalarInteger(internal->dim_I));
+  SET_VECTOR_ELT(contents, 33, ScalarInteger(internal->dim_init_D));
+  SET_VECTOR_ELT(contents, 34, ScalarInteger(internal->dim_init_E));
+  SET_VECTOR_ELT(contents, 35, ScalarInteger(internal->dim_init_EV));
+  SET_VECTOR_ELT(contents, 36, ScalarInteger(internal->dim_init_H));
+  SET_VECTOR_ELT(contents, 37, ScalarInteger(internal->dim_init_HV));
+  SET_VECTOR_ELT(contents, 38, ScalarInteger(internal->dim_init_I));
+  SET_VECTOR_ELT(contents, 39, ScalarInteger(internal->dim_init_IV));
+  SET_VECTOR_ELT(contents, 40, ScalarInteger(internal->dim_init_R));
+  SET_VECTOR_ELT(contents, 41, ScalarInteger(internal->dim_init_S));
+  SET_VECTOR_ELT(contents, 42, ScalarInteger(internal->dim_init_V1));
+  SET_VECTOR_ELT(contents, 43, ScalarInteger(internal->dim_init_V2));
+  SET_VECTOR_ELT(contents, 44, ScalarInteger(internal->dim_IV));
+  SET_VECTOR_ELT(contents, 45, ScalarInteger(internal->dim_lambda));
+  SET_VECTOR_ELT(contents, 46, ScalarInteger(internal->dim_lambda_prod));
+  SET_VECTOR_ELT(contents, 47, ScalarInteger(internal->dim_lambda_prod_1));
+  SET_VECTOR_ELT(contents, 48, ScalarInteger(internal->dim_lambda_prod_2));
+  SET_VECTOR_ELT(contents, 49, ScalarInteger(internal->dim_lambda_prod_vax));
+  SET_VECTOR_ELT(contents, 50, ScalarInteger(internal->dim_lambda_prod_vax_1));
+  SET_VECTOR_ELT(contents, 51, ScalarInteger(internal->dim_lambda_prod_vax_2));
+  SET_VECTOR_ELT(contents, 52, ScalarInteger(internal->dim_lambda_vax));
+  SET_VECTOR_ELT(contents, 53, ScalarInteger(internal->dim_omega));
+  SET_VECTOR_ELT(contents, 54, ScalarInteger(internal->dim_omega_vax));
+  SET_VECTOR_ELT(contents, 55, ScalarInteger(internal->dim_R));
+  SET_VECTOR_ELT(contents, 56, ScalarInteger(internal->dim_rate_intervention_effect));
+  SET_VECTOR_ELT(contents, 57, ScalarInteger(internal->dim_rate_intervention_effect_1));
+  SET_VECTOR_ELT(contents, 58, ScalarInteger(internal->dim_rate_intervention_effect_2));
+  SET_VECTOR_ELT(contents, 59, ScalarInteger(internal->dim_rate_intervention_end));
+  SET_VECTOR_ELT(contents, 60, ScalarInteger(internal->dim_rate_intervention_start));
+  SET_VECTOR_ELT(contents, 61, ScalarInteger(internal->dim_rate_reduction));
+  SET_VECTOR_ELT(contents, 62, ScalarInteger(internal->dim_rate_reduction_1));
+  SET_VECTOR_ELT(contents, 63, ScalarInteger(internal->dim_rate_reduction_2));
+  SET_VECTOR_ELT(contents, 64, ScalarInteger(internal->dim_rate_reduction_sum));
+  SET_VECTOR_ELT(contents, 65, ScalarInteger(internal->dim_rate_reduction_total));
+  SET_VECTOR_ELT(contents, 66, ScalarInteger(internal->dim_S));
+  SET_VECTOR_ELT(contents, 67, ScalarInteger(internal->dim_sigma));
+  SET_VECTOR_ELT(contents, 68, ScalarInteger(internal->dim_time));
+  SET_VECTOR_ELT(contents, 69, ScalarInteger(internal->dim_V1));
+  SET_VECTOR_ELT(contents, 70, ScalarInteger(internal->dim_V2));
+  SET_VECTOR_ELT(contents, 71, ScalarInteger(internal->dim_vax_end));
+  SET_VECTOR_ELT(contents, 72, ScalarInteger(internal->dim_vax_end_1));
+  SET_VECTOR_ELT(contents, 73, ScalarInteger(internal->dim_vax_end_2));
+  SET_VECTOR_ELT(contents, 74, ScalarInteger(internal->dim_vax_nu));
+  SET_VECTOR_ELT(contents, 75, ScalarInteger(internal->dim_vax_nu_1));
+  SET_VECTOR_ELT(contents, 76, ScalarInteger(internal->dim_vax_nu_2));
+  SET_VECTOR_ELT(contents, 77, ScalarInteger(internal->dim_vax_rate_S));
+  SET_VECTOR_ELT(contents, 78, ScalarInteger(internal->dim_vax_rate_V1));
+  SET_VECTOR_ELT(contents, 79, ScalarInteger(internal->dim_vax_start));
+  SET_VECTOR_ELT(contents, 80, ScalarInteger(internal->dim_vax_start_1));
+  SET_VECTOR_ELT(contents, 81, ScalarInteger(internal->dim_vax_start_2));
+  SEXP eta = PROTECT(allocVector(REALSXP, internal->dim_eta));
+  memcpy(REAL(eta), internal->eta, internal->dim_eta * sizeof(double));
+  SET_VECTOR_ELT(contents, 82, eta);
+  SEXP eta_vax = PROTECT(allocVector(REALSXP, internal->dim_eta_vax));
+  memcpy(REAL(eta_vax), internal->eta_vax, internal->dim_eta_vax * sizeof(double));
+  SET_VECTOR_ELT(contents, 83, eta_vax);
+  SEXP gamma = PROTECT(allocVector(REALSXP, internal->dim_gamma));
+  memcpy(REAL(gamma), internal->gamma, internal->dim_gamma * sizeof(double));
+  SET_VECTOR_ELT(contents, 84, gamma);
+  SEXP init_D = PROTECT(allocVector(REALSXP, internal->dim_init_D));
+  memcpy(REAL(init_D), internal->init_D, internal->dim_init_D * sizeof(double));
+  SET_VECTOR_ELT(contents, 85, init_D);
+  SEXP init_E = PROTECT(allocVector(REALSXP, internal->dim_init_E));
+  memcpy(REAL(init_E), internal->init_E, internal->dim_init_E * sizeof(double));
+  SET_VECTOR_ELT(contents, 86, init_E);
+  SEXP init_EV = PROTECT(allocVector(REALSXP, internal->dim_init_EV));
+  memcpy(REAL(init_EV), internal->init_EV, internal->dim_init_EV * sizeof(double));
+  SET_VECTOR_ELT(contents, 87, init_EV);
+  SEXP init_H = PROTECT(allocVector(REALSXP, internal->dim_init_H));
+  memcpy(REAL(init_H), internal->init_H, internal->dim_init_H * sizeof(double));
+  SET_VECTOR_ELT(contents, 88, init_H);
+  SEXP init_HV = PROTECT(allocVector(REALSXP, internal->dim_init_HV));
+  memcpy(REAL(init_HV), internal->init_HV, internal->dim_init_HV * sizeof(double));
+  SET_VECTOR_ELT(contents, 89, init_HV);
+  SEXP init_I = PROTECT(allocVector(REALSXP, internal->dim_init_I));
+  memcpy(REAL(init_I), internal->init_I, internal->dim_init_I * sizeof(double));
+  SET_VECTOR_ELT(contents, 90, init_I);
+  SEXP init_IV = PROTECT(allocVector(REALSXP, internal->dim_init_IV));
+  memcpy(REAL(init_IV), internal->init_IV, internal->dim_init_IV * sizeof(double));
+  SET_VECTOR_ELT(contents, 91, init_IV);
+  SEXP init_R = PROTECT(allocVector(REALSXP, internal->dim_init_R));
+  memcpy(REAL(init_R), internal->init_R, internal->dim_init_R * sizeof(double));
+  SET_VECTOR_ELT(contents, 92, init_R);
+  SEXP init_S = PROTECT(allocVector(REALSXP, internal->dim_init_S));
+  memcpy(REAL(init_S), internal->init_S, internal->dim_init_S * sizeof(double));
+  SET_VECTOR_ELT(contents, 93, init_S);
+  SEXP init_V1 = PROTECT(allocVector(REALSXP, internal->dim_init_V1));
+  memcpy(REAL(init_V1), internal->init_V1, internal->dim_init_V1 * sizeof(double));
+  SET_VECTOR_ELT(contents, 94, init_V1);
+  SEXP init_V2 = PROTECT(allocVector(REALSXP, internal->dim_init_V2));
+  memcpy(REAL(init_V2), internal->init_V2, internal->dim_init_V2 * sizeof(double));
+  SET_VECTOR_ELT(contents, 95, init_V2);
+  SEXP initial_D = PROTECT(allocVector(REALSXP, internal->dim_D));
+  memcpy(REAL(initial_D), internal->initial_D, internal->dim_D * sizeof(double));
+  SET_VECTOR_ELT(contents, 96, initial_D);
+  SEXP initial_E = PROTECT(allocVector(REALSXP, internal->dim_E));
+  memcpy(REAL(initial_E), internal->initial_E, internal->dim_E * sizeof(double));
+  SET_VECTOR_ELT(contents, 97, initial_E);
+  SEXP initial_EV = PROTECT(allocVector(REALSXP, internal->dim_EV));
+  memcpy(REAL(initial_EV), internal->initial_EV, internal->dim_EV * sizeof(double));
+  SET_VECTOR_ELT(contents, 98, initial_EV);
+  SEXP initial_H = PROTECT(allocVector(REALSXP, internal->dim_H));
+  memcpy(REAL(initial_H), internal->initial_H, internal->dim_H * sizeof(double));
+  SET_VECTOR_ELT(contents, 99, initial_H);
+  SEXP initial_HV = PROTECT(allocVector(REALSXP, internal->dim_HV));
+  memcpy(REAL(initial_HV), internal->initial_HV, internal->dim_HV * sizeof(double));
+  SET_VECTOR_ELT(contents, 100, initial_HV);
+  SEXP initial_I = PROTECT(allocVector(REALSXP, internal->dim_I));
+  memcpy(REAL(initial_I), internal->initial_I, internal->dim_I * sizeof(double));
+  SET_VECTOR_ELT(contents, 101, initial_I);
+  SEXP initial_IV = PROTECT(allocVector(REALSXP, internal->dim_IV));
+  memcpy(REAL(initial_IV), internal->initial_IV, internal->dim_IV * sizeof(double));
+  SET_VECTOR_ELT(contents, 102, initial_IV);
+  SEXP initial_R = PROTECT(allocVector(REALSXP, internal->dim_R));
+  memcpy(REAL(initial_R), internal->initial_R, internal->dim_R * sizeof(double));
+  SET_VECTOR_ELT(contents, 103, initial_R);
+  SEXP initial_S = PROTECT(allocVector(REALSXP, internal->dim_S));
+  memcpy(REAL(initial_S), internal->initial_S, internal->dim_S * sizeof(double));
+  SET_VECTOR_ELT(contents, 104, initial_S);
+  SEXP initial_V1 = PROTECT(allocVector(REALSXP, internal->dim_V1));
+  memcpy(REAL(initial_V1), internal->initial_V1, internal->dim_V1 * sizeof(double));
+  SET_VECTOR_ELT(contents, 105, initial_V1);
+  SEXP initial_V2 = PROTECT(allocVector(REALSXP, internal->dim_V2));
+  memcpy(REAL(initial_V2), internal->initial_V2, internal->dim_V2 * sizeof(double));
+  SET_VECTOR_ELT(contents, 106, initial_V2);
+  SEXP lambda = PROTECT(allocVector(REALSXP, internal->dim_lambda));
+  memcpy(REAL(lambda), internal->lambda, internal->dim_lambda * sizeof(double));
+  SET_VECTOR_ELT(contents, 115, lambda);
+  SEXP lambda_prod = PROTECT(allocVector(REALSXP, internal->dim_lambda_prod));
+  memcpy(REAL(lambda_prod), internal->lambda_prod, internal->dim_lambda_prod * sizeof(double));
+  odin_set_dim(lambda_prod, 2, internal->dim_lambda_prod_1, internal->dim_lambda_prod_2);
+  SET_VECTOR_ELT(contents, 116, lambda_prod);
+  SEXP lambda_prod_vax = PROTECT(allocVector(REALSXP, internal->dim_lambda_prod_vax));
+  memcpy(REAL(lambda_prod_vax), internal->lambda_prod_vax, internal->dim_lambda_prod_vax * sizeof(double));
+  odin_set_dim(lambda_prod_vax, 2, internal->dim_lambda_prod_vax_1, internal->dim_lambda_prod_vax_2);
+  SET_VECTOR_ELT(contents, 117, lambda_prod_vax);
+  SEXP lambda_vax = PROTECT(allocVector(REALSXP, internal->dim_lambda_vax));
+  memcpy(REAL(lambda_vax), internal->lambda_vax, internal->dim_lambda_vax * sizeof(double));
+  SET_VECTOR_ELT(contents, 118, lambda_vax);
+  SET_VECTOR_ELT(contents, 119, ScalarInteger(internal->n_age));
+  SET_VECTOR_ELT(contents, 120, ScalarInteger(internal->n_contact_intervention));
+  SET_VECTOR_ELT(contents, 121, ScalarInteger(internal->n_rate_intervention));
+  SET_VECTOR_ELT(contents, 122, ScalarInteger(internal->n_time));
+  SET_VECTOR_ELT(contents, 123, ScalarInteger(internal->offset_variable_D));
+  SET_VECTOR_ELT(contents, 124, ScalarInteger(internal->offset_variable_EV));
+  SET_VECTOR_ELT(contents, 125, ScalarInteger(internal->offset_variable_H));
+  SET_VECTOR_ELT(contents, 126, ScalarInteger(internal->offset_variable_HV));
+  SET_VECTOR_ELT(contents, 127, ScalarInteger(internal->offset_variable_I));
+  SET_VECTOR_ELT(contents, 128, ScalarInteger(internal->offset_variable_IV));
+  SET_VECTOR_ELT(contents, 129, ScalarInteger(internal->offset_variable_R));
+  SET_VECTOR_ELT(contents, 130, ScalarInteger(internal->offset_variable_V1));
+  SET_VECTOR_ELT(contents, 131, ScalarInteger(internal->offset_variable_V2));
+  SEXP omega = PROTECT(allocVector(REALSXP, internal->dim_omega));
+  memcpy(REAL(omega), internal->omega, internal->dim_omega * sizeof(double));
+  SET_VECTOR_ELT(contents, 132, omega);
+  SEXP omega_vax = PROTECT(allocVector(REALSXP, internal->dim_omega_vax));
+  memcpy(REAL(omega_vax), internal->omega_vax, internal->dim_omega_vax * sizeof(double));
+  SET_VECTOR_ELT(contents, 133, omega_vax);
+  SEXP rate_intervention_effect = PROTECT(allocVector(REALSXP, internal->dim_rate_intervention_effect));
+  memcpy(REAL(rate_intervention_effect), internal->rate_intervention_effect, internal->dim_rate_intervention_effect * sizeof(double));
+  odin_set_dim(rate_intervention_effect, 2, internal->dim_rate_intervention_effect_1, internal->dim_rate_intervention_effect_2);
+  SET_VECTOR_ELT(contents, 134, rate_intervention_effect);
+  SEXP rate_intervention_end = PROTECT(allocVector(REALSXP, internal->dim_rate_intervention_end));
+  memcpy(REAL(rate_intervention_end), internal->rate_intervention_end, internal->dim_rate_intervention_end * sizeof(double));
+  SET_VECTOR_ELT(contents, 135, rate_intervention_end);
+  SEXP rate_intervention_start = PROTECT(allocVector(REALSXP, internal->dim_rate_intervention_start));
+  memcpy(REAL(rate_intervention_start), internal->rate_intervention_start, internal->dim_rate_intervention_start * sizeof(double));
+  SET_VECTOR_ELT(contents, 136, rate_intervention_start);
+  SEXP rate_reduction = PROTECT(allocVector(REALSXP, internal->dim_rate_reduction));
+  memcpy(REAL(rate_reduction), internal->rate_reduction, internal->dim_rate_reduction * sizeof(double));
+  odin_set_dim(rate_reduction, 2, internal->dim_rate_reduction_1, internal->dim_rate_reduction_2);
+  SET_VECTOR_ELT(contents, 137, rate_reduction);
+  SEXP rate_reduction_sum = PROTECT(allocVector(REALSXP, internal->dim_rate_reduction_sum));
+  memcpy(REAL(rate_reduction_sum), internal->rate_reduction_sum, internal->dim_rate_reduction_sum * sizeof(double));
+  SET_VECTOR_ELT(contents, 138, rate_reduction_sum);
+  SEXP rate_reduction_total = PROTECT(allocVector(REALSXP, internal->dim_rate_reduction_total));
+  memcpy(REAL(rate_reduction_total), internal->rate_reduction_total, internal->dim_rate_reduction_total * sizeof(double));
+  SET_VECTOR_ELT(contents, 139, rate_reduction_total);
+  SEXP sigma = PROTECT(allocVector(REALSXP, internal->dim_sigma));
+  memcpy(REAL(sigma), internal->sigma, internal->dim_sigma * sizeof(double));
+  SET_VECTOR_ELT(contents, 140, sigma);
+  SEXP time = PROTECT(allocVector(REALSXP, internal->dim_time));
+  memcpy(REAL(time), internal->time, internal->dim_time * sizeof(double));
+  SET_VECTOR_ELT(contents, 141, time);
+  SEXP vax_end = PROTECT(allocVector(REALSXP, internal->dim_vax_end));
+  memcpy(REAL(vax_end), internal->vax_end, internal->dim_vax_end * sizeof(double));
+  odin_set_dim(vax_end, 2, internal->dim_vax_end_1, internal->dim_vax_end_2);
+  SET_VECTOR_ELT(contents, 142, vax_end);
+  SEXP vax_nu = PROTECT(allocVector(REALSXP, internal->dim_vax_nu));
+  memcpy(REAL(vax_nu), internal->vax_nu, internal->dim_vax_nu * sizeof(double));
+  odin_set_dim(vax_nu, 2, internal->dim_vax_nu_1, internal->dim_vax_nu_2);
+  SET_VECTOR_ELT(contents, 143, vax_nu);
+  SEXP vax_rate_S = PROTECT(allocVector(REALSXP, internal->dim_vax_rate_S));
+  memcpy(REAL(vax_rate_S), internal->vax_rate_S, internal->dim_vax_rate_S * sizeof(double));
+  SET_VECTOR_ELT(contents, 144, vax_rate_S);
+  SEXP vax_rate_V1 = PROTECT(allocVector(REALSXP, internal->dim_vax_rate_V1));
+  memcpy(REAL(vax_rate_V1), internal->vax_rate_V1, internal->dim_vax_rate_V1 * sizeof(double));
+  SET_VECTOR_ELT(contents, 145, vax_rate_V1);
+  SEXP vax_start = PROTECT(allocVector(REALSXP, internal->dim_vax_start));
+  memcpy(REAL(vax_start), internal->vax_start, internal->dim_vax_start * sizeof(double));
+  odin_set_dim(vax_start, 2, internal->dim_vax_start_1, internal->dim_vax_start_2);
+  SET_VECTOR_ELT(contents, 146, vax_start);
+  SEXP nms = PROTECT(allocVector(STRSXP, 147));
+  SET_STRING_ELT(nms, 0, mkChar("beta"));
+  SET_STRING_ELT(nms, 1, mkChar("beta_vax"));
+  SET_STRING_ELT(nms, 2, mkChar("C"));
+  SET_STRING_ELT(nms, 3, mkChar("contact_intervention_effect"));
+  SET_STRING_ELT(nms, 4, mkChar("contact_intervention_end"));
+  SET_STRING_ELT(nms, 5, mkChar("contact_intervention_start"));
+  SET_STRING_ELT(nms, 6, mkChar("contact_reduction"));
+  SET_STRING_ELT(nms, 7, mkChar("contact_reduction_sum"));
+  SET_STRING_ELT(nms, 8, mkChar("contact_reduction_total"));
+  SET_STRING_ELT(nms, 9, mkChar("dim_beta"));
+  SET_STRING_ELT(nms, 10, mkChar("dim_beta_vax"));
+  SET_STRING_ELT(nms, 11, mkChar("dim_C"));
+  SET_STRING_ELT(nms, 12, mkChar("dim_C_1"));
+  SET_STRING_ELT(nms, 13, mkChar("dim_C_2"));
+  SET_STRING_ELT(nms, 14, mkChar("dim_contact_intervention_effect"));
+  SET_STRING_ELT(nms, 15, mkChar("dim_contact_intervention_effect_1"));
+  SET_STRING_ELT(nms, 16, mkChar("dim_contact_intervention_effect_2"));
+  SET_STRING_ELT(nms, 17, mkChar("dim_contact_intervention_end"));
+  SET_STRING_ELT(nms, 18, mkChar("dim_contact_intervention_start"));
+  SET_STRING_ELT(nms, 19, mkChar("dim_contact_reduction"));
+  SET_STRING_ELT(nms, 20, mkChar("dim_contact_reduction_1"));
+  SET_STRING_ELT(nms, 21, mkChar("dim_contact_reduction_2"));
+  SET_STRING_ELT(nms, 22, mkChar("dim_contact_reduction_sum"));
+  SET_STRING_ELT(nms, 23, mkChar("dim_contact_reduction_total"));
+  SET_STRING_ELT(nms, 24, mkChar("dim_D"));
+  SET_STRING_ELT(nms, 25, mkChar("dim_E"));
+  SET_STRING_ELT(nms, 26, mkChar("dim_eta"));
+  SET_STRING_ELT(nms, 27, mkChar("dim_eta_vax"));
+  SET_STRING_ELT(nms, 28, mkChar("dim_EV"));
+  SET_STRING_ELT(nms, 29, mkChar("dim_gamma"));
+  SET_STRING_ELT(nms, 30, mkChar("dim_H"));
+  SET_STRING_ELT(nms, 31, mkChar("dim_HV"));
+  SET_STRING_ELT(nms, 32, mkChar("dim_I"));
+  SET_STRING_ELT(nms, 33, mkChar("dim_init_D"));
+  SET_STRING_ELT(nms, 34, mkChar("dim_init_E"));
+  SET_STRING_ELT(nms, 35, mkChar("dim_init_EV"));
+  SET_STRING_ELT(nms, 36, mkChar("dim_init_H"));
+  SET_STRING_ELT(nms, 37, mkChar("dim_init_HV"));
+  SET_STRING_ELT(nms, 38, mkChar("dim_init_I"));
+  SET_STRING_ELT(nms, 39, mkChar("dim_init_IV"));
+  SET_STRING_ELT(nms, 40, mkChar("dim_init_R"));
+  SET_STRING_ELT(nms, 41, mkChar("dim_init_S"));
+  SET_STRING_ELT(nms, 42, mkChar("dim_init_V1"));
+  SET_STRING_ELT(nms, 43, mkChar("dim_init_V2"));
+  SET_STRING_ELT(nms, 44, mkChar("dim_IV"));
+  SET_STRING_ELT(nms, 45, mkChar("dim_lambda"));
+  SET_STRING_ELT(nms, 46, mkChar("dim_lambda_prod"));
+  SET_STRING_ELT(nms, 47, mkChar("dim_lambda_prod_1"));
+  SET_STRING_ELT(nms, 48, mkChar("dim_lambda_prod_2"));
+  SET_STRING_ELT(nms, 49, mkChar("dim_lambda_prod_vax"));
+  SET_STRING_ELT(nms, 50, mkChar("dim_lambda_prod_vax_1"));
+  SET_STRING_ELT(nms, 51, mkChar("dim_lambda_prod_vax_2"));
+  SET_STRING_ELT(nms, 52, mkChar("dim_lambda_vax"));
+  SET_STRING_ELT(nms, 53, mkChar("dim_omega"));
+  SET_STRING_ELT(nms, 54, mkChar("dim_omega_vax"));
+  SET_STRING_ELT(nms, 55, mkChar("dim_R"));
+  SET_STRING_ELT(nms, 56, mkChar("dim_rate_intervention_effect"));
+  SET_STRING_ELT(nms, 57, mkChar("dim_rate_intervention_effect_1"));
+  SET_STRING_ELT(nms, 58, mkChar("dim_rate_intervention_effect_2"));
+  SET_STRING_ELT(nms, 59, mkChar("dim_rate_intervention_end"));
+  SET_STRING_ELT(nms, 60, mkChar("dim_rate_intervention_start"));
+  SET_STRING_ELT(nms, 61, mkChar("dim_rate_reduction"));
+  SET_STRING_ELT(nms, 62, mkChar("dim_rate_reduction_1"));
+  SET_STRING_ELT(nms, 63, mkChar("dim_rate_reduction_2"));
+  SET_STRING_ELT(nms, 64, mkChar("dim_rate_reduction_sum"));
+  SET_STRING_ELT(nms, 65, mkChar("dim_rate_reduction_total"));
+  SET_STRING_ELT(nms, 66, mkChar("dim_S"));
+  SET_STRING_ELT(nms, 67, mkChar("dim_sigma"));
+  SET_STRING_ELT(nms, 68, mkChar("dim_time"));
+  SET_STRING_ELT(nms, 69, mkChar("dim_V1"));
+  SET_STRING_ELT(nms, 70, mkChar("dim_V2"));
+  SET_STRING_ELT(nms, 71, mkChar("dim_vax_end"));
+  SET_STRING_ELT(nms, 72, mkChar("dim_vax_end_1"));
+  SET_STRING_ELT(nms, 73, mkChar("dim_vax_end_2"));
+  SET_STRING_ELT(nms, 74, mkChar("dim_vax_nu"));
+  SET_STRING_ELT(nms, 75, mkChar("dim_vax_nu_1"));
+  SET_STRING_ELT(nms, 76, mkChar("dim_vax_nu_2"));
+  SET_STRING_ELT(nms, 77, mkChar("dim_vax_rate_S"));
+  SET_STRING_ELT(nms, 78, mkChar("dim_vax_rate_V1"));
+  SET_STRING_ELT(nms, 79, mkChar("dim_vax_start"));
+  SET_STRING_ELT(nms, 80, mkChar("dim_vax_start_1"));
+  SET_STRING_ELT(nms, 81, mkChar("dim_vax_start_2"));
+  SET_STRING_ELT(nms, 82, mkChar("eta"));
+  SET_STRING_ELT(nms, 83, mkChar("eta_vax"));
+  SET_STRING_ELT(nms, 84, mkChar("gamma"));
+  SET_STRING_ELT(nms, 85, mkChar("init_D"));
+  SET_STRING_ELT(nms, 86, mkChar("init_E"));
+  SET_STRING_ELT(nms, 87, mkChar("init_EV"));
+  SET_STRING_ELT(nms, 88, mkChar("init_H"));
+  SET_STRING_ELT(nms, 89, mkChar("init_HV"));
+  SET_STRING_ELT(nms, 90, mkChar("init_I"));
+  SET_STRING_ELT(nms, 91, mkChar("init_IV"));
+  SET_STRING_ELT(nms, 92, mkChar("init_R"));
+  SET_STRING_ELT(nms, 93, mkChar("init_S"));
+  SET_STRING_ELT(nms, 94, mkChar("init_V1"));
+  SET_STRING_ELT(nms, 95, mkChar("init_V2"));
+  SET_STRING_ELT(nms, 96, mkChar("initial_D"));
+  SET_STRING_ELT(nms, 97, mkChar("initial_E"));
+  SET_STRING_ELT(nms, 98, mkChar("initial_EV"));
+  SET_STRING_ELT(nms, 99, mkChar("initial_H"));
+  SET_STRING_ELT(nms, 100, mkChar("initial_HV"));
+  SET_STRING_ELT(nms, 101, mkChar("initial_I"));
+  SET_STRING_ELT(nms, 102, mkChar("initial_IV"));
+  SET_STRING_ELT(nms, 103, mkChar("initial_R"));
+  SET_STRING_ELT(nms, 104, mkChar("initial_S"));
+  SET_STRING_ELT(nms, 105, mkChar("initial_V1"));
+  SET_STRING_ELT(nms, 106, mkChar("initial_V2"));
+  SET_STRING_ELT(nms, 107, mkChar("interpolate_beta_t"));
+  SET_STRING_ELT(nms, 108, mkChar("interpolate_beta_vax_t"));
+  SET_STRING_ELT(nms, 109, mkChar("interpolate_eta_t"));
+  SET_STRING_ELT(nms, 110, mkChar("interpolate_eta_vax_t"));
+  SET_STRING_ELT(nms, 111, mkChar("interpolate_gamma_t"));
+  SET_STRING_ELT(nms, 112, mkChar("interpolate_omega_t"));
+  SET_STRING_ELT(nms, 113, mkChar("interpolate_omega_vax_t"));
+  SET_STRING_ELT(nms, 114, mkChar("interpolate_sigma_t"));
+  SET_STRING_ELT(nms, 115, mkChar("lambda"));
+  SET_STRING_ELT(nms, 116, mkChar("lambda_prod"));
+  SET_STRING_ELT(nms, 117, mkChar("lambda_prod_vax"));
+  SET_STRING_ELT(nms, 118, mkChar("lambda_vax"));
+  SET_STRING_ELT(nms, 119, mkChar("n_age"));
+  SET_STRING_ELT(nms, 120, mkChar("n_contact_intervention"));
+  SET_STRING_ELT(nms, 121, mkChar("n_rate_intervention"));
+  SET_STRING_ELT(nms, 122, mkChar("n_time"));
+  SET_STRING_ELT(nms, 123, mkChar("offset_variable_D"));
+  SET_STRING_ELT(nms, 124, mkChar("offset_variable_EV"));
+  SET_STRING_ELT(nms, 125, mkChar("offset_variable_H"));
+  SET_STRING_ELT(nms, 126, mkChar("offset_variable_HV"));
+  SET_STRING_ELT(nms, 127, mkChar("offset_variable_I"));
+  SET_STRING_ELT(nms, 128, mkChar("offset_variable_IV"));
+  SET_STRING_ELT(nms, 129, mkChar("offset_variable_R"));
+  SET_STRING_ELT(nms, 130, mkChar("offset_variable_V1"));
+  SET_STRING_ELT(nms, 131, mkChar("offset_variable_V2"));
+  SET_STRING_ELT(nms, 132, mkChar("omega"));
+  SET_STRING_ELT(nms, 133, mkChar("omega_vax"));
+  SET_STRING_ELT(nms, 134, mkChar("rate_intervention_effect"));
+  SET_STRING_ELT(nms, 135, mkChar("rate_intervention_end"));
+  SET_STRING_ELT(nms, 136, mkChar("rate_intervention_start"));
+  SET_STRING_ELT(nms, 137, mkChar("rate_reduction"));
+  SET_STRING_ELT(nms, 138, mkChar("rate_reduction_sum"));
+  SET_STRING_ELT(nms, 139, mkChar("rate_reduction_total"));
+  SET_STRING_ELT(nms, 140, mkChar("sigma"));
+  SET_STRING_ELT(nms, 141, mkChar("time"));
+  SET_STRING_ELT(nms, 142, mkChar("vax_end"));
+  SET_STRING_ELT(nms, 143, mkChar("vax_nu"));
+  SET_STRING_ELT(nms, 144, mkChar("vax_rate_S"));
+  SET_STRING_ELT(nms, 145, mkChar("vax_rate_V1"));
+  SET_STRING_ELT(nms, 146, mkChar("vax_start"));
+  setAttrib(contents, R_NamesSymbol, nms);
+  UNPROTECT(55);
+  return contents;
+}
+SEXP vacamole_set_user(SEXP internal_p, SEXP user) {
+  vacamole_internal *internal = vacamole_get_internal(internal_p, 1);
+  internal->n_age = user_get_scalar_int(user, "n_age", internal->n_age, NA_REAL, NA_REAL);
+  internal->n_contact_intervention = user_get_scalar_int(user, "n_contact_intervention", internal->n_contact_intervention, NA_REAL, NA_REAL);
+  internal->n_rate_intervention = user_get_scalar_int(user, "n_rate_intervention", internal->n_rate_intervention, NA_REAL, NA_REAL);
+  internal->n_time = user_get_scalar_int(user, "n_time", internal->n_time, NA_REAL, NA_REAL);
+  internal->dim_beta = internal->n_time;
+  internal->dim_beta_vax = internal->n_time;
+  internal->dim_C_1 = internal->n_age;
+  internal->dim_C_2 = internal->n_age;
+  internal->dim_contact_intervention_effect_1 = internal->n_contact_intervention;
+  internal->dim_contact_intervention_effect_2 = internal->n_age;
+  internal->dim_contact_intervention_end = internal->n_contact_intervention;
+  internal->dim_contact_intervention_start = internal->n_contact_intervention;
+  internal->dim_contact_reduction_1 = internal->n_contact_intervention;
+  internal->dim_contact_reduction_2 = internal->n_age;
+  internal->dim_contact_reduction_sum = internal->n_age;
+  internal->dim_contact_reduction_total = internal->n_age;
+  internal->dim_D = internal->n_age;
+  internal->dim_E = internal->n_age;
+  internal->dim_eta = internal->n_time;
+  internal->dim_eta_vax = internal->n_time;
+  internal->dim_EV = internal->n_age;
+  internal->dim_gamma = internal->n_time;
+  internal->dim_H = internal->n_age;
+  internal->dim_HV = internal->n_age;
+  internal->dim_I = internal->n_age;
+  internal->dim_init_D = internal->n_age;
+  internal->dim_init_E = internal->n_age;
+  internal->dim_init_EV = internal->n_age;
+  internal->dim_init_H = internal->n_age;
+  internal->dim_init_HV = internal->n_age;
+  internal->dim_init_I = internal->n_age;
+  internal->dim_init_IV = internal->n_age;
+  internal->dim_init_R = internal->n_age;
+  internal->dim_init_S = internal->n_age;
+  internal->dim_init_V1 = internal->n_age;
+  internal->dim_init_V2 = internal->n_age;
+  internal->dim_IV = internal->n_age;
+  internal->dim_lambda = internal->n_age;
+  internal->dim_lambda_prod_1 = internal->n_age;
+  internal->dim_lambda_prod_2 = internal->n_age;
+  internal->dim_lambda_prod_vax_1 = internal->n_age;
+  internal->dim_lambda_prod_vax_2 = internal->n_age;
+  internal->dim_lambda_vax = internal->n_age;
+  internal->dim_omega = internal->n_time;
+  internal->dim_omega_vax = internal->n_time;
+  internal->dim_R = internal->n_age;
+  internal->dim_rate_intervention_effect_1 = internal->n_rate_intervention;
+  internal->dim_rate_intervention_effect_2 = internal->n_age;
+  internal->dim_rate_intervention_end = internal->n_rate_intervention;
+  internal->dim_rate_intervention_start = internal->n_rate_intervention;
+  internal->dim_rate_reduction_1 = internal->n_rate_intervention;
+  internal->dim_rate_reduction_2 = internal->n_age;
+  internal->dim_rate_reduction_sum = internal->n_age;
+  internal->dim_rate_reduction_total = internal->n_age;
+  internal->dim_S = internal->n_age;
+  internal->dim_sigma = internal->n_time;
+  internal->dim_time = internal->n_time;
+  internal->dim_V1 = internal->n_age;
+  internal->dim_V2 = internal->n_age;
+  internal->dim_vax_end_1 = internal->n_age;
+  internal->dim_vax_end_2 = 2;
+  internal->dim_vax_nu_1 = internal->n_age;
+  internal->dim_vax_nu_2 = 2;
+  internal->dim_vax_rate_S = internal->n_age;
+  internal->dim_vax_rate_V1 = internal->n_age;
+  internal->dim_vax_start_1 = internal->n_age;
+  internal->dim_vax_start_2 = 2;
+  R_Free(internal->contact_reduction_sum);
+  internal->contact_reduction_sum = (double*) R_Calloc(internal->dim_contact_reduction_sum, double);
+  R_Free(internal->contact_reduction_total);
+  internal->contact_reduction_total = (double*) R_Calloc(internal->dim_contact_reduction_total, double);
+  R_Free(internal->initial_D);
+  internal->initial_D = (double*) R_Calloc(internal->dim_D, double);
+  R_Free(internal->initial_E);
+  internal->initial_E = (double*) R_Calloc(internal->dim_E, double);
+  R_Free(internal->initial_EV);
+  internal->initial_EV = (double*) R_Calloc(internal->dim_EV, double);
+  R_Free(internal->initial_H);
+  internal->initial_H = (double*) R_Calloc(internal->dim_H, double);
+  R_Free(internal->initial_HV);
+  internal->initial_HV = (double*) R_Calloc(internal->dim_HV, double);
+  R_Free(internal->initial_I);
+  internal->initial_I = (double*) R_Calloc(internal->dim_I, double);
+  R_Free(internal->initial_IV);
+  internal->initial_IV = (double*) R_Calloc(internal->dim_IV, double);
+  R_Free(internal->initial_R);
+  internal->initial_R = (double*) R_Calloc(internal->dim_R, double);
+  R_Free(internal->initial_S);
+  internal->initial_S = (double*) R_Calloc(internal->dim_S, double);
+  R_Free(internal->initial_V1);
+  internal->initial_V1 = (double*) R_Calloc(internal->dim_V1, double);
+  R_Free(internal->initial_V2);
+  internal->initial_V2 = (double*) R_Calloc(internal->dim_V2, double);
+  R_Free(internal->lambda);
+  internal->lambda = (double*) R_Calloc(internal->dim_lambda, double);
+  R_Free(internal->lambda_vax);
+  internal->lambda_vax = (double*) R_Calloc(internal->dim_lambda_vax, double);
+  R_Free(internal->rate_reduction_sum);
+  internal->rate_reduction_sum = (double*) R_Calloc(internal->dim_rate_reduction_sum, double);
+  R_Free(internal->rate_reduction_total);
+  internal->rate_reduction_total = (double*) R_Calloc(internal->dim_rate_reduction_total, double);
+  R_Free(internal->vax_rate_S);
+  internal->vax_rate_S = (double*) R_Calloc(internal->dim_vax_rate_S, double);
+  R_Free(internal->vax_rate_V1);
+  internal->vax_rate_V1 = (double*) R_Calloc(internal->dim_vax_rate_V1, double);
+  internal->beta = (double*) user_get_array(user, false, internal->beta, "beta", NA_REAL, NA_REAL, 1, internal->dim_beta);
+  internal->beta_vax = (double*) user_get_array(user, false, internal->beta_vax, "beta_vax", NA_REAL, NA_REAL, 1, internal->dim_beta_vax);
+  internal->contact_intervention_end = (double*) user_get_array(user, false, internal->contact_intervention_end, "contact_intervention_end", NA_REAL, NA_REAL, 1, internal->dim_contact_intervention_end);
+  internal->contact_intervention_start = (double*) user_get_array(user, false, internal->contact_intervention_start, "contact_intervention_start", NA_REAL, NA_REAL, 1, internal->dim_contact_intervention_start);
+  internal->dim_C = internal->dim_C_1 * internal->dim_C_2;
+  internal->dim_contact_intervention_effect = internal->dim_contact_intervention_effect_1 * internal->dim_contact_intervention_effect_2;
+  internal->dim_contact_reduction = internal->dim_contact_reduction_1 * internal->dim_contact_reduction_2;
+  internal->dim_lambda_prod = internal->dim_lambda_prod_1 * internal->dim_lambda_prod_2;
+  internal->dim_lambda_prod_vax = internal->dim_lambda_prod_vax_1 * internal->dim_lambda_prod_vax_2;
+  internal->dim_rate_intervention_effect = internal->dim_rate_intervention_effect_1 * internal->dim_rate_intervention_effect_2;
+  internal->dim_rate_reduction = internal->dim_rate_reduction_1 * internal->dim_rate_reduction_2;
+  internal->dim_vax_end = internal->dim_vax_end_1 * internal->dim_vax_end_2;
+  internal->dim_vax_nu = internal->dim_vax_nu_1 * internal->dim_vax_nu_2;
+  internal->dim_vax_start = internal->dim_vax_start_1 * internal->dim_vax_start_2;
+  internal->eta = (double*) user_get_array(user, false, internal->eta, "eta", NA_REAL, NA_REAL, 1, internal->dim_eta);
+  internal->eta_vax = (double*) user_get_array(user, false, internal->eta_vax, "eta_vax", NA_REAL, NA_REAL, 1, internal->dim_eta_vax);
+  internal->gamma = (double*) user_get_array(user, false, internal->gamma, "gamma", NA_REAL, NA_REAL, 1, internal->dim_gamma);
+  internal->init_D = (double*) user_get_array(user, false, internal->init_D, "init_D", NA_REAL, NA_REAL, 1, internal->dim_init_D);
+  internal->init_E = (double*) user_get_array(user, false, internal->init_E, "init_E", NA_REAL, NA_REAL, 1, internal->dim_init_E);
+  internal->init_EV = (double*) user_get_array(user, false, internal->init_EV, "init_EV", NA_REAL, NA_REAL, 1, internal->dim_init_EV);
+  internal->init_H = (double*) user_get_array(user, false, internal->init_H, "init_H", NA_REAL, NA_REAL, 1, internal->dim_init_H);
+  internal->init_HV = (double*) user_get_array(user, false, internal->init_HV, "init_HV", NA_REAL, NA_REAL, 1, internal->dim_init_HV);
+  internal->init_I = (double*) user_get_array(user, false, internal->init_I, "init_I", NA_REAL, NA_REAL, 1, internal->dim_init_I);
+  internal->init_IV = (double*) user_get_array(user, false, internal->init_IV, "init_IV", NA_REAL, NA_REAL, 1, internal->dim_init_IV);
+  internal->init_R = (double*) user_get_array(user, false, internal->init_R, "init_R", NA_REAL, NA_REAL, 1, internal->dim_init_R);
+  internal->init_S = (double*) user_get_array(user, false, internal->init_S, "init_S", NA_REAL, NA_REAL, 1, internal->dim_init_S);
+  internal->init_V1 = (double*) user_get_array(user, false, internal->init_V1, "init_V1", NA_REAL, NA_REAL, 1, internal->dim_init_V1);
+  internal->init_V2 = (double*) user_get_array(user, false, internal->init_V2, "init_V2", NA_REAL, NA_REAL, 1, internal->dim_init_V2);
+  internal->offset_variable_D = internal->dim_E + internal->dim_EV + internal->dim_H + internal->dim_HV + internal->dim_I + internal->dim_IV + internal->dim_S;
+  internal->offset_variable_EV = internal->dim_E + internal->dim_S;
+  internal->offset_variable_H = internal->dim_E + internal->dim_EV + internal->dim_I + internal->dim_IV + internal->dim_S;
+  internal->offset_variable_HV = internal->dim_E + internal->dim_EV + internal->dim_H + internal->dim_I + internal->dim_IV + internal->dim_S;
+  internal->offset_variable_I = internal->dim_E + internal->dim_EV + internal->dim_S;
+  internal->offset_variable_IV = internal->dim_E + internal->dim_EV + internal->dim_I + internal->dim_S;
+  internal->offset_variable_R = internal->dim_D + internal->dim_E + internal->dim_EV + internal->dim_H + internal->dim_HV + internal->dim_I + internal->dim_IV + internal->dim_S;
+  internal->offset_variable_V1 = internal->dim_D + internal->dim_E + internal->dim_EV + internal->dim_H + internal->dim_HV + internal->dim_I + internal->dim_IV + internal->dim_R + internal->dim_S;
+  internal->offset_variable_V2 = internal->dim_D + internal->dim_E + internal->dim_EV + internal->dim_H + internal->dim_HV + internal->dim_I + internal->dim_IV + internal->dim_R + internal->dim_S + internal->dim_V1;
+  internal->omega = (double*) user_get_array(user, false, internal->omega, "omega", NA_REAL, NA_REAL, 1, internal->dim_omega);
+  internal->omega_vax = (double*) user_get_array(user, false, internal->omega_vax, "omega_vax", NA_REAL, NA_REAL, 1, internal->dim_omega_vax);
+  internal->rate_intervention_end = (double*) user_get_array(user, false, internal->rate_intervention_end, "rate_intervention_end", NA_REAL, NA_REAL, 1, internal->dim_rate_intervention_end);
+  internal->rate_intervention_start = (double*) user_get_array(user, false, internal->rate_intervention_start, "rate_intervention_start", NA_REAL, NA_REAL, 1, internal->dim_rate_intervention_start);
+  internal->sigma = (double*) user_get_array(user, false, internal->sigma, "sigma", NA_REAL, NA_REAL, 1, internal->dim_sigma);
+  internal->time = (double*) user_get_array(user, false, internal->time, "time", NA_REAL, NA_REAL, 1, internal->dim_time);
+  R_Free(internal->contact_reduction);
+  internal->contact_reduction = (double*) R_Calloc(internal->dim_contact_reduction, double);
+  R_Free(internal->lambda_prod);
+  internal->lambda_prod = (double*) R_Calloc(internal->dim_lambda_prod, double);
+  R_Free(internal->lambda_prod_vax);
+  internal->lambda_prod_vax = (double*) R_Calloc(internal->dim_lambda_prod_vax, double);
+  R_Free(internal->rate_reduction);
+  internal->rate_reduction = (double*) R_Calloc(internal->dim_rate_reduction, double);
+  internal->C = (double*) user_get_array(user, false, internal->C, "C", NA_REAL, NA_REAL, 2, internal->dim_C_1, internal->dim_C_2);
+  internal->contact_intervention_effect = (double*) user_get_array(user, false, internal->contact_intervention_effect, "contact_intervention_effect", NA_REAL, NA_REAL, 2, internal->dim_contact_intervention_effect_1, internal->dim_contact_intervention_effect_2);
+  for (int i = 1; i <= internal->dim_D; ++i) {
+    internal->initial_D[i - 1] = internal->init_D[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_E; ++i) {
+    internal->initial_E[i - 1] = internal->init_E[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_EV; ++i) {
+    internal->initial_EV[i - 1] = internal->init_EV[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_H; ++i) {
+    internal->initial_H[i - 1] = internal->init_H[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_HV; ++i) {
+    internal->initial_HV[i - 1] = internal->init_HV[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_I; ++i) {
+    internal->initial_I[i - 1] = internal->init_I[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_IV; ++i) {
+    internal->initial_IV[i - 1] = internal->init_IV[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R; ++i) {
+    internal->initial_R[i - 1] = internal->init_R[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_S; ++i) {
+    internal->initial_S[i - 1] = internal->init_S[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_V1; ++i) {
+    internal->initial_V1[i - 1] = internal->init_V1[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_V2; ++i) {
+    internal->initial_V2[i - 1] = internal->init_V2[i - 1];
+  }
+  interpolate_check_y(internal->dim_time, internal->dim_beta, 0, "beta", "beta_t");
+  cinterpolate_free(internal->interpolate_beta_t);
+  internal->interpolate_beta_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->beta, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_beta_vax, 0, "beta_vax", "beta_vax_t");
+  cinterpolate_free(internal->interpolate_beta_vax_t);
+  internal->interpolate_beta_vax_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->beta_vax, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_eta, 0, "eta", "eta_t");
+  cinterpolate_free(internal->interpolate_eta_t);
+  internal->interpolate_eta_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->eta, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_eta_vax, 0, "eta_vax", "eta_vax_t");
+  cinterpolate_free(internal->interpolate_eta_vax_t);
+  internal->interpolate_eta_vax_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->eta_vax, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_gamma, 0, "gamma", "gamma_t");
+  cinterpolate_free(internal->interpolate_gamma_t);
+  internal->interpolate_gamma_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->gamma, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_omega, 0, "omega", "omega_t");
+  cinterpolate_free(internal->interpolate_omega_t);
+  internal->interpolate_omega_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->omega, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_omega_vax, 0, "omega_vax", "omega_vax_t");
+  cinterpolate_free(internal->interpolate_omega_vax_t);
+  internal->interpolate_omega_vax_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->omega_vax, true, false);
+  interpolate_check_y(internal->dim_time, internal->dim_sigma, 0, "sigma", "sigma_t");
+  cinterpolate_free(internal->interpolate_sigma_t);
+  internal->interpolate_sigma_t = cinterpolate_alloc("linear", internal->dim_time, 1, internal->time, internal->sigma, true, false);
+  internal->rate_intervention_effect = (double*) user_get_array(user, false, internal->rate_intervention_effect, "rate_intervention_effect", NA_REAL, NA_REAL, 2, internal->dim_rate_intervention_effect_1, internal->dim_rate_intervention_effect_2);
+  internal->vax_end = (double*) user_get_array(user, false, internal->vax_end, "vax_end", NA_REAL, NA_REAL, 2, internal->dim_vax_end_1, internal->dim_vax_end_2);
+  internal->vax_nu = (double*) user_get_array(user, false, internal->vax_nu, "vax_nu", NA_REAL, NA_REAL, 2, internal->dim_vax_nu_1, internal->dim_vax_nu_2);
+  internal->vax_start = (double*) user_get_array(user, false, internal->vax_start, "vax_start", NA_REAL, NA_REAL, 2, internal->dim_vax_start_1, internal->dim_vax_start_2);
+  return R_NilValue;
+}
+SEXP vacamole_set_initial(SEXP internal_p, SEXP t_ptr, SEXP state_ptr, SEXP vacamole_use_dde_ptr) {
+  return R_NilValue;
+}
+SEXP vacamole_metadata(SEXP internal_p) {
+  vacamole_internal *internal = vacamole_get_internal(internal_p, 1);
+  SEXP ret = PROTECT(allocVector(VECSXP, 4));
+  SEXP nms = PROTECT(allocVector(STRSXP, 4));
+  SET_STRING_ELT(nms, 0, mkChar("variable_order"));
+  SET_STRING_ELT(nms, 1, mkChar("output_order"));
+  SET_STRING_ELT(nms, 2, mkChar("n_out"));
+  SET_STRING_ELT(nms, 3, mkChar("interpolate_t"));
+  setAttrib(ret, R_NamesSymbol, nms);
+  SEXP variable_length = PROTECT(allocVector(VECSXP, 11));
+  SEXP variable_names = PROTECT(allocVector(STRSXP, 11));
+  setAttrib(variable_length, R_NamesSymbol, variable_names);
+  SET_VECTOR_ELT(variable_length, 0, ScalarInteger(internal->dim_S));
+  SET_VECTOR_ELT(variable_length, 1, ScalarInteger(internal->dim_E));
+  SET_VECTOR_ELT(variable_length, 2, ScalarInteger(internal->dim_EV));
+  SET_VECTOR_ELT(variable_length, 3, ScalarInteger(internal->dim_I));
+  SET_VECTOR_ELT(variable_length, 4, ScalarInteger(internal->dim_IV));
+  SET_VECTOR_ELT(variable_length, 5, ScalarInteger(internal->dim_H));
+  SET_VECTOR_ELT(variable_length, 6, ScalarInteger(internal->dim_HV));
+  SET_VECTOR_ELT(variable_length, 7, ScalarInteger(internal->dim_D));
+  SET_VECTOR_ELT(variable_length, 8, ScalarInteger(internal->dim_R));
+  SET_VECTOR_ELT(variable_length, 9, ScalarInteger(internal->dim_V1));
+  SET_VECTOR_ELT(variable_length, 10, ScalarInteger(internal->dim_V2));
+  SET_STRING_ELT(variable_names, 0, mkChar("S"));
+  SET_STRING_ELT(variable_names, 1, mkChar("E"));
+  SET_STRING_ELT(variable_names, 2, mkChar("EV"));
+  SET_STRING_ELT(variable_names, 3, mkChar("I"));
+  SET_STRING_ELT(variable_names, 4, mkChar("IV"));
+  SET_STRING_ELT(variable_names, 5, mkChar("H"));
+  SET_STRING_ELT(variable_names, 6, mkChar("HV"));
+  SET_STRING_ELT(variable_names, 7, mkChar("D"));
+  SET_STRING_ELT(variable_names, 8, mkChar("R"));
+  SET_STRING_ELT(variable_names, 9, mkChar("V1"));
+  SET_STRING_ELT(variable_names, 10, mkChar("V2"));
+  SET_VECTOR_ELT(ret, 0, variable_length);
+  UNPROTECT(2);
+  SET_VECTOR_ELT(ret, 1, R_NilValue);
+  SET_VECTOR_ELT(ret, 2, ScalarInteger(0));
+  SEXP interpolate_t = PROTECT(allocVector(VECSXP, 3));
+  SEXP interpolate_t_nms = PROTECT(allocVector(STRSXP, 3));
+  setAttrib(interpolate_t, R_NamesSymbol, interpolate_t_nms);
+  SET_VECTOR_ELT(interpolate_t, 0, ScalarReal(internal->time[0]));
+  SET_VECTOR_ELT(interpolate_t, 1, ScalarReal(internal->time[internal->dim_time - 1]));
+  SET_STRING_ELT(interpolate_t_nms, 0, mkChar("min"));
+  SET_STRING_ELT(interpolate_t_nms, 1, mkChar("max"));
+  SET_VECTOR_ELT(ret, 3, interpolate_t);
+  UNPROTECT(2);
+  UNPROTECT(2);
+  return ret;
+}
+SEXP vacamole_initial_conditions(SEXP internal_p, SEXP t_ptr) {
+  vacamole_internal *internal = vacamole_get_internal(internal_p, 1);
+  SEXP r_state = PROTECT(allocVector(REALSXP, internal->dim_D + internal->dim_E + internal->dim_EV + internal->dim_H + internal->dim_HV + internal->dim_I + internal->dim_IV + internal->dim_R + internal->dim_S + internal->dim_V1 + internal->dim_V2));
+  double * state = REAL(r_state);
+  memcpy(state + 0, internal->initial_S, internal->dim_S * sizeof(double));
+  memcpy(state + internal->dim_S, internal->initial_E, internal->dim_E * sizeof(double));
+  memcpy(state + internal->offset_variable_EV, internal->initial_EV, internal->dim_EV * sizeof(double));
+  memcpy(state + internal->offset_variable_I, internal->initial_I, internal->dim_I * sizeof(double));
+  memcpy(state + internal->offset_variable_IV, internal->initial_IV, internal->dim_IV * sizeof(double));
+  memcpy(state + internal->offset_variable_H, internal->initial_H, internal->dim_H * sizeof(double));
+  memcpy(state + internal->offset_variable_HV, internal->initial_HV, internal->dim_HV * sizeof(double));
+  memcpy(state + internal->offset_variable_D, internal->initial_D, internal->dim_D * sizeof(double));
+  memcpy(state + internal->offset_variable_R, internal->initial_R, internal->dim_R * sizeof(double));
+  memcpy(state + internal->offset_variable_V1, internal->initial_V1, internal->dim_V1 * sizeof(double));
+  memcpy(state + internal->offset_variable_V2, internal->initial_V2, internal->dim_V2 * sizeof(double));
+  UNPROTECT(1);
+  return r_state;
+}
+void vacamole_rhs(vacamole_internal* internal, double t, double * state, double * dstatedt, double * output) {
+  double * S = state + 0;
+  double * E = state + internal->dim_S;
+  double * EV = state + internal->offset_variable_EV;
+  double * I = state + internal->offset_variable_I;
+  double * IV = state + internal->offset_variable_IV;
+  double * H = state + internal->offset_variable_H;
+  double * HV = state + internal->offset_variable_HV;
+  double * V1 = state + internal->offset_variable_V1;
+  double * V2 = state + internal->offset_variable_V2;
+  double beta_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_beta_t, &beta_t);
+  double beta_vax_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_beta_vax_t, &beta_vax_t);
+  for (int i = 1; i <= internal->dim_contact_reduction_1; ++i) {
+    for (int j = 1; j <= internal->dim_contact_reduction_2; ++j) {
+      internal->contact_reduction[i - 1 + internal->dim_contact_reduction_1 * (j - 1)] = (t > internal->contact_intervention_start[i - 1] && t < internal->contact_intervention_end[i - 1] ? internal->contact_intervention_effect[internal->dim_contact_intervention_effect_1 * (j - 1) + i - 1] : 0);
+    }
+  }
+  double eta_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_eta_t, &eta_t);
+  double eta_vax_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_eta_vax_t, &eta_vax_t);
+  double gamma_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_gamma_t, &gamma_t);
+  double omega_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_omega_t, &omega_t);
+  double omega_vax_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_omega_vax_t, &omega_vax_t);
+  for (int i = 1; i <= internal->dim_rate_reduction_1; ++i) {
+    for (int j = 1; j <= internal->dim_rate_reduction_2; ++j) {
+      internal->rate_reduction[i - 1 + internal->dim_rate_reduction_1 * (j - 1)] = (t > internal->rate_intervention_start[i - 1] && t < internal->rate_intervention_end[i - 1] ? internal->rate_intervention_effect[internal->dim_rate_intervention_effect_1 * (j - 1) + i - 1] : 0);
+    }
+  }
+  double sigma_t = 0.0;
+  cinterpolate_eval(t, internal->interpolate_sigma_t, &sigma_t);
+  for (int i = 1; i <= internal->dim_contact_reduction_sum; ++i) {
+    internal->contact_reduction_sum[i - 1] = odin_sum2(internal->contact_reduction, 0, internal->dim_contact_reduction_1, i - 1, i, internal->dim_contact_reduction_1);
+  }
+  for (int i = 1; i <= internal->dim_D; ++i) {
+    dstatedt[internal->offset_variable_D + i - 1] = omega_t * (I[i - 1] + H[i - 1]) + omega_vax_t * (IV[i - 1] + HV[i - 1]);
+  }
+  for (int i = 1; i <= internal->dim_H; ++i) {
+    dstatedt[internal->offset_variable_H + i - 1] = eta_t * I[i - 1] - (gamma_t + omega_t) * H[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_HV; ++i) {
+    dstatedt[internal->offset_variable_HV + i - 1] = eta_vax_t * IV[i - 1] - (gamma_t + omega_vax_t) * HV[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_I; ++i) {
+    dstatedt[internal->offset_variable_I + i - 1] = sigma_t * E[i - 1] - (eta_t + gamma_t + omega_t) * I[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_IV; ++i) {
+    dstatedt[internal->offset_variable_IV + i - 1] = sigma_t * EV[i - 1] - (eta_vax_t + gamma_t + omega_vax_t) * IV[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_R; ++i) {
+    dstatedt[internal->offset_variable_R + i - 1] = gamma_t * (I[i - 1] + H[i - 1] + IV[i - 1] + HV[i - 1]);
+  }
+  for (int i = 1; i <= internal->dim_rate_reduction_sum; ++i) {
+    internal->rate_reduction_sum[i - 1] = odin_sum2(internal->rate_reduction, 0, internal->dim_rate_reduction_1, i - 1, i, internal->dim_rate_reduction_1);
+  }
+  for (int i = 1; i <= internal->dim_contact_reduction_total; ++i) {
+    internal->contact_reduction_total[i - 1] = 1 - fmin(internal->contact_reduction_sum[i - 1], 1);
+  }
+  for (int i = 1; i <= internal->dim_rate_reduction_total; ++i) {
+    internal->rate_reduction_total[i - 1] = 1 - fmin(internal->rate_reduction_sum[i - 1], 1);
+  }
+  for (int i = 1; i <= internal->dim_lambda_prod_1; ++i) {
+    for (int j = 1; j <= internal->dim_lambda_prod_2; ++j) {
+      internal->lambda_prod[i - 1 + internal->dim_lambda_prod_1 * (j - 1)] = internal->C[internal->dim_C_1 * (j - 1) + i - 1] * (I[j - 1] + IV[j - 1]) * beta_t * internal->contact_reduction_total[j - 1] * internal->contact_reduction_total[i - 1] * internal->rate_reduction_total[i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_lambda_prod_vax_1; ++i) {
+    for (int j = 1; j <= internal->dim_lambda_prod_vax_2; ++j) {
+      internal->lambda_prod_vax[i - 1 + internal->dim_lambda_prod_vax_1 * (j - 1)] = internal->C[internal->dim_C_1 * (j - 1) + i - 1] * (I[j - 1] + IV[j - 1]) * beta_vax_t * internal->contact_reduction_total[j - 1] * internal->contact_reduction_total[i - 1] * internal->rate_reduction_total[i - 1];
+    }
+  }
+  for (int i = 1; i <= internal->dim_lambda; ++i) {
+    internal->lambda[i - 1] = odin_sum2(internal->lambda_prod, i - 1, i, 0, internal->dim_lambda_prod_2, internal->dim_lambda_prod_1);
+  }
+  for (int i = 1; i <= internal->dim_lambda_vax; ++i) {
+    internal->lambda_vax[i - 1] = odin_sum2(internal->lambda_prod_vax, i - 1, i, 0, internal->dim_lambda_prod_vax_2, internal->dim_lambda_prod_vax_1);
+  }
+  for (int i = 1; i <= internal->dim_E; ++i) {
+    dstatedt[internal->dim_S + i - 1] = internal->lambda[i - 1] * (S[i - 1] + V1[i - 1]) - sigma_t * E[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_EV; ++i) {
+    dstatedt[internal->offset_variable_EV + i - 1] = internal->lambda_vax[i - 1] * V2[i - 1] - sigma_t * EV[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_vax_rate_S; ++i) {
+    internal->vax_rate_S[i - 1] = (t >= internal->vax_start[internal->dim_vax_start_1 * 0 + i - 1] && t <= internal->vax_end[internal->dim_vax_end_1 * 0 + i - 1] && S[i - 1] > 0 ? internal->vax_nu[internal->dim_vax_nu_1 * 0 + i - 1] / (double) S[i - 1] : 0);
+  }
+  for (int i = 1; i <= internal->dim_vax_rate_S; ++i) {
+    internal->vax_rate_S[i - 1] = (internal->vax_rate_S[i - 1] + internal->lambda[i - 1] > 1 ? 1 - internal->lambda[i - 1] : internal->vax_rate_S[i - 1]);
+  }
+  for (int i = 1; i <= internal->dim_vax_rate_V1; ++i) {
+    internal->vax_rate_V1[i - 1] = (t >= internal->vax_start[internal->dim_vax_start_1 * 1 + i - 1] && t <= internal->vax_end[internal->dim_vax_end_1 * 1 + i - 1] && V1[i - 1] > 0 ? internal->vax_nu[internal->dim_vax_nu_1 * 1 + i - 1] / (double) V1[i - 1] : 0);
+  }
+  for (int i = 1; i <= internal->dim_vax_rate_V1; ++i) {
+    internal->vax_rate_V1[i - 1] = (internal->vax_rate_V1[i - 1] + internal->lambda[i - 1] > 1 ? 1 - internal->lambda[i - 1] : internal->vax_rate_V1[i - 1]);
+  }
+  for (int i = 1; i <= internal->dim_S; ++i) {
+    dstatedt[0 + i - 1] = -((internal->lambda[i - 1] + internal->vax_rate_S[i - 1])) * S[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_V1; ++i) {
+    dstatedt[internal->offset_variable_V1 + i - 1] = internal->vax_rate_S[i - 1] * S[i - 1] - (internal->vax_rate_V1[i - 1] + internal->lambda[i - 1]) * V1[i - 1];
+  }
+  for (int i = 1; i <= internal->dim_V2; ++i) {
+    dstatedt[internal->offset_variable_V2 + i - 1] = internal->vax_rate_V1[i - 1] * V1[i - 1] - internal->lambda_vax[i - 1] * V2[i - 1];
+  }
+}
+void vacamole_rhs_dde(size_t neq, double t, double * state, double * dstatedt, void * internal) {
+  vacamole_rhs((vacamole_internal*)internal, t, state, dstatedt, NULL);
+}
+void vacamole_rhs_desolve(int * neq, double * t, double * state, double * dstatedt, double * output, int * np) {
+  vacamole_rhs(vacamole_internal_ds, *t, state, dstatedt, output);
+}
+SEXP vacamole_rhs_r(SEXP internal_p, SEXP t, SEXP state) {
+  SEXP dstatedt = PROTECT(allocVector(REALSXP, LENGTH(state)));
+  vacamole_internal *internal = vacamole_get_internal(internal_p, 1);
+  double *output = NULL;
+  vacamole_rhs(internal, scalar_real(t, "t"), REAL(state), REAL(dstatedt), output);
   UNPROTECT(1);
   return dstatedt;
 }

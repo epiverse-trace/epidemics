@@ -95,7 +95,7 @@
 #' group as well as the total epidemic size.
 #'
 #' @param data A table of model output, typically
-#' the output of [model_de  ault()] or similar functions.
+#' the output of [model_default()] or similar functions.
 #' @param stage A numeric vector for the stage of the epidemic at which to
 #' return the epidemic size; here 0.0 represents the start time of the epidemic
 #' i.e., the initial conditions of the epidemic simulation, while 1.0 represents

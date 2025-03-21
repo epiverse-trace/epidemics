@@ -2,8 +2,26 @@
 % Please edit documentation in R/model_diphtheria.R
 \name{model_diphtheria}
 \alias{model_diphtheria}
+\alias{model_diphtheria_cpp}
 \title{Model a diphtheria outbreak using a compartmental ODE model}
 \usage{
+model_diphtheria_cpp(
+  population,
+  transmission_rate = 4/4.5,
+  infectiousness_rate = 1/3,
+  recovery_rate = 1/3,
+  reporting_rate = 0.03,
+  prop_hosp = 0.01,
+  hosp_entry_rate = 0.2,
+  hosp_exit_rate = 0.2,
+  prop_vaccinated = 0 * population[["demography_vector"]],
+  intervention = NULL,
+  time_dependence = NULL,
+  population_change = NULL,
+  time_end = 100,
+  increment = 1
+)
+
 model_diphtheria(
   population,
   transmission_rate = 4/4.5,
@@ -91,6 +109,11 @@ A \code{data.table} with the columns "time", "compartment", "age_group",
 "value", and "run", giving the number of individuals per demographic group
 in each compartment at each timestep in long (or "tidy") format, with "run"
 indicating the unique parameter combination.
+
+A \code{data.table} with the columns "time", "compartment", "age_group",
+"value", and "run", giving the number of individuals per demographic group
+in each compartment at each timestep in long (or "tidy") format, with "run"
+indicating the unique parameter combination.
 }
 \description{
 Simulate a diphtheria outbreak using a deterministic,
@@ -102,8 +125,60 @@ This model allows for a proportion of each demographic group to be vaccinated
 at the start of the outbreak, and thus to not contribute to the outbreak.
 The model also allows for changes to the number of susceptibles in each age
 group to model influxes or evacuations from camps.
+
+Simulate a diphtheria outbreak using a deterministic,
+compartmental ordinary differential equation model with the compartments
+"susceptible", "exposed", "infectious", "hospitalised", and"recovered".
+The model is based on Finger et al. (2019) and is intended to be used in the
+context of internally displaced people (IDP) or refugee camps.
+This model allows for a proportion of each demographic group to be vaccinated
+at the start of the outbreak, and thus to not contribute to the outbreak.
+The model also allows for changes to the number of susceptibles in each age
+group to model influxes or evacuations from camps.
 }
 \section{Details: Model an infection outbreak in a humanitarian camp setting}{
+This model has been developed for diphtheria outbreaks in settings where
+interventions on social contacts are difficult to implement. It it suitable
+for application to the outbreak of similar, directly transmitted infectious
+diseases as well.
+\subsection{Model parameters}{
+
+This model only allows for single, population-wide rates transitions between
+compartments per model run.
+
+However, model parameters may be passed as numeric vectors. These vectors
+must follow Tidyverse recycling rules: all vectors must have the same length,
+or, vectors of length 1 will be recycled to the length of any other vector.
+
+The default values are taken from Finger et al. (2019) where possible:
+\itemize{
+\item Transmission rate (\eqn{\beta}, \code{transmission_rate}): 0.8888889, assuming
+an \eqn{R_0} of 4.0 and a total infectious period of 4.5 days.
+\item Infectiousness rate (\eqn{\sigma}, \code{infectiousness_rate}): 0.333, assuming
+a pre-infectious period of 3 days.
+\item Reporting rate (\eqn{r}, \code{reporting_rate}): 0.03, assuming that 3\% of
+infectious cases are detected or reported.
+\item Proportion hospitalised (\eqn{\eta}, \code{prop_hosp}): 0.01, assuming that 1\%
+of reported cases need hospital treatment.
+\item Hospital entry rate (\eqn{\tau_1}, \code{hosp_entry_rate}): 0.2, assuming that
+it takes 5 days for infectious individuals to seek hospital treatment.
+\item Hospital exit rate (\eqn{\tau_2}, \code{hosp_exit_rate}): 0.2, assuming that
+individuals are discharged from hospital after 5 days.
+\item Recovery rate (\eqn{\gamma}, \code{recovery_rate}): 0.333, assuming an
+infectious period following symptoms, of 3 days.
+}
+}
+
+\subsection{Modelling population changes}{
+
+This model allows changes to the number of susceptibles in each demographic
+group, to represent influxes or evacuations from the camp as would be
+expected in humanitarian relief situations.
+Users can specify the times and changes (to each demographic group) of
+changes using the \code{population_changes} argument, to examine the effect on
+outbreak dynamics.
+}
+
 This model has been developed for diphtheria outbreaks in settings where
 interventions on social contacts are difficult to implement. It it suitable
 for application to the outbreak of similar, directly transmitted infectious
@@ -194,8 +269,59 @@ data <- model_diphtheria(
 )
 head(data)
 tail(data)
+# create a dummy camp population with three age groups
+# diphtheria model is SEIHR
+# assume that most are susceptible, some infectious
+# values taken from supplementary material in Finger et al. for the
+# Kutupalong camp, rounded to the nearest 100
+n_age_groups <- 3
+demography_vector <- c(83000, 108200, 224600)
+initial_conditions <- matrix(0, nrow = n_age_groups, ncol = 5)
+
+# set susceptibles and infectious
+initial_conditions[, 1] <- demography_vector - 1
+initial_conditions[, 3] <- rep(1, n_age_groups)
+
+camp_pop <- population(
+  contact_matrix = matrix(1, nrow = n_age_groups, ncol = n_age_groups),
+  demography_vector = demography_vector,
+  initial_conditions = initial_conditions / demography_vector
+)
+
+# assume younger age groups are vaccinated
+prop_vaccinated <- c(0.2, 0.10, 0.1)
+
+# run model for single, default parameter set
+data <- model_diphtheria(
+  camp_pop,
+  prop_vaccinated = prop_vaccinated
+)
+head(data)
+tail(data)
+
+# run model with increase in population
+# create population change data
+p <- list(
+  time = 70,
+  values = list(
+    c(1e4, 2e5, 1e5)
+  )
+)
+
+data <- model_diphtheria(
+  camp_pop,
+  prop_vaccinated = prop_vaccinated,
+  population_change = p
+)
+head(data)
+tail(data)
 }
 \references{
+Finger, F., Funk, S., White, K., Siddiqui, M. R., Edmunds, W. J., &
+Kucharski, A. J. (2019). Real-time analysis of the diphtheria outbreak in
+forcibly displaced Myanmar nationals in Bangladesh. BMC Medicine, 17, 58.
+\doi{10.1186/s12916-019-1288-7}.
+
 Finger, F., Funk, S., White, K., Siddiqui, M. R., Edmunds, W. J., &
 Kucharski, A. J. (2019). Real-time analysis of the diphtheria outbreak in
 forcibly displaced Myanmar nationals in Bangladesh. BMC Medicine, 17, 58.

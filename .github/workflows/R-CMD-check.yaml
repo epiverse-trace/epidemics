@@ -7,6 +7,7 @@
 # rcmdcheck::rcmdcheck()
 # ```
 on:
+  workflow_dispatch:
   push:
     branches: [main, master]
     paths:

@@ -875,7 +875,7 @@ model_vacamole <- function(population,
         )
       )[seq_len(nrow(population[[1]]$contact_matrix))]
     )
-    names(age_group_mappings) <- seq_len(nrow(C))
+    names(age_group_mappings) <- seq_len(nrow(population[[1]]$contact_matrix))
     
     mapping <- c( # prepend numbers to help during sorting. Will remove later
       S = "01susceptible", V1 = "02vaccinated_one_dose", V2 = "03vaccinated_two_dose", 

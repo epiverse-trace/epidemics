@@ -700,7 +700,7 @@ model_default <- function(population,
         )
       )[seq_len(nrow(population[[1]]$contact_matrix))]
     )
-    names(age_group_mappings) <- seq_len(nrow(C))
+    names(age_group_mappings) <- seq_len(nrow(population[[1]]$contact_matrix))
 
     mapping <- c( # prepend numbers to help during sorting. Will remove later
       S = "1susceptible", E = "2exposed", I = "3infectious",

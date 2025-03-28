@@ -37,7 +37,8 @@ deriv(S[]) <- if(vax_rate[i] + lambda[i] <= 1) -(lambda[i] + vax_rate[i]) * S[i]
 deriv(E[]) <- lambda[i] * S[i] - sigma_t * E[i]
 deriv(I[]) <- sigma_t * E[i] - gamma_t * I[i]
 deriv(R[]) <- gamma_t * I[i]
-deriv(V[]) <- if(vax_rate[i] + lambda[i] <= 1) vax_rate[i] * S[i] else S[i]*(1-lambda[i])
+deriv(V[]) <- if(vax_rate[i] + lambda[i] <= 1) vax_rate[i] * S[i] else 
+  if(vax_rate[i] > 0) S[i]*(1-lambda[i]) else 0
 
 # Initial conditions
 initial(S[]) <- init_S[i]

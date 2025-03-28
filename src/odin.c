@@ -1665,7 +1665,7 @@ void seirv_model_rhs(seirv_model_internal* internal, double t, double * state, d
     dstatedt[0 + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] <= 1 ? -((internal->lambda[i - 1] + internal->vax_rate[i - 1])) * S[i - 1] : -(S[i - 1]));
   }
   for (int i = 1; i <= internal->dim_V; ++i) {
-    dstatedt[internal->offset_variable_V + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] <= 1 ? internal->vax_rate[i - 1] * S[i - 1] : S[i - 1] * (1 - internal->lambda[i - 1]));
+    dstatedt[internal->offset_variable_V + i - 1] = (internal->vax_rate[i - 1] + internal->lambda[i - 1] <= 1 ? internal->vax_rate[i - 1] * S[i - 1] : (internal->vax_rate[i - 1] > 0 ? S[i - 1] * (1 - internal->lambda[i - 1]) : 0));
   }
 }
 void seirv_model_rhs_dde(size_t neq, double t, double * state, double * dstatedt, void * internal) {

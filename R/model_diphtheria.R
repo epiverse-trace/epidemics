@@ -702,15 +702,15 @@ model_diphtheria <- function(population,
     age_group_mappings <- paste0( # properly label demography groups
       seq_len(n_age),
       c(
-        rownames(C),
         rownames(population[[1]]$contact_matrix),
+        names(population[[1]]$demography_vector),
         sprintf(
           "demo_group_%i",
           seq_len(nrow(population[[1]]$contact_matrix))
         )
       )[seq_len(nrow(population[[1]]$contact_matrix))]
     )
-    names(age_group_mappings) <- seq_len(ncol(pop_change))
+    names(age_group_mappings) <- seq_len(nrow(population[[1]]$contact_matrix))
     
     mapping <- c( # prepend numbers to help during sorting. Will remove later
       S = "1susceptible", E = "2exposed", I = "3infectious",

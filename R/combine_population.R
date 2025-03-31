@@ -10,7 +10,7 @@
 #' @param name Optional string for the population name.
 #'
 #' @return An object of the `<population>` class.
-#'
+#' @export
 #' @examples
 #' pop1 <- population(
 #'   name = "Population 1",

@@ -32,8 +32,7 @@ This vignette shows how _epidemics_ can be used to combine multiple age-stratifi
 
 
 ```{r setup}
-# library(epidemics)
-devtools::load_all()
+library(epidemics)
 library(dplyr)
 library(ggplot2)
 ```

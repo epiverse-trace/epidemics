@@ -11,7 +11,7 @@
 \item{mod_args}{A named list of the population, and epidemic modifiers.}
 }
 \value{
-A list of model arguments suitable for \code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}}.
+A list of model arguments suitable for .model_diphtheria_cpp().
 This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
@@ -43,11 +43,11 @@ is incremented.
 }
 \description{
 Prepare arguments to \code{\link[=model_diphtheria]{model_diphtheria()}} for
-\code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}}.
+.model_diphtheria_cpp().
 }
 \details{
 \code{.check_prepare_args_diphtheria()} prepares arguments for
-\code{\link[=.model_diphtheria_cpp]{.model_diphtheria_cpp()}}, which is the C++ function that solves the
+.model_diphtheria_cpp(), which is the C++ function that solves the
 ODE system using a Boost \emph{odeint} solver, by converting the arguments
 collected in \code{mod_args} into simpler structures such as lists and numeric or
 integer vectors that can be interpreted as C++ types such as \code{Rcpp::List},

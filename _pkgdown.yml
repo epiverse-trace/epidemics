@@ -22,7 +22,7 @@ articles:
 - title: Run models with multiple populations
   navbar: Run models with multiple populations
   contents:
-  - modelling_populations.Rmd
+  - modelling_populations
 - title: Advanced modelling
   navbar: Advanced modelling
   contents:

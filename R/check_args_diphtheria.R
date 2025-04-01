@@ -3,12 +3,12 @@
 #' @rdname prepare_diphtheria_args
 #'
 #' @description Prepare arguments to [model_diphtheria()] for
-#' [.model_diphtheria_cpp()].
+#' .model_diphtheria_cpp().
 #'
 #' @param mod_args A named list of the population, and epidemic modifiers.
 #'
 #' @return
-#' A list of model arguments suitable for [.model_diphtheria_cpp()].
+#' A list of model arguments suitable for .model_diphtheria_cpp().
 #' This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
@@ -50,7 +50,7 @@
 #' @keywords internal
 #' @details
 #' `.check_prepare_args_diphtheria()` prepares arguments for
-#' [.model_diphtheria_cpp()], which is the C++ function that solves the
+#' .model_diphtheria_cpp(), which is the C++ function that solves the
 #' ODE system using a Boost _odeint_ solver, by converting the arguments
 #' collected in `mod_args` into simpler structures such as lists and numeric or
 #' integer vectors that can be interpreted as C++ types such as `Rcpp::List`,

@@ -102,6 +102,7 @@ extract_demography <- function(population) {
   # Rename demography by combining the population name and the name of each
   # element of demography
   names(demography) <- paste(name_pop, names(demography), sep = ".")
+  demography
 }
 
 #' Extract initial conditions from a `<population>` object
@@ -127,6 +128,7 @@ extract_initial <- function(population) {
                                  seq_len(nrow(initial))
                                ))[seq_len(nrow(initial))],
                              sep = ".")
+  initial
 }
 
 #' Extract the contact matrix from a `<population>` object
@@ -151,6 +153,7 @@ extract_contact <- function(population) {
                         seq_len(nrow(population$contact_matrix))
                       ))[seq_len(nrow(population$contact_matrix))],
           sep = ".")
+  contact
 }
 
 #' Create the connectivity matrix between all groups of `populations`
@@ -188,7 +191,7 @@ combine_contact <- function(populations, connectivity_matrix) {
         contact_matrices[[j]] * connectivity_matrix[i, j]
     }
   }
-
+  combined_matrix
 }
 
 #' Create the connectivity matrix between all groups of `populations` using
@@ -252,4 +255,5 @@ gravity_contact <- function(populations, connectivity_matrix) {
         contact_matrices[[j]] * connectivity_matrix[i, j]
     }
   }
+  combined_matrix
 }

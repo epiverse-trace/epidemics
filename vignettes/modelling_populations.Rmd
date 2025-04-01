@@ -167,8 +167,8 @@ We plot the data to observe the number of cases per region and age group. In all
 
 ```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
-filter(output, compartment %in% "infectious") %>%
-  mutate(region = gsub("[.].*", "", demography_group), 
+filter(output, compartment == "infectious") %>%
+  mutate(region = gsub("[.].*", "", demography_group),
          age = gsub(".*[.]", "", demography_group)) %>%
   ggplot(
     aes(
@@ -233,8 +233,8 @@ Given the distance between populations, the rate of connectivity between the two
 
 ```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
-filter(output_gravity, compartment %in% "infectious") %>%
-  mutate(region = gsub("[.].*", "", demography_group), 
+filter(output_gravity, compartment == "infectious") %>%
+  mutate(region = gsub("[.].*", "", demography_group),
          age = gsub(".*[.]", "", demography_group)) %>%
   ggplot(
     aes(
@@ -272,7 +272,7 @@ filter(output_gravity, compartment %in% "infectious") %>%
 The argument `method` can also be defined as a function, which will be used to compute the connectivity matrix. Using `method = gravity_contact` will lead to the same output as `method = "gravity"`. 
 
 ```{r}
-gravity_population_with_function <- combine_populations(
+gravity_pop_with_function <- combine_populations(
   populations = list(population1, population2),
   connectivity_matrix = distance_matrix,
   method = gravity_contact, name = "combine_gravity"
@@ -280,7 +280,7 @@ gravity_population_with_function <- combine_populations(
 
 # run an epidemic model
 output_gravity_with_function <- model_default(
-  population = gravity_population_with_function,
+  population = gravity_pop_with_function,
   time_end = 1000, increment = 1.0
 )
 
@@ -296,15 +296,15 @@ In this last example, the function `combine_population` is used to combine more 
 n <- 4
 
 all_population <- list()
-for(i in seq_len(n - 1)){
+for (i in seq_len(n - 1)){
   all_population[i] <- list(population(
     contact_matrix = contact_matrix1,
-    demography_vector = demography_vector1/100,
+    demography_vector = demography_vector1 / 100,
     initial_conditions = rbind(
       c(S = 1, E = 0, I = 0, R = 0, V = 0),
       c(S = 1, E = 0, I = 0, R = 0, V = 0),
       c(S = 1, E = 0, I = 0, R = 0, V = 0)
-    ), 
+    ),
     name = paste0("region", i)))
 }
 ```
@@ -314,25 +314,26 @@ We then add one last population object to the `all_population` list, with a few 
 ```{r}
 all_population[n] <- list(population(
   contact_matrix = contact_matrix1,
-  demography_vector = demography_vector1/100,
+  demography_vector = demography_vector1 / 100,
   initial_conditions = rbind(
     c(S = 1 - 1e-6, E = 0, I = 1e-6, R = 0, V = 0),
     c(S = 1 - 1e-6, E = 0, I = 1e-6, R = 0, V = 0),
     c(S = 1 - 1e-6, E = 0, I = 1e-6, R = 0, V = 0)
-  ), 
+  ),
   name = paste0("region", n)))
 ```
 
 Each population is placed on a line, with consecutive populations being 50km away (i.e. populations 1 and 2 are 50km away, 1 and 3 are 100km away...).
 
 ```{r}
-distance_matrix_n <- matrix(50 * abs(rep(seq_len(n), n) - rep(seq_len(n), each = n)), nrow = n)
+distance_matrix_n <-
+  matrix(50 * abs(rep(seq_len(n), n) - rep(seq_len(n), each = n)), nrow = n)
 ```
 
 We combine all populations using a gravity model, and simulate an epidemic using and SEIRV model.
 
 ```{r}
-combined_n_populations <- 
+combined_n_populations <-
   combine_populations(
     populations = all_population,
     connectivity_matrix = distance_matrix_n,
@@ -350,15 +351,16 @@ output_gravity_n <- model_default(
 The outbreak first peaks in region 5, then in region 4, 3, 2, and 1, with similar number of cases.
 
 ```{r class.source = 'fold-hide'}
-filter(output_gravity_n, compartment %in% "infectious") %>%
-  mutate(region = gsub("[.].*", "", demography_group), 
+filter(output_gravity_n, compartment == "infectious") %>%
+  mutate(region = gsub("[.].*", "", demography_group),
          age = gsub(".*[.]", "", demography_group)) %>%
-  group_by(time, region) |> summarise(value = sum(value)) %>%
+  group_by(time, region) %>%
+  summarise(value = sum(value)) %>%
   ggplot(
     aes(
       x = time,
       y = value,
-      col = region,
+      col = region
     )
   ) +
   geom_line() +

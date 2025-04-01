@@ -10,7 +10,7 @@ contact_data <- socialmixr::contact_matrix(
 contact_matrix <- t(contact_data$matrix)
 demography_vector <- contact_data$demography$population
 
-# Prepare some initial objects
+# Create the first population
 population1 <- population(
   name = "Population 1",
   contact_matrix = contact_matrix,
@@ -22,6 +22,7 @@ population1 <- population(
   )
 )
 
+# Create the second population
 population2 <- population(
   name = "Population 2",
   contact_matrix = contact_matrix,

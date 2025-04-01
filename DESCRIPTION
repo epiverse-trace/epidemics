@@ -39,8 +39,6 @@ Imports:
     cli,
     data.table,
     glue,
-    Rcpp,
-    RcppEigen,
     stats,
     utils,
     withr

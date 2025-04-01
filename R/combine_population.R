@@ -196,6 +196,7 @@ combine_contact <- function(populations, connectivity_matrix){
 #'
 #' @return A numeric matrix combining the contact matrices in `<population>` and 
 #' the connectivity matrix using a gravity model
+#' @export
 #' @keywords internal
 gravity_contact <- function(populations, connectivity_matrix){
   # Get the number of inhabitants per population:

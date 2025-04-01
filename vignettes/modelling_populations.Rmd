@@ -269,7 +269,7 @@ filter(output_gravity, compartment %in% "infectious") %>%
   )
 ```
 
-The argument `method` can also be defined as a function, which will be used to compute the connectivity matrix. Using `method = gravity_contact` instead of `method = "gravity` leads to the same output. 
+The argument `method` can also be defined as a function, which will be used to compute the connectivity matrix. Using `method = gravity_contact` will lead to the same output as `method = "gravity"`. 
 
 ```{r}
 gravity_population_with_function <- combine_populations(

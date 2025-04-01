@@ -2,26 +2,8 @@
 % Please edit documentation in R/model_vacamole.R
 \name{model_vacamole}
 \alias{model_vacamole}
-\alias{model_vacamole_cpp}
 \title{Model leaky, two-dose vaccination in an epidemic using Vacamole}
 \usage{
-model_vacamole_cpp(
-  population,
-  transmission_rate = 1.3/7,
-  transmission_rate_vax = 0.8 * transmission_rate,
-  infectiousness_rate = 1/2,
-  hospitalisation_rate = 1/1000,
-  hospitalisation_rate_vax = 0.8 * hospitalisation_rate,
-  mortality_rate = 1/1000,
-  mortality_rate_vax = 0.8 * mortality_rate,
-  recovery_rate = 1/7,
-  intervention = NULL,
-  vaccination = NULL,
-  time_dependence = NULL,
-  time_end = 100,
-  increment = 1
-)
-
 model_vacamole(
   population,
   transmission_rate = 1.3/7,
@@ -122,20 +104,6 @@ Other columns hold parameters and composable elements relating to the model
 run. Columns "scenario" and "param_set" identify combinations of composable
 elements (population, interventions, vaccination regimes), and infection
 parameters, respectively.
-
-A \verb{<data.table>}.
-If the model parameters and composable elements are all scalars, a single
-\verb{<data.table>} with the columns "time", "compartment", "age_group", and
-"value", giving the number of individuals per demographic group
-in each compartment at each timestep in long (or "tidy") format is returned.
-
-If the model parameters or composable elements are lists or list-like,
-a nested \verb{<data.table>} is returned with a list column "data", which holds
-the compartmental values described above.
-Other columns hold parameters and composable elements relating to the model
-run. Columns "scenario" and "param_set" identify combinations of composable
-elements (population, interventions, vaccination regimes), and infection
-parameters, respectively.
 }
 \description{
 Simulate an epidemic using the \emph{Vacamole} model for Covid-19
@@ -143,55 +111,8 @@ developed at RIVM, the National Institute for Public Health and the
 Environment in the Netherlands.
 This model is aimed at estimating the impact of 'leaky' vaccination on an
 epidemic. See \strong{Details} and \strong{References} for more information.
-
-Simulate an epidemic using the \emph{Vacamole} model for Covid-19
-developed at RIVM, the National Institute for Public Health and the
-Environment in the Netherlands.
-This model is aimed at estimating the impact of 'leaky' vaccination on an
-epidemic. See \strong{Details} and \strong{References} for more information.
 }
 \section{Details: Vacamole Covid-19 model with leaky, two-dose vaccination}{
-The Vacamole model has the compartments "susceptible",
-"vaccinated_one_dose", "vaccinated_two_dose", "exposed", "infectious"
-"infectious_vaccinated", "hospitalised", "hospitalised_vaccinated",
-"recovered",  and "dead".
-
-This model allows for:
-\enumerate{
-\item A 'hospitalised' compartment along with a hospitalisation rate;
-\item Two doses of vaccination, with 'leaky' protection, i.e., vaccination does
-not prevent infection completely but allows for a reduction in the infection
-rate, as well as reduced rates of moving into states considered more serious,
-such as 'hospitalised' or 'dead'.
-}
-\subsection{Model parameters}{
-
-This model only allows for single, population-wide rates of
-transitions between compartments per model run.
-
-However, model parameters may be passed as numeric vectors. These vectors
-must follow Tidyverse recycling rules: all vectors must have the same length,
-or, vectors of length 1 will be recycled to the length of any other vector.
-\itemize{
-\item Transmission rate (\eqn{\beta}, \code{transmission_rate}): 0.186, resulting from
-an \eqn{R_0} = 1.3 and an infectious period of 7 days. The transmission rate
-for doubly vaccinated individuals (\eqn{\beta_v}) is 80\% of \eqn{\beta},
-0.1488.
-\item Infectiousness rate (\eqn{\sigma}, \code{infectiousness_rate}): 0.5, assuming
-a pre-infectious period of 2 days.
-\item Hospitalisation rate (\eqn{\eta}, \code{hospitalistion_rate}): 1.0 / 1000,
-assuming that one in every thousand infectious individuals is hospitalised.
-The hospitalisation rate of doubly vaccinated individuals (\eqn{\eta_v}) is
-80\% of \eqn{\eta}, 0.8 / 1000.
-\item Mortality rate (\eqn{\omega}, \code{mortality_rate}): 1.0 / 1000,
-assuming that one in every thousand infectious and hospitalised
-individuals dies. The mortality rate of the doubly vaccinated
-(\eqn{\omega_v}) is 80\% of \eqn{\omega}, 0.8 / 1000.
-\item Recovery rate (\eqn{\gamma}, \code{recovery_rate}): 0.143, assuming an
-infectious period of 7 days.
-}
-}
-
 The Vacamole model has the compartments "susceptible",
 "vaccinated_one_dose", "vaccinated_two_dose", "exposed", "infectious"
 "infectious_vaccinated", "hospitalised", "hospitalised_vaccinated",
@@ -273,53 +194,8 @@ data <- model_vacamole(
 head(data)
 tail(data)
 
-# create a population, note eleven columns for compartments
-population <- population(
-  contact_matrix = matrix(1),
-  demography_vector = 67e6,
-  initial_conditions = matrix(
-    c(0.9999, 0, 0, 0, 0, 0.0001, 0, 0, 0, 0, 0),
-    nrow = 1, ncol = 11L
-  )
-)
-
-# create a vaccination regime
-double_vax <- vaccination(
-  nu = matrix(1e-3, ncol = 2, nrow = 1),
-  time_begin = matrix(c(10, 30), nrow = 1),
-  time_end = matrix(c(50, 80), nrow = 1)
-)
-
-# run epidemic simulation with vaccination but no intervention
-# with a single set of parameters
-data <- model_vacamole(
-  population = population,
-  vaccination = double_vax
-)
-
-# view some data
-head(data)
-
-# run epidemic simulation with no vaccination or intervention
-# and three discrete values of transmission_rate
-data <- model_vacamole(
-  population = population,
-  transmission_rate = c(1.3, 1.4, 1.5) / 7.0, # uncertainty in R0
-)
-
-# view some data
-head(data)
-tail(data)
-
 }
 \references{
-Ainslie, K. E. C., Backer, J. A., Boer, P. T. de, Hoek, A. J. van,
-Klinkenberg, D., Altes, H. K., Leung, K. Y., Melker, H. de, Miura, F., &
-Wallinga, J. (2022). A scenario modelling analysis to anticipate the impact
-of COVID-19 vaccination in adolescents and children on disease outcomes in
-the Netherlands, summer 2021. Eurosurveillance, 27(44), 2101090.
-\doi{10.2807/1560-7917.ES.2022.27.44.2101090}
-
 Ainslie, K. E. C., Backer, J. A., Boer, P. T. de, Hoek, A. J. van,
 Klinkenberg, D., Altes, H. K., Leung, K. Y., Melker, H. de, Miura, F., &
 Wallinga, J. (2022). A scenario modelling analysis to anticipate the impact

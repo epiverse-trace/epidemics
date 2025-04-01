@@ -7,8 +7,8 @@
           <num>           <char>              <char>        <num>
        1:    50           [0,60) vaccinated_one_dose 2.374336e+06
        2:    50              60+ vaccinated_one_dose 6.399722e+05
-       3:    50           [0,60) vaccinated_two_dose 1.219212e-07
-       4:    50              60+ vaccinated_two_dose 3.286212e-08
+       3:    50           [0,60) vaccinated_two_dose 7.763841e-07
+       4:    50              60+ vaccinated_two_dose 2.092633e-07
        5:    51           [0,60) vaccinated_one_dose 2.398078e+06
        6:    51              60+ vaccinated_one_dose 6.463717e+05
        7:    51           [0,60) vaccinated_two_dose 2.374361e+04

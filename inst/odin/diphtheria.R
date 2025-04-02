@@ -10,28 +10,33 @@ pop_change_t[] <- interpolate(time, pop_change, "linear")
 
 ## Compute reduction in transmission from rate_intervention
 # Contact matrix with time-dependent interventions
-# Then add across interventions - rate does not seem to be age-dependent, 
+# Then add across interventions - rate does not seem to be age-dependent,
 # so could remove age dimension for rate_reduction and rate_reduction_total
-rate_reduction[,] <- if (t > rate_intervention_start[i] && t < rate_intervention_end[i]) 
-  rate_intervention_effect[i,j] else 0 # nolint: line_length_linter.
-rate_reduction_sum[] <- sum(rate_reduction[,i])
+rate_reduction[, ] <-
+  if (t > rate_intervention_start[i] && t < rate_intervention_end[i]) {
+    rate_intervention_effect[i, j]
+  } else {
+    0
+  } # nolint: line_length_linter.
+rate_reduction_sum[] <- sum(rate_reduction[, i])
 rate_reduction_total[] <- 1 - min(rate_reduction_sum[i], 1)
 
 # Specify how transmission varies over time
-# FOI is contacts * infectious * transmission rate 
+# FOI is contacts * infectious * transmission rate
 # returns a matrix, must be converted to a vector/1D array
-# multiply FOI by  reduction in contact origin * reduction in contact destination * reduction in rate
+# multiply FOI by  reduction in contact origin * reduction in contact destination * reduction in rate # nolint: line_length_linter.
 # NOTE: division by population size - this is typically included in the
 # contact matrix scaling in other models
-lambda_prod[, ] <- beta_t * I[j] * rate_reduction_total[i] / (sum(S[]) + sum(E[]) + sum(I[]) + sum(H[]) + sum(R[]))
+lambda_prod[, ] <- beta_t * I[j] * rate_reduction_total[i] /
+  (sum(S[]) + sum(E[]) + sum(I[]) + sum(H[]) + sum(R[]))
 lambda[] <- sum(lambda_prod[i, ])
 
 # ODEs
-deriv(S[]) <-  -lambda[i] * S[i] + pop_change_t[i]
-deriv(E[]) <-  lambda[i] * S[i] - sigma_t * E[i]
-deriv(I[]) <-  sigma_t * E[i] - eta_t * tau1_t * r_t * I[i] - gamma_t * I[i]
-deriv(H[]) <-  tau1_t * eta_t * r_t * I[i] - tau2_t * H[i]
-deriv(R[]) <-  gamma_t * I[i] + tau2_t * H[i]
+deriv(S[]) <- -lambda[i] * S[i] + pop_change_t[i]
+deriv(E[]) <- lambda[i] * S[i] - sigma_t * E[i]
+deriv(I[]) <- sigma_t * E[i] - eta_t * tau1_t * r_t * I[i] - gamma_t * I[i]
+deriv(H[]) <- tau1_t * eta_t * r_t * I[i] - tau2_t * H[i]
+deriv(R[]) <- gamma_t * I[i] + tau2_t * H[i]
 
 # Initial conditions
 initial(S[]) <- init_S[i]
@@ -50,7 +55,7 @@ sigma[] <- user()
 gamma[] <- user()
 tau1[] <- user()
 tau2[] <- user()
-pop_change[,] <- user()
+pop_change[, ] <- user()
 
 # Not currently used (can re-add for time-dependent parameters)
 dim(time) <- n_time
@@ -93,4 +98,3 @@ dim(init_E) <- n_age
 dim(init_I) <- n_age
 dim(init_H) <- n_age
 dim(init_R) <- n_age
-

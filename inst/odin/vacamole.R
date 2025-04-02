@@ -11,56 +11,82 @@ omega_vax_t <- interpolate(time, omega_vax, "linear")
 ## Compute reduction in transmission from contacts_intervention
 # Contact matrix with time-dependent interventions
 # Then add across interventions - need to check this
-contact_reduction[, ] <- if (t > contact_intervention_start[i] && t < contact_intervention_end[i]) 
-  contact_intervention_effect[i, j] else 0 # nolint: line_length_linter.
+contact_reduction[, ] <-
+  if (t > contact_intervention_start[i] && t < contact_intervention_end[i]) {
+    contact_intervention_effect[i, j]
+  } else {
+    0
+  }
 contact_reduction_sum[] <- sum(contact_reduction[, i])
-contact_reduction_total[] <- 1 - min(contact_reduction_sum[i],1)
+contact_reduction_total[] <- 1 - min(contact_reduction_sum[i], 1)
 
 
 ## Compute reduction in transmission from rate_intervention
 # Contact matrix with time-dependent interventions
-# Then add across interventions - rate does not seem to be age-dependent, 
+# Then add across interventions - rate does not seem to be age-dependent,
 # so could remove age dimension for rate_reduction and rate_reduction_total
-rate_reduction[,] <- if (t > rate_intervention_start[i] && t < rate_intervention_end[i]) 
-  rate_intervention_effect[i,j] else 0 # nolint: line_length_linter.
-rate_reduction_sum[] <- sum(rate_reduction[,i])
+rate_reduction[, ] <-
+  if (t > rate_intervention_start[i] && t < rate_intervention_end[i]) {
+    rate_intervention_effect[i, j]
+  } else {
+    0
+  }
+rate_reduction_sum[] <- sum(rate_reduction[, i])
 rate_reduction_total[] <- 1 - min(rate_reduction_sum[i], 1)
 
 # Specify how transmission varies over time
-# FOI is contacts * infectious * transmission rate 
+# FOI is contacts * infectious * transmission rate
 # returns a matrix, must be converted to a vector/1D array
-# multiply FOI by  reduction in contact origin * reduction in contact destination * reduction in rate
-lambda_prod[, ] <- C[i, j] * (I[j] + IV[j]) * beta_t * contact_reduction_total[j] * 
-  contact_reduction_total[i] * rate_reduction_total[i]
+# multiply FOI by  reduction in contact origin * reduction in contact destination * reduction in rate # nolint: line_length_linter.
+lambda_prod[, ] <- C[i, j] * (I[j] + IV[j]) * beta_t *
+  contact_reduction_total[j] * contact_reduction_total[i] *
+  rate_reduction_total[i]
 lambda[] <- sum(lambda_prod[i, ])
 
-lambda_prod_vax[, ] <- C[i, j] * (I[j] + IV[j]) * beta_vax_t * contact_reduction_total[j] * 
-  contact_reduction_total[i] * rate_reduction_total[i]
+lambda_prod_vax[, ] <- C[i, j] * (I[j] + IV[j]) * beta_vax_t *
+  contact_reduction_total[j] * contact_reduction_total[i] *
+  rate_reduction_total[i]
 lambda_vax[] <- sum(lambda_prod_vax[i, ])
 
 # Vaccination - indexing over age groups
-vax_rate_S[] <- if (t >= vax_start[i, 1] && t <= vax_end[i, 1] && S[i] > 0) vax_nu[i, 1]/S[i] else 0
-vax_rate_V1[] <- if (t >= vax_start[i, 2] && t <= vax_end[i, 2] && V1[i] > 0) vax_nu[i, 2]/V1[i] else 0
+vax_rate_S[] <- if (t >= vax_start[i, 1] && t <= vax_end[i, 1] && S[i] > 0) {
+  vax_nu[i, 1] / S[i]
+} else {
+  0
+}
+vax_rate_V1[] <- if (t >= vax_start[i, 2] && t <= vax_end[i, 2] && V1[i] > 0) {
+  vax_nu[i, 2] / V1[i]
+} else {
+  0
+}
 
-vax_rate_S[] <- if(vax_rate_S[i] + lambda[i] > 1) 1-lambda[i] else vax_rate_S[i]
-vax_rate_V1[] <- if(vax_rate_V1[i] + lambda[i] > 1) 1-lambda[i] else vax_rate_V1[i]
+vax_rate_S[] <- if (vax_rate_S[i] + lambda[i] > 1) {
+  1 - lambda[i]
+} else {
+  vax_rate_S[i]
+}
+vax_rate_V1[] <- if (vax_rate_V1[i] + lambda[i] > 1) {
+  1 - lambda[i]
+} else {
+  vax_rate_V1[i]
+}
 
 # ODEs
-deriv(S[]) <-  -(lambda[i] + vax_rate_S[i]) * S[i]
+deriv(S[]) <- -(lambda[i] + vax_rate_S[i]) * S[i]
 
-deriv(E[]) <-  lambda[i] * (S[i] + V1[i]) - sigma_t * E[i]
+deriv(E[]) <- lambda[i] * (S[i] + V1[i]) - sigma_t * E[i]
 deriv(EV[]) <- lambda_vax[i] * V2[i] - sigma_t * EV[i]
 
-deriv(I[]) <-  sigma_t * E[i] - (eta_t + gamma_t + omega_t) * I[i]
+deriv(I[]) <- sigma_t * E[i] - (eta_t + gamma_t + omega_t) * I[i]
 deriv(IV[]) <- sigma_t * EV[i] - (eta_vax_t + gamma_t + omega_vax_t) * IV[i]
 
-deriv(H[]) <-  eta_t * I[i] - (gamma_t + omega_t) * H[i]
+deriv(H[]) <- eta_t * I[i] - (gamma_t + omega_t) * H[i]
 deriv(HV[]) <- eta_vax_t * IV[i] - (gamma_t + omega_vax_t) * HV[i]
 
-deriv(D[]) <-  omega_t * (I[i] + H[i]) + omega_vax_t * (IV[i] + HV[i])
-deriv(R[]) <-  gamma_t * (I[i] + H[i] + IV[i] + HV[i])
+deriv(D[]) <- omega_t * (I[i] + H[i]) + omega_vax_t * (IV[i] + HV[i])
+deriv(R[]) <- gamma_t * (I[i] + H[i] + IV[i] + HV[i])
 
-deriv(V1[]) <- vax_rate_S[i] * S[i] - (vax_rate_V1[i] + lambda[i]) * V1[i] 
+deriv(V1[]) <- vax_rate_S[i] * S[i] - (vax_rate_V1[i] + lambda[i]) * V1[i]
 
 deriv(V2[]) <- vax_rate_V1[i] * V1[i] - lambda_vax[i] * V2[i]
 
@@ -109,9 +135,9 @@ contact_intervention_effect[, ] <- user()
 rate_intervention_start[] <- user()
 rate_intervention_end[] <- user()
 rate_intervention_effect[, ] <- user()
-vax_start[,] <- user()
-vax_end[,] <- user()
-vax_nu[,] <- user()
+vax_start[, ] <- user()
+vax_end[, ] <- user()
+vax_nu[, ] <- user()
 init_S[] <- user()
 init_E[] <- user()
 init_EV[] <- user()
@@ -169,4 +195,3 @@ dim(init_D) <- n_age
 dim(init_R) <- n_age
 dim(init_V1) <- n_age
 dim(init_V2) <- n_age
-

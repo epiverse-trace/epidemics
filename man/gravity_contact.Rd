@@ -10,8 +10,8 @@ gravity_contact(populations, connectivity_matrix)
 \arguments{
 \item{populations}{A list of \verb{<population>} objects}
 
-\item{connectivity_matrix}{A numeric matrix for the contact matrix between the
-elements of the populations}
+\item{connectivity_matrix}{A numeric matrix for the contact matrix between
+the elements of the populations}
 }
 \value{
 A numeric matrix combining the contact matrices in \verb{<population>} and

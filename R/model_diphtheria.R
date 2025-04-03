@@ -164,7 +164,7 @@ model_diphtheria <- function(population,
     "susceptible", "exposed", "infectious", "hospitalised", "recovered"
   )
   assert_population(population, compartments)
-  
+
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
   checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
@@ -176,12 +176,12 @@ model_diphtheria <- function(population,
   # are allowed to be > 1 for now
   checkmate::assert_numeric(hosp_entry_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(hosp_exit_rate, lower = 0, finite = TRUE)
-  
+
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
   checkmate::assert_integerish(time_end, lower = 0)
   checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
-  
+
   # check all vector lengths are equal or 1L
   params <- list(
     transmission_rate = transmission_rate,
@@ -195,7 +195,7 @@ model_diphtheria <- function(population,
   )
   # take parameter names here as names(DT) updates by reference!
   param_names <- names(params)
-  
+
   # check that prop_vaccinated is the same length as demography_vector
   # TODO: treat this as a composable element for vectorisation
   checkmate::assert_numeric(
@@ -205,7 +205,7 @@ model_diphtheria <- function(population,
   )
   # convert to list for data.table
   prop_vaccinated <- list(prop_vaccinated)
-  
+
   # Check if `intervention` is a list of interventions or a list-of-lists
   # and convert to a list for a data.table list column. NULL is allowed;
   is_lofints <- checkmate::test_list(
@@ -224,7 +224,7 @@ model_diphtheria <- function(population,
       }, TRUE
     )
   )
-  
+
   # Check if parameters can be recycled;
   stopifnot(
     "All parameters must be of the same length, or must have length 1" =
@@ -232,13 +232,13 @@ model_diphtheria <- function(population,
     "`intervention` must be a list of <intervention>s or a list of such lists" =
       is_lofints || is_lofls
   )
-  
+
   # make lists if not lists
   population <- list(population)
   if (is_lofints) {
     intervention <- list(intervention)
   }
-  
+
   # check that time-dependence functions are passed as a list with at least the
   # arguments `time` and `x`, in order as the first two args
   # NOTE: this functionality is not vectorised;
@@ -251,7 +251,7 @@ model_diphtheria <- function(population,
   # lapply on null returns an empty list
   invisible(
     lapply(time_dependence, checkmate::assert_function,
-           args = c("time", "x"), ordered = TRUE
+      args = c("time", "x"), ordered = TRUE
     )
   )
   time_dependence <- list(
@@ -263,15 +263,15 @@ model_diphtheria <- function(population,
       )
     )
   )
-  
+
   # TODO: allow vectorised input for population_change
   # convert to list for data.table
   population_change <- list(population_change)
-  
+
   # collect parameters and add a parameter set identifier
   params <- data.table::as.data.table(params)
   params[, "param_set" := .I]
-  
+
   # this nested data.table will be returned
   model_output <- data.table::CJ(
     population = population,
@@ -282,18 +282,18 @@ model_diphtheria <- function(population,
     increment = increment,
     sorted = FALSE
   )
-  
+
   # process the population, interventions, and vaccinations, after
   # cross-checking them agains the relevant population
   model_output[, args := apply(model_output, 1, function(x) {
     .check_prepare_args_diphtheria(c(x))
   })]
   model_output[, "scenario" := .I]
-  
+
   # combine infection parameters and scenarios
   # NOTE: join X[Y] must have params as X as list cols not supported for X
   model_output <- params[, as.list(model_output), by = names(params)]
-  
+
   # collect model arguments in column data, then overwrite
   model_output[, args := apply(model_output, 1, function(x) {
     c(x[["args"]], x[param_names]) # avoid including col "param_set"
@@ -302,17 +302,21 @@ model_diphtheria <- function(population,
     time_points <- seq(0, args$time_end, by = args$increment)
     n_time <- length(time_points)
     n_age <- length(args$pop_change_values[[1]])
-    
+
     pop_change <- matrix(0, nrow = n_time, ncol = n_age)
-    if(any(args$pop_change_times > 0)){ 
-      pop_change[args$pop_change_times + 1,] <- do.call(rbind, args$pop_change_values)
+    if (any(args$pop_change_times > 0)) {
+      pop_change[args$pop_change_times + 1, ] <-
+        do.call(rbind, args$pop_change_values)
     }
-    rate_intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
-    rate_intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
-    rate_intervention_effect <- matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
-    
+    rate_intervention_start <-
+      as.numeric(args$rate_interventions[[1]]$time_begin)
+    rate_intervention_end <-
+      as.numeric(args$rate_interventions[[1]]$time_end)
+    rate_intervention_effect <-
+      matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+
     n_rate_intervention <- length(rate_intervention_start)
-    
+
     time_dependent_params <- Map(
       args[names(args$time_dependence)],
       args$time_dependence,
@@ -329,22 +333,22 @@ model_diphtheria <- function(population,
     tau1 <- args$hosp_entry_rate
     tau2 <- args$hosp_exit_rate
     gamma <- args$recovery_rate
-    
-    if(length(beta) == 1) beta <- rep(beta, n_time)
-    if(length(r) == 1) r <- rep(r, n_time)
-    if(length(eta) == 1) eta <- rep(eta, n_time)
-    if(length(sigma) == 1) sigma <- rep(sigma, n_time)
-    if(length(tau1) == 1) tau1 <- rep(tau1, n_time)
-    if(length(tau2) == 1) tau2 <- rep(tau2, n_time)
-    if(length(gamma) == 1) gamma <- rep(gamma, n_time)
-    
+
+    if (length(beta) == 1) beta <- rep(beta, n_time)
+    if (length(r) == 1) r <- rep(r, n_time)
+    if (length(eta) == 1) eta <- rep(eta, n_time)
+    if (length(sigma) == 1) sigma <- rep(sigma, n_time)
+    if (length(tau1) == 1) tau1 <- rep(tau1, n_time)
+    if (length(tau2) == 1) tau2 <- rep(tau2, n_time)
+    if (length(gamma) == 1) gamma <- rep(gamma, n_time)
+
     initial_conditions <- args$initial_state
     init_S <- initial_conditions[, 1]
     init_E <- initial_conditions[, 2]
     init_I <- initial_conditions[, 3]
     init_H <- initial_conditions[, 4]
     init_R <- initial_conditions[, 5]
-    
+
     # Initialize and run the model
     # model <- diphtheria_local$new(
     model <- diphtheria$new(
@@ -369,15 +373,15 @@ model_diphtheria <- function(population,
       init_H = init_H,
       init_R = init_R
     )
-    
+
     result <- model$run(time_points)
-    
+
     # Add scenario information
     dt <- data.table::as.data.table(result)
     # declaring variables below to avoid data.table related lintr messages
     temp <- value <- temp_compartment <- temp_demography <-
       compartment <- demography_group <- `:=` <- time <- NULL
-    
+
     age_group_mappings <- paste0( # properly label demography groups
       seq_len(n_age),
       c(
@@ -390,17 +394,17 @@ model_diphtheria <- function(population,
       )[seq_len(nrow(population[[1]]$contact_matrix))]
     )
     names(age_group_mappings) <- seq_len(nrow(population[[1]]$contact_matrix))
-    
+
     mapping <- c( # prepend numbers to help during sorting. Will remove later
       S = "1susceptible", E = "2exposed", I = "3infectious",
       H = "4hospitalised", R = "5recovered", age_group_mappings
     )
-    
+
     # Melt the data table to long format
     data.table::melt(dt,
-                     id.vars = "t",
-                     variable.name = "temp", # e.g. S[1], ..., V[3]
-                     value.name = "value"
+      id.vars = "t",
+      variable.name = "temp", # e.g. S[1], ..., V[3]
+      value.name = "value"
     )[ # piping the data.table way. Possible because melt outputs a data.table
       , list(
         time = t, # alternative to using data.table::setnames(dt, "t", "time")
@@ -429,16 +433,16 @@ model_diphtheria <- function(population,
       # added because the previous operation used `:=` which doesn't output
     ]
   })]
-  
+
   # remove temporary arguments
   model_output$args <- NULL
-  
+
   # check for single row output, i.e., scalar arguments, and return data.table
   # do not return the parameters in this case
   if (nrow(model_output) == 1L) {
     model_output <- model_output[["data"]][[1L]] # hardcoded for special case
   }
-  
+
   # return data.table
   model_output[]
 }

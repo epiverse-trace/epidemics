@@ -297,11 +297,11 @@ validate_contacts_intervention <- function(x) {
   # 0 - 1 and negative npi intervals are not allowed
   stopifnot(
     "`reduction` can only have values in the range 0.0 -- 1.0" =
-      all(x$reduction >= 0.0 & x$reduction <= 1.0),
+      x$reduction >= 0.0 & x$reduction <= 1.0,
     "`time_begin` should have positive or zero values" =
-      all(x$time_begin >= 0.0),
+      x$time_begin >= 0.0,
     "`time_end` should have values greater-than or equal-to `time_begin`" =
-      all(x$time_end >= x$time_begin)
+      x$time_end >= x$time_begin
   )
 
   # message if any intervention intervals are badly formed
@@ -357,11 +357,11 @@ validate_rate_intervention <- function(x) {
   # 0 - 1 and negative npi intervals are not allowed
   stopifnot(
     "`reduction` can only have values in the range 0.0 -- 1.0" =
-      all(x$reduction >= 0.0 & x$reduction <= 1.0),
+      x$reduction >= 0.0 & x$reduction <= 1.0,
     "`time_begin` should have positive or zero values" =
-      all(x$time_begin >= 0.0),
+      x$time_begin >= 0.0,
     "`time_end` should have values greater-than or equal-to `time_begin`" =
-      all(x$time_end >= x$time_begin)
+      x$time_end >= x$time_begin
   )
 
   # message if any intervention intervals are badly formed
@@ -596,11 +596,9 @@ c.contacts_intervention <- function(x, ...) {
   # of intervention rates --- these are identical to dims of start and end times
   stopifnot(
     "All <contact_intervention> `reduction`s must have identical dimensions" =
-      all(
         vapply(multi_npi, function(npi) {
           identical(nrow(npi$reduction), nrow(x$reduction))
         }, FUN.VALUE = logical(1))
-      )
   )
 
   # strip class and `name` member from `multi_npi`

@@ -14,13 +14,13 @@ combine_populations(
 \arguments{
 \item{populations}{A list of \verb{<population>} objects}
 
-\item{connectivity_matrix}{A numeric matrix for the contact matrix between the
-elements of the populations}
+\item{connectivity_matrix}{A numeric matrix for the contact matrix between
+the elements of the populations}
 
-\item{method}{The method used to combine the contact matrices of \code{populations},
-can be a character chain (\code{linear} or \code{gravity}) which will call an internal function,
-or a user-defined function with two arguments (\code{populations} and \code{connectivity_matrix})
-and returning a numeric matrix.}
+\item{method}{The method to combine the contact matrices of \code{populations},
+can be a character chain (\code{linear} or \code{gravity}) which will call an internal
+function, or a user-defined function with two arguments (\code{populations} and
+\code{connectivity_matrix}) and returning a numeric matrix.}
 
 \item{name}{Optional string for the population name.}
 }
@@ -36,7 +36,7 @@ pop1 <- population(
   contact_matrix = matrix(c(1, .5, .5, 1), nrow = 2),
   demography_vector = c(2e7, 4e7),
   initial_conditions = matrix(
-    c(0.9999, 0.0001, 0, 0, 
+    c(0.9999, 0.0001, 0, 0,
       0.9999, 0.0001, 0, 0),
     nrow = 2, ncol = 4, byrow = TRUE
   )
@@ -47,7 +47,7 @@ pop2 <- population(
   contact_matrix = matrix(c(1, .5, .5, 1), nrow = 2),
   demography_vector = c(1e7, 2e7),
   initial_conditions = matrix(
-    c(0.9999, 0.0001, 0, 0, 
+    c(0.9999, 0.0001, 0, 0,
       0.9999, 0.0001, 0, 0),
     nrow = 2, ncol = 4, byrow = TRUE
   )

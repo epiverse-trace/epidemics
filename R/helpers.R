@@ -196,7 +196,8 @@ epidemic_size <- function(
   if (include_deaths && (!"dead" %in% unique(data$compartment))) {
     warning(
       "epidemic_size(): No 'dead' compartment found in `data`; counting only",
-      " 'recovered' or 'removed' individuals in the epidemic size."
+      " 'recovered' or 'removed' individuals in the epidemic size.",
+      call. = FALSE
     )
   }
   # add include_deaths to compartments to search
@@ -231,7 +232,8 @@ epidemic_size <- function(
   if ((length(times_to_get) > 1L || n_replicates > 1) && simplify) {
     warning(
       "Returning epidemic size at multiple time points, or for multiple",
-      " replicates; cannot simplify output to vector; returning `<data.table>`"
+      " replicates; cannot simplify output to vector; returning `<data.table>`",
+      call. = FALSE
     )
     simplify <- FALSE
   }

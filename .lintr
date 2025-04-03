@@ -19,6 +19,7 @@ linters: all_linters(
     backport_linter(if (length(x <- etdev::extract_min_r_version())) x else getRversion())
   )
 exclusions: list(
+    "R/odin.R",
     "tests/testthat.R" = list(
       unused_import_linter = Inf
     ),

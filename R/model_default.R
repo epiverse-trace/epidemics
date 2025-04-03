@@ -337,21 +337,23 @@ model_default <- function(population,
   model_output[, "data" := lapply(args, function(args) {
     time_points <- seq(0, args$time_end, by = args$increment)
     n_time <- length(time_points)
-    
+
     C <- args$contact_matrix
     n_age <- nrow(C)
 
     contact_intervention_start <- as.numeric(args$npi_time_begin)
     contact_intervention_end <- as.numeric(args$npi_time_end)
     contact_intervention_effect <- t(args$npi_cr)
-    
-    rate_intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
+
+    rate_intervention_start <-
+      as.numeric(args$rate_interventions[[1]]$time_begin)
     rate_intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
-    rate_intervention_effect <- matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
-    
+    rate_intervention_effect <-
+      matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+
     n_contact_intervention <- length(contact_intervention_start)
     n_rate_intervention <- length(rate_intervention_start)
-    
+
     time_dependent_params <- Map(
       args[names(args$time_dependence)],
       args$time_dependence,
@@ -365,10 +367,10 @@ model_default <- function(population,
     sigma <- args$infectiousness_rate
     gamma <- args$recovery_rate
 
-    if(length(beta) == 1) beta <- rep(beta, n_time)
-    if(length(sigma) == 1) sigma <- rep(sigma, n_time)
-    if(length(gamma) == 1) gamma <- rep(gamma, n_time)
-    
+    if (length(beta) == 1) beta <- rep(beta, n_time)
+    if (length(sigma) == 1) sigma <- rep(sigma, n_time)
+    if (length(gamma) == 1) gamma <- rep(gamma, n_time)
+
     vax_start <- as.numeric(args$vax_time_begin)
     vax_end <- as.numeric(args$vax_time_end)
     vax_nu <- as.numeric(args$vax_nu)
@@ -406,7 +408,7 @@ model_default <- function(population,
       init_R = init_R,
       init_V = init_V
     )
-    
+
     result <- model$run(time_points)
 
     # Add scenario information

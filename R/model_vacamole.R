@@ -277,12 +277,12 @@
 #'
 #' @export
 #' @importFrom odin odin
-model_vacamole <- function(population,
+model_vacamole <- function(population, # nolint: cyclocomp_linter.
                            transmission_rate = 1.3 / 7.0,
                            transmission_rate_vax = 0.8 * transmission_rate,
                            infectiousness_rate = 1.0 / 2.0,
                            hospitalisation_rate = 1.0 / 1000,
-                           hospitalisation_rate_vax = 0.8 * hospitalisation_rate,
+                           hospitalisation_rate_vax = 0.8 * hospitalisation_rate, # nolint: line_length_linter.
                            mortality_rate = 1.0 / 1000,
                            mortality_rate_vax = 0.8 * mortality_rate,
                            recovery_rate = 1.0 / 7.0,
@@ -298,24 +298,24 @@ model_vacamole <- function(population,
     "hospitalised_vaccinated", "dead", "recovered"
   )
   assert_population(population, compartments)
-  
+
   # NOTE: model rates very likely bounded 0 - 1 but no upper limit set for now
   checkmate::assert_numeric(transmission_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(infectiousness_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(hospitalisation_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(mortality_rate, lower = 0, finite = TRUE)
   checkmate::assert_numeric(recovery_rate, lower = 0, finite = TRUE)
-  
+
   # parameters for rates affecting only doubly vaccinated
   checkmate::assert_numeric(transmission_rate_vax, lower = 0, finite = TRUE)
   checkmate::assert_numeric(hospitalisation_rate_vax, lower = 0, finite = TRUE)
   checkmate::assert_numeric(mortality_rate_vax, lower = 0, finite = TRUE)
-  
+
   # check the time end and increment
   # restrict increment to lower limit of 1e-6
   checkmate::assert_integerish(time_end, lower = 0)
   checkmate::assert_number(increment, lower = 1e-6, finite = TRUE)
-  
+
   # check all vector lengths are equal or 1L
   params <- list(
     transmission_rate = transmission_rate,
@@ -330,7 +330,7 @@ model_vacamole <- function(population,
   )
   # take parameter names here as names(DT) updates by reference!
   param_names <- names(params)
-  
+
   # Check if `intervention` is a single intervention set or a list of such sets
   # NULL is allowed;
   is_lofints <- checkmate::test_list(
@@ -352,7 +352,7 @@ model_vacamole <- function(population,
         }, TRUE
       )
     )
-  
+
   # Check if parameters can be recycled;
   stopifnot(
     "All parameters must be of the same length, or must have length 1" =
@@ -366,7 +366,7 @@ model_vacamole <- function(population,
         types = c("vaccination", "null"), null.ok = TRUE
       )
   )
-  
+
   # make lists if not lists
   population <- list(population)
   if (is_lofints) {
@@ -375,7 +375,7 @@ model_vacamole <- function(population,
   if (is_vaccination(vaccination) || is.null(vaccination)) {
     vaccination <- list(vaccination)
   }
-  
+
   # check that time-dependence functions are passed as a list with at least the
   # arguments `time` and `x`, in order as the first two args
   # NOTE: this functionality is not vectorised;
@@ -388,7 +388,7 @@ model_vacamole <- function(population,
   # lapply on null returns an empty list
   invisible(
     lapply(time_dependence, checkmate::assert_function,
-           args = c("time", "x"), ordered = TRUE
+      args = c("time", "x"), ordered = TRUE
     )
   )
   time_dependence <- list(
@@ -402,11 +402,11 @@ model_vacamole <- function(population,
       )
     )
   )
-  
+
   # collect parameters and add a parameter set identifier
   params <- data.table::as.data.table(params)
   params[, "param_set" := .I]
-  
+
   # this nested data.table will be returned
   model_output <- data.table::CJ(
     population = population,
@@ -416,41 +416,43 @@ model_vacamole <- function(population,
     increment = increment,
     sorted = FALSE
   )
-  
+
   # process the population, interventions, and vaccinations, after
   # cross-checking them against the relevant population
   model_output[, args := apply(model_output, 1, function(x) {
     .check_prepare_args_vacamole(c(x))
   })]
   model_output[, "scenario" := .I]
-  
+
   # combine infection parameters and scenarios
   # NOTE: join X[Y] must have params as X as list cols not supported for X
   model_output <- params[, as.list(model_output), by = names(params)]
-  
+
   # collect model arguments in column data, then overwrite
   model_output[, args := apply(model_output, 1, function(x) {
     c(x[["args"]], x[param_names]) # avoid including col "param_set"
   })]
-  
+
   model_output[, "data" := lapply(args, function(args) {
     time_points <- seq(0, args$time_end, by = args$increment)
     n_time <- length(time_points)
-    
+
     C <- args$contact_matrix
     n_age <- nrow(C)
-    
+
     contact_intervention_start <- as.numeric(args$npi_time_begin)
     contact_intervention_end <- as.numeric(args$npi_time_end)
     contact_intervention_effect <- t(args$npi_cr)
-    
-    rate_intervention_start <- as.numeric(args$rate_interventions[[1]]$time_begin)
+
+    rate_intervention_start <-
+      as.numeric(args$rate_interventions[[1]]$time_begin)
     rate_intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
-    rate_intervention_effect <- matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
-    
+    rate_intervention_effect <-
+      matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+
     n_contact_intervention <- length(contact_intervention_start)
     n_rate_intervention <- length(rate_intervention_start)
-    
+
     time_dependent_params <- Map(
       args[names(args$time_dependence)],
       args$time_dependence,
@@ -469,20 +471,20 @@ model_vacamole <- function(population,
     gamma <- args$recovery_rate
     omega <- args$mortality_rate
     omega_vax <- args$mortality_rate_vax
-    
-    if(length(beta) == 1) beta <- rep(beta, n_time)
-    if(length(beta_vax) == 1) beta_vax <- rep(beta_vax, n_time)
-    if(length(eta) == 1) eta <- rep(eta, n_time)
-    if(length(eta_vax) == 1) eta_vax <- rep(eta_vax, n_time)
-    if(length(sigma) == 1) sigma <- rep(sigma, n_time)
-    if(length(gamma) == 1) gamma <- rep(gamma, n_time)
-    if(length(omega) == 1) omega <- rep(omega, n_time)
-    if(length(omega_vax) == 1) omega_vax <- rep(omega_vax, n_time)
-    
+
+    if (length(beta) == 1) beta <- rep(beta, n_time)
+    if (length(beta_vax) == 1) beta_vax <- rep(beta_vax, n_time)
+    if (length(eta) == 1) eta <- rep(eta, n_time)
+    if (length(eta_vax) == 1) eta_vax <- rep(eta_vax, n_time)
+    if (length(sigma) == 1) sigma <- rep(sigma, n_time)
+    if (length(gamma) == 1) gamma <- rep(gamma, n_time)
+    if (length(omega) == 1) omega <- rep(omega, n_time)
+    if (length(omega_vax) == 1) omega_vax <- rep(omega_vax, n_time)
+
     vax_start <- as.matrix(args$vax_time_begin)
     vax_end <- as.matrix(args$vax_time_end)
     vax_nu <- as.matrix(args$vax_nu)
-    
+
     initial_conditions <- args$initial_state
     init_S <- initial_conditions[, 1]
     init_V1 <- initial_conditions[, 2]
@@ -495,7 +497,7 @@ model_vacamole <- function(population,
     init_HV <- initial_conditions[, 9]
     init_D <- initial_conditions[, 10]
     init_R <- initial_conditions[, 11]
-    
+
     # Initialize and run the model
     model <- vacamole$new(
       time = time_points,
@@ -533,15 +535,15 @@ model_vacamole <- function(population,
       init_D = init_D,
       init_R = init_R
     )
-    
+
     result <- model$run(time_points)
-    
+
     # Add scenario information
     dt <- data.table::as.data.table(result)
     # declaring variables below to avoid data.table related lintr messages
     temp <- value <- temp_compartment <- temp_demography <-
       compartment <- demography_group <- `:=` <- time <- NULL
-    
+
     age_group_mappings <- paste0( # properly label demography groups
       seq_len(n_age),
       c(
@@ -554,26 +556,29 @@ model_vacamole <- function(population,
       )[seq_len(nrow(population[[1]]$contact_matrix))]
     )
     names(age_group_mappings) <- seq_len(nrow(population[[1]]$contact_matrix))
-    
+
     mapping <- c( # prepend numbers to help during sorting. Will remove later
-      S = "01susceptible", V1 = "02vaccinated_one_dose", V2 = "03vaccinated_two_dose", 
-      E = "04exposed", EV = "05exposed_vaccinated", I = "06infectious", 
-      IV = "07infectious_vaccinated", H = "08hospitalised", 
-      HV = "09hospitalised_vaccinated", D = "10dead", R = "11recovered", 
+      S = "01susceptible", V1 = "02vaccinated_one_dose",
+      V2 = "03vaccinated_two_dose", E = "04exposed",
+      EV = "05exposed_vaccinated", I = "06infectious",
+      IV = "07infectious_vaccinated", H = "08hospitalised",
+      HV = "09hospitalised_vaccinated", D = "10dead", R = "11recovered",
       age_group_mappings
     )
-    
+
     # Melt the data table to long format
     data.table::melt(dt,
-                     id.vars = "t",
-                     variable.name = "temp", # e.g. S[1], ..., V[3]
-                     value.name = "value"
+      id.vars = "t",
+      variable.name = "temp", # e.g. S[1], ..., V[3]
+      value.name = "value"
     )[ # piping the data.table way. Possible because melt outputs a data.table
       , list(
         time = t, # alternative to using data.table::setnames(dt, "t", "time")
         temp_compartment = sub("\\[.*", "", temp), # e.g. S[1] -> S
-        temp_demography = substring(temp, nchar(as.character(temp)) - 1, 
-                                    nchar(as.character(temp))-1), # e.g. S[1] -> 1
+        temp_demography = substring(
+          temp, nchar(as.character(temp)) - 1,
+          nchar(as.character(temp)) - 1
+        ), # e.g. S[1] -> 1
         value
       )
     ][ # |> the DT way (piping the data.table way)
@@ -597,16 +602,16 @@ model_vacamole <- function(population,
       # added because the previous operation used `:=` which doesn't output
     ]
   })]
-  
+
   # remove temporary arguments
   model_output$args <- NULL
-  
+
   # check for single row output, i.e., scalar arguments, and return data.table
   # do not return the parameters in this case
   if (nrow(model_output) == 1L) {
     model_output <- model_output[["data"]][[1L]] # hardcoded for special case
   }
-  
+
   # return data.table
   model_output[]
 }

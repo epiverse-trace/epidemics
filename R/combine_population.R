@@ -7,7 +7,7 @@
 #' can be a character chain (`linear` or `gravity`) which will call an internal
 #' function, or a user-defined function with two arguments (`populations` and
 #' `connectivity_matrix`) and returning a numeric matrix.
-#' @param name Optional string for the population name.
+#' @param name Optional string for the combined population name.
 #'
 #' @return An object of the `<population>` class.
 #' @export
@@ -101,7 +101,7 @@ extract_demography <- function(population) {
   demography <- population$demography_vector
   # Rename demography by combining the population name and the name of each
   # element of demography
-  names(demography) <- paste(name_pop, names(demography), sep = ".")
+  names(demography) <- paste(name_pop, names(demography), sep = "_")
   demography
 }
 
@@ -127,7 +127,7 @@ extract_initial <- function(population) {
                                  "demo_group_%i",
                                  seq_len(nrow(initial))
                                ))[seq_len(nrow(initial))],
-                             sep = ".")
+                             sep = "_")
   initial
 }
 
@@ -152,7 +152,7 @@ extract_contact <- function(population) {
                         "demo_group_%i",
                         seq_len(nrow(population$contact_matrix))
                       ))[seq_len(nrow(population$contact_matrix))],
-          sep = ".")
+          sep = "_")
   contact
 }
 

@@ -183,10 +183,15 @@ combine_contact <- function(populations, connectivity_matrix) {
 
   for (i in seq_along(populations)) {
     for (j in seq_along(populations)) {
-      index_row <-  sum(n_group_per_pop[i - 1]) + seq_len(n_group_per_pop[i])
-      index_col <- sum(n_group_per_pop[j - 1]) + seq_len(n_group_per_pop[j])
-      # Each element of combined matrix is equal to
-      # connectivity between populations * connectivity between sub-populations
+      index_row <-
+        1 + cumsum(n_group_per_pop)[i] - rev(seq_len(n_group_per_pop[i]))
+      index_col <-
+        1 + cumsum(n_group_per_pop)[j] - rev(seq_len(n_group_per_pop[j]))
+      
+      # Each element of combined matrix is computed as
+      # contacts from x (column of combined_matrix) to y (row) =
+      #  nb of contacts from x group to y group in the population x belongs to *
+      #  connectivity from the pop x belongs to the pop y belongs to
       combined_matrix[index_row, index_col] <-
         contact_matrices[[j]] * connectivity_matrix[i, j]
     }
@@ -247,9 +252,9 @@ gravity_contact <- function(populations, connectivity_matrix) {
       index_col <-
         1 + cumsum(n_group_per_pop)[j] - rev(seq_len(n_group_per_pop[j]))
 
-      # Each element of combined matrix is equal to
+      # Each element of combined matrix is computed as
       # contacts from x (column of combined_matrix) to y (row) =
-      #  number of contacts from x to y in the population x belongs to *
+      #  nb of contacts from x group to y group in the population x belongs to *
       #  connectivity from the pop x belongs to the pop y belongs to
       combined_matrix[index_row, index_col] <-
         contact_matrices[[j]] * connectivity_matrix[i, j]

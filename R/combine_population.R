@@ -15,7 +15,7 @@
 #' pop1 <- population(
 #'   name = "Population 1",
 #'   contact_matrix = matrix(c(1, .5, .5, 1), nrow = 2),
-#'   demography_vector = c(2e7, 4e7),
+#'   demography_vector = c("0-20" = 2e7, "20+" = 4e7),
 #'   initial_conditions = matrix(
 #'     c(0.9999, 0.0001, 0, 0,
 #'       0.9999, 0.0001, 0, 0),
@@ -26,7 +26,7 @@
 #' pop2 <- population(
 #'   name = "Population 2",
 #'   contact_matrix = matrix(c(1, .5, .5, 1), nrow = 2),
-#'   demography_vector = c(1e7, 2e7),
+#'   demography_vector = c("0-20" = 1e7, "20+" = 2e7),
 #'   initial_conditions = matrix(
 #'     c(0.9999, 0.0001, 0, 0,
 #'       0.9999, 0.0001, 0, 0),

@@ -2,7 +2,7 @@
 
 ## Helper functions
 
-1. Added the `combine_populations()` function to combine age=-structured populations into a new population object.
+1. Added the `combine_populations()` function to combine age-structured populations into a new population object.
 
 ## Documentation
 

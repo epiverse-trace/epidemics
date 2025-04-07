@@ -168,8 +168,8 @@ We plot the data to observe the number of cases per region and age group. In all
 ```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
 filter(output, compartment == "infectious") %>%
-  mutate(region = gsub("[.].*", "", demography_group),
-         age = gsub(".*[.]", "", demography_group)) %>%
+  mutate(region = gsub("[_].*", "", demography_group),
+         age = gsub(".*[_]", "", demography_group)) %>%
   ggplot(
     aes(
       x = time,
@@ -234,8 +234,8 @@ Given the distance between populations, the rate of connectivity between the two
 ```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
 filter(output_gravity, compartment == "infectious") %>%
-  mutate(region = gsub("[.].*", "", demography_group),
-         age = gsub(".*[.]", "", demography_group)) %>%
+  mutate(region = gsub("[_].*", "", demography_group),
+         age = gsub(".*[_]", "", demography_group)) %>%
   ggplot(
     aes(
       x = time,
@@ -353,8 +353,8 @@ The outbreak first peaks in region 5, then in region 4, 3, 2, and 1, with simila
 
 ```{r class.source = 'fold-hide'}
 filter(output_gravity_n, compartment == "infectious") %>%
-  mutate(region = gsub("[.].*", "", demography_group),
-         age = gsub(".*[.]", "", demography_group)) %>%
+  mutate(region = gsub("[_].*", "", demography_group),
+         age = gsub(".*[_]", "", demography_group)) %>%
   group_by(time, region) %>%
   summarise(value = sum(value)) %>%
   ggplot(

@@ -22,7 +22,7 @@ can be a character chain (\code{linear} or \code{gravity}) which will call an in
 function, or a user-defined function with two arguments (\code{populations} and
 \code{connectivity_matrix}) and returning a numeric matrix.}
 
-\item{name}{Optional string for the population name.}
+\item{name}{Optional string for the combined population name.}
 }
 \value{
 An object of the \verb{<population>} class.

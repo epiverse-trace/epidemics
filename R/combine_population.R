@@ -61,8 +61,8 @@ combine_populations <- function(populations, connectivity_matrix,
   }
   # Check that all populations contain the same demographic groups
   names_groups <- names(populations[[1]]$demography_vector)
-  for(i in seq_along(populations))  
-    checkmate::assert_names(names(populations[[i]]$demography_vector), 
+  for (i in seq_along(populations))
+    checkmate::assert_names(names(populations[[i]]$demography_vector),
                             identical.to = names_groups)
 
 
@@ -193,7 +193,7 @@ combine_contact <- function(populations, connectivity_matrix) {
         1 + cumsum(n_group_per_pop)[i] - rev(seq_len(n_group_per_pop[i]))
       index_col <-
         1 + cumsum(n_group_per_pop)[j] - rev(seq_len(n_group_per_pop[j]))
-      
+
       # Each element of combined matrix is computed as
       # contacts from x (column of combined_matrix) to y (row) =
       #  nb of contacts from x group to y group in the population x belongs to *

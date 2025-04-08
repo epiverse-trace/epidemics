@@ -148,7 +148,7 @@ We then use the function `combine_populations` to combine the two populations. T
 
  The contact matrix element of the combined population contains the number of connections between each group of all the populations listed in the `populations` argument. More than two populations can be combined, and the populations should all contain the same demographic groups. The number of contacts between groups from the same populations is computed from the `contact_matrix`. The number of contacts between groups from different populations is computed from the `connectivity_matrix` argument. Different methods can be used to compute the number of contacts between groups from different populations. If `method` is linear, the number of contacts between groups of different population is computed as the product of the connectivity between the two populations (in `connectivity_matrix`) and the number of contacts between groups in the population of origin.
 
- ::: 
+::: 
 
 ```{r}
 # Combine populations
@@ -241,7 +241,7 @@ gravity_population$contact_matrix
 # run an epidemic model
 output_gravity <- model_default(
   population = gravity_population,
-  time_end = 1000, increment = 1.0
+  time_end = 700, increment = 1.0
 )
 
 ```
@@ -298,7 +298,7 @@ gravity_pop_with_function <- combine_populations(
 # run an epidemic model
 output_gravity_with_function <- model_default(
   population = gravity_pop_with_function,
-  time_end = 1000, increment = 1.0
+  time_end = 700, increment = 1.0
 )
 
 # Check function and "gravity" outputs are the same
@@ -322,7 +322,7 @@ for (i in seq_len(n - 1)){
       c(S = 1, E = 0, I = 0, R = 0, V = 0),
       c(S = 1, E = 0, I = 0, R = 0, V = 0)
     ),
-    name = paste0("region", i)))
+    name = paste0("Region ", i)))
 }
 ```
 
@@ -337,7 +337,7 @@ all_population[n] <- list(population(
     c(S = 1 - 1e-6, E = 0, I = 1e-6, R = 0, V = 0),
     c(S = 1 - 1e-6, E = 0, I = 1e-6, R = 0, V = 0)
   ),
-  name = paste0("region", n)))
+  name = paste0("Region ", n)))
 ```
 
 Each population is placed on a line, with consecutive populations being 150km away (i.e. populations 1 and 2 are 150km away, 1 and 3 are 300km away...).

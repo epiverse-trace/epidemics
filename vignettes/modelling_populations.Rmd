@@ -219,7 +219,11 @@ filter(output, compartment == "infectious") %>%
 
 When combining populations, the argument method can be set to "gravity" to implement a gravity model instead, using the connectivity matrix as a distance between regions. In this example, the populations are set to 200km away. The connectivity between regions is then computed from the overall number of inhabitants in each region and the distance.
 
-> If `method` is set to gravity, a gravity model is used to estimate the number of connections between populations. For each population $i$ and $j$, the number of connections is computed as $C_{ij} = \frac{N_i * N_j}{d_{ij}}$, with $N_i$ and $N_j$ the overall number of inhabitants in each population, and $d_{ij}$ the distance between population (set to 1 if $i=j$), taken from the `connectivity_matrix` argument. To avoid large values, $C_{ij}$ is divided by the maximum value of $C$. The number of contacts between groups is computed as the product of $\frac{C_ij}{max(C)}$ and the number of contacts between groups in the population of origin.
+::: {.alert .alert-info}
+### Note on gravity connectivity matrix {-}
+
+If `method` is set to gravity, a gravity model is used to estimate the number of connections between populations. For each population $i$ and $j$, the number of connections is computed as $C_{ij} = \frac{N_i * N_j}{d_{ij}}$, with $N_i$ and $N_j$ the overall number of inhabitants in each population, and $d_{ij}$ the distance between population (set to 1 if $i=j$), taken from the `connectivity_matrix` argument. To avoid large values, $C_{ij}$ is divided by the maximum value of $C$. The number of contacts between groups is computed as the product of $\frac{C_ij}{max(C)}$ and the number of contacts between groups in the population of origin.
+:::
 
 ```{r}
 distance_matrix <- matrix(c(0, 200, 200, 0), nrow = 2, ncol = 2)

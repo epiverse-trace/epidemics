@@ -8,7 +8,7 @@
 .check_prepare_args_vacamole(mod_args)
 }
 \value{
-A list of model arguments suitable for .model_vacamole_cpp().
+A list of model arguments suitable for model_vacamole().
 This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
@@ -42,15 +42,11 @@ is incremented.
 }
 }
 \description{
-Prepare arguments to \code{\link[=model_vacamole]{model_vacamole()}} for
-.model_vacamole_cpp().
+Prepare arguments to \code{\link[=model_vacamole]{model_vacamole()}}.
 }
 \details{
 \code{.check_prepare_args_vacamole()} prepares arguments for
-.model_vacamole_cpp(), which is the C++ function that solves the Vacamole
-ODE system using a Boost \emph{odeint} solver, by converting some of the arguments
-collected in \code{mod_args} into simpler structures such as lists and numeric or
-integer vectors that can be interpreted as C++ types such as \code{Rcpp::List},
-\code{Rcpp::NumericVector}, or \code{Eigen::MatrixXd}.
+model_vacamole(), which is the odin based C function that solves the
+Vacamole ODE system.
 }
 \keyword{internal}

@@ -2,13 +2,12 @@
 #' @name prepare_default_args
 #' @rdname prepare_default_args
 #'
-#' @description Prepare arguments to [model_default()] for
-#' .model_default_cpp().
+#' @description Prepare arguments to [model_default()].
 #'
 #' @param mod_args A named list of the population, and epidemic modifiers.
 #'
 #' @return
-#' A list of model arguments suitable for .model_default_cpp().
+#' A list of model arguments suitable for seirv_model().
 #' This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
@@ -38,11 +37,8 @@
 #' @keywords internal
 #' @details
 #' `.check_prepare_args_default()` prepares arguments for
-#' .model_default_cpp(), which is the C++ function that solves the default
-#' ODE system using a Boost _odeint_ solver, by converting some of the arguments
-#' collected in `mod_args` into simpler structures such as lists and numeric or
-#' integer vectors that can be interpreted as C++ types such as `Rcpp::List`,
-#' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
+#' seirv_model(), which is the C function that solves the default
+#' ODE system using odin.
 .check_prepare_args_default <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
   cmat_init_state <- .prepare_population(mod_args[["population"]])

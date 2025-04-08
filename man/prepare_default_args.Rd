@@ -11,7 +11,7 @@
 \item{mod_args}{A named list of the population, and epidemic modifiers.}
 }
 \value{
-A list of model arguments suitable for .model_default_cpp().
+A list of model arguments suitable for seirv_model().
 This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
@@ -34,15 +34,11 @@ is incremented.
 }
 }
 \description{
-Prepare arguments to \code{\link[=model_default]{model_default()}} for
-.model_default_cpp().
+Prepare arguments to \code{\link[=model_default]{model_default()}}.
 }
 \details{
 \code{.check_prepare_args_default()} prepares arguments for
-.model_default_cpp(), which is the C++ function that solves the default
-ODE system using a Boost \emph{odeint} solver, by converting some of the arguments
-collected in \code{mod_args} into simpler structures such as lists and numeric or
-integer vectors that can be interpreted as C++ types such as \code{Rcpp::List},
-\code{Rcpp::NumericVector}, or \code{Eigen::MatrixXd}.
+seirv_model(), which is the C function that solves the default
+ODE system using odin.
 }
 \keyword{internal}

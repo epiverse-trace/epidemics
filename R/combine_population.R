@@ -39,7 +39,8 @@
 #' combined_population <- combine_populations(
 #'       populations = list(pop1, pop2),
 #'       connectivity_matrix = prop_matrix,
-#'       method = "linear", name = "combine"
+#'       method = "linear", 
+#'       name = "combine"
 #' )
 #'
 #'

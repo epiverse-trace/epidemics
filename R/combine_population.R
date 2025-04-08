@@ -39,7 +39,7 @@
 #' combined_population <- combine_populations(
 #'       populations = list(pop1, pop2),
 #'       connectivity_matrix = prop_matrix,
-#'       method = "linear", 
+#'       method = "linear",
 #'       name = "combine"
 #' )
 #'
@@ -62,14 +62,14 @@ combine_populations <- function(populations, connectivity_matrix,
   }
   # Check that all populations contain the same demographic groups
   names_groups <- rownames(populations[[1]]$contact_matrix)
-  if (!is.null(names_groups)){
-    for (i in seq_along(populations)){
+  if (!is.null(names_groups)) {
+    for (i in seq_along(populations)) {
       checkmate::assert_names(rownames(populations[[i]]$contact_matrix),
                               identical.to = names_groups)
     }
   } else {
-    for (i in seq_along(populations)){
-      checkmate::assert_vector(populations[[i]]$demography_vector, 
+    for (i in seq_along(populations)) {
+      checkmate::assert_vector(populations[[i]]$demography_vector,
                                len = length(populations[[1]]$demography_vector))
     }
   }

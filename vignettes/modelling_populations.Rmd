@@ -155,7 +155,7 @@ We then use the function `combine_populations` to combine the two populations. T
 tot_population <- combine_populations(
   populations = list(population1, population2),
   connectivity_matrix = prop_matrix,
-  method = "linear", 
+  method = "linear",
   name = "combine"
 )
 tot_population$contact_matrix

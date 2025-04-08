@@ -260,6 +260,9 @@ gravity_contact <- function(populations, connectivity_matrix) {
   # Set the maximum value of connectivity matrix to 1
   connectivity_matrix <- connectivity_matrix / max(connectivity_matrix)
 
+  # Set diagonal values to 1
+  diag(connectivity_matrix) <- 1
+
   for (i in seq_along(populations)) {
     for (j in seq_along(populations)) {
       index_row <-

@@ -11,7 +11,7 @@
 \item{mod_args}{A named list of the population, and epidemic modifiers.}
 }
 \value{
-A list of model arguments suitable for .model_diphtheria_cpp().
+A list of model arguments suitable for model_diphtheria().
 This is a named list consisting of:
 \itemize{
 \item \code{initial_state}: the initial conditions modified to represent absolute
@@ -30,9 +30,9 @@ reported;
 need hospitalisation;
 \item \code{hosp_entry_rate}, \code{hosp_exit_rate}: two numbers representing the rate of
 entry and exit from the 'hospitalised' compartment;
-\item \code{rate_interventions}: an Rcpp List giving the interventions on model
+\item \code{rate_interventions}: a List giving the interventions on model
 parameters;
-\item \code{time_dependence}: an Rcpp List giving the time-dependent effects on model
+\item \code{time_dependence}: a List giving the time-dependent effects on model
 parameters in the form of R functions;
 \item \code{pop_change_times} and \code{pop_change_values}: the times and values of changes
 in the population of susceptibles;
@@ -42,15 +42,11 @@ is incremented.
 }
 }
 \description{
-Prepare arguments to \code{\link[=model_diphtheria]{model_diphtheria()}} for
-.model_diphtheria_cpp().
+Prepare arguments to \code{\link[=model_diphtheria]{model_diphtheria()}}.
 }
 \details{
 \code{.check_prepare_args_diphtheria()} prepares arguments for
-.model_diphtheria_cpp(), which is the C++ function that solves the
-ODE system using a Boost \emph{odeint} solver, by converting the arguments
-collected in \code{mod_args} into simpler structures such as lists and numeric or
-integer vectors that can be interpreted as C++ types such as \code{Rcpp::List},
-\code{Rcpp::NumericVector}, or \code{Eigen::MatrixXd}.
+model_diphtheria(), which uses an odin C function to solve the
+ODE system.
 }
 \keyword{internal}

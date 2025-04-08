@@ -2,11 +2,10 @@
 #' @name prepare_vacamole_args
 #' @rdname prepare_vacamole_args
 #'
-#' @description Prepare arguments to [model_vacamole()] for
-#' .model_vacamole_cpp().
+#' @description Prepare arguments to [model_vacamole()].
 #'
 #' @return
-#' A list of model arguments suitable for .model_vacamole_cpp().
+#' A list of model arguments suitable for model_vacamole().
 #' This is a named list consisting of:
 #'
 #'  - `initial_state`: the initial conditions modified to represent absolute
@@ -51,11 +50,8 @@
 #' @keywords internal
 #' @details
 #' `.check_prepare_args_vacamole()` prepares arguments for
-#' .model_vacamole_cpp(), which is the C++ function that solves the Vacamole
-#' ODE system using a Boost _odeint_ solver, by converting some of the arguments
-#' collected in `mod_args` into simpler structures such as lists and numeric or
-#' integer vectors that can be interpreted as C++ types such as `Rcpp::List`,
-#' `Rcpp::NumericVector`, or `Eigen::MatrixXd`.
+#' model_vacamole(), which is the odin based C function that solves the 
+#' Vacamole ODE system.
 .check_prepare_args_vacamole <- function(mod_args) {
   # prepare the contact matrix and the initial conditions
   cmat_init_state <- .prepare_population(mod_args[["population"]])

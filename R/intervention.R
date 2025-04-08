@@ -136,7 +136,7 @@ new_rate_intervention <- function(name, time_begin, time_end,
 #' in the rate is concatenated into a vector of the same length as the number of
 #' interventions.
 #'
-#' Models such as model_default_cpp() are set up to treat interventions
+#' Models such as model_default() are set up to treat interventions
 #' with overlapping periods (i.e., overlap between the time when they are active
 #' ) as having an _additive effect_ on contact or rate reductions.
 #'

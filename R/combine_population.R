@@ -61,10 +61,18 @@ combine_populations <- function(populations, connectivity_matrix,
       method, args = c("populations", "connectivity_matrix"))
   }
   # Check that all populations contain the same demographic groups
-  names_groups <- names(populations[[1]]$demography_vector)
-  for (i in seq_along(populations))
-    checkmate::assert_names(names(populations[[i]]$demography_vector),
-                            identical.to = names_groups)
+  names_groups <- rownames(populations[[1]]$contact_matrix)
+  if (!is.null(names_groups)){
+    for (i in seq_along(populations)){
+      checkmate::assert_names(rownames(populations[[i]]$contact_matrix),
+                              identical.to = names_groups)
+    }
+  } else {
+    for (i in seq_along(populations)){
+      checkmate::assert_vector(populations[[i]]$demography_vector, 
+                               len = length(populations[[1]]$demography_vector))
+    }
+  }
 
 
   # Create demography vector for the combined population

@@ -149,7 +149,8 @@ We then use the function `combine_populations` to combine the two populations. T
 tot_population <- combine_populations(
   populations = list(population1, population2),
   connectivity_matrix = prop_matrix,
-  method = "linear", name = "combine"
+  method = "linear", 
+  name = "combine"
 )
 tot_population$contact_matrix
 ```
@@ -329,11 +330,11 @@ all_population[n] <- list(population(
   name = paste0("region", n)))
 ```
 
-Each population is placed on a line, with consecutive populations being 50km away (i.e. populations 1 and 2 are 50km away, 1 and 3 are 100km away...).
+Each population is placed on a line, with consecutive populations being 150km away (i.e. populations 1 and 2 are 150km away, 1 and 3 are 300km away...).
 
 ```{r}
 distance_matrix_n <-
-  matrix(50 * abs(rep(seq_len(n), n) - rep(seq_len(n), each = n)), nrow = n)
+  matrix(150 * abs(rep(seq_len(n), n) - rep(seq_len(n), each = n)), nrow = n)
 distance_matrix_n
 ```
 
@@ -355,7 +356,7 @@ output_gravity_n <- model_default(
 )
 ```
 
-The outbreak first peaks in region 5, then in region 4, 3, 2, and 1, with similar number of cases.
+The outbreak first peaks in region 4, then in region 3, 2, and 1, with similar number of cases.
 
 ```{r class.source = 'fold-hide'}
 filter(output_gravity_n, compartment == "infectious") %>%

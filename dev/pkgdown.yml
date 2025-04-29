@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.0.9
+pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   design-principles: design-principles.html
@@ -12,12 +12,12 @@ articles:
   modelling_interventions: modelling_interventions.html
   modelling_multiple_interventions: modelling_multiple_interventions.html
   modelling_param_uncertainty: modelling_param_uncertainty.html
+  modelling_populations: modelling_populations.html
   modelling_rate_interventions: modelling_rate_interventions.html
   modelling_scenarios: modelling_scenarios.html
   modelling_time_dependence: modelling_time_dependence.html
   modelling_vaccination: modelling_vaccination.html
-last_built: 2024-06-12T11:16Z
+last_built: 2025-04-29T13:20Z
 urls:
   reference: https://epiverse-trace.github.io/epidemics/reference
   article: https://epiverse-trace.github.io/epidemics/articles
-

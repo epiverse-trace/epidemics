@@ -140,7 +140,7 @@ We define `prop_matrix`, the connectivity matrix between the two populations (Un
 prop_matrix <- matrix(c(1, 0.05, 0.05, 1), nrow = 2, ncol = 2)
 ```
 
-We then use the function `combine_populations` to combine the two populations. The resulting population object will contain 6 stata (3 age groups in each population). If the method is defined as `"linear"`, the contact rate between groups is computed as the product between the contact matrix between groups and the connectivity between populations. 
+We then use the function `combine_populations` to combine the two populations. The resulting population object will contain 6 strata (3 age groups in each population). If the method is defined as `"linear"`, the contact rate between groups is computed as the product between the contact matrix between groups and the connectivity between populations. 
 
 ::: {.alert .alert-info}
 

@@ -58,7 +58,7 @@ prop_matrix <- matrix(c(1, .1, .05, 1), nrow = 2)
 combined_population <- combine_populations(
       populations = list(pop1, pop2),
       connectivity_matrix = prop_matrix,
-      method = "linear", 
+      method = "linear",
       name = "combine"
 )
 

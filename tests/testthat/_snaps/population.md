@@ -42,7 +42,7 @@
       Dem.grp.3:9,673,058(20%)
       
       Contactmatrix
-                       age.group
+      age.group
       contact.age.group[0,40)[40,65)65+
       Dem.grp.1:9.69631904.7926192.235873
       Dem.grp.2:2.95095864.1782182.468756

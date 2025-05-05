@@ -41,7 +41,7 @@ test_that("Printing population class", {
   # population with no rownames for the contact matrix
   names(uk_population$demography_vector) <- NULL
   rownames(uk_population$contact_matrix) <- NULL
-  expect_snapshot(uk_population)
+  expect_snapshot_value(uk_population, style = "deparse")
 })
 
 # test the population has expected structure

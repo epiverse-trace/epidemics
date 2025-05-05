@@ -41,7 +41,8 @@ test_that("Printing population class", {
   # population with no rownames for the contact matrix
   names(uk_population$demography_vector) <- NULL
   rownames(uk_population$contact_matrix) <- NULL
-  expect_snapshot_value(uk_population, style = "deparse")
+  expect_snapshot(uk_population, 
+  transform = function(lines) gsub("\\s", "", lines)) # format changes in CI
 })
 
 # test the population has expected structure

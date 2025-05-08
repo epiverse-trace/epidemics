@@ -1,6 +1,7 @@
 linters: all_linters(
     packages = c("lintr", "etdev"),
     object_name_linter = NULL,
+    object_overwrite_linter = NULL,
     implicit_integer_linter = NULL,
     extraction_operator_linter = NULL,
     todo_comment_linter = NULL,
@@ -19,6 +20,7 @@ linters: all_linters(
     backport_linter(if (length(x <- etdev::extract_min_r_version())) x else getRversion())
   )
 exclusions: list(
+    "R/odin.R",
     "tests/testthat.R" = list(
       unused_import_linter = Inf
     ),

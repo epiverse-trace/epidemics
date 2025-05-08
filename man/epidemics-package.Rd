@@ -31,6 +31,7 @@ Other contributors:
   \item Adam Kucharski \email{adam.kucharski@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-8814-9421}{ORCID}) [contributor, reviewer]
   \item Tim Taylor \email{tim.taylor@hiddenelephants.co.uk} (\href{https://orcid.org/0000-0002-8587-7113}{ORCID}) [contributor, reviewer]
   \item Banky Ahadzie \email{bahadzie@gmail.com} [contributor]
+  \item Alexis Robert \email{alexis.robert@lshtm.ac.uk} (\href{https://orcid.org/0000-0002-4516-2965}{ORCID}) [contributor]
   \item Hugo Gruson \email{hugo.gruson@data.org} (\href{https://orcid.org/0000-0002-4094-1476}{ORCID}) [reviewer]
   \item Joshua W. Lambert \email{joshua.lambert@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5218-3046}{ORCID}) [reviewer]
   \item James M. Azam \email{james.azam@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5782-7330}{ORCID}) [reviewer]

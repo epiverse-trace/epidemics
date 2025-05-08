@@ -15,7 +15,7 @@ epidemic_size(
 }
 \arguments{
 \item{data}{A table of model output, typically
-the output of \code{\link[=model_de  ault]{model_de  ault()}} or similar functions.}
+the output of \code{\link[=model_default]{model_default()}} or similar functions.}
 
 \item{stage}{A numeric vector for the stage of the epidemic at which to
 return the epidemic size; here 0.0 represents the start time of the epidemic

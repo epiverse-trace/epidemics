@@ -164,7 +164,7 @@ _epidemics_ is moving towards allowing vectors or lists to be passed as model fu
 
 - Function naming: Function names aim to contain verbs that indicate the function behaviour. Internal input checking functions follow the _checkmate_ naming style (e.g. `assert_*()`).
 
-- Function naming: Internal functions aim to begin with a `.` (e.g. `.model_default_cpp()`) to more clearly indicate that they are not for direct use.
+- Function naming: Internal functions aim to begin with a `.` (e.g. .model_default_cpp()) to more clearly indicate that they are not for direct use.
 
 ---
 

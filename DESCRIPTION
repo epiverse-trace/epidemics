@@ -13,6 +13,8 @@ Authors@R: c(
     person("Tim", "Taylor", , "tim.taylor@hiddenelephants.co.uk", role = c("ctb", "rev"),
            comment = c(ORCID = "0000-0002-8587-7113")),
     person("Banky", "Ahadzie", , "bahadzie@gmail.com", role = "ctb"),
+    person("Alexis", "Robert", , "alexis.robert@lshtm.ac.uk", role = "ctb",
+           comment = c(ORCID = "0000-0002-4516-2965")),
     person("Hugo", "Gruson", , "hugo.gruson@data.org", role = "rev",
            comment = c(ORCID = "0000-0002-4094-1476")),
     person("Joshua W.", "Lambert", , "joshua.lambert@lshtm.ac.uk", role = "rev",

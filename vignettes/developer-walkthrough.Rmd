@@ -30,9 +30,9 @@ Please read the [vignette on design decisions taken during the development proce
 
 This vignette is structured around use cases of making package modifications given the existing package architecture.
 
-Consequently this vignette does not cover major changes that would require a substantial rewrite of the package, such as switching the C++ solver used for ODE models, or switching to using _cpp11_ rather than _Rcpp_.
+The package implements models using `odin`, a domain-specific language for differential equations that combines readability with computational efficiency. Odin automatically generates optimized R code, eliminating the need for compiled `C++` while maintaining performance. This simplifies development and ensures models are both easy to modify and fast to execute.
 
-This vignette also does not tackle questions around epidemic modelling choices - such as which compartmental transitions should be allowed; we strongly recommend the involvement of a specialist in such cases.
+This vignette does not tackle questions around epidemic modelling choices - such as which compartmental transitions should be allowed; we strongly recommend the involvement of a specialist in such cases.
 
 Finally, this vignette relates only to the deterministic ODE models in _epidemics_, as these are expected to be the main starting points for most users seeking to create their own models.
 

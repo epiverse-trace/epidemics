@@ -174,9 +174,7 @@ The aim is to restrict the number of hard dependencies while maintaining user-fr
 - [_checkmate_](https://CRAN.R-project.org/package=checkmate): a useful input-checking package used across Epiverse packages;
 - [_cli_](https://CRAN.R-project.org/package=cli) and [_glue_](https://CRAN.R-project.org/package=glue): convenience packages for pretty printing methods; these could be reconsidered to lighten package dependencies;
 - [_data.table_](https://CRAN.R-project.org/package=data.table): a lightweight dependency to handle data from model outputs, and especially used for nested list column functionality.
-- [_Rcpp_](https://CRAN.R-project.org/package=Rcpp): provides linking between C++ and R;
-- [_RcppEigen_](https://CRAN.R-project.org/package=RcppEigen): provides matrix classes suitable for use with Boost _odeint_;
-- [_BH_](https://CRAN.R-project.org/package=BH): provides the Boost _odeint_ ODE solvers;
+- [odin](https://cran.r-project.org/package=odin): for solving ODEs.
 - [_withr_](https://CRAN.R-project.org/package=withr): for seed management;
 - _stats_ and _utils_: already installed with R, and used only in the Ebola model, and hence liable to be removed in the future.
 

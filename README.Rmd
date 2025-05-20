@@ -16,30 +16,29 @@ knitr::opts_chunk[["set"]](
 )
 ```
 
-# {{ packagename }}: Composable epidemic scenario modelling <img src="man/figures/logo.svg" align="right" width="130"/>
+# _epidemics_: Composable epidemic scenario modelling <img src="man/figures/logo.svg" align="right" width="130"/>
 
 <!-- badges: start -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit/)
-[![R-CMD-check](https://github.com/{{ gh_repo }}/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/{{ gh_repo }}/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/{{ gh_repo }}/branch/main/graph/badge.svg)](https://app.codecov.io/gh/{{ gh_repo }}?branch=main)
+[![R-CMD-check](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/epiverse-trace/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/epiverse-trace/epidemics/branch/main/graph/badge.svg)](https://app.codecov.io/gh/epiverse-trace/epidemics?branch=main)
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![CRAN status](https://www.r-pkg.org/badges/version/{{ packagename }})](https://CRAN.R-project.org/package={{ packagename }})
+[![CRAN status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.org/package=epidemics)
 <!-- badges: end -->
 
-_{{ packagename }}_ is an R package that provides modular representations of populations and public health response measures, allowing them to be combined with epidemiological model structures curated from the published literature, to conveniently compose and compare epidemic scenario models.
+_epidemics_ is an R package that provides modular representations of populations and public health response measures, allowing them to be combined with epidemiological model structures curated from the published literature, to conveniently compose and compare epidemic scenario models.
 
-The models in _{{ packagename }}_ focus on directly transmitted infections, and implement methods outlined in @bjornstad2020a and @bjornstad2020.
-The models in _{{ packagename }}_ can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions.
+The models in _epidemics_ focus on directly transmitted infections, and implement methods outlined in @bjornstad2020a and @bjornstad2020.
+The models in _epidemics_ can help provide rough estimates of the course of epidemics, and the effectiveness of pharmaceutical and non-pharmaceutical interventions.
 
-_{{ packagename }}_ relies on [Eigen](https://gitlab.com/libeigen/eigen) via [{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on [Boost Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html) via [{BH}](https://cran.r-project.org/package=BH), and is developed at the [Centre for the Mathematical Modelling of Infectious Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases) at the London School of Hygiene and Tropical Medicine as part of the [Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
+_epidemics_ relies on odin generates systems of ordinary differential equations (ODE) and integrate them, using a domain specific language (DSL), and is widely used to translate compartmental models from R to C code for performance gains;
 
-## Installation
 
-The current development version of _{{ packagename }}_ can be installed from [GitHub](https://github.com/) using the _pak_ package.
+The current development version of _epidemics_ can be installed from [GitHub](https://github.com/epiverse-trace/epidemics.git) using the _pak_ package.
 
 ```r
 if(!require("pak")) install.packages("pak")
-pak::pkg_install("{{ gh_repo }}")
+pak::pkg_install("epiverse-trace/epidemics")
 ```
 
 Alternatively, install pre-compiled binaries from [the Epiverse TRACE R-universe](https://epiverse-trace.r-universe.dev/epidemics)
@@ -56,7 +55,7 @@ install.packages("epidemics", repos = c("https://epiverse-trace.r-universe.dev",
 
 ## Quick start
 
-Here we show an example of using the default model in _{{ packagename }}_ to model an epidemic in the U.K. population with an $R_0$ similar to that of pandemic influenza, with heterogeneity in social contacts among different age groups, and with the implementation of school closures to dampen the spread of the infection.
+Here we show an example of using the default model in _epidemics_ to model an epidemic in the U.K. population with an $R_0$ similar to that of pandemic influenza, with heterogeneity in social contacts among different age groups, and with the implementation of school closures to dampen the spread of the infection.
 
 ```{r}
 # load epidemics
@@ -188,11 +187,11 @@ filter(output, compartment == "infectious") %>%
 
 ## Package vignettes
 
-More details on how to use _{{ packagename }}_ can be found in the [online documentation as package vignettes](https://epiverse-trace.github.io/{{ packagename }}/), under "Articles".
+More details on how to use _epidemics_ can be found in the [online documentation as package vignettes](https://epiverse-trace.github.io/epidemics/), under "Articles".
 
 ## Package models
 
-_{{ packagename }}_ provides a convenient interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted respiratory infections such as influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus disease:
+_epidemics_ provides a convenient interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted respiratory infections such as influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus disease:
 
 1. A deterministic SEIR-V model with susceptible, exposed, infectious, recovered, and vaccinated compartments (SEIR-V), allowing for heterogeneity in social contacts, the implementation of a group-specific non-pharmaceutical intervention that reduces social contacts, and a vaccination regime with group-specific start and end dates;
 
@@ -203,7 +202,7 @@ _{{ packagename }}_ provides a convenient interface to a library of compartmenta
 4. An initial implementation of a compartmental model for diphtheria in the context of internally displaced persons camps, including a reporting rate, hospitalisation rate, and delays in entering and leaving hospital, taken from @finger2019.
 
 More models are planned to be added in the near future.
-Please get in touch if you would like to see your model added to the _{{ packagename }}_ model library --- we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.
+Please get in touch if you would like to see your model added to the _epidemics_ model library --- we are happy to help with translating it into our framework, with a special focus on making the model applicable to LMIC settings.
 
 ## Related projects
 
@@ -216,14 +215,14 @@ _epidemics_ aims to be a library of published epidemiological models, and the fo
 
 ## Help
 
-To report a bug please open an [issue](https://github.com/{{ gh_repo }}/issues/new/choose).
+To report a bug please open an [issue](https://github.com/epiverse-trace/epidemics/issues/new/choose).
 
 ## Contribute
 
-Contributions to _{{ packagename }}_ are welcomed via [pull requests](https://github.com/{{ gh_repo }}/pulls).
+Contributions to _epidemics_ are welcomed via [pull requests](https://github.com/epiverse-trace/pulls).
 
 ## Code of conduct
 
-Please note that the _{{ packagename }}_ project is released with a [Contributor Code of Conduct](https://github.com/epiverse-trace/.github/blob/main/CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
+Please note that the _epidemics_ project is released with a [Contributor Code of Conduct](https://github.com/epiverse-trace/.github/blob/main/CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
 
 ## References

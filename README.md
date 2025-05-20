@@ -1,13 +1,13 @@
 
-# epidemics: Composable epidemic scenario modelling <img src="man/figures/logo.svg" align="right" width="130"/>
+# {{ packagename }}: Composable epidemic scenario modelling <img src="man/figures/logo.svg" align="right" width="130"/>
 
 <!-- badges: start -->
 
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit/)
-[![R-CMD-check](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/%7B%7B%20gh_repo%20%7D%7D/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/%7B%7B%20gh_repo%20%7D%7D/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/epiverse-trace/epidemics/branch/main/graph/badge.svg)](https://app.codecov.io/gh/epiverse-trace/epidemics?branch=main)
+coverage](https://codecov.io/gh/%7B%7B%20gh_repo%20%7D%7D/branch/main/graph/badge.svg)](https://app.codecov.io/gh/%7B%7B%20gh_repo%20%7D%7D?branch=main)
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
@@ -158,7 +158,8 @@ close_schools <- intervention(
 # view the intervention
 close_schools
 #> 
-#>  Intervention name: 
+#>  Intervention name:
+#> 
 #>  Begins at: 
 #> [1] 200
 #> 
@@ -268,12 +269,12 @@ and the following projects may be useful for building your own models:
 ## Help
 
 To report a bug please open an
-[issue](https://github.com/epiverse-trace/epidemics/issues/new/choose).
+[issue](https://github.com/%7B%7B%20gh_repo%20%7D%7D/issues/new/choose).
 
 ## Contribute
 
 Contributions to *epidemics* are welcomed via [pull
-requests](https://github.com/epiverse-trace/epidemics/pulls).
+requests](https://github.com/%7B%7B%20gh_repo%20%7D%7D/pulls).
 
 ## Code of conduct
 

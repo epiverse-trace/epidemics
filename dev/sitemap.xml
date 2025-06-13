@@ -31,10 +31,9 @@
 <url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/cumulative_contacts_intervention.html</loc></url>
 <url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/cumulative_rate_intervention.html</loc></url>
 <url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-intervention_on_rates.html</loc></url>
-<url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-model_default_cpp.html</loc></url>
-<url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-model_diphtheria_cpp.html</loc></url>
 <url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-model_ebola_internal.html</loc></url>
-<url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-model_vacamole_cpp.html</loc></url>
+<url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-no_population_change.html</loc></url>
+<url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-no_time_dependence.html</loc></url>
 <url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-ode_model_default.html</loc></url>
 <url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-ode_model_vacamole.html</loc></url>
 <url><loc>https://epiverse-trace.github.io/epidemics/dev/reference/dot-prepare_population.html</loc></url>

@@ -159,7 +159,7 @@ The eventual stable output type must allow users to conveniently access the epid
 <h3 id="ode-systems-and-models">ODE systems and models<a class="anchor" aria-label="anchor" href="#ode-systems-and-models"></a>
 </h3>
 <ul>
-<li><p>A common method for defining and solving ODEs in R is to write the ODE system in R and pass it to solvers such as <code>deSolve::lsoda()</code> from the <a href="https://cran.r-project.org/package=deSolve" class="external-link"><em>deSolve</em> package</a>. We have opted against this approach (referred to as ‘R-deSolve’).</p></li>
+<li><p>A common method for defining and solving ODEs in R is to write the ODE system in R and pass it to solvers such as <code><a href="https://rdrr.io/pkg/deSolve/man/lsoda.html" class="external-link">deSolve::lsoda()</a></code> from the <a href="https://cran.r-project.org/package=deSolve" class="external-link"><em>deSolve</em> package</a>. We have opted against this approach (referred to as ‘R-deSolve’).</p></li>
 <li><p>It is possible to write ODE compartmental transitions in C++, and expose the C++ code to R, eventually passing this ODE system to deSolve solvers (referred to as ‘Rcpp-deSolve’). We have also opted against this approach, as it involves substantial interconversion of more complex objects such as structured lists (the model composable elements) from R to C++ in each solver timestep, reducing performance.</p></li>
 <li><p>ODE systems are written in C++, and solved using the <a href="https://www.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/index.html" class="external-link">Boost <em>odeint</em> solvers</a> with <em>fixed step sizes</em>. This means that within each call to <code>model_*()</code>, R objects are converted for use by C++ only once (in the scalar arguments case), and are not passed back and forth multiple times.</p></li>
 <li><p><em>odeint</em> is provided by the package <a href="https://cran.r-project.org/package=BH" class="external-link">BH (Boost Headers)</a>, making it convenient to use in Rcpp packages. The <a href="https://cran.r-project.org/package=r2sundials" class="external-link"><em>r2sundials</em> package</a> provides an Rcpp-friendly interface to the <a href="https://computing.llnl.gov/projects/sundials" class="external-link">SUNDIALS ODE solvers</a>, but the documentation is less clear overall, and seems to recommend the use of <a href="https://cran.r-project.org/package=RcppArmadillo" class="external-link"><em>RcppArmadillo</em></a> and <a href="https://cran.r-project.org/package=RcppXPtrUtils" class="external-link"><em>RcppXPtrUtils</em></a>; these have not been evaluated for use.</p></li>
@@ -242,7 +242,7 @@ Some modelling decisions are explained here, while recognising that adding more 
 <ul>
 <li><p><em>epidemics</em> follows the <em>finalsize</em> example in following <a href="https://google.github.io/styleguide/cppguide.html" class="external-link">Google’s C++ code style</a>, and in using <a href="https://github.com/cpplint/cpplint" class="external-link">Cpplint</a> and <a href="https://cppcheck.sourceforge.io/" class="external-link">Cppcheck</a> for static code analysis as options such as Clang-tidy do not work well with Rcpp code; <a href="https://epiverse-trace.github.io/posts/lint-rcpp/" class="external-link">see this blog post</a> for more.</p></li>
 <li><p>Function naming: Function names aim to contain verbs that indicate the function behaviour. Internal input checking functions follow the <em>checkmate</em> naming style (e.g. <code>assert_*()</code>).</p></li>
-<li><p>Function naming: Internal functions aim to begin with a <code>.</code> (e.g. <code><a href="../reference/dot-model_default_cpp.html">.model_default_cpp()</a></code>) to more clearly indicate that they are not for direct use.</p></li>
+<li><p>Function naming: Internal functions aim to begin with a <code>.</code> (e.g. .model_default_cpp()) to more clearly indicate that they are not for direct use.</p></li>
 </ul>
 <hr>
 </div>
@@ -307,7 +307,7 @@ In general, please follow the <a href="https://github.com/epiverse-trace/.github
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

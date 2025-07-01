@@ -12,7 +12,7 @@ coverage](https://codecov.io/gh/epiverse-trace/epidemics/branch/main/graph/badge
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![CRAN
-status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.org/package=epidemics)
+status](https://www.r-pkg.org/badges/version/epiverse-trace/epidemics)](https://CRAN.R-project.org/package=epidemics)
 <!-- badges: end -->
 
 *epidemics* is an R package that provides modular representations of
@@ -158,7 +158,8 @@ close_schools <- intervention(
 # view the intervention
 close_schools
 #> 
-#>  Intervention name: 
+#>  Intervention name:
+#> 
 #>  Begins at: 
 #> [1] 200
 #> 

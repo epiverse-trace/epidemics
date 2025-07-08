@@ -28,15 +28,11 @@ implement methods outlined in Bjørnstad et al.
 provide rough estimates of the course of epidemics, and the
 effectiveness of pharmaceutical and non-pharmaceutical interventions.
 
-*epidemics* relies on [Eigen](https://gitlab.com/libeigen/eigen) via
-[{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on
-[Boost
-Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html)
-via [{BH}](https://cran.r-project.org/package=BH), and is developed at
-the [Centre for the Mathematical Modelling of Infectious
-Diseases](https://www.lshtm.ac.uk/research/centres/centre-mathematical-modelling-infectious-diseases)
-at the London School of Hygiene and Tropical Medicine as part of the
-[Epiverse-TRACE initiative](https://data.org/initiatives/epiverse/).
+*epidemics* relies on epidemics relies on the
+[*odin*](https://cran.r-project.org/package=odin) package for defining
+ODE systems and deSolve for numerical integration, and is developed at
+the [MRC Centre for Global Infectious Disease Analysis at Imperial
+College London](https://mrc-ide.github.io/odin/index.html).
 
 ## Installation
 

@@ -290,9 +290,7 @@ Here, we shall draw 100 samples of the transmission rate with a mean of `r round
 ```{r}
 beta <- with_seed(
   seed = 1,
-  code = {
-    rnorm(100, 1.3 / 7, 0.005)
-  }
+  code = rnorm(100, 1.3 / 7, 0.005)
 )
 ```
 

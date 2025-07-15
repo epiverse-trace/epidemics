@@ -1,3 +1,138 @@
+#' Ordinary Differential Equations for the Vacamole Model
+#'
+#' @description Provides the ODEs for the RIVM Vacamole model in a format that
+#' is suitable for passing to [deSolve::lsoda()].
+#' See [model_vacamole()] for a list of required parameters.
+#'
+#' @param t A single number of the timestep at which to integrate.
+#' @param y The conditions of the epidemiological compartments.
+#' @param params The parameters, passed as a named list.
+#'
+#' @return A list with a vector with as many elements as the number of
+#' demographic groups times the number of epidemiological compartments. Each
+#' value gives the change in the number of individuals in that compartment.
+#' @keywords internal
+.ode_model_vacamole <- function(t, y, params) {
+  # no input checking, fn is unsafe and not expected to be used
+  n_age <- nrow(params[["contact_matrix"]])
+
+  # create a matrix
+  # columns correspond to the following compartments
+  # 1| 2| 3|4| 5|6| 7|8| 9|10|11 # nolint
+  # S|V1|V2|E|EV|I|IV|H|HV|D|R # nolint
+  y <- matrix(y, nrow = n_age, ncol = 11L, byrow = FALSE)
+
+  # scale the contact matrix if within the intervention period
+  contact_matrix_ <- intervention_on_cm(
+    t = t,
+    cm = params[["contact_matrix"]],
+    time_begin = params[["npi_time_begin"]],
+    time_end = params[["npi_time_end"]],
+    cr = params[["npi_cr"]]
+  )
+
+  # allow modification of only some parameters
+  model_params <- params[
+    c(
+      "transmission_rate", "transmission_rate_vax", "infectiousness_rate",
+      "hospitalisation_rate", "hospitalisation_rate_vax",
+      "mortality_rate", "mortality_rate_vax", "recovery_rate"
+    )
+  ]
+
+  # modifiable parameters
+  model_params_primary <- model_params[c(
+    "transmission_rate", "infectiousness_rate", "hospitalisation_rate",
+    "mortality_rate", "recovery_rate"
+  )]
+
+  # apply time dependence before interventions
+  time_dependent_params <- Map(
+    model_params_primary[names(params$time_dependence)],
+    params$time_dependence,
+    f = function(x, func) {
+      func(time = t, x = x)
+    }
+  )
+
+  # assign time-modified param values
+  model_params_primary[names(time_dependent_params)] <- time_dependent_params
+
+  model_params_primary <- .intervention_on_rates(
+    t = t,
+    interventions = params[["rate_interventions"]],
+    parameters = model_params_primary
+  )
+
+  # reassign all modified values to model_params
+  model_params[names(model_params_primary)] <- model_params_primary
+
+  # modify the vaccination rate depending on the regime
+  # the number of doses is already checked before passing
+  # columns are: 1: rate of first dose, 2: rate of second dose
+  current_nu <- params[["vax_nu"]] *
+    ((params[["vax_time_begin"]] < t) &
+      (params[["vax_time_end"]] > t))
+
+  # calculate transitions
+  s_to_e <- (model_params[["transmission_rate"]] * y[, 1] *
+    contact_matrix_ %*% (y[, 6] + y[, 7]))
+  # transitions into the vaccinated compartments
+  s_to_v1 <- current_nu[, 1] * y[, 1]
+  v1_to_v2 <- current_nu[, 2] * y[, 2]
+
+  # transitions into the exposed compartment
+  v1_to_e <- model_params[["transmission_rate"]] * y[, 2] *
+    (contact_matrix_ %*% (y[, 6] + y[, 7]))
+  v2_to_ev <- model_params[["transmission_rate_vax"]] * y[, 3] *
+    (contact_matrix_ %*% (y[, 6] + y[, 7]))
+
+  # transitions into the infectious compartment
+  e_to_i <- model_params[["infectiousness_rate"]] * y[, 4]
+  ev_to_iv <- model_params[["infectiousness_rate"]] * y[, 5]
+
+  # transitions from infectious to hospitalised
+  i_to_h <- model_params[["hospitalisation_rate"]] * y[, 6]
+  iv_to_hv <- model_params[["hospitalisation_rate_vax"]] * y[, 7]
+
+  # transitions from infectious to dead
+  i_to_d <- model_params[["mortality_rate"]] * y[, 6]
+  iv_to_d <- model_params[["mortality_rate_vax"]] * y[, 7]
+
+  # transitions from hospitalied to dead
+  h_to_d <- model_params[["mortality_rate"]] * y[, 8]
+  hv_to_d <- model_params[["mortality_rate_vax"]] * y[, 9]
+
+  # transitions from infectious to recovered
+  i_to_r <- model_params[["recovery_rate"]] * y[, 6]
+  iv_to_r <- model_params[["recovery_rate"]] * y[, 7]
+
+  # transitions from hospitalised to recovered
+  h_to_r <- model_params[["recovery_rate"]] * y[, 8]
+  hv_to_r <- model_params[["recovery_rate"]] * y[, 9]
+
+  # define compartmental changes
+  dS <- -s_to_e - s_to_v1
+
+  dV1 <- s_to_v1 - v1_to_e - v1_to_v2
+  dV2 <- v1_to_v2 - v2_to_ev
+
+  dE <- s_to_e + v1_to_e - e_to_i
+  dEv <- v2_to_ev - ev_to_iv
+
+  dI <- e_to_i - i_to_h - i_to_r - i_to_d
+  dIv <- ev_to_iv - iv_to_hv - iv_to_r - iv_to_d
+
+  dH <- i_to_h - h_to_r - h_to_d
+  dHv <- iv_to_hv - hv_to_r - hv_to_d
+
+  dD <- i_to_d + iv_to_d + h_to_d + hv_to_d
+  dR <- i_to_r + iv_to_r + h_to_r + hv_to_r
+
+  # return a list
+  list(c(dS, dV1, dV2, dE, dEv, dI, dIv, dH, dHv, dD, dR))
+}
+
 #' @title Model leaky, two-dose vaccination in an epidemic using Vacamole
 #'
 #' @name model_vacamole
@@ -141,13 +276,13 @@
 #' tail(data)
 #'
 #' @export
-model_vacamole <- function(population,
+#' @importFrom odin odin
+model_vacamole <- function(population, # nolint: cyclocomp_linter.
                            transmission_rate = 1.3 / 7.0,
                            transmission_rate_vax = 0.8 * transmission_rate,
                            infectiousness_rate = 1.0 / 2.0,
                            hospitalisation_rate = 1.0 / 1000,
-                           hospitalisation_rate_vax = 0.8 *
-                             hospitalisation_rate,
+                           hospitalisation_rate_vax = 0.8 * hospitalisation_rate, # nolint: line_length_linter.
                            mortality_rate = 1.0 / 1000,
                            mortality_rate_vax = 0.8 * mortality_rate,
                            recovery_rate = 1.0 / 7.0,
@@ -233,9 +368,7 @@ model_vacamole <- function(population,
   )
 
   # make lists if not lists
-  if (is_population(population)) {
-    population <- list(population)
-  }
+  population <- list(population)
   if (is_lofints) {
     intervention <- list(intervention)
   }
@@ -285,7 +418,7 @@ model_vacamole <- function(population,
   )
 
   # process the population, interventions, and vaccinations, after
-  # cross-checking them agains the relevant population
+  # cross-checking them against the relevant population
   model_output[, args := apply(model_output, 1, function(x) {
     .check_prepare_args_vacamole(c(x))
   })]
@@ -299,12 +432,175 @@ model_vacamole <- function(population,
   model_output[, args := apply(model_output, 1, function(x) {
     c(x[["args"]], x[param_names]) # avoid including col "param_set"
   })]
-  model_output[, "data" := Map(population, args, f = function(p, l) {
-    .output_to_df(
-      do.call(.model_vacamole_cpp, l),
-      population = p, # taken from local scope/env
-      compartments = compartments
+
+  model_output[, "data" := lapply(args, function(args) {
+    time_points <- seq(0, args$time_end, by = args$increment)
+    n_time <- length(time_points)
+
+    C <- args$contact_matrix
+    n_age <- nrow(C)
+
+    contact_intervention_start <- as.numeric(args$npi_time_begin)
+    contact_intervention_end <- as.numeric(args$npi_time_end)
+    contact_intervention_effect <- t(args$npi_cr)
+
+    rate_intervention_start <-
+      as.numeric(args$rate_interventions[[1]]$time_begin)
+    rate_intervention_end <- as.numeric(args$rate_interventions[[1]]$time_end)
+    rate_intervention_effect <-
+      matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+
+    n_contact_intervention <- length(contact_intervention_start)
+    n_rate_intervention <- length(rate_intervention_start)
+
+    time_dependent_params <- Map(
+      args[names(args$time_dependence)],
+      args$time_dependence,
+      f = function(x, func) {
+        func(time = time_points, x = x)
+      }
     )
+    # assign time-modified param values
+    args[names(time_dependent_params)] <- time_dependent_params
+
+    beta <- args$transmission_rate
+    beta_vax <- args$transmission_rate_vax
+    eta <- args$hospitalisation_rate
+    eta_vax <- args$hospitalisation_rate_vax
+    sigma <- args$infectiousness_rate
+    gamma <- args$recovery_rate
+    omega <- args$mortality_rate
+    omega_vax <- args$mortality_rate_vax
+
+    if (length(beta) == 1) beta <- rep(beta, n_time)
+    if (length(beta_vax) == 1) beta_vax <- rep(beta_vax, n_time)
+    if (length(eta) == 1) eta <- rep(eta, n_time)
+    if (length(eta_vax) == 1) eta_vax <- rep(eta_vax, n_time)
+    if (length(sigma) == 1) sigma <- rep(sigma, n_time)
+    if (length(gamma) == 1) gamma <- rep(gamma, n_time)
+    if (length(omega) == 1) omega <- rep(omega, n_time)
+    if (length(omega_vax) == 1) omega_vax <- rep(omega_vax, n_time)
+
+    vax_start <- as.matrix(args$vax_time_begin)
+    vax_end <- as.matrix(args$vax_time_end)
+    vax_nu <- as.matrix(args$vax_nu)
+
+    initial_conditions <- args$initial_state
+    init_S <- initial_conditions[, 1]
+    init_V1 <- initial_conditions[, 2]
+    init_V2 <- initial_conditions[, 3]
+    init_E <- initial_conditions[, 4]
+    init_EV <- initial_conditions[, 5]
+    init_I <- initial_conditions[, 6]
+    init_IV <- initial_conditions[, 7]
+    init_H <- initial_conditions[, 8]
+    init_HV <- initial_conditions[, 9]
+    init_D <- initial_conditions[, 10]
+    init_R <- initial_conditions[, 11]
+
+    # Initialize and run the model
+    model <- vacamole$new(
+      time = time_points,
+      n_time = n_time,
+      C = C,
+      n_age = n_age,
+      n_contact_intervention = n_contact_intervention,
+      n_rate_intervention = n_rate_intervention,
+      beta = beta,
+      beta_vax = beta_vax,
+      eta = eta,
+      eta_vax = eta_vax,
+      sigma = sigma,
+      gamma = gamma,
+      omega = omega,
+      omega_vax = omega_vax,
+      rate_intervention_start = rate_intervention_start,
+      rate_intervention_end = rate_intervention_end,
+      rate_intervention_effect = rate_intervention_effect,
+      contact_intervention_start = contact_intervention_start,
+      contact_intervention_end = contact_intervention_end,
+      contact_intervention_effect = contact_intervention_effect,
+      vax_start = vax_start,
+      vax_end = vax_end,
+      vax_nu = vax_nu,
+      init_S = init_S,
+      init_V1 = init_V1,
+      init_V2 = init_V2,
+      init_E = init_E,
+      init_EV = init_EV,
+      init_I = init_I,
+      init_IV = init_IV,
+      init_H = init_H,
+      init_HV = init_HV,
+      init_D = init_D,
+      init_R = init_R
+    )
+
+    result <- model$run(time_points)
+
+    # Add scenario information
+    dt <- data.table::as.data.table(result)
+    # declaring variables below to avoid data.table related lintr messages
+    temp <- value <- temp_compartment <- temp_demography <-
+      compartment <- demography_group <- `:=` <- time <- NULL
+
+    age_group_mappings <- paste0( # properly label demography groups
+      seq_len(n_age),
+      c(
+        rownames(C),
+        names(population[[1]]$demography_vector),
+        sprintf(
+          "demo_group_%i",
+          seq_len(nrow(population[[1]]$contact_matrix))
+        )
+      )[seq_len(nrow(population[[1]]$contact_matrix))]
+    )
+    names(age_group_mappings) <- seq_len(nrow(population[[1]]$contact_matrix))
+
+    mapping <- c( # prepend numbers to help during sorting. Will remove later
+      S = "01susceptible", V1 = "02vaccinated_one_dose",
+      V2 = "03vaccinated_two_dose", E = "04exposed",
+      EV = "05exposed_vaccinated", I = "06infectious",
+      IV = "07infectious_vaccinated", H = "08hospitalised",
+      HV = "09hospitalised_vaccinated", D = "10dead", R = "11recovered",
+      age_group_mappings
+    )
+
+    # Melt the data table to long format
+    data.table::melt(dt,
+      id.vars = "t",
+      variable.name = "temp", # e.g. S[1], ..., V[3]
+      value.name = "value"
+    )[ # piping the data.table way. Possible because melt outputs a data.table
+      , list(
+        time = t, # alternative to using data.table::setnames(dt, "t", "time")
+        temp_compartment = sub("\\[.*", "", temp), # e.g. S[1] -> S
+        temp_demography = substring(
+          temp, nchar(as.character(temp)) - 1,
+          nchar(as.character(temp)) - 1
+        ), # e.g. S[1] -> 1
+        value
+      )
+    ][ # |> the DT way (piping the data.table way)
+      ,
+      list(
+        time,
+        demography_group = mapping[temp_demography], # e.g. 1[0,20), 2[20,65),
+        compartment = mapping[temp_compartment], # e.g. 1susceptible, 2exposed
+        value
+      )
+    ][ # |> the DT way
+      order(time, compartment, demography_group) # prepending numbers helps here
+    ][ # |> the DT way
+      ,
+      `:=`( # used as the prefix form to update multiple columns
+        # remove prepended numbers from `mapping`
+        demography_group = substring(demography_group, 2L), # e.g. [0,20), ...
+        compartment = substring(compartment, 3L) # e.g. susceptible, exposed,
+      )
+    ][ # |> the DT way
+      # added because the previous operation used `:=` which doesn't output
+    ]
   })]
 
   # remove temporary arguments
@@ -318,139 +614,4 @@ model_vacamole <- function(population,
 
   # return data.table
   model_output[]
-}
-
-#' Ordinary Differential Equations for the Vacamole Model
-#'
-#' @description Provides the ODEs for the RIVM Vacamole model in a format that
-#' is suitable for passing to [deSolve::lsoda()].
-#' See [model_vacamole()] for a list of required parameters.
-#'
-#' @param t A single number of the timestep at which to integrate.
-#' @param y The conditions of the epidemiological compartments.
-#' @param params The parameters, passed as a named list.
-#'
-#' @return A list with a vector with as many elements as the number of
-#' demographic groups times the number of epidemiological compartments. Each
-#' value gives the change in the number of individuals in that compartment.
-#' @keywords internal
-.ode_model_vacamole <- function(t, y, params) {
-  # no input checking, fn is unsafe and not expected to be used
-  n_age <- nrow(params[["contact_matrix"]])
-
-  # create a matrix
-  # columns correspond to the following compartments
-  # 1| 2| 3|4| 5|6| 7|8| 9|10|11 # nolint
-  # S|V1|V2|E|EV|I|IV|H|HV|D|R # nolint
-  y <- matrix(y, nrow = n_age, ncol = 11L, byrow = FALSE)
-
-  # scale the contact matrix if within the intervention period
-  contact_matrix_ <- intervention_on_cm(
-    t = t,
-    cm = params[["contact_matrix"]],
-    time_begin = params[["npi_time_begin"]],
-    time_end = params[["npi_time_end"]],
-    cr = params[["npi_cr"]]
-  )
-
-  # allow modification of only some parameters
-  model_params <- params[
-    c(
-      "transmission_rate", "transmission_rate_vax", "infectiousness_rate",
-      "hospitalisation_rate", "hospitalisation_rate_vax",
-      "mortality_rate", "mortality_rate_vax", "recovery_rate"
-    )
-  ]
-
-  # modifiable parameters
-  model_params_primary <- model_params[c(
-    "transmission_rate", "infectiousness_rate", "hospitalisation_rate",
-    "mortality_rate", "recovery_rate"
-  )]
-
-  # apply time dependence before interventions
-  time_dependent_params <- Map(
-    model_params_primary[names(params$time_dependence)],
-    params$time_dependence,
-    f = function(x, func) {
-      func(time = t, x = x)
-    }
-  )
-
-  # assign time-modified param values
-  model_params_primary[names(time_dependent_params)] <- time_dependent_params
-
-  model_params_primary <- .intervention_on_rates(
-    t = t,
-    interventions = params[["rate_interventions"]],
-    parameters = model_params_primary
-  )
-
-  # reassign all modified values to model_params
-  model_params[names(model_params_primary)] <- model_params_primary
-
-  # modify the vaccination rate depending on the regime
-  # the number of doses is already checked before passing
-  # columns are: 1: rate of first dose, 2: rate of second dose
-  current_nu <- params[["vax_nu"]] *
-    ((params[["vax_time_begin"]] < t) &
-      (params[["vax_time_end"]] > t))
-
-  # calculate transitions
-  s_to_e <- (model_params[["transmission_rate"]] * y[, 1] *
-    contact_matrix_ %*% (y[, 6] + y[, 7]))
-  # transitions into the vaccinated compartments
-  s_to_v1 <- current_nu[, 1] * y[, 1]
-  v1_to_v2 <- current_nu[, 2] * y[, 2]
-
-  # transitions into the exposed compartment
-  v1_to_e <- model_params[["transmission_rate"]] * y[, 2] *
-    (contact_matrix_ %*% (y[, 6] + y[, 7]))
-  v2_to_ev <- model_params[["transmission_rate_vax"]] * y[, 3] *
-    (contact_matrix_ %*% (y[, 6] + y[, 7]))
-
-  # transitions into the infectious compartment
-  e_to_i <- model_params[["infectiousness_rate"]] * y[, 4]
-  ev_to_iv <- model_params[["infectiousness_rate"]] * y[, 5]
-
-  # transitions from infectious to hospitalised
-  i_to_h <- model_params[["hospitalisation_rate"]] * y[, 6]
-  iv_to_hv <- model_params[["hospitalisation_rate_vax"]] * y[, 7]
-
-  # transitions from infectious to dead
-  i_to_d <- model_params[["mortality_rate"]] * y[, 6]
-  iv_to_d <- model_params[["mortality_rate_vax"]] * y[, 7]
-
-  # transitions from hospitalied to dead
-  h_to_d <- model_params[["mortality_rate"]] * y[, 8]
-  hv_to_d <- model_params[["mortality_rate_vax"]] * y[, 9]
-
-  # transitions from infectious to recovered
-  i_to_r <- model_params[["recovery_rate"]] * y[, 6]
-  iv_to_r <- model_params[["recovery_rate"]] * y[, 7]
-
-  # transitions from hospitalised to recovered
-  h_to_r <- model_params[["recovery_rate"]] * y[, 8]
-  hv_to_r <- model_params[["recovery_rate"]] * y[, 9]
-
-  # define compartmental changes
-  dS <- -s_to_e - s_to_v1
-
-  dV1 <- s_to_v1 - v1_to_e - v1_to_v2
-  dV2 <- v1_to_v2 - v2_to_ev
-
-  dE <- s_to_e + v1_to_e - e_to_i
-  dEv <- v2_to_ev - ev_to_iv
-
-  dI <- e_to_i - i_to_h - i_to_r - i_to_d
-  dIv <- ev_to_iv - iv_to_hv - iv_to_r - iv_to_d
-
-  dH <- i_to_h - h_to_r - h_to_d
-  dHv <- iv_to_hv - hv_to_r - hv_to_d
-
-  dD <- i_to_d + iv_to_d + h_to_d + hv_to_d
-  dR <- i_to_r + iv_to_r + h_to_r + hv_to_r
-
-  # return a list
-  list(c(dS, dV1, dV2, dE, dEv, dI, dIv, dH, dHv, dD, dR))
 }

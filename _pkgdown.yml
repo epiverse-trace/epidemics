@@ -19,6 +19,10 @@ articles:
   navbar: Modelling seasonality
   contents:
   - modelling_time_dependence
+- title: Run models with multiple populations
+  navbar: Run models with multiple populations
+  contents:
+  - modelling_populations
 - title: Advanced modelling
   navbar: Advanced modelling
   contents:

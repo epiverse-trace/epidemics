@@ -97,7 +97,6 @@ dV
 dX
 deSolve
 dfrac
-doi
 dplyr
 ebola
 epicookbook
@@ -106,6 +105,7 @@ epirecipes
 erroring
 etc
 finalsize
+frac
 geq
 ggdist
 ggplot
@@ -114,7 +114,6 @@ github
 ij
 io
 knitr
-kylieainslie
 linter
 odeint
 odin
@@ -128,6 +127,7 @@ recyclability
 rightarrow
 rmarkdown
 rollout
+seirv
 socialmixr
 stochasticity
 subcompartments

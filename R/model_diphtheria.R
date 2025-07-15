@@ -298,12 +298,140 @@ model_diphtheria <- function(population,
   model_output[, args := apply(model_output, 1, function(x) {
     c(x[["args"]], x[param_names]) # avoid including col "param_set"
   })]
-  model_output[, "data" := Map(population, args, f = function(p, l) {
-    .output_to_df(
-      do.call(.model_diphtheria_cpp, l),
-      population = p, # taken from local scope/env
-      compartments = compartments
+  model_output[, "data" := lapply(args, function(args) {
+    time_points <- seq(0, args$time_end, by = args$increment)
+    n_time <- length(time_points)
+    n_age <- length(args$pop_change_values[[1]])
+
+    pop_change <- matrix(0, nrow = n_time, ncol = n_age)
+    if (any(args$pop_change_times > 0)) {
+      pop_change[args$pop_change_times + 1, ] <-
+        do.call(rbind, args$pop_change_values)
+    }
+    rate_intervention_start <-
+      as.numeric(args$rate_interventions[[1]]$time_begin)
+    rate_intervention_end <-
+      as.numeric(args$rate_interventions[[1]]$time_end)
+    rate_intervention_effect <-
+      matrix(rep(args$rate_interventions[[1]]$reduction, n_age), ncol = n_age)
+
+    n_rate_intervention <- length(rate_intervention_start)
+
+    time_dependent_params <- Map(
+      args[names(args$time_dependence)],
+      args$time_dependence,
+      f = function(x, func) {
+        func(time = time_points, x = x)
+      }
     )
+    # assign time-modified param values
+    args[names(time_dependent_params)] <- time_dependent_params
+    beta <- args$transmission_rate
+    r <- args$reporting_rate
+    eta <- args$prop_hosp
+    sigma <- args$infectiousness_rate
+    tau1 <- args$hosp_entry_rate
+    tau2 <- args$hosp_exit_rate
+    gamma <- args$recovery_rate
+
+    if (length(beta) == 1) beta <- rep(beta, n_time)
+    if (length(r) == 1) r <- rep(r, n_time)
+    if (length(eta) == 1) eta <- rep(eta, n_time)
+    if (length(sigma) == 1) sigma <- rep(sigma, n_time)
+    if (length(tau1) == 1) tau1 <- rep(tau1, n_time)
+    if (length(tau2) == 1) tau2 <- rep(tau2, n_time)
+    if (length(gamma) == 1) gamma <- rep(gamma, n_time)
+
+    initial_conditions <- args$initial_state
+    init_S <- initial_conditions[, 1]
+    init_E <- initial_conditions[, 2]
+    init_I <- initial_conditions[, 3]
+    init_H <- initial_conditions[, 4]
+    init_R <- initial_conditions[, 5]
+
+    # Initialize and run the model
+    # model <- diphtheria_local$new(
+    model <- diphtheria$new(
+      time = time_points,
+      n_time = n_time,
+      n_age = n_age,
+      pop_change = pop_change,
+      n_rate_intervention = n_rate_intervention,
+      beta = beta,
+      r = r,
+      eta = eta,
+      sigma = sigma,
+      tau1 = tau1,
+      tau2 = tau2,
+      gamma = gamma,
+      rate_intervention_start = rate_intervention_start,
+      rate_intervention_end = rate_intervention_end,
+      rate_intervention_effect = rate_intervention_effect,
+      init_S = init_S,
+      init_E = init_E,
+      init_I = init_I,
+      init_H = init_H,
+      init_R = init_R
+    )
+
+    result <- model$run(time_points)
+
+    # Add scenario information
+    dt <- data.table::as.data.table(result)
+    # declaring variables below to avoid data.table related lintr messages
+    temp <- value <- temp_compartment <- temp_demography <-
+      compartment <- demography_group <- `:=` <- time <- NULL
+
+    age_group_mappings <- paste0( # properly label demography groups
+      seq_len(n_age),
+      c(
+        rownames(population[[1]]$contact_matrix),
+        names(population[[1]]$demography_vector),
+        sprintf(
+          "demo_group_%i",
+          seq_len(nrow(population[[1]]$contact_matrix))
+        )
+      )[seq_len(nrow(population[[1]]$contact_matrix))]
+    )
+    names(age_group_mappings) <- seq_len(nrow(population[[1]]$contact_matrix))
+
+    mapping <- c( # prepend numbers to help during sorting. Will remove later
+      S = "1susceptible", E = "2exposed", I = "3infectious",
+      H = "4hospitalised", R = "5recovered", age_group_mappings
+    )
+
+    # Melt the data table to long format
+    data.table::melt(dt,
+      id.vars = "t",
+      variable.name = "temp", # e.g. S[1], ..., V[3]
+      value.name = "value"
+    )[ # piping the data.table way. Possible because melt outputs a data.table
+      , list(
+        time = t, # alternative to using data.table::setnames(dt, "t", "time")
+        temp_compartment = substring(temp, 1L, 1L), # e.g. S[1] -> S
+        temp_demography = substring(temp, 3L, 3L), # e.g. S[1] -> 1
+        value
+      )
+    ][ # |> the DT way (piping the data.table way)
+      ,
+      list(
+        time,
+        demography_group = mapping[temp_demography], # e.g. 1[0,20), 2[20,65),
+        compartment = mapping[temp_compartment], # e.g. 1susceptible, 2exposed
+        value
+      )
+    ][ # |> the DT way
+      order(time, compartment, demography_group) # prepending numbers helps here
+    ][ # |> the DT way
+      ,
+      `:=`( # used as the prefix form to update multiple columns
+        # remove prepended numbers from `mapping`
+        demography_group = substring(demography_group, 2L), # e.g. [0,20), ...
+        compartment = substring(compartment, 2L) # e.g. susceptible, exposed,
+      )
+    ][ # |> the DT way
+      # added because the previous operation used `:=` which doesn't output
+    ]
   })]
 
   # remove temporary arguments

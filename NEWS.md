@@ -1,5 +1,13 @@
 # epidemics (development version)
 
+## Helper functions
+
+1. Added the `combine_populations()` function to combine age-structured populations into a new population object.
+
+## Documentation
+
+1. Added a `modelling-populations` vignette on how to combine age-structured populations.
+
 # epidemics 0.4.0
 
 Maintainer is changing to @rozeggo.

@@ -95,7 +95,7 @@
 #' group as well as the total epidemic size.
 #'
 #' @param data A table of model output, typically
-#' the output of [model_de  ault()] or similar functions.
+#' the output of [model_default()] or similar functions.
 #' @param stage A numeric vector for the stage of the epidemic at which to
 #' return the epidemic size; here 0.0 represents the start time of the epidemic
 #' i.e., the initial conditions of the epidemic simulation, while 1.0 represents
@@ -196,7 +196,8 @@ epidemic_size <- function(
   if (include_deaths && (!"dead" %in% unique(data$compartment))) {
     warning(
       "epidemic_size(): No 'dead' compartment found in `data`; counting only",
-      " 'recovered' or 'removed' individuals in the epidemic size."
+      " 'recovered' or 'removed' individuals in the epidemic size.",
+      call. = FALSE
     )
   }
   # add include_deaths to compartments to search
@@ -231,7 +232,8 @@ epidemic_size <- function(
   if ((length(times_to_get) > 1L || n_replicates > 1) && simplify) {
     warning(
       "Returning epidemic size at multiple time points, or for multiple",
-      " replicates; cannot simplify output to vector; returning `<data.table>`"
+      " replicates; cannot simplify output to vector; returning `<data.table>`",
+      call. = FALSE
     )
     simplify <- FALSE
   }

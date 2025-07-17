@@ -16,6 +16,10 @@ Maintainer is changing to @rozeggo.
 
 1. Internal model functions for the models which allow vaccination have been corrected to prevent vaccination introducing negative values of susceptibles; tests added to check for this (#235, initially reported by @avallecam).
 
+## Model structures
+
+1. Added `model_stochastic_seir()` which is a stochastic SEIR model with population structure (i.e. stochastic version of `model_default()` without vaccine compartment) (#260). 
+
 ## Helper functions
 
 1. Added the `epidemic_peak()` function to calculate the timing and size of the largest peak in each compartment in an scenario model (#240) by @bahadzie.

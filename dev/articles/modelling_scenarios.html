@@ -95,6 +95,8 @@
 </nav><div class="container template-article">
 
 
+
+
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Modelling intervention scenarios</h1>
@@ -106,27 +108,44 @@
 
     
     
-<p>Scenario modelling can guide epidemic response measures by helping to establish general principles around the potential effects of interventions, or</p>
+<p>Scenario modelling can guide epidemic response measures by helping to
+establish general principles around the potential effects of
+interventions, or</p>
 <blockquote>
 <p>… how might things change if policies are brought in …</p>
-<p>– <a href="https://www.gov.uk/government/publications/epidemiological-modelling-frequently-asked-questions/epidemiological-modelling-frequently-asked-questions" class="external-link">UK Scientific Advisory Group for Emergencies Epidemiological Modelling FAQ</a></p>
+<p>– <a href="https://www.gov.uk/government/publications/epidemiological-modelling-frequently-asked-questions/epidemiological-modelling-frequently-asked-questions" class="external-link">UK
+Scientific Advisory Group for Emergencies Epidemiological Modelling
+FAQ</a></p>
 </blockquote>
-<p>Scenarios differ from true forecasts in projecting much farther ahead (typically months rather than days), and large-scale scenario modelling that includes both pharmaceutical and non-pharmaceutical interventions was widely adopted during the Covid-19 pandemic and has been applied to endemic infections as well <span class="citation">(<a href="#ref-howerton2023">Howerton et al. 2023</a>; <a href="#ref-prasad2023">Prasad et al. 2023</a>)</span>.</p>
-<p>This vignettes shows how <em>epidemics</em> can be used to tun multiple scenarios of epidemic response measures, and include parameter uncertainty when running multiple scenarios.</p>
+<p>Scenarios differ from true forecasts in projecting much farther ahead
+(typically months rather than days), and large-scale scenario modelling
+that includes both pharmaceutical and non-pharmaceutical interventions
+was widely adopted during the Covid-19 pandemic and has been applied to
+endemic infections as well <span class="citation">(<a href="#ref-howerton2023">Howerton et al. 2023</a>; <a href="#ref-prasad2023">Prasad et al. 2023</a>)</span>.</p>
+<p>This vignettes shows how <em>epidemics</em> can be used to tun
+multiple scenarios of epidemic response measures, and include parameter
+uncertainty when running multiple scenarios.</p>
 <div class="alert alert-warning">
-<p><strong>New to modelling interventions using <em>epidemics</em>?</strong> It may help to read these vignettes first:</p>
+<p><strong>New to modelling interventions using
+<em>epidemics</em>?</strong> It may help to read these vignettes
+first:</p>
 <ul>
 <li>
-<a href="modelling_interventions.html">“Getting started with modelling interventions targeting social contacts”</a>;</li>
+<a href="modelling_interventions.html">“Getting started with
+modelling interventions targeting social contacts”</a>;</li>
 <li>
-<a href="modelling_multiple_interventions.html">“Modelling overlapping and sequential interventions targeting social contacts”</a>;</li>
+<a href="modelling_multiple_interventions.html">“Modelling
+overlapping and sequential interventions targeting social
+contacts”</a>;</li>
 <li>
-<a href="modelling_rate_interventions.html">“Modelling interventions that change infection parameters”</a>;</li>
+<a href="modelling_rate_interventions.html">“Modelling interventions
+that change infection parameters”</a>;</li>
 <li>
-<a href="modelling_vaccination.html">“Modelling the effect of a vaccination campaign”</a>.</li>
+<a href="modelling_vaccination.html">“Modelling the effect of a
+vaccination campaign”</a>.</li>
 </ul>
 </div>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># epi modelling</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
 <span></span>
@@ -140,30 +159,60 @@
 <span></span>
 <span><span class="co"># for reproducibility</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://withr.r-lib.org" class="external-link">withr</a></span><span class="op">)</span></span></code></pre></div>
-</details><p><em>epidemics</em> model functions can accept lists of intervention sets and vaccination regimes, allowing multiple intervention, vaccination, and combined intervention-and-vaccination sets to be modelled on the same population.</p>
+<p><em>epidemics</em> model functions can accept lists of intervention
+sets and vaccination regimes, allowing multiple intervention,
+vaccination, and combined intervention-and-vaccination sets to be
+modelled on the same population.</p>
 <p>Some benefits of passing lists of composable elements:</p>
 <ul>
-<li><p>Combinations of intervention and vaccination scenarios can be conveniently created, as model functions will automatically create all possible combinations of the arguments to <code>intervention</code> and <code>vaccination</code>;</p></li>
-<li><p>Input-checking and cross-checking is reduced by checking each element of the <code>intervention</code> and <code>vaccination</code> list independently before the combination is created (and against the <code>population</code>, for cross-checking); hence for <span class="math inline">\(N\)</span> intervention sets and <span class="math inline">\(M\)</span> vaccination regimes there are only <span class="math inline">\(N+M\)</span> cross-checks, rather than <span class="math inline">\(N \times M\)</span> cross-checks;</p></li>
-<li><p>Model output is organised to provide a scenario identifier, making subsetting easier (more on this below).</p></li>
+<li><p>Combinations of intervention and vaccination scenarios can be
+conveniently created, as model functions will automatically create all
+possible combinations of the arguments to <code>intervention</code> and
+<code>vaccination</code>;</p></li>
+<li><p>Input-checking and cross-checking is reduced by checking each
+element of the <code>intervention</code> and <code>vaccination</code>
+list independently before the combination is created (and against the
+<code>population</code>, for cross-checking); hence for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+intervention sets and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+vaccination regimes there are only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>+</mo><mi>M</mi></mrow><annotation encoding="application/x-tex">N+M</annotation></semantics></math>
+cross-checks, rather than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>×</mo><mi>M</mi></mrow><annotation encoding="application/x-tex">N \times M</annotation></semantics></math>
+cross-checks;</p></li>
+<li><p>Model output is organised to provide a scenario identifier,
+making subsetting easier (more on this below).</p></li>
 </ul>
 <div class="alert alert-warning">
-<p>It may help to read the <a href="modelling_interventions.html">“Modelling a non-pharmaceutical intervention targeting social contacts”</a> and the <a href="modelling_vaccination.html">“Modelling the effect of a vaccination campaign”</a> vignettes first!</p>
+<p>It may help to read the <a href="modelling_interventions.html">“Modelling a non-pharmaceutical
+intervention targeting social contacts”</a> and the <a href="modelling_vaccination.html">“Modelling the effect of a vaccination
+campaign”</a> vignettes first!</p>
 </div>
 <div class="section level3 alert alert-info">
 <h3 id="which-model-components-can-be-passed-as-lists">Which model components can be passed as lists<a class="anchor" aria-label="anchor" href="#which-model-components-can-be-passed-as-lists"></a>
 </h3>
-<p><em>epidemics</em> currently offers the ability to pass <strong>intervention sets</strong> and <strong>vaccination regimes</strong> as lists.</p>
-<p>It is not currently possible to pass lists of <em>populations</em>, <em>seasonality</em>, or <em>population changes</em> to any models.</p>
-<p>In future, it may be possible to pass multiple populations as a list, to rapidly and conveniently model an epidemic on different populations, or to examine the effect of assumptions about the population’s social contacts or demographic structure.</p>
+<p><em>epidemics</em> currently offers the ability to pass
+<strong>intervention sets</strong> and <strong>vaccination
+regimes</strong> as lists.</p>
+<p>It is not currently possible to pass lists of <em>populations</em>,
+<em>seasonality</em>, or <em>population changes</em> to any models.</p>
+<p>In future, it may be possible to pass multiple populations as a list,
+to rapidly and conveniently model an epidemic on different populations,
+or to examine the effect of assumptions about the population’s social
+contacts or demographic structure.</p>
 </div>
 <div class="section level3">
 <h3 id="setting-up-the-epidemic-context">Setting up the epidemic context<a class="anchor" aria-label="anchor" href="#setting-up-the-epidemic-context"></a>
 </h3>
-<p>We model an influenza epidemic in the U.K. population while separating outcomes into three age groups, 0 – 19, 20 – 39, &gt; 40, with social contacts stratified by age.
-Click on “Code” below to see the hidden code used to set up a population in this vignette.
-For more details on how to define populations and initial model conditions please see the <a href="epidemics.html">“Getting started with epidemic scenario modelling components”</a> vignette.</p>
-<details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<p>We model an influenza epidemic in the U.K. population while
+separating outcomes into three age groups, 0 – 19, 20 – 39, &gt; 40,
+with social contacts stratified by age. Click on “Code” below to see the
+hidden code used to set up a population in this vignette. For more
+details on how to define populations and initial model conditions please
+see the <a href="epidemics.html">“Getting started with epidemic scenario
+modelling components”</a> vignette.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
 <span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
@@ -194,7 +243,7 @@ For more details on how to define populations and initial model conditions pleas
 <span><span class="op">)</span></span>
 <span><span class="co"># assign rownames for clarity</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># UK population created from hidden code</span></span>
 <span><span class="va">uk_population</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/population.html">population</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"UK"</span>,</span>
@@ -202,14 +251,17 @@ For more details on how to define populations and initial model conditions pleas
 <span>  demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
 <span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details>
 </div>
 <div class="section level3">
 <h3 id="creating-a-list-of-intervention-sets">Creating a list of intervention sets<a class="anchor" aria-label="anchor" href="#creating-a-list-of-intervention-sets"></a>
 </h3>
-<p>We shall create a list of ‘intervention sets’, each set representing a scenario of epidemic response measures.</p>
-<p><strong>Note that</strong> each intervention set is simply a list of <code>&lt;intervention&gt;</code> objects; typically, a single <code>&lt;contacts_intervention&gt;</code> and any <code>&lt;rate_interventions&gt;</code> on infection parameters.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>We shall create a list of ‘intervention sets’, each set representing
+a scenario of epidemic response measures.</p>
+<p><strong>Note that</strong> each intervention set is simply a list of
+<code>&lt;intervention&gt;</code> objects; typically, a single
+<code>&lt;contacts_intervention&gt;</code> and any
+<code>&lt;rate_interventions&gt;</code> on infection parameters.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">max_time</span> <span class="op">&lt;-</span> <span class="fl">600</span></span>
 <span><span class="co"># prepare durations as starting at 25% of the way through an epidemic</span></span>
 <span><span class="co"># and ending halfway through</span></span>
@@ -237,7 +289,7 @@ For more details on how to define populations and initial model conditions pleas
 <span></span>
 <span><span class="co"># prepare a combined intervention</span></span>
 <span><span class="va">combined_intervention</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">close_schools</span>, <span class="va">close_workplaces</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create a mask-mandate rate intervention</span></span>
 <span><span class="co"># prepare an intervention that models mask mandates for 300 days</span></span>
 <span><span class="va">mask_mandate</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
@@ -247,8 +299,9 @@ For more details on how to define populations and initial model conditions pleas
 <span>  time_end <span class="op">=</span> <span class="va">time_end</span>,</span>
 <span>  reduction <span class="op">=</span> <span class="fl">0.1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><p>Having prepared the interventions, we create intervention sets, and pass them to a model function.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>Having prepared the interventions, we create intervention sets, and
+pass them to a model function.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create intervention sets, which are combinations of contacts and rate</span></span>
 <span><span class="co"># interventions</span></span>
 <span><span class="va">intervention_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -277,12 +330,24 @@ For more details on how to define populations and initial model conditions pleas
 <span>    transmission_rate <span class="op">=</span> <span class="va">mask_mandate</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><p><strong>Note that</strong> there is no parameter uncertainty included here. We can visualise the effect of each intervention set in the form of the epidemic’s final size, aggregating over age groups.</p>
-<p>The output is a nested <code>&lt;data.table&gt;</code> as before — we can quickly get a table of the final epidemic sizes for each scenarios — this is a key initial indicator of the effectiveness of interventions.</p>
+<p><strong>Note that</strong> there is no parameter uncertainty included
+here. We can visualise the effect of each intervention set in the form
+of the epidemic’s final size, aggregating over age groups.</p>
+<p>The output is a nested <code>&lt;data.table&gt;</code> as before — we
+can quickly get a table of the final epidemic sizes for each scenarios —
+this is a key initial indicator of the effectiveness of
+interventions.</p>
 <div class="alert alert-info">
-<p><strong>Note that</strong> in this example, we use the model’s default <span class="math inline">\(R\)</span> estimate of 1.3. This is because at higher values of <span class="math inline">\(R\)</span>, we get counter-intuitive results for the effects of interventions that reduce transmission. This is explored in more detail later in this vignette.</p>
+<p><strong>Note that</strong> in this example, we use the model’s
+default
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+estimate of 1.3. This is because at higher values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>,
+we get counter-intuitive results for the effects of interventions that
+reduce transmission. This is explored in more detail later in this
+vignette.</p>
 </div>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># pass the list of intervention sets to the model function</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  <span class="va">uk_population</span>,</span>
@@ -316,16 +381,22 @@ For more details on how to define populations and initial model conditions pleas
 <span><span class="co">#&gt; 4: &lt;data.table[9015x4]&gt;</span></span>
 <span><span class="co">#&gt; 5: &lt;data.table[9015x4]&gt;</span></span>
 <span><span class="co">#&gt; 6: &lt;data.table[9015x4]&gt;</span></span></code></pre></div>
-</details>
 </div>
 <div class="section level3 alert alert-info">
 <h3 id="output-type-for-list-intervention-inputs">Output type for list intervention inputs<a class="anchor" aria-label="anchor" href="#output-type-for-list-intervention-inputs"></a>
 </h3>
-<p>The output of <code>model_*()</code> when either <code>intervention</code> or <code>vaccination</code> is passed a list, is a nested <code>&lt;data.table&gt;</code>.
-This is similar to the output type when parameters are passed as vectors, but with the <code>"scenario"</code> column indicating each intervention set as a distinct scenario, which helps with grouping the model outputs in <code>"data"</code>.</p>
+<p>The output of <code>model_*()</code> when either
+<code>intervention</code> or <code>vaccination</code> is passed a list,
+is a nested <code>&lt;data.table&gt;</code>. This is similar to the
+output type when parameters are passed as vectors, but with the
+<code>"scenario"</code> column indicating each intervention set as a
+distinct scenario, which helps with grouping the model outputs in
+<code>"data"</code>.</p>
 </div>
-<p>The function <code><a href="../reference/epidemic_size.html">epidemic_size()</a></code> can be applied to the nested data column <code>data</code> to get the final size for each scenario.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>The function <code><a href="../reference/epidemic_size.html">epidemic_size()</a></code> can be applied to the
+nested data column <code>data</code> to get the final size for each
+scenario.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set intervention labels</span></span>
 <span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Close schools"</span>, <span class="st">"Close workplaces"</span>, <span class="st">"Close both"</span>,</span>
@@ -353,30 +424,47 @@ This is similar to the output type when parameters are passed as vectors, but wi
 <span><span class="co">#&gt; 5:    Masks + close schools 17,267,407</span></span>
 <span><span class="co">#&gt; 6: Masks + close workplaces 20,585,324</span></span>
 <span><span class="co">#&gt; 7:       Masks + close both  2,082,890</span></span></code></pre></div>
-</details><p>This example shows how implementing interventions that reduce transmission can reduce the size of an epidemic.</p>
+<p>This example shows how implementing interventions that reduce
+transmission can reduce the size of an epidemic.</p>
 <div class="section level3 alert alert-info">
 <h3 id="combinations-of-intervention-and-vaccination-scenarios">Combinations of intervention and vaccination scenarios<a class="anchor" aria-label="anchor" href="#combinations-of-intervention-and-vaccination-scenarios"></a>
 </h3>
-<p>When either or both <code>intervention</code> and <code>vaccination</code> are passed as lists (of intervention sets, or of vaccination regimes, respectively), the model is run for each combination of elements.
-Thus for <span class="math inline">\(M\)</span> intervention sets and <span class="math inline">\(N\)</span> vaccination regimes, the model runs <span class="math inline">\(M \times N\)</span> times, and each combination is treated as a unique scenario.</p>
-<p><strong>Note that</strong> ‘no intervention’ and ‘no vaccination’ scenarios are not automatically created, and must be passed explicitly as <code>NULL</code> in the respective lists.</p>
-<p>While the number of intervention and vaccination combinations are not expected to be very many, the addition of parameter uncertainty for each scenario (next section) may rapidly multiply the number of times the model is run.
-<strong>Users are advised</strong> to be mindful of the number of scenario combinations they create.</p>
+<p>When either or both <code>intervention</code> and
+<code>vaccination</code> are passed as lists (of intervention sets, or
+of vaccination regimes, respectively), the model is run for each
+combination of elements. Thus for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+intervention sets and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+vaccination regimes, the model runs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>×</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">M \times N</annotation></semantics></math>
+times, and each combination is treated as a unique scenario.</p>
+<p><strong>Note that</strong> ‘no intervention’ and ‘no vaccination’
+scenarios are not automatically created, and must be passed explicitly
+as <code>NULL</code> in the respective lists.</p>
+<p>While the number of intervention and vaccination combinations are not
+expected to be very many, the addition of parameter uncertainty for each
+scenario (next section) may rapidly multiply the number of times the
+model is run. <strong>Users are advised</strong> to be mindful of the
+number of scenario combinations they create.</p>
 </div>
-<p>The unnesting of the output follows the same procedure as before, and is not shown here.</p>
+<p>The unnesting of the output follows the same procedure as before, and
+is not shown here.</p>
 <div class="section level2">
-<h2 id="modelling-epidemic-response-scenarios-with-parameter-uncertainty">Modelling epidemic response scenarios with parameter uncertainty<a class="anchor" aria-label="anchor" href="#modelling-epidemic-response-scenarios-with-parameter-uncertainty"></a>
+<h2 id="modelling-epidemic-response-scenarios-with-parameter-uncertainty">Modelling epidemic response scenarios with parameter
+uncertainty<a class="anchor" aria-label="anchor" href="#modelling-epidemic-response-scenarios-with-parameter-uncertainty"></a>
 </h2>
-<p><em>epidemics</em> allows parameter uncertainty to be combined with scenario models of multiple intervention sets or vaccination campaigns.</p>
-<p>Here, we shall draw 100 samples of the transmission rate with a mean of 0 and a low standard deviation of 0.005.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p><em>epidemics</em> allows parameter uncertainty to be combined with
+scenario models of multiple intervention sets or vaccination
+campaigns.</p>
+<p>Here, we shall draw 100 samples of the transmission rate with a mean
+of 0 and a low standard deviation of 0.005.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">with_seed</a></span><span class="op">(</span></span>
 <span>  seed <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  code <span class="op">=</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">1.3</span> <span class="op">/</span> <span class="fl">7</span>, <span class="fl">0.005</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
+<span>  code <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">1.3</span> <span class="op">/</span> <span class="fl">7</span>, <span class="fl">0.005</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># this example includes 100 samples of transmission rates for each intervention</span></span>
 <span><span class="co"># including the baseline</span></span>
 <span><span class="va">scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
@@ -385,26 +473,52 @@ Thus for <span class="math inline">\(M\)</span> intervention sets and <span clas
 <span>  intervention <span class="op">=</span> <span class="va">intervention_scenarios</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><p>The output is a nested <code>&lt;data.table&gt;</code> as before, and can be handled in the same way.</p>
+<p>The output is a nested <code>&lt;data.table&gt;</code> as before, and
+can be handled in the same way.</p>
 <div class="section level3 alert alert-info">
 <h3 id="output-type-for-intervention-and-parameter-set-combinations">Output type for intervention and parameter set combinations<a class="anchor" aria-label="anchor" href="#output-type-for-intervention-and-parameter-set-combinations"></a>
 </h3>
-<p>The output of <code>model_*()</code> when either <code>intervention</code> or <code>vaccination</code> is passed a list, and when any of the infection parameters is passed as a vector is a nested <code>&lt;data.table&gt;</code>.
-The <code>"scenario"</code> column indicates each intervention set as a distinct scenario, while the <code>"param_set"</code> column indicates the parameter set used for the model run.</p>
-<p>The <strong>same parameters</strong> are used for each scenario, allowing for comparability between scenarios at the aggregate level.</p>
-<p>The output has <span class="math inline">\(M \times N \times S\)</span> rows (and nested model outputs), for <span class="math inline">\(M\)</span> intervention sets, <span class="math inline">\(N\)</span> vaccination regimes, and <span class="math inline">\(S\)</span> infection parameter sets.</p>
+<p>The output of <code>model_*()</code> when either
+<code>intervention</code> or <code>vaccination</code> is passed a list,
+and when any of the infection parameters is passed as a vector is a
+nested <code>&lt;data.table&gt;</code>. The <code>"scenario"</code>
+column indicates each intervention set as a distinct scenario, while the
+<code>"param_set"</code> column indicates the parameter set used for the
+model run.</p>
+<p>The <strong>same parameters</strong> are used for each scenario,
+allowing for comparability between scenarios at the aggregate level.</p>
+<p>The output has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>×</mo><mi>N</mi><mo>×</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">M \times N \times S</annotation></semantics></math>
+rows (and nested model outputs), for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+intervention sets,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+vaccination regimes, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+infection parameter sets.</p>
 </div>
 <div class="section level3">
 <h3 id="comparing-response-scenarios-with-parameter-uncertainty">Comparing response scenarios with parameter uncertainty<a class="anchor" aria-label="anchor" href="#comparing-response-scenarios-with-parameter-uncertainty"></a>
 </h3>
-<p>When running multiple scenarios with parameter uncertainty, there may easily be hundreds of output rows corresponding to each scenario and parameter set combination. This can become challenging to handle and lead to comparisons that are not valid, such as across different parameter sets.</p>
+<p>When running multiple scenarios with parameter uncertainty, there may
+easily be hundreds of output rows corresponding to each scenario and
+parameter set combination. This can become challenging to handle and
+lead to comparisons that are not valid, such as across different
+parameter sets.</p>
 <div class="alert alert-info">
-<p>The <code><a href="../reference/outcomes_averted.html">outcomes_averted()</a></code> function can help to quickly calculate the differences in epidemic sizes between a baseline scenario and any number of alternative or comparator scenarios.
-The function ensures that alternative scenarios share the same characteristics, such as infection parameters, with the baseline scenario.
-It also ensures like-for-like comparisons between scenarios and the baselines by matching output data from each scenario to its direct counterfactual in the baseline, ensuring that the only differences in outcomes are due to the implementation of interventions.</p>
+<p>The <code><a href="../reference/outcomes_averted.html">outcomes_averted()</a></code> function can help to quickly
+calculate the differences in epidemic sizes between a baseline scenario
+and any number of alternative or comparator scenarios. The function
+ensures that alternative scenarios share the same characteristics, such
+as infection parameters, with the baseline scenario. It also ensures
+like-for-like comparisons between scenarios and the baselines by
+matching output data from each scenario to its direct counterfactual in
+the baseline, ensuring that the only differences in outcomes are due to
+the implementation of interventions.</p>
 </div>
-<p>We re-use the transmission rate values drawn earlier to represent uncertainty in this parameter.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p>We re-use the transmission rate values drawn earlier to represent
+uncertainty in this parameter.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run a baseline scenario with no epidemic response against which to compare</span></span>
 <span><span class="co"># previously generated scenario data</span></span>
 <span><span class="va">baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
@@ -412,14 +526,16 @@ It also ensures like-for-like comparisons between scenarios and the baselines by
 <span>  transmission_rate <span class="op">=</span> <span class="va">beta</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><p>We use <code><a href="../reference/outcomes_averted.html">outcomes_averted()</a></code> to calculate the total number of cases averted across all demographic groups for each parameter set.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>We use <code><a href="../reference/outcomes_averted.html">outcomes_averted()</a></code> to calculate the total number
+of cases averted across all demographic groups for each parameter
+set.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">intervention_effect</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outcomes_averted.html">outcomes_averted</a></span><span class="op">(</span></span>
 <span>  baseline <span class="op">=</span> <span class="va">baseline</span>, scenarios <span class="op">=</span> <span class="va">scenarios</span>,</span>
 <span>  by_group <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  summarise <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot distribution of differences</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">intervention_effect</span>,</span>
@@ -444,14 +560,20 @@ It also ensures like-for-like comparisons between scenarios and the baselines by
 <span>    palette <span class="op">=</span> <span class="st">"Dynamic"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-13"></span>
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-13-1.png" alt="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates."><p class="caption">
-Figure 1: Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates.
+<div class="figure">
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-13-1.png" alt="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates." width="900"><p class="caption">
+Infections averted relative to no epidemic response by implementing each
+scenario, while accounting with parameter uncertainty in the
+transmission rates.
 </p>
 </div>
-<p>We can get more compact data suitable for tables by summarising the output to get a summary of the median cases averted along with the 95% uncertainty interval using the <code>summarise</code> argument, and we can also disaggregate the cases averted by demographic group using the <code>by_group</code> argument. Both these options are <code>TRUE</code> by default.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p>We can get more compact data suitable for tables by summarising the
+output to get a summary of the median cases averted along with the 95%
+uncertainty interval using the <code>summarise</code> argument, and we
+can also disaggregate the cases averted by demographic group using the
+<code>by_group</code> argument. Both these options are <code>TRUE</code>
+by default.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/outcomes_averted.html">outcomes_averted</a></span><span class="op">(</span></span>
 <span>  baseline <span class="op">=</span> <span class="va">baseline</span>, scenarios <span class="op">=</span> <span class="va">scenarios</span></span>
 <span><span class="op">)</span></span>
@@ -479,7 +601,6 @@ Figure 1: Infections averted relative to no epidemic response by implementing ea
 <span><span class="co">#&gt; 20:        7           [0,20)      6246259.3    2586944.09     6633237.2</span></span>
 <span><span class="co">#&gt; 21:        7          [20,40)      5916770.1    2716621.69     6232275.9</span></span>
 <span><span class="co">#&gt;     scenario demography_group averted_median averted_lower averted_upper</span></span></code></pre></div>
-</details>
 </div>
 </div>
 <div class="section level2">
@@ -487,12 +608,22 @@ Figure 1: Infections averted relative to no epidemic response by implementing ea
 </h2>
 <p>The intervention scenarios modelled above suggest that:</p>
 <ul>
-<li><p>interventions on disease transmission rates reduce infections and hence epidemic final sizes;</p></li>
-<li><p>multiple interventions reduce epidemic final sizes more than single interventions.</p></li>
+<li><p>interventions on disease transmission rates reduce infections and
+hence epidemic final sizes;</p></li>
+<li><p>multiple interventions reduce epidemic final sizes more than
+single interventions.</p></li>
 </ul>
-<p>In this simple example we show how this need not always be the case, and that counter-intuitively, implementing more interventions can lead to a larger epidemic final size than implementing fewer interventions.</p>
-<p>This phenomenon depends on the baseline transmission rate of the infection, so we select a relatively low <span class="math inline">\(R\)</span> of 1.30 (corresponding to pandemic influenza), and a higher <span class="math inline">\(R\)</span> of 1.6 to illustrate the point.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<p>In this simple example we show how this need not always be the case,
+and that counter-intuitively, implementing more interventions can lead
+to a larger epidemic final size than implementing fewer
+interventions.</p>
+<p>This phenomenon depends on the baseline transmission rate of the
+infection, so we select a relatively low
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+of 1.30 (corresponding to pandemic influenza), and a higher
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+of 1.6 to illustrate the point.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run each scenario for two values of R</span></span>
 <span><span class="co"># no parameter uncertainty</span></span>
 <span><span class="va">r_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.3</span>, <span class="fl">1.6</span><span class="op">)</span></span>
@@ -515,7 +646,7 @@ Figure 1: Infections averted relative to no epidemic response by implementing ea
 <span>  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">labels</span>, <span class="va">labels</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">r_value</span>, <span class="va">scenario</span>, <span class="va">size</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot the epidemic final size for each scenario for each R</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">epidemic_size_estimates</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span></span>
@@ -540,14 +671,20 @@ Figure 1: Infections averted relative to no epidemic response by implementing ea
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-16"></span>
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-16-1.png" alt="Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario."><p class="caption">
-Figure 2: Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the ‘Close both workplaces and schools’ scenario.
+<div class="figure">
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-16-1.png" alt="Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario." width="900"><p class="caption">
+Counter-intuitive effects of time-limited interventions on transmission
+rate at high R values. Scenarios in which multiple interventions are
+implemented may have a larger final epidemic size than scenarios with
+fewer interventions, e.g. the ‘Close both workplaces and schools’
+scenario.
 </p>
 </div>
-<p>Plotting the epidemic trajectories for each scenario for each value of <span class="math inline">\(R\)</span> gives a fuller picture of why we see this unexpected effect.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<p>Plotting the epidemic trajectories for each scenario for each value
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+gives a fuller picture of why we see this unexpected effect.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get new infections per day</span></span>
 <span><span class="va">daily_incidence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>  <span class="va">output</span>,</span>
@@ -557,7 +694,7 @@ Figure 2: Counter-intuitive effects of time-limited interventions on transmissio
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">scenario</span>, <span class="va">r_value</span>, <span class="va">incidence_data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">incidence_data</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">daily_incidence</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span></span>
 <span>    geom <span class="op">=</span> <span class="st">"rect"</span>,</span>
@@ -583,29 +720,57 @@ Figure 2: Counter-intuitive effects of time-limited interventions on transmissio
 <span>    x <span class="op">=</span> <span class="st">"Time since epidemic start"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"New infections"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-18"></span>
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-18-1.png" alt="New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the 'No response' scenario."><p class="caption">
-Figure 3: New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the ‘No response’ scenario.
+<div class="figure">
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-18-1.png" alt="New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the 'No response' scenario." width="900"><p class="caption">
+New daily infections in each intervention scenario for two values of R.
+The period in which interventions are active is shown by the area shaded
+in grey. No interventions are active in the ‘No response’ scenario.
 </p>
 </div>
-<p>Implementing interventions on the disease transmission rate leads to a ‘flattening of the curve’ (reduced daily incidence in comparison with no response) while the interventions are active.</p>
-<p>However, these cases are deferred rather than prevented entirely, and in both scenarios this is seen as a shifting of the incidence curve to the right (towards the end of the simulation period).</p>
-<p>When <span class="math inline">\(R\)</span> is low, the incidence curve begins to rise later than when <span class="math inline">\(R\)</span> is high (interventions applied to these epidemics actually miss the projected peak of the epidemic, but still shift cases to the right).
-Thus low <span class="math inline">\(R\)</span> epidemics do not run their course by the time the simulation ends, making is appear as though interventions have succeeded in averting infections.</p>
-<p>At higher <span class="math inline">\(R\)</span>, the peak of the projected incidence curve without interventions falls within the intervention period, and thus all interventions reduce new infections.
-In scenarios with multiple active interventions, a large number of susceptibles remain uninfected, compared to scenarios with fewer interventions.
-The former thus see higher incidence peaks, leading to counter-intuitively larger final epidemic sizes.</p>
+<p>Implementing interventions on the disease transmission rate leads to
+a ‘flattening of the curve’ (reduced daily incidence in comparison with
+no response) while the interventions are active.</p>
+<p>However, these cases are deferred rather than prevented entirely, and
+in both scenarios this is seen as a shifting of the incidence curve to
+the right (towards the end of the simulation period).</p>
+<p>When
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+is low, the incidence curve begins to rise later than when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+is high (interventions applied to these epidemics actually miss the
+projected peak of the epidemic, but still shift cases to the right).
+Thus low
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+epidemics do not run their course by the time the simulation ends,
+making is appear as though interventions have succeeded in averting
+infections.</p>
+<p>At higher
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>,
+the peak of the projected incidence curve without interventions falls
+within the intervention period, and thus all interventions reduce new
+infections. In scenarios with multiple active interventions, a large
+number of susceptibles remain uninfected, compared to scenarios with
+fewer interventions. The former thus see higher incidence peaks, leading
+to counter-intuitively larger final epidemic sizes.</p>
 </div>
 <div class="section level2 unnumbered">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-howerton2023" class="csl-entry">
-Howerton, Emily, Lucie Contamin, Luke C. Mullany, Michelle Qin, Nicholas G. Reich, Samantha Bents, Rebecca K. Borchering, et al. 2023. <span>“Evaluation of the US COVID-19 Scenario Modeling Hub for Informing Pandemic Response Under Uncertainty.”</span> <em>Nature Communications</em> 14 (1): 7260. <a href="https://doi.org/10.1038/s41467-023-42680-x" class="external-link">https://doi.org/10.1038/s41467-023-42680-x</a>.
+Howerton, Emily, Lucie Contamin, Luke C. Mullany, Michelle Qin, Nicholas
+G. Reich, Samantha Bents, Rebecca K. Borchering, et al. 2023.
+<span>“Evaluation of the US COVID-19 Scenario Modeling Hub for Informing
+Pandemic Response Under Uncertainty.”</span> <em>Nature
+Communications</em> 14 (1): 7260. <a href="https://doi.org/10.1038/s41467-023-42680-x" class="external-link">https://doi.org/10.1038/s41467-023-42680-x</a>.
 </div>
 <div id="ref-prasad2023" class="csl-entry">
-Prasad, Pragati V., Molly K. Steele, Carrie Reed, Lauren Ancel Meyers, Zhanwei Du, Remy Pasco, Jorge A. Alfaro-Murillo, et al. 2023. <span>“Multimodeling Approach to Evaluating the Efficacy of Layering Pharmaceutical and Nonpharmaceutical Interventions for Influenza Pandemics.”</span> <em>Proceedings of the National Academy of Sciences</em> 120 (28): e2300590120. <a href="https://doi.org/10.1073/pnas.2300590120" class="external-link">https://doi.org/10.1073/pnas.2300590120</a>.
+Prasad, Pragati V., Molly K. Steele, Carrie Reed, Lauren Ancel Meyers,
+Zhanwei Du, Remy Pasco, Jorge A. Alfaro-Murillo, et al. 2023.
+<span>“Multimodeling Approach to Evaluating the Efficacy of Layering
+Pharmaceutical and Nonpharmaceutical Interventions for Influenza
+Pandemics.”</span> <em>Proceedings of the National Academy of
+Sciences</em> 120 (28): e2300590120. <a href="https://doi.org/10.1073/pnas.2300590120" class="external-link">https://doi.org/10.1073/pnas.2300590120</a>.
 </div>
 </div>
 </div>

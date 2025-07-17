@@ -95,6 +95,8 @@
 </nav><div class="container template-article">
 
 
+
+
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Modelling leaky vaccination and hospitalisation outcomes with Vacamole</h1>
@@ -107,46 +109,87 @@
     
     
 <div class="alert alert-warning">
-<p><strong>New to <em>epidemics</em>?</strong> It may help to read the <a href="epidemics.html">“Get started”</a> and <a href="modelling_vaccination.html">“Modelling a vaccination campaign”</a> vignettes first!</p>
+<p><strong>New to <em>epidemics</em>?</strong> It may help to read the
+<a href="epidemics.html">“Get started”</a> and <a href="modelling_vaccination.html">“Modelling a vaccination campaign”</a>
+vignettes first!</p>
 </div>
-<p>Vacamole is a deterministic, compartmental epidemic model built by Kylie Ainslie and others at <a href="https://www.rivm.nl/" class="external-link">RIVM, the Dutch Public Health Institute</a> for the Covid-19 pandemic, with a focus on scenario modelling for hospitalisation and vaccination <span class="citation">(<a href="#ref-ainslie2022">Ainslie et al. 2022</a>)</span>.</p>
-<p>Vacamole was implemented as an R package, and the <a href="https://github.com/kylieainslie/vacamole" class="external-link">source code can be found on GitHub</a>. Some versions have been used to generate scenarios for the ECDC Covid-19 Scenario Hub.</p>
-<p>The original model has 8 conceptual compartments - four epidemiological compartments: susceptible, exposed, infectious, and recovered (S, E, I, R respectively), three hospitalisation compartments: hospitalised, in intensive care, and returning from intensive care to regular hospital care (H, ICU, ICU2H), and death. Only infected individuals can enter the hospitalisation or death compartments.</p>
-<p>Individuals from the susceptible compartment may be vaccinated partially (<span class="math inline">\(V_1\)</span>) or fully (<span class="math inline">\(V_2\)</span>; assuming a two dose regimen), with each dose reducing their probability of being infected, and of being hospitalised or dying.</p>
+<p>Vacamole is a deterministic, compartmental epidemic model built by
+Kylie Ainslie and others at <a href="https://www.rivm.nl/" class="external-link">RIVM, the
+Dutch Public Health Institute</a> for the Covid-19 pandemic, with a
+focus on scenario modelling for hospitalisation and vaccination <span class="citation">(<a href="#ref-ainslie2022">Ainslie et al.
+2022</a>)</span>.</p>
+<p>Vacamole was implemented as an R package, and the <a href="https://github.com/kylieainslie/vacamole" class="external-link">source code can be found
+on GitHub</a>. Some versions have been used to generate scenarios for
+the ECDC Covid-19 Scenario Hub.</p>
+<p>The original model has 8 conceptual compartments - four
+epidemiological compartments: susceptible, exposed, infectious, and
+recovered (S, E, I, R respectively), three hospitalisation compartments:
+hospitalised, in intensive care, and returning from intensive care to
+regular hospital care (H, ICU, ICU2H), and death. Only infected
+individuals can enter the hospitalisation or death compartments.</p>
+<p>Individuals from the susceptible compartment may be vaccinated
+partially
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mn>1</mn></msub><annotation encoding="application/x-tex">V_1</annotation></semantics></math>)
+or fully
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mn>2</mn></msub><annotation encoding="application/x-tex">V_2</annotation></semantics></math>;
+assuming a two dose regimen), with each dose reducing their probability
+of being infected, and of being hospitalised or dying.</p>
 <div class="section level2">
 <h2 id="modifications-for-epidemics">Modifications for <em>epidemics</em><a class="anchor" aria-label="anchor" href="#modifications-for-epidemics"></a>
 </h2>
-<p>We have made some modifications to the ODE model of Vacamole in order to make it more general and thus potentially more applicable to a wider range of settings.</p>
+<p>We have made some modifications to the ODE model of Vacamole in order
+to make it more general and thus potentially more applicable to a wider
+range of settings.</p>
 <p>Specifically,</p>
 <ol style="list-style-type: decimal">
-<li><p>We have dropped the ICU and ICU2H compartment as this is potentially less relevant to a context in which intensive care capacity is low.</p></li>
-<li><p>We have added transitions from the infectious (I) and hospitalised (H) compartments to death (D), as this may be a more general assumption when hospital capacity is low (relatively more I → D) or when treatments are poor (relatively more H → D).</p></li>
+<li><p>We have dropped the ICU and ICU2H compartment as this is
+potentially less relevant to a context in which intensive care capacity
+is low.</p></li>
+<li><p>We have added transitions from the infectious (I) and
+hospitalised (H) compartments to death (D), as this may be a more
+general assumption when hospital capacity is low (relatively more I → D)
+or when treatments are poor (relatively more H → D).</p></li>
 <li>
-<p>We assume, in a first pass implementation that vaccination primarily reduces adverse outcomes, by modification to the transition rates (<span class="math inline">\(\beta_V,\eta_{V},\omega_V\)</span>):</p>
+<p>We assume, in a first pass implementation that vaccination
+primarily reduces adverse outcomes, by modification to the transition
+rates
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mi>V</mi></msub><mo>,</mo><msub><mi>η</mi><mi>V</mi></msub><mo>,</mo><msub><mi>ω</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">\beta_V,\eta_{V},\omega_V</annotation></semantics></math>):</p>
 <ol style="list-style-type: decimal">
-<li><p><span class="math inline">\(\beta_V\)</span>: The transmission rate <span class="math inline">\(\beta\)</span> for individuals in the fully vaccinated compartment <span class="math inline">\(V_2\)</span>;</p></li>
-<li><p><span class="math inline">\(\eta_{V}\)</span>: The hospitalisation rate <span class="math inline">\(\eta\)</span> for fully vaccinated, infected individuals (<span class="math inline">\(I_V\)</span> → <span class="math inline">\(H_V\)</span>);</p></li>
-<li><p><span class="math inline">\(\omega_V\)</span>: The mortality rate for all fully vaccinated individuals at any stage in or post infection (I, or H).</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>V</mi></msub><annotation encoding="application/x-tex">\beta_V</annotation></semantics></math>:
+The transmission rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+for individuals in the fully vaccinated compartment
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mn>2</mn></msub><annotation encoding="application/x-tex">V_2</annotation></semantics></math>;</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>V</mi></msub><annotation encoding="application/x-tex">\eta_{V}</annotation></semantics></math>:
+The hospitalisation rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
+for fully vaccinated, infected individuals
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>V</mi></msub><annotation encoding="application/x-tex">I_V</annotation></semantics></math>
+→
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mi>V</mi></msub><annotation encoding="application/x-tex">H_V</annotation></semantics></math>);</p></li>
+<li><p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ω</mi><mi>V</mi></msub><annotation encoding="application/x-tex">\omega_V</annotation></semantics></math>:
+The mortality rate for all fully vaccinated individuals at any stage in
+or post infection (I, or H).</p></li>
 </ol>
 </li>
 </ol>
 <div class="alert alert-primary">
-<p>The details of the ODE system for the version of Vacamole included in <em>epidemics</em> can be found at <a href="#vacamole-ode-system-for-epidemics">the end of this page.</a></p>
+<p>The details of the ODE system for the version of Vacamole included in
+<em>epidemics</em> can be found at <a href="#vacamole-ode-system-for-epidemics">the end of this page.</a></p>
 </div>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://colorspace.R-Forge.R-project.org/" class="external-link">colorspace</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://scales.r-lib.org" class="external-link">scales</a></span><span class="op">)</span></span></code></pre></div>
-</details>
 </div>
 <div class="section level2">
 <h2 id="prepare-population-and-initial-conditions">Prepare population and initial conditions<a class="anchor" aria-label="anchor" href="#prepare-population-and-initial-conditions"></a>
 </h2>
 <p>Prepare population and contact data.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
 <span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
@@ -162,8 +205,9 @@
 <span><span class="co"># prepare the demography vector</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
-</details><p>Prepare initial conditions for each age group. The Vacamole model has 11 compartments and therefore requires a matrix with 11 columns.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>Prepare initial conditions for each age group. The Vacamole model has
+11 compartments and therefore requires a matrix with 11 columns.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># initial conditions</span></span>
 <span><span class="va">initial_i</span> <span class="op">&lt;-</span> <span class="fl">1e-6</span></span>
 <span></span>
@@ -186,27 +230,34 @@
 <span></span>
 <span><span class="co"># assign rownames for clarity</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
-</details><p>Prepare the time in days over which to model the epidemic, with the outbreak beginning at day zero.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>Prepare the time in days over which to model the epidemic, with the
+outbreak beginning at day zero.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">epidemic_days</span> <span class="op">&lt;-</span> <span class="fl">300</span></span></code></pre></div>
-</details><p>Prepare a population as a <code>population</code> class object.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Prepare a population as a <code>population</code> class object.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">uk_population</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/population.html">population</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"UK"</span>,</span>
 <span>  contact_matrix <span class="op">=</span> <span class="va">contact_matrix</span>,</span>
 <span>  demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
 <span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details>
 </div>
 <div class="section level2">
 <h2 id="prepare-a-two-dose-vaccination-campaign">Prepare a two dose vaccination campaign<a class="anchor" aria-label="anchor" href="#prepare-a-two-dose-vaccination-campaign"></a>
 </h2>
-<p>We prepare a two-dose vaccination campaign by concatenating two single dose vaccination regimes, i.e., applying the function <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> to two <code>vaccination</code> objects.</p>
+<p>We prepare a two-dose vaccination campaign by concatenating two
+single dose vaccination regimes, i.e., applying the function
+<code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> to two <code>vaccination</code> objects.</p>
 <div class="alert alert-primary">
-<p>It is possible to combine multiple vaccination objects together using <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> — the only limitation is that all vaccination regimes combined in this way must have the same number of demographic groups. It is possible to add a single dose to a two-vaccination regime by using <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> on two <code>vaccination</code> objects with two and one dose, respectively.</p>
+<p>It is possible to combine multiple vaccination objects together using
+<code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> — the only limitation is that all vaccination regimes
+combined in this way must have the same number of demographic groups. It
+is possible to add a single dose to a two-vaccination regime by using
+<code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> on two <code>vaccination</code> objects with two and
+one dose, respectively.</p>
 </div>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># prepare a two dose vaccination regime for a single age group</span></span>
 <span><span class="co"># prepare the first dose</span></span>
 <span><span class="va">dose_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vaccination.html">vaccination</a></span><span class="op">(</span></span>
@@ -249,42 +300,69 @@
 <span><span class="co">#&gt; [1,]   0.01   0.01</span></span>
 <span><span class="co">#&gt; [2,]   0.01   0.01</span></span>
 <span><span class="co">#&gt; [3,]   0.01   0.01</span></span></code></pre></div>
-</details>
 </div>
 <div class="section level2">
 <h2 id="model-epidemic-using-vacamole">Model epidemic using Vacamole<a class="anchor" aria-label="anchor" href="#model-epidemic-using-vacamole"></a>
 </h2>
-<p>First, we run the model with no vaccination. This is the default behaviour, and a vaccination regime only need be specified if it is to be included. The model’s default parameters are:</p>
+<p>First, we run the model with no vaccination. This is the default
+behaviour, and a vaccination regime only need be specified if it is to
+be included. The model’s default parameters are:</p>
 <ul>
-<li><p>Transmission rate (<span class="math inline">\(\beta\)</span>, <code>transmission_rate</code>): 0.186, resulting from an <span class="math inline">\(R_0\)</span> = 1.3 and an infectious period of 7 days, given that <span class="math inline">\(\beta = R_0 / \text{infectious period}\)</span>.</p></li>
-<li><p>Infectiousness rate (<span class="math inline">\(\sigma\)</span>, <code>infectiousness_rate</code>): 0.5, assuming a pre-infectious period of 2 days, given that <span class="math inline">\(\sigma = 1 / \text{pre-infectious period}\)</span>.</p></li>
-<li><p>Hospitalisation rate (<span class="math inline">\(\eta\)</span>, <code>hospitalistion_rate</code>): 1.0 / 1000, assuming that one in every thousand infectious individuals is hospitalised.</p></li>
-<li><p>Mortality rate (<span class="math inline">\(\omega\)</span>, <code>mortality_rate</code>): 1.0 / 1000, assuming that one in every thousand infectious and hospitalised individuals dies.</p></li>
-<li><p>Recovery rate (<span class="math inline">\(\gamma\)</span>, <code>recovery_rate</code>): 0.143, assuming an infectious period of 7 days, given <span class="math inline">\(\gamma = 1 / \text{infectious period}\)</span>.</p></li>
-<li><p>Susceptibility reduction from vaccination (<code>susc_reduction_vax</code>): 0.2, assuming a 20% reduction in susceptibility for individuals who are doubly vaccinated.</p></li>
-<li><p>Hospitalisation reduction from vaccination (<code>hosp_reduction_vax</code>): 0.2, assuming a 20% reduction in hospitalisation for individuals who are doubly vaccinated.</p></li>
-<li><p>Mortality reduction from vaccination (<code>mort_reduction_vax</code>): 0.2, assuming a 20% reduction in mortality for individuals who are doubly vaccinated.</p></li>
+<li><p>Transmission rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>,
+<code>transmission_rate</code>): 0.186, resulting from an
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mn>0</mn></msub><annotation encoding="application/x-tex">R_0</annotation></semantics></math>
+= 1.3 and an infectious period of 7 days, given that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>=</mo><msub><mi>R</mi><mn>0</mn></msub><mi>/</mi><mtext mathvariant="normal">infectious period</mtext></mrow><annotation encoding="application/x-tex">\beta = R_0 / \text{infectious period}</annotation></semantics></math>.</p></li>
+<li><p>Infectiousness rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>,
+<code>infectiousness_rate</code>): 0.5, assuming a pre-infectious period
+of 2 days, given that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi><mo>=</mo><mn>1</mn><mi>/</mi><mtext mathvariant="normal">pre-infectious period</mtext></mrow><annotation encoding="application/x-tex">\sigma = 1 / \text{pre-infectious period}</annotation></semantics></math>.</p></li>
+<li><p>Hospitalisation rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>,
+<code>hospitalistion_rate</code>): 1.0 / 1000, assuming that one in
+every thousand infectious individuals is hospitalised.</p></li>
+<li><p>Mortality rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ω</mi><annotation encoding="application/x-tex">\omega</annotation></semantics></math>,
+<code>mortality_rate</code>): 1.0 / 1000, assuming that one in every
+thousand infectious and hospitalised individuals dies.</p></li>
+<li><p>Recovery rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>,
+<code>recovery_rate</code>): 0.143, assuming an infectious period of 7
+days, given
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>1</mn><mi>/</mi><mtext mathvariant="normal">infectious period</mtext></mrow><annotation encoding="application/x-tex">\gamma = 1 / \text{infectious period}</annotation></semantics></math>.</p></li>
+<li><p>Susceptibility reduction from vaccination
+(<code>susc_reduction_vax</code>): 0.2, assuming a 20% reduction in
+susceptibility for individuals who are doubly vaccinated.</p></li>
+<li><p>Hospitalisation reduction from vaccination
+(<code>hosp_reduction_vax</code>): 0.2, assuming a 20% reduction in
+hospitalisation for individuals who are doubly vaccinated.</p></li>
+<li><p>Mortality reduction from vaccination
+(<code>mort_reduction_vax</code>): 0.2, assuming a 20% reduction in
+mortality for individuals who are doubly vaccinated.</p></li>
 </ul>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># note model will automatically account for no vaccination</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_vacamole.html">model_vacamole</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="va">epidemic_days</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><p>Next we run the model with a two dose vaccination regime.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>Next we run the model with a two dose vaccination regime.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_vaccination</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_vacamole.html">model_vacamole</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  vaccination <span class="op">=</span> <span class="va">double_vaccination</span>, <span class="co"># note vaccination object for two doses</span></span>
 <span>  time_end <span class="op">=</span> <span class="va">epidemic_days</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details>
 </div>
 <div class="section level2">
 <h2 id="visualise-model-outcomes">Visualise model outcomes<a class="anchor" aria-label="anchor" href="#visualise-model-outcomes"></a>
 </h2>
-<p>First, we calculate the total number of infections resulting in recoveries and deaths over the course of the simulation; this is the epidemic’s final size.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>First, we calculate the total number of infections resulting in
+recoveries and deaths over the course of the simulation; this is the
+epidemic’s final size.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># collect data from the two scenarios</span></span>
 <span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">data_vaccination</span><span class="op">)</span></span>
 <span></span>
@@ -320,7 +398,7 @@
 <span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"total_deaths"</span>, <span class="st">"total_recovered"</span><span class="op">)</span>,</span>
 <span>  names_to <span class="op">=</span> <span class="st">"measure"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_scenarios</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">demography_group</span>, <span class="va">value</span>, fill <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span>,</span>
@@ -369,9 +447,13 @@
 <span>    y <span class="op">=</span> <span class="st">"No. of individuals"</span>,</span>
 <span>    title <span class="op">=</span> <span class="st">"Effect of vaccination on deaths and total infections"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-</details><p><img src="model_vacamole_files/figure-html/unnamed-chunk-10-1.png"><!-- --></p>
-<p>Finally, we can compare the peak of hospital bed occupancy in each scenario — this can be a rough indication of how much hospital capacity would be required if a pandemic of these characteristics were to occur, as well as another way to examine the effect of vaccination in reducing this requirement.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p><img src="model_vacamole_files/figure-html/unnamed-chunk-10-1.png" width="750"></p>
+<p>Finally, we can compare the peak of hospital bed occupancy in each
+scenario — this can be a rough indication of how much hospital capacity
+would be required if a pandemic of these characteristics were to occur,
+as well as another way to examine the effect of vaccination in reducing
+this requirement.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># collect data from the two scenarios</span></span>
 <span><span class="va">data_scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">data_vaccination</span><span class="op">)</span></span>
 <span></span>
@@ -402,37 +484,50 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">peak_hospital_occupancy</span>, big.mark <span class="op">=</span> <span class="st">","</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; No vaccination    Vaccination </span></span>
 <span><span class="co">#&gt;        "1,813"        "   12"</span></span></code></pre></div>
-</details><p>This example demonstrates that implementing vaccination can substantially reduce peak hospital occupancy (by about 99%) compared to a scenario in which no vaccines are deployed.</p>
+<p>This example demonstrates that implementing vaccination can
+substantially reduce peak hospital occupancy (by about 99%) compared to
+a scenario in which no vaccines are deployed.</p>
 </div>
 <div class="section level2">
 <h2 id="vacamole-ode-system-for-epidemics">Vacamole ODE system for {epidemics}<a class="anchor" aria-label="anchor" href="#vacamole-ode-system-for-epidemics"></a>
 </h2>
 <p>The Vacamole ODE system adapted for {epidemics} is:</p>
-<p>Susceptibles who are not vaccinated, or only partially vaccinated (considered unprotected) can transition to exposed and vaccinated:</p>
-<p><span class="math display">\[dS = -\beta S(I+I_V) - \nu_1 S\]</span></p>
-<p>Two sequential vaccination compartments, with a lower conversion rate from two-dose vaccinated individuals (considered to be protected) to exposed:</p>
-<p><span class="math display">\[dV_1 = \nu_1S - \beta V_1(I+I_V) - \nu_2V_1\]</span></p>
-<p><span class="math display">\[dV_2 = \nu_2V_1 - \beta_VV_2(I+I_V)\]</span></p>
-<p>Two parallel exposed compartments, with similar conversion to infectious:</p>
-<p><span class="math display">\[dE = \beta (S+V_1)(I+I_V) - \sigma E\]</span></p>
-<p><span class="math display">\[dE_V = \beta_VV_2(I+I_V) - \sigma E_V\]</span></p>
-<p>Two parallel infectious compartments, with lower hospitalisation and mortality rate for vaccinated:</p>
-<p><span class="math display">\[dI = \sigma E - \gamma I - \eta I - \omega I\]</span></p>
-<p><span class="math display">\[dI_V = \sigma E_V - \gamma I_V - \eta_{V} I_V - \omega_V I_V\]</span></p>
-<p>Two parallel hospitalisation compartments, with a lower mortality rate for vaccinated:</p>
-<p><span class="math display">\[dH = \eta I - \gamma H - \eta_2 H - \omega H\]</span></p>
-<p><span class="math display">\[dH_V = \eta_{V} I - \gamma H_V - \omega_V H_V\]</span></p>
+<p>Susceptibles who are not vaccinated, or only partially vaccinated
+(considered unprotected) can transition to exposed and vaccinated:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>S</mi><mo>=</mo><mo>−</mo><mi>β</mi><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>ν</mi><mn>1</mn></msub><mi>S</mi></mrow><annotation encoding="application/x-tex">dS = -\beta S(I+I_V) - \nu_1 S</annotation></semantics></math></p>
+<p>Two sequential vaccination compartments, with a lower conversion rate
+from two-dose vaccinated individuals (considered to be protected) to
+exposed:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>V</mi><mn>1</mn></msub><mo>=</mo><msub><mi>ν</mi><mn>1</mn></msub><mi>S</mi><mo>−</mo><mi>β</mi><msub><mi>V</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>ν</mi><mn>2</mn></msub><msub><mi>V</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">dV_1 = \nu_1S - \beta V_1(I+I_V) - \nu_2V_1</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>V</mi><mn>2</mn></msub><mo>=</mo><msub><mi>ν</mi><mn>2</mn></msub><msub><mi>V</mi><mn>1</mn></msub><mo>−</mo><msub><mi>β</mi><mi>V</mi></msub><msub><mi>V</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">dV_2 = \nu_2V_1 - \beta_VV_2(I+I_V)</annotation></semantics></math></p>
+<p>Two parallel exposed compartments, with similar conversion to
+infectious:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>E</mi><mo>=</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>S</mi><mo>+</mo><msub><mi>V</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>σ</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">dE = \beta (S+V_1)(I+I_V) - \sigma E</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>E</mi><mi>V</mi></msub><mo>=</mo><msub><mi>β</mi><mi>V</mi></msub><msub><mi>V</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>σ</mi><msub><mi>E</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">dE_V = \beta_VV_2(I+I_V) - \sigma E_V</annotation></semantics></math></p>
+<p>Two parallel infectious compartments, with lower hospitalisation and
+mortality rate for vaccinated:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>I</mi><mo>=</mo><mi>σ</mi><mi>E</mi><mo>−</mo><mi>γ</mi><mi>I</mi><mo>−</mo><mi>η</mi><mi>I</mi><mo>−</mo><mi>ω</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">dI = \sigma E - \gamma I - \eta I - \omega I</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>I</mi><mi>V</mi></msub><mo>=</mo><mi>σ</mi><msub><mi>E</mi><mi>V</mi></msub><mo>−</mo><mi>γ</mi><msub><mi>I</mi><mi>V</mi></msub><mo>−</mo><msub><mi>η</mi><mi>V</mi></msub><msub><mi>I</mi><mi>V</mi></msub><mo>−</mo><msub><mi>ω</mi><mi>V</mi></msub><msub><mi>I</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">dI_V = \sigma E_V - \gamma I_V - \eta_{V} I_V - \omega_V I_V</annotation></semantics></math></p>
+<p>Two parallel hospitalisation compartments, with a lower mortality
+rate for vaccinated:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>H</mi><mo>=</mo><mi>η</mi><mi>I</mi><mo>−</mo><mi>γ</mi><mi>H</mi><mo>−</mo><msub><mi>η</mi><mn>2</mn></msub><mi>H</mi><mo>−</mo><mi>ω</mi><mi>H</mi></mrow><annotation encoding="application/x-tex">dH = \eta I - \gamma H - \eta_2 H - \omega H</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>H</mi><mi>V</mi></msub><mo>=</mo><msub><mi>η</mi><mi>V</mi></msub><mi>I</mi><mo>−</mo><mi>γ</mi><msub><mi>H</mi><mi>V</mi></msub><mo>−</mo><msub><mi>ω</mi><mi>V</mi></msub><msub><mi>H</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">dH_V = \eta_{V} I - \gamma H_V - \omega_V H_V</annotation></semantics></math></p>
 <p>Single recovered compartment:</p>
-<p><span class="math display">\[dR = \gamma(I + H + I_V + H_V)\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>R</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><mi>H</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo>+</mo><msub><mi>H</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">dR = \gamma(I + H + I_V + H_V)</annotation></semantics></math></p>
 <p>Single mortality compartment:</p>
-<p><span class="math display">\[dD = \omega(I + H) + \omega_V(I_V + H_V)\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>D</mi><mo>=</mo><mi>ω</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><mi>H</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>ω</mi><mi>V</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>I</mi><mi>V</mi></msub><mo>+</mo><msub><mi>H</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">dD = \omega(I + H) + \omega_V(I_V + H_V)</annotation></semantics></math></p>
 </div>
 <div class="section level2 unnumbered">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-ainslie2022" class="csl-entry">
-Ainslie, Kylie E. C., Jantien A. Backer, Pieter T. de Boer, Albert Jan van Hoek, Don Klinkenberg, Hester Korthals Altes, Ka Yin Leung, Hester de Melker, Fuminari Miura, and Jacco Wallinga. 2022. <span>“A Scenario Modelling Analysis to Anticipate the Impact of COVID-19 Vaccination in Adolescents and Children on Disease Outcomes in the Netherlands, Summer 2021.”</span> <em>Eurosurveillance</em> 27 (44): 2101090. <a href="https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090" class="external-link">https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090</a>.
+Ainslie, Kylie E. C., Jantien A. Backer, Pieter T. de Boer, Albert Jan
+van Hoek, Don Klinkenberg, Hester Korthals Altes, Ka Yin Leung, Hester
+de Melker, Fuminari Miura, and Jacco Wallinga. 2022. <span>“A Scenario
+Modelling Analysis to Anticipate the Impact of COVID-19 Vaccination in
+Adolescents and Children on Disease Outcomes in the Netherlands, Summer
+2021.”</span> <em>Eurosurveillance</em> 27 (44): 2101090. <a href="https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090" class="external-link">https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090</a>.
 </div>
 </div>
 </div>

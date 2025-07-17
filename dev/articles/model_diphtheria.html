@@ -95,6 +95,8 @@
 </nav><div class="container template-article">
 
 
+
+
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Modelling a diphtheria outbreak in a humanitarian camp setting</h1>
@@ -107,29 +109,53 @@
     
     
 <div class="alert alert-warning">
-<p><strong>New to <em>epidemics</em>?</strong> It may help to read the <a href="epidemics.html">“Get started”</a> vignette first!</p>
+<p><strong>New to <em>epidemics</em>?</strong> It may help to read the
+<a href="epidemics.html">“Get started”</a> vignette first!</p>
 </div>
-<p>This vignette shows how to model an outbreak of diphtheria (or a similar acute directly-transmitted infectious disease) within the setting of a humanitarian aid camp, where the camp population may fluctuate due to external factors, including influxes from crisis affected areas or evacuations to other camps or areas.
-In such situations, implementing large-scale public health measures such contact tracing and quarantine, or introducing reactive mass vaccination may be challenging.</p>
+<p>This vignette shows how to model an outbreak of diphtheria (or a
+similar acute directly-transmitted infectious disease) within the
+setting of a humanitarian aid camp, where the camp population may
+fluctuate due to external factors, including influxes from crisis
+affected areas or evacuations to other camps or areas. In such
+situations, implementing large-scale public health measures such contact
+tracing and quarantine, or introducing reactive mass vaccination may be
+challenging.</p>
 <div class="alert alert-info">
-<p>The <a href="modelling_vaccination.html">vignette on modelling a vaccination campaign</a> shows how to model the introduction of a mass vaccination campaign for a fixed, stable population.</p>
+<p>The <a href="modelling_vaccination.html">vignette on modelling a
+vaccination campaign</a> shows how to model the introduction of a mass
+vaccination campaign for a fixed, stable population.</p>
 </div>
-<p><em>epidemics</em> provides a simple SEIHR compartmental model based on <span class="citation">Finger et al. (<a href="#ref-finger2019">2019</a>)</span>, in which it is possible to vary the population of each demographic group throughout the model’s simulation time and explore the resulting epidemic dynamics.
-This baseline model only tracks infections by demographic groups, and does not include variation in contacts between demographic groups (e.g. by age or occupation), as contacts are likely to be less clearly stratified in a camp setting.
-The baseline model also does not allow interventions that target social contacts (such as social distancing or quarantine), and does not include a ‘vaccinated’ compartment. It is therefore suited to analysis of a rapidly spreading infection prior to the introduction of any reactive vaccine campaign.</p>
-<p>However, the model does allow for seasonality in model parameters and interventions on model parameters.
-Similarly, the model allows for a proportion of the initial camp population to be considered vaccinated and thus immune from infection.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<p><em>epidemics</em> provides a simple SEIHR compartmental model based
+on <span class="citation">Finger et al. (<a href="#ref-finger2019">2019</a>)</span>, in which it is possible to vary
+the population of each demographic group throughout the model’s
+simulation time and explore the resulting epidemic dynamics. This
+baseline model only tracks infections by demographic groups, and does
+not include variation in contacts between demographic groups (e.g. by
+age or occupation), as contacts are likely to be less clearly stratified
+in a camp setting. The baseline model also does not allow interventions
+that target social contacts (such as social distancing or quarantine),
+and does not include a ‘vaccinated’ compartment. It is therefore suited
+to analysis of a rapidly spreading infection prior to the introduction
+of any reactive vaccine campaign.</p>
+<p>However, the model does allow for seasonality in model parameters and
+interventions on model parameters. Similarly, the model allows for a
+proportion of the initial camp population to be considered vaccinated
+and thus immune from infection.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
-</details><div class="section level2">
+<div class="section level2">
 <h2 id="modelling-an-outbreak-with-pre-existing-immunity">Modelling an outbreak with pre-existing immunity<a class="anchor" aria-label="anchor" href="#modelling-an-outbreak-with-pre-existing-immunity"></a>
 </h2>
-<p>We create a population object corresponding to the Kutupalong camp in Cox’s Bazar, Bangladesh in 2017-18, rounded to the nearest 100, as described in Additional file 1 provided with <span class="citation">Finger et al. (<a href="#ref-finger2019">2019</a>)</span>.
-This population has three age groups, &lt; 5 years, 5 – 14 years, <span class="math inline">\(\geq\)</span> 15 years.
-We assume that only one individual is infectious in each age group.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<p>We create a population object corresponding to the Kutupalong camp in
+Cox’s Bazar, Bangladesh in 2017-18, rounded to the nearest 100, as
+described in Additional file 1 provided with <span class="citation">Finger et al. (<a href="#ref-finger2019">2019</a>)</span>. This population has three age
+groups, &lt; 5 years, 5 – 14 years,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≥</mo><annotation encoding="application/x-tex">\geq</annotation></semantics></math>
+15 years. We assume that only one individual is infectious in each age
+group.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># three age groups with five compartments SEIHR</span></span>
 <span><span class="va">n_age_groups</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">83000</span>, <span class="fl">108200</span>, <span class="fl">224600</span><span class="op">)</span></span>
@@ -161,24 +187,43 @@ We assume that only one individual is infectious in each age group.</p>
 <span><span class="co">#&gt; Dem. grp. 1:            1            1            1</span></span>
 <span><span class="co">#&gt; Dem. grp. 2:            1            1            1</span></span>
 <span><span class="co">#&gt; Dem. grp. 3:            1            1            1</span></span></code></pre></div>
-</details><p>We assume, following <span class="citation">Finger et al. (<a href="#ref-finger2019">2019</a>)</span>, that 20% of the 5 – 14 year-olds were vaccinated against (and immune to) diphtheria prior to the start of the outbreak, but that coverage is much lower among other age groups.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>We assume, following <span class="citation">Finger et al. (<a href="#ref-finger2019">2019</a>)</span>, that 20% of the 5 – 14
+year-olds were vaccinated against (and immune to) diphtheria prior to
+the start of the outbreak, but that coverage is much lower among other
+age groups.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 20% of 5-14 year-olds are vaccinated</span></span>
 <span><span class="va">prop_vaccinated</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.2</span>, <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
-</details><p>We run the model with its default parameters, assuming that:</p>
+<p>We run the model with its default parameters, assuming that:</p>
 <ul>
-<li>diphtheria has an <span class="math inline">\(R_0\)</span> of 4.0 and a mean infectious period of 4.5 days, giving a transmission rate (<span class="math inline">\(\beta\)</span>) of about 0.889;</li>
-<li>diphtheria has a pre-infectious or incubation period of 3 days, giving an infectiousness rate (<span class="math inline">\(\sigma\)</span>) of about 0.33; and</li>
+<li>diphtheria has an
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mn>0</mn></msub><annotation encoding="application/x-tex">R_0</annotation></semantics></math>
+of 4.0 and a mean infectious period of 4.5 days, giving a transmission
+rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>)
+of about 0.889;</li>
+<li>diphtheria has a pre-infectious or incubation period of 3 days,
+giving an infectiousness rate
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>)
+of about 0.33; and</li>
 <li>the recovery rate of diphtheria is about 0.33.</li>
 </ul>
-<p>We also make several assumptions regarding clinical progression and reporting. Specifically: case reporting (that about 3% of infections are reported as cases), the proportion of reported cases needing hospitalisation (1%), the time taken by cases needing hospitalisation to seek and be admitted to hospital (5 days, giving a daily hospitalisation rate of 0.2 among cases), and time spent in hospital (5 days, giving a daily hospitalisation recovery rate of 0.2).</p>
-<p>Finally, we assume there are no interventions or seasonal effects that affect the dynamics of transmission during the outbreak. We then run the model and plot the outcomes.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>We also make several assumptions regarding clinical progression and
+reporting. Specifically: case reporting (that about 3% of infections are
+reported as cases), the proportion of reported cases needing
+hospitalisation (1%), the time taken by cases needing hospitalisation to
+seek and be admitted to hospital (5 days, giving a daily hospitalisation
+rate of 0.2 among cases), and time spent in hospital (5 days, giving a
+daily hospitalisation recovery rate of 0.2).</p>
+<p>Finally, we assume there are no interventions or seasonal effects
+that affect the dynamics of transmission during the outbreak. We then
+run the model and plot the outcomes.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_diphtheria.html">model_diphtheria</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">camp_pop</span>,</span>
 <span>  prop_vaccinated <span class="op">=</span> <span class="va">prop_vaccinated</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"infectious"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
@@ -203,21 +248,30 @@ We assume that only one individual is infectious in each age group.</p>
 <span>    x <span class="op">=</span> <span class="st">"Simulation time (days)"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Individuals infectious"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-3"></span>
-<img src="model_diphtheria_files/figure-html/unnamed-chunk-3-1.png" alt="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak."><p class="caption">
-Figure 1: Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak.
+<div class="figure">
+<img src="model_diphtheria_files/figure-html/unnamed-chunk-3-1.png" alt="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak." width="750"><p class="caption">
+Model results from a single run showing the number of individuals
+infectious with diphtheria over 100 days of the outbreak.
 </p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="modelling-an-outbreak-with-changing-population-sizes">Modelling an outbreak with changing population sizes<a class="anchor" aria-label="anchor" href="#modelling-an-outbreak-with-changing-population-sizes"></a>
 </h2>
-<p>We now model the same outbreak, but an increase in susceptible individuals towards the end of the outbreak, to illustrate the effect that an influx of non-immune individuals could could have on outbreak dynamics.
-In this example, we do not assume any prior immunity among new arrivals into the population.</p>
-<p>We prepare a population change schedule as a named list giving the times of each change, and the corresponding changes to each demographic group.</p>
-<p>Note that the model assumes that these changes apply <em>only to the susceptible compartment</em>, as we assume that the wider population entering the camp is not yet affected by diphtheria (i.e. no infected or recovered arrival), and that already infected or hospitalised individuals do not leave the camp.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>We now model the same outbreak, but an increase in susceptible
+individuals towards the end of the outbreak, to illustrate the effect
+that an influx of non-immune individuals could could have on outbreak
+dynamics. In this example, we do not assume any prior immunity among new
+arrivals into the population.</p>
+<p>We prepare a population change schedule as a named list giving the
+times of each change, and the corresponding changes to each demographic
+group.</p>
+<p>Note that the model assumes that these changes apply <em>only to the
+susceptible compartment</em>, as we assume that the wider population
+entering the camp is not yet affected by diphtheria (i.e. no infected or
+recovered arrival), and that already infected or hospitalised
+individuals do not leave the camp.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># susceptibles increase by about 12%, 92%, and 89% of initial sizes</span></span>
 <span><span class="va">pop_change</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  time <span class="op">=</span> <span class="fl">70</span>,</span>
@@ -225,8 +279,11 @@ In this example, we do not assume any prior immunity among new arrivals into the
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1e4</span>, <span class="fl">1e5</span>, <span class="fl">2e5</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><p>Here, the population size of the camp increases by about 75% overall, which is similar to reported values in the Kutupalong camp scenario <span class="citation">(<a href="#ref-finger2019">Finger et al. 2019</a>)</span>.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p>Here, the population size of the camp increases by about 75% overall,
+which is similar to reported values in the Kutupalong camp scenario
+<span class="citation">(<a href="#ref-finger2019">Finger et al.
+2019</a>)</span>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_diphtheria.html">model_diphtheria</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">camp_pop</span>,</span>
 <span>  population_change <span class="op">=</span> <span class="va">pop_change</span></span>
@@ -238,7 +295,7 @@ In this example, we do not assume any prior immunity among new arrivals into the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    total_susceptibles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_area</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">data_pop_size</span>,</span>
@@ -287,20 +344,27 @@ In this example, we do not assume any prior immunity among new arrivals into the
 <span>    x <span class="op">=</span> <span class="st">"Simulation time (days)"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Individuals infectious"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-</details><div class="figure">
-<span style="display:block;" id="fig:unnamed-chunk-5"></span>
-<img src="model_diphtheria_files/figure-html/unnamed-chunk-5-1.png" alt="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak, with an increase in the camp population size. Shaded blue region shows the number of individuals susceptible to infection (right-hand side Y axis)."><p class="caption">
-Figure 2: Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak, with an increase in the camp population size. Shaded blue region shows the number of individuals susceptible to infection (right-hand side Y axis).
+<div class="figure">
+<img src="model_diphtheria_files/figure-html/unnamed-chunk-5-1.png" alt="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak, with an increase in the camp population size. Shaded blue region shows the number of individuals susceptible to infection (right-hand side Y axis)." width="750"><p class="caption">
+Model results from a single run showing the number of individuals
+infectious with diphtheria over 100 days of the outbreak, with an
+increase in the camp population size. Shaded blue region shows the
+number of individuals susceptible to infection (right-hand side Y axis).
 </p>
 </div>
-<p>This example shows how an increase in the number of susceptibles in the population can lead to a rise in the transmission potential of the infection and therefore extend the duration of an outbreak.</p>
+<p>This example shows how an increase in the number of susceptibles in
+the population can lead to a rise in the transmission potential of the
+infection and therefore extend the duration of an outbreak.</p>
 </div>
 <div class="section level2 unnumbered">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-finger2019" class="csl-entry">
-Finger, Flavio, Sebastian Funk, Kate White, M. Ruby Siddiqui, W. John Edmunds, and Adam J. Kucharski. 2019. <span>“Real-Time Analysis of the Diphtheria Outbreak in Forcibly Displaced Myanmar Nationals in Bangladesh.”</span> <em>BMC Medicine</em> 17 (March): 58. <a href="https://doi.org/10.1186/s12916-019-1288-7" class="external-link">https://doi.org/10.1186/s12916-019-1288-7</a>.
+Finger, Flavio, Sebastian Funk, Kate White, M. Ruby Siddiqui, W. John
+Edmunds, and Adam J. Kucharski. 2019. <span>“Real-Time Analysis of the
+Diphtheria Outbreak in Forcibly Displaced Myanmar Nationals in
+Bangladesh.”</span> <em>BMC Medicine</em> 17 (March): 58. <a href="https://doi.org/10.1186/s12916-019-1288-7" class="external-link">https://doi.org/10.1186/s12916-019-1288-7</a>.
 </div>
 </div>
 </div>

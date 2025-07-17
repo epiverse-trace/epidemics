@@ -95,6 +95,8 @@
 </nav><div class="container template-article">
 
 
+
+
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Modelling the effect of a vaccination campaign</h1>
@@ -106,13 +108,13 @@
 
     
     
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span></code></pre></div>
-</details><div class="section level2">
+<div class="section level2">
 <h2 id="prepare-population-and-initial-conditions">Prepare population and initial conditions<a class="anchor" aria-label="anchor" href="#prepare-population-and-initial-conditions"></a>
 </h2>
 <p>Prepare population and contact data.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
 <span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
@@ -129,8 +131,8 @@
 <span><span class="co"># prepare the demography vector</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
-</details><p>Prepare initial conditions for each age group.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>Prepare initial conditions for each age group.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># initial conditions</span></span>
 <span><span class="va">initial_i</span> <span class="op">&lt;-</span> <span class="fl">1e-6</span></span>
 <span><span class="va">initial_conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -146,21 +148,21 @@
 <span></span>
 <span><span class="co"># assign rownames for clarity</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
-</details><p>Prepare a population as a <code>population</code> class object.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>Prepare a population as a <code>population</code> class object.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">uk_population</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/population.html">population</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"UK"</span>,</span>
 <span>  contact_matrix <span class="op">=</span> <span class="va">contact_matrix</span>,</span>
 <span>  demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
 <span>  initial_conditions <span class="op">=</span> <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details>
 </div>
 <div class="section level2">
 <h2 id="prepare-a-vaccination-campaign">Prepare a vaccination campaign<a class="anchor" aria-label="anchor" href="#prepare-a-vaccination-campaign"></a>
 </h2>
-<p>Prepare a vaccination campaign targeting individuals aged over 65.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Prepare a vaccination campaign targeting individuals aged over
+65.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># prepare a vaccination object</span></span>
 <span><span class="va">vaccinate_elders</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vaccination.html">vaccination</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"vaccinate elders"</span>,</span>
@@ -193,21 +195,40 @@
 <span><span class="co">#&gt; [1,]  1e-04</span></span>
 <span><span class="co">#&gt; [2,]  0e+00</span></span>
 <span><span class="co">#&gt; [3,]  0e+00</span></span></code></pre></div>
-</details><div class="alert alert-warning">
-<p><strong>Note that</strong> when the vaccination rate is high, the number of individuals who could <em>potentially</em> transition from ‘susceptible’ to ‘vaccinated’ may be greater than the number of individuals in the ‘susceptible’ compartment: <span class="math inline">\(dS_{i_{t}} = \nu_{i_t}S_{i_{0}} &gt; S_{i_{t}}\)</span> for each demographic group <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span>.</p>
-<p>This could realistically occur when there are more doses available than individuals eligible to receive them, for instance towards the end of an epidemic.</p>
-<p><em>epidemics</em> automatically handles such situations by setting <span class="math inline">\(dS_{i_{t}}\)</span> to be the minimum of doses or eligible individuals: : <span class="math inline">\(dS_{i_t} = \text{Min}(\nu_{i_t}S_{i_0}, S_{i_t})\)</span>, such that <span class="math inline">\(S_{i_{t+1}}\)</span> does not take a negative value.</p>
+<div class="alert alert-warning">
+<p><strong>Note that</strong> when the vaccination rate is high, the
+number of individuals who could <em>potentially</em> transition from
+‘susceptible’ to ‘vaccinated’ may be greater than the number of
+individuals in the ‘susceptible’ compartment:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>S</mi><msub><mi>i</mi><mi>t</mi></msub></msub><mo>=</mo><msub><mi>ν</mi><msub><mi>i</mi><mi>t</mi></msub></msub><msub><mi>S</mi><msub><mi>i</mi><mn>0</mn></msub></msub><mo>&gt;</mo><msub><mi>S</mi><msub><mi>i</mi><mi>t</mi></msub></msub></mrow><annotation encoding="application/x-tex">dS_{i_{t}} = \nu_{i_t}S_{i_{0}} &gt; S_{i_{t}}</annotation></semantics></math>
+for each demographic group
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+at time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>.</p>
+<p>This could realistically occur when there are more doses available
+than individuals eligible to receive them, for instance towards the end
+of an epidemic.</p>
+<p><em>epidemics</em> automatically handles such situations by setting
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>S</mi><msub><mi>i</mi><mi>t</mi></msub></msub></mrow><annotation encoding="application/x-tex">dS_{i_{t}}</annotation></semantics></math>
+to be the minimum of doses or eligible individuals: :
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>S</mi><msub><mi>i</mi><mi>t</mi></msub></msub><mo>=</mo><mtext mathvariant="normal">Min</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ν</mi><msub><mi>i</mi><mi>t</mi></msub></msub><msub><mi>S</mi><msub><mi>i</mi><mn>0</mn></msub></msub><mo>,</mo><msub><mi>S</mi><msub><mi>i</mi><mi>t</mi></msub></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">dS_{i_t} = \text{Min}(\nu_{i_t}S_{i_0}, S_{i_t})</annotation></semantics></math>,
+such that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><msub><mi>i</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></msub><annotation encoding="application/x-tex">S_{i_{t+1}}</annotation></semantics></math>
+does not take a negative value.</p>
 </div>
-<p>The <code>&lt;vaccination&gt;</code> object can be passed to the <code>vaccination</code> argument of a model function call.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>The <code>&lt;vaccination&gt;</code> object can be passed to the
+<code>vaccination</code> argument of a model function call.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run an epidemic model using `epidemic`</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
 <span>  vaccination <span class="op">=</span> <span class="va">vaccinate_elders</span>,</span>
 <span>  time_end <span class="op">=</span> <span class="fl">600</span>, increment <span class="op">=</span> <span class="fl">1.0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details><div class="alert alert-info">
-<p><strong>Note that</strong> vaccination modelling is currently only supported for the ‘default’ (<code><a href="../reference/model_default.html">model_default()</a></code>) and ‘Vacamole’ (<code><a href="../reference/model_vacamole.html">model_vacamole()</a></code>) models.</p>
+<div class="alert alert-info">
+<p><strong>Note that</strong> vaccination modelling is currently only
+supported for the ‘default’ (<code><a href="../reference/model_default.html">model_default()</a></code>) and
+‘Vacamole’ (<code><a href="../reference/model_vacamole.html">model_vacamole()</a></code>) models.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

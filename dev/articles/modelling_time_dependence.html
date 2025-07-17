@@ -95,6 +95,8 @@
 </nav><div class="container template-article">
 
 
+
+
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Modelling time-dependence and seasonality in transmission dynamics</h1>
@@ -106,21 +108,35 @@
 
     
     
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiverse-trace/epidemics" class="external-link">epidemics</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
-</details><div class="alert alert-warning">
-<p><strong>New to <em>epidemics</em>?</strong> It may help to read the <a href="epidemics.html">“Get started”</a> vignette first, and to browse through some of the other vignettes such as <a href="modelling_interventions.html">“Modelling a non-pharmaceutical intervention”</a>, or <a href="modelling_rate_interventions.html">“Modelling interventions on epidemic parameters”</a>.</p>
+<div class="alert alert-warning">
+<p><strong>New to <em>epidemics</em>?</strong> It may help to read the
+<a href="epidemics.html">“Get started”</a> vignette first, and to browse
+through some of the other vignettes such as <a href="modelling_interventions.html">“Modelling a non-pharmaceutical
+intervention”</a>, or <a href="modelling_rate_interventions.html">“Modelling interventions on
+epidemic parameters”</a>.</p>
 </div>
-<p>This vignette shows how to compose a model in which one or more epidemic parameters vary gradually over time.</p>
-<p>This functionality can be used to compose models that include a seasonal component, i.e., where the epidemic parameters vary due to variation in ambient conditions over the modelled time-period.</p>
-<p>This is intended to be different from <a href="modelling_rate_interventions.html">modelling interventions on epidemic parameters</a> by allowing small, continuous changes to the epidemic parameters, while rate interventions are intended to be large step-changes as would be expected from policies such as mask mandates or the roll-out of therapeutics.</p>
-<p>The time-dependence functionality shown in this vignette is also expected to be a starting point for data-driven modelling in which epidemic parameters vary as a function of externally provided data, such as climate data.</p>
+<p>This vignette shows how to compose a model in which one or more
+epidemic parameters vary gradually over time.</p>
+<p>This functionality can be used to compose models that include a
+seasonal component, i.e., where the epidemic parameters vary due to
+variation in ambient conditions over the modelled time-period.</p>
+<p>This is intended to be different from <a href="modelling_rate_interventions.html">modelling interventions on
+epidemic parameters</a> by allowing small, continuous changes to the
+epidemic parameters, while rate interventions are intended to be large
+step-changes as would be expected from policies such as mask mandates or
+the roll-out of therapeutics.</p>
+<p>The time-dependence functionality shown in this vignette is also
+expected to be a starting point for data-driven modelling in which
+epidemic parameters vary as a function of externally provided data, such
+as climate data.</p>
 <div class="section level2">
 <h2 id="setup-and-initial-conditions">Setup and initial conditions<a class="anchor" aria-label="anchor" href="#setup-and-initial-conditions"></a>
 </h2>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set up initial conditions</span></span>
 <span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
@@ -143,21 +159,29 @@
 <span>    byrow <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</details>
 </div>
 <div class="section level2">
 <h2 id="defining-a-time-dependent-function">Defining a time-dependent function<a class="anchor" aria-label="anchor" href="#defining-a-time-dependent-function"></a>
 </h2>
-<p>Next we prepare a function that affects the transmission rate (often denoted <span class="math inline">\(\beta\)</span>) in such a way that there are two peaks and two troughs in the transmission rate over the course of a year.</p>
-<p>Note that this example uses an arbitrary function, and that we might want to choose a more realistic function in a model.
-Nonetheless, as the figures later will show, this can still generate realistic looking epidemic curves and is a good starting point for understanding how this feature works.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>Next we prepare a function that affects the transmission rate (often
+denoted
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>)
+in such a way that there are two peaks and two troughs in the
+transmission rate over the course of a year.</p>
+<p>Note that this example uses an arbitrary function, and that we might
+want to choose a more realistic function in a model. Nonetheless, as the
+figures later will show, this can still generate realistic looking
+epidemic curves and is a good starting point for understanding how this
+feature works.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># prepare function, refer to transmissiblity as beta in function name</span></span>
 <span><span class="va">mod_beta</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">time</span>, <span class="va">x</span>, <span class="va">tmax</span> <span class="op">=</span> <span class="fl">365</span> <span class="op">/</span> <span class="fl">4</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="va">x</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sinpi</a></span><span class="op">(</span><span class="va">time</span> <span class="op">/</span> <span class="va">tmax</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-</details><p>We can plot the output of this function over time to examine its effect on <span class="math inline">\(\beta\)</span>.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>We can plot the output of this function over time to examine its
+effect on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get the function output</span></span>
 <span><span class="co"># calculate beta - this is done automatically inside epidemic_*()</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">mod_beta</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">365</span><span class="op">)</span>, <span class="fl">1.3</span> <span class="op">/</span> <span class="fl">7.0</span><span class="op">)</span></span>
@@ -169,13 +193,14 @@ Nonetheless, as the figures later will show, this can still generate realistic l
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Days"</span>, y <span class="op">=</span> <span class="st">"Transmission rate (beta)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</details><p><img src="modelling_time_dependence_files/figure-html/unnamed-chunk-4-1.png"><!-- --></p>
+<p><img src="modelling_time_dependence_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
 </div>
 <div class="section level2">
 <h2 id="model-with-time-dependent-transmission">Model with time-dependent transmission<a class="anchor" aria-label="anchor" href="#model-with-time-dependent-transmission"></a>
 </h2>
-<p>Next we run an epidemic model while including the time dependence of the transmission rate.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Next we run an epidemic model while including the time dependence of
+the transmission rate.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># note transmission_rate is the function/model parameter</span></span>
 <span><span class="co"># the function that affects it may have any name</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
@@ -188,9 +213,9 @@ Nonetheless, as the figures later will show, this can still generate realistic l
 <span></span>
 <span><span class="co"># get data on new infections</span></span>
 <span><span class="va">data_infections</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_infections.html">new_infections</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
-</details><p>We plot the number of newly infectious individuals to check the model dynamics.
-Note that plotting code is folded and can be expanded.</p>
-<details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>We plot the number of newly infectious individuals to check the model
+dynamics. Note that plotting code is folded and can be expanded.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot data on new infections</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_infections</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
@@ -216,16 +241,25 @@ Note that plotting code is folded and can be expanded.</p>
 <span>    legend.position <span class="op">=</span> <span class="st">"top"</span>,</span>
 <span>    plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-</details><p><img src="modelling_time_dependence_files/figure-html/unnamed-chunk-6-1.png"><!-- --></p>
-<p>Here, we can see that the epidemic has a large first wave, followed by a smaller second wave later in the model run (which represents one year).</p>
+<p><img src="modelling_time_dependence_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
+<p>Here, we can see that the epidemic has a large first wave, followed
+by a smaller second wave later in the model run (which represents one
+year).</p>
 </div>
 <div class="section level2">
 <h2 id="non-pharmaceutical-interventions-and-time-dependence">Non-pharmaceutical interventions and time-dependence<a class="anchor" aria-label="anchor" href="#non-pharmaceutical-interventions-and-time-dependence"></a>
 </h2>
-<p>We can also model the effect of imposing non-pharmaceutical interventions that reduce social contacts, on the trajectory of an epidemic with time-dependent changes in the transmission rate.</p>
-<p>In this example, we impose an intervention with three phases: (1) closing schools, which primarily affects the age group 0 – 19, then (2) closing workplaces, which affects the age groups &gt; 20 years old, and then (3) partially reopening schools so that the intervention has a lower effect on the social contacts of the age group 0 – 19.</p>
-<p>First we construct the intervention, an object of the <code>&lt;contacts_intervention&gt;</code> class.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p>We can also model the effect of imposing non-pharmaceutical
+interventions that reduce social contacts, on the trajectory of an
+epidemic with time-dependent changes in the transmission rate.</p>
+<p>In this example, we impose an intervention with three phases: (1)
+closing schools, which primarily affects the age group 0 – 19, then (2)
+closing workplaces, which affects the age groups &gt; 20 years old, and
+then (3) partially reopening schools so that the intervention has a
+lower effect on the social contacts of the age group 0 – 19.</p>
+<p>First we construct the intervention, an object of the
+<code>&lt;contacts_intervention&gt;</code> class.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># school closures affecting younger age groups</span></span>
 <span><span class="va">close_schools</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/intervention.html">intervention</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"contacts"</span>, time_begin <span class="op">=</span> <span class="fl">50</span>, time_end <span class="op">=</span> <span class="fl">120</span>,</span>
@@ -265,8 +299,9 @@ Note that plotting code is folded and can be expanded.</p>
 <span><span class="co">#&gt; Demo. grp. 1      0.10      0.01      0.05</span></span>
 <span><span class="co">#&gt; Demo. grp. 2      0.01      0.20      0.01</span></span>
 <span><span class="co">#&gt; Demo. grp. 3      0.01      0.20      0.01</span></span></code></pre></div>
-</details><p>Then we run the model while specifying the time-dependence of the transmission rate, as well as the intervention on social contacts.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>Then we run the model while specifying the time-dependence of the
+transmission rate, as well as the intervention on social contacts.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run the model with interventions and time-dependence</span></span>
 <span><span class="va">data_npi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
@@ -279,14 +314,15 @@ Note that plotting code is folded and can be expanded.</p>
 <span></span>
 <span><span class="co"># get the infections</span></span>
 <span><span class="va">data_infections_npi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_infections.html">new_infections</a></span><span class="op">(</span><span class="va">data_npi</span><span class="op">)</span></span></code></pre></div>
-</details><p>We assign scenario names to the data, combine them, and plot a comparison.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>We assign scenario names to the data, combine them, and plot a
+comparison.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_infections</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"baseline"</span></span>
 <span><span class="va">data_infections_npi</span><span class="op">$</span><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="st">"intervention"</span></span>
 <span></span>
 <span><span class="co"># combine the data</span></span>
 <span><span class="va">data_npi_compare</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_infections</span>, <span class="va">data_infections_npi</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_npi_compare</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
@@ -322,18 +358,22 @@ Note that plotting code is folded and can be expanded.</p>
 <span>    legend.position <span class="op">=</span> <span class="st">"top"</span>,</span>
 <span>    plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-</details><p><img src="modelling_time_dependence_files/figure-html/unnamed-chunk-10-1.png"><!-- --></p>
-<p>We can observe that implementing interventions on social contacts can substantially reduce the number of infections in all age groups in both epidemic waves.</p>
+<p><img src="modelling_time_dependence_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
+<p>We can observe that implementing interventions on social contacts can
+substantially reduce the number of infections in all age groups in both
+epidemic waves.</p>
 </div>
 <div class="section level2">
 <h2 id="timing-vaccination-to-prevent-epidemic-peaks">Timing vaccination to prevent epidemic peaks<a class="anchor" aria-label="anchor" href="#timing-vaccination-to-prevent-epidemic-peaks"></a>
 </h2>
-<p>We can model the effect of timing vaccination doses to begin with the end of the first wave, at about 120 days.
-This example does not include non-pharmaceutical interventions.</p>
-<p>First we define a vaccination regime that targets adults aged over 40 years as a priority group.
-All other age groups are not vaccinated in this campaign.
-We also assume that a single dose of the vaccine confers immunity (i.e., non-leaky vaccination).</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p>We can model the effect of timing vaccination doses to begin with the
+end of the first wave, at about 120 days. This example does not include
+non-pharmaceutical interventions.</p>
+<p>First we define a vaccination regime that targets adults aged over 40
+years as a priority group. All other age groups are not vaccinated in
+this campaign. We also assume that a single dose of the vaccine confers
+immunity (i.e., non-leaky vaccination).</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define vaccination object</span></span>
 <span><span class="va">vax_regime</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vaccination.html">vaccination</a></span><span class="op">(</span></span>
 <span>  nu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0.001</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
@@ -363,8 +403,9 @@ We also assume that a single dose of the vaccine confers immunity (i.e., non-lea
 <span><span class="co">#&gt; [1,]  0.001</span></span>
 <span><span class="co">#&gt; [2,]  0.001</span></span>
 <span><span class="co">#&gt; [3,]  0.001</span></span></code></pre></div>
-</details><p>We model the effect of administering vaccine doses between the expected peaks of the epidemic waves, and plot the outcome.</p>
-<details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>We model the effect of administering vaccine doses between the
+expected peaks of the epidemic waves, and plot the outcome.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># pass time dependence and vaccination. Note no interventions</span></span>
 <span><span class="va">data_vax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
 <span>  population <span class="op">=</span> <span class="va">uk_population</span>,</span>
@@ -384,7 +425,7 @@ We also assume that a single dose of the vaccine confers immunity (i.e., non-lea
 <span></span>
 <span><span class="co"># combine data</span></span>
 <span><span class="va">data_vax_compare</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_infections</span>, <span class="va">data_vax_infections</span><span class="op">)</span></span></code></pre></div>
-</details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_vax_compare</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_rect</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
@@ -449,10 +490,16 @@ We also assume that a single dose of the vaccine confers immunity (i.e., non-lea
 <span>    legend.position <span class="op">=</span> <span class="st">"top"</span>,</span>
 <span>    plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-</details><p><img src="modelling_time_dependence_files/figure-html/unnamed-chunk-13-1.png"><!-- --></p>
-<p>Here, we can see that over 2 million individuals are vaccinated (and immunised; blue line, right-hand Y axis) over the 100 days between the end of the first wave of infections, and the start of the second wave of infections.</p>
-<p>Vaccination reduces the number of daily infections among individuals of all age groups in the second wave.
-At its peak, the vaccination scenario sees approximately 5,000 fewer daily infections than the baseline scenario, which may represent a substantial benefit for public health.</p>
+<p><img src="modelling_time_dependence_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
+<p>Here, we can see that over 2 million individuals are vaccinated (and
+immunised; blue line, right-hand Y axis) over the 100 days between the
+end of the first wave of infections, and the start of the second wave of
+infections.</p>
+<p>Vaccination reduces the number of daily infections among individuals
+of all age groups in the second wave. At its peak, the vaccination
+scenario sees approximately 5,000 fewer daily infections than the
+baseline scenario, which may represent a substantial benefit for public
+health.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

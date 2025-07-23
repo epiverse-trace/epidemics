@@ -254,6 +254,14 @@ format.population <- function(x, ...) {
     "\n"
   )
   print(contact_matrix)
+  cat(
+    "\n",
+    cli::col_blue(
+      "Initial Conditions"
+    ),
+    "\n"
+  )
+  print(x$initial_conditions)
 
   invisible(x)
 }

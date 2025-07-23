@@ -29,34 +29,3 @@
       [2,] 0.9999 5e-05 5e-05    0    0
       [3,] 0.9999 5e-05 5e-05    0    0
 
-# Printing population class with no row or column labels
-
-    Code
-      uk_population
-    Message
-      <population>object
-    Output
-      
-      Populationname:
-    Message
-      "UKpopulation"
-    Output
-      
-      Demography
-      Dem.grp.1:31,325,592(50%)
-      Dem.grp.2:19,288,101(30%)
-      Dem.grp.3:9,673,058(20%)
-      
-      Contactmatrix
-      
-      contact.age.groupDem.grp.1:Dem.grp.2:Dem.grp.3:
-      Dem.grp.1:9.69631904.7926192.235873
-      Dem.grp.2:2.95095864.1782182.468756
-      Dem.grp.3:0.69041721.2380911.714286
-      
-      InitialConditions
-      [,1][,2][,3][,4][,5]
-      [1,]0.99995e-055e-0500
-      [2,]0.99995e-055e-0500
-      [3,]0.99995e-055e-0500
-

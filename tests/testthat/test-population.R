@@ -36,6 +36,7 @@ half_population <- population(
 
 # snapshot test for printing
 test_that("Printing population class", {
+  skip_on_ci()
   expect_snapshot(uk_population)
 })
 
@@ -98,12 +99,13 @@ test_that("Effect of population on final size", {
   )
 })
 
-# # snapshot test for printing
-# test_that("Printing population class with no row or column labels", {
-#   # population with no rownames for the contact matrix
-#   names(uk_population$demography_vector) <- NULL
-#   rownames(uk_population$contact_matrix) <- NULL
-#   expect_snapshot(uk_population,
-#     transform = function(lines) gsub("\\s", "", lines)
-#   ) # format changes in CI
-# })
+# snapshot test for printing
+test_that("Printing population class with no row or column labels", {
+  # population with no rownames for the contact matrix
+  names(uk_population$demography_vector) <- NULL
+  rownames(uk_population$contact_matrix) <- NULL
+  skip_on_ci()
+  expect_snapshot(uk_population,
+    transform = function(lines) gsub("\\s", "", lines)
+  ) # format changes in CI
+})

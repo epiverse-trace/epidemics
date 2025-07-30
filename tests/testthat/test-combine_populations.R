@@ -17,7 +17,7 @@ contact_data <- socialmixr::contact_matrix(
   symmetric = TRUE,
   return_demography = TRUE
 )
-contact_matrix <- t(contact_data$matrix)
+contact_matrix <- contact_data[["matrix"]]
 demography_vector <- contact_data$demography$population
 
 # Create the first population

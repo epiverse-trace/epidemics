@@ -10,7 +10,7 @@ test_data_default_model <- function() {
   )
 
   # prepare contact matrix
-  contact_matrix <- t(contact_data[["matrix"]])
+  contact_matrix <- contact_data[["matrix"]]
 
   # prepare the demography vector
   demography_vector <- contact_data[["demography"]][["population"]]

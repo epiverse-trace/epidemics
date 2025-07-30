@@ -60,9 +60,12 @@ contact_data1 <- socialmixr::contact_matrix(
   symmetric = TRUE
 )
 
+# prepare contact matrix
+contact_matrix1 <- contact_data1[["matrix"]]
+
 # prepare the demography vector
 demography_vector1 <- contact_data1$demography$population
-names(demography_vector1) <- rownames(contact_matrix1)
+names(demography_vector1) <- colnames(contact_matrix1)
 
 # view contact matrix and demography
 contact_matrix1
@@ -107,7 +110,7 @@ contact_data2 <- socialmixr::contact_matrix(
   age.limits = c(0, 20, 40),
   symmetric = TRUE
 )
-contact_matrix2 <- t(contact_data2$matrix)
+contact_matrix2 <- (contact_data2$matrix)
 demography_vector2 <- contact_data2$demography$population
 names(demography_vector2) <- rownames(contact_matrix2)
 

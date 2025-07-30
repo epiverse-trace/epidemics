@@ -60,9 +60,6 @@ contact_data1 <- socialmixr::contact_matrix(
   symmetric = TRUE
 )
 
-# prepare contact matrix
-contact_matrix1 <- t(contact_data1$matrix)
-
 # prepare the demography vector
 demography_vector1 <- contact_data1$demography$population
 names(demography_vector1) <- rownames(contact_matrix1)

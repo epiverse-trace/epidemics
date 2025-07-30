@@ -98,9 +98,6 @@ contact_data <- contact_matrix(
   symmetric = TRUE
 )
 
-# prepare contact matrix
-contact_matrix <- t(contact_data$matrix)
-
 # prepare the demography vector
 demography_vector <- contact_data$demography$population
 names(demography_vector) <- rownames(contact_matrix)

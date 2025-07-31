@@ -7,7 +7,7 @@ contact_data <- socialmixr::contact_matrix(
   age.limits = c(0, 60),
   symmetric = TRUE
 )
-contact_matrix <- t(contact_data$matrix)
+contact_matrix <- contact_data[["matrix"]]
 demography_vector <- contact_data$demography$population
 
 # make initial conditions - order is important
@@ -66,7 +66,7 @@ test_that("Default model: basic expectations, scalar arguments", {
     )
   )
   expect_identical(
-    unique(data$demography_group), rownames(contact_matrix)
+    unique(data$demography_group), colnames(contact_matrix)
   )
 
   # expect no individuals are vaccinated as vaccination is optional

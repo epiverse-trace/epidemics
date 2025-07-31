@@ -13,11 +13,11 @@ contact_data <- socialmixr::contact_matrix(
 )
 
 # prepare contact matrix
-contact_matrix <- t(contact_data$matrix)
+contact_matrix <- contact_data[["matrix"]]
 
 # prepare the demography vector
 demography_vector <- contact_data$demography$population
-names(demography_vector) <- rownames(contact_matrix)
+names(demography_vector) <- colnames(contact_matrix)
 
 # initial conditions
 initial_i <- 1e-6

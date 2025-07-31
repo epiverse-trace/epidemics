@@ -361,7 +361,7 @@ $$dI_V = \sigma E_V - \gamma I_V - \eta_{V} I_V - \omega_V I_V$$
 
 Two parallel hospitalisation compartments, with a lower mortality rate for vaccinated:
 
-$$dH = \eta I - \gamma H - \eta_2 H - \omega H$$
+$$dH = \eta I - \gamma H - \omega H$$
 
 $$dH_V = \eta_{V} I - \gamma H_V - \omega_V H_V$$
 

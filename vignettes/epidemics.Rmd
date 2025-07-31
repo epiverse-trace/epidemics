@@ -91,7 +91,7 @@ initial_conditions <- rbind(
 )
 
 # assign rownames for clarity
-rownames(initial_conditions) <- rownames(contact_matrix)
+rownames(initial_conditions) <- colnames(contact_matrix)
 
 # view initial conditions
 initial_conditions

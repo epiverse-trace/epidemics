@@ -88,7 +88,7 @@ initial_conditions1 <- rbind(
 )
 
 # assign rownames for clarity
-rownames(initial_conditions1) <- rownames(contact_matrix1)
+rownames(initial_conditions1) <- colnames(contact_matrix1)
 ```
 
 ```{r class.source = 'fold-hide'}
@@ -112,7 +112,7 @@ contact_data2 <- socialmixr::contact_matrix(
 )
 contact_matrix2 <- (contact_data2$matrix)
 demography_vector2 <- contact_data2$demography$population
-names(demography_vector2) <- rownames(contact_matrix2)
+names(demography_vector2) <- colnames(contact_matrix2)
 
 # build for all age groups
 initial_condition2 <- c(

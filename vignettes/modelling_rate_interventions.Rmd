@@ -75,7 +75,7 @@ initial_conditions <- rbind(
 )
 
 # assign rownames for clarity
-rownames(initial_conditions) <- rownames(contact_matrix)
+rownames(initial_conditions) <- colnames(contact_matrix)
 ```
 
 ```{r class.source = 'fold-hide'}

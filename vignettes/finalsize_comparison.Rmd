@@ -117,7 +117,7 @@ initial_conditions <- rbind(
   initial_conditions,
   initial_conditions
 )
-rownames(initial_conditions) <- rownames(contact_matrix)
+rownames(initial_conditions) <- colnames(contact_matrix)
 ```
 
 ```{r}
@@ -257,7 +257,7 @@ We need to scale the contact matrix appropriately.
 ```{r}
 # Define population in each age group
 scalar <- max(eigen(contact_data$matrix)$values)
-contact_matrix <- (contact_data$matrix / demography_vector) / scalar
+finalsize_contact_matrix <- (contact_data$matrix / demography_vector) / scalar
 ```
 
 
@@ -265,7 +265,7 @@ contact_matrix <- (contact_data$matrix / demography_vector) / scalar
 # Calculate the proportion of individuals infected in each age group
 dat1 <- final_size(
   r0 = 1.5,
-  contact_matrix = contact_matrix,
+  contact_matrix = finalsize_contact_matrix,
   demography_vector = demography_vector,
   susceptibility = susceptibility,
   p_susceptibility = p_susceptibility
@@ -318,7 +318,7 @@ The benchmarking shows that the total time taken for 1,000 runs using both metho
 benchmark <- mark(
   analytical_method = final_size(
     r0 = 1.5,
-    contact_matrix = contact_matrix,
+    contact_matrix = finalsize_contact_matrix,
     demography_vector = demography_vector,
     susceptibility = susceptibility,
     p_susceptibility = p_susceptibility

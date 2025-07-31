@@ -123,7 +123,7 @@ initial_conditions <- rbind(
   initial_conditions,
   initial_conditions
 )
-rownames(initial_conditions) <- rownames(contact_matrix)
+rownames(initial_conditions) <- colnames(contact_matrix)
 ```
 
 Prepare an object of the class `<population>`, using the function

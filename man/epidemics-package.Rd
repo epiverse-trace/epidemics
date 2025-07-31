@@ -27,6 +27,7 @@ Authors:
   \item Rosalind Eggo \email{rosalind.eggo@lshtm.ac.uk} (\href{https://orcid.org/0000-0002-0362-6717}{ORCID}) [copyright holder]
   \item Pratik Gupte \email{pratik.gupte@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5294-7819}{ORCID}) [copyright holder]
   \item Edwin Van Leeuwen \email{edwin.vanleeuwen@ukhsa.gov.uk} (\href{https://orcid.org/0000-0002-2383-5305}{ORCID}) [copyright holder]
+  \item Bankole Ahadzie \email{bankole.ahadzie@lshtm.ac.uk}
 }
 
 Other contributors:

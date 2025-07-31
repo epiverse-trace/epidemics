@@ -263,7 +263,7 @@ epidemic_size <- function(
 #'
 #' @param data A table of model output, typically
 #' the output of [model_default()] or similar functions.
-#' @param compartments_from_susceptible An optional argument, for a character
+#' @param exclude_compartments An optional argument, for a character
 #' vector of the names of model compartments into which individuals transition
 #' from the "susceptible" compartment, and which are not related to infection.
 #' A common example is a compartment for "vaccinated" individuals who are no
@@ -297,7 +297,7 @@ epidemic_size <- function(
 #' new_infections(data)
 #'
 new_infections <- function(data,
-                           compartments_from_susceptible = NULL,
+                           exclude_compartments = NULL,
                            by_group = TRUE) {
   # input checking for class and susceptible compartment
   # input checking for data - this allows data.tables as well
@@ -310,7 +310,7 @@ new_infections <- function(data,
     must.include = c("time", "demography_group", "compartment", "value")
   )
   checkmate::assert_character(
-    compartments_from_susceptible,
+    exclude_compartments,
     min.len = 1, null.ok = TRUE,
     any.missing = FALSE, unique = TRUE
   )
@@ -319,8 +319,8 @@ new_infections <- function(data,
     "Compartment 'susceptible' not found in data, check compartment names." =
       "susceptible" %in% unique(data$compartment),
     "Compartments from 'susceptible' not all found in data, check names." =
-      all(compartments_from_susceptible %in% unique(data$compartment)) ||
-        is.null(compartments_from_susceptible)
+      all(exclude_compartments %in% unique(data$compartment)) ||
+        is.null(exclude_compartments)
   )
 
   # set data to a data.table for internal operations
@@ -336,7 +336,7 @@ new_infections <- function(data,
   # calculate new infections as the change in susceptibles -
   # the change in susceptibles due to non-infection related transitions
   # such as vaccination
-  if (is.null(compartments_from_susceptible)) {
+  if (is.null(exclude_compartments)) {
     data[, new_infections := c(0, -diff(get("susceptible"))),
       by = "demography_group"
     ]
@@ -345,7 +345,7 @@ new_infections <- function(data,
       Reduce(`+`, lapply(.SD, function(x) {
         c(0, diff(x))
       })),
-    .SDcols = compartments_from_susceptible,
+    .SDcols = exclude_compartments,
     by = "demography_group"
     ]
   }

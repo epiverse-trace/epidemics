@@ -4,13 +4,13 @@
 \alias{new_infections}
 \title{Get new infections over model time}
 \usage{
-new_infections(data, compartments_from_susceptible = NULL, by_group = TRUE)
+new_infections(data, exclude_compartments = NULL, by_group = TRUE)
 }
 \arguments{
 \item{data}{A table of model output, typically
 the output of \code{\link[=model_default]{model_default()}} or similar functions.}
 
-\item{compartments_from_susceptible}{An optional argument, for a character
+\item{exclude_compartments}{An optional argument, for a character
 vector of the names of model compartments into which individuals transition
 from the "susceptible" compartment, and which are not related to infection.
 A common example is a compartment for "vaccinated" individuals who are no

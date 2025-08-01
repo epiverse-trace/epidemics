@@ -49,7 +49,7 @@
 #' @keywords internal
 #' @details
 #' `.check_prepare_args_diphtheria()` prepares arguments for
-#' model_diphtheria(), which uses an odin C function to solve the
+#' model_diphtheria(), which uses an _odin_ C function to solve the
 #' ODE system.
 .check_prepare_args_diphtheria <- function(mod_args) {
   # prepare and use the initial state only;

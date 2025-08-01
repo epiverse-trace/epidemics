@@ -62,7 +62,7 @@ This is a minor version release of _epidemics_ is the end point of this project 
 
 1. The Ebola model code has been split into a two-level structure similar to the ODE models. The user facing function `model_ebola()` now handles input checking and some cross-checking, and makes combinations of infection parameter sets and scenarios, and handles output. The internal model function `.model_ebola_internal()` is now called over combinations of parameters and scenario elements (#211).
 
-2. `.model_ebola_internal()` relies on functionality from the {withr} package to preserve the random number seed between parameter set-scenario combinations, and to ensure that each $i$-th replicate of each scenario starts with the same random number stream.
+2. `.model_ebola_internal()` relies on functionality from the _withr_ package to preserve the random number seed between parameter set-scenario combinations, and to ensure that each $i$-th replicate of each scenario starts with the same random number stream.
 
 ## Model structures
 
@@ -106,7 +106,7 @@ This is a minor version release of _epidemics_ is the end point of this project 
 
 ## Package
 
-1. {withr} moved from Suggests to Imports due to use in seed management.
+1. _withr_ moved from Suggests to Imports due to use in seed management.
 
 2. Added @bahadzie as contributor and @jamesmbaazam as reviewer.
 
@@ -137,7 +137,7 @@ This release focuses on the ODE models in _epidemics_.
 
 - ODE model functions can now be passed numeric vectors of infection parameters, and lists of intervention sets (a list of `<intervention>`s), and lists of `<vaccination>` to the `intervention` and `vaccination` argument respectively. This is the **main change in this minor version.** (#176)
 
-- ODE model functions take on {data.table} to make combinations of interventions and vaccinations (together called a 'scenario'), and infection parameter sets to run each scenario for each parameter set (#176).
+- ODE model functions take on _data.table_ to make combinations of interventions and vaccinations (together called a 'scenario'), and infection parameter sets to run each scenario for each parameter set (#176).
 
 - ODE model functions all return `<data.table>`s - these may be nested with the model arguments as identity columns if vectors of parameters or multiple scenarios are passed. A simple, unnested `<data.table>` is passed if the model function is called with scalar arguments (#176).
 
@@ -183,9 +183,9 @@ No substantial changes to classes; small additions of input checking to `<popula
 
 2. Filenames have been standardised to show which files are related, e.g. `R/model_default.R`, `src/model_default.cpp`, and `inst/include/model_default.h`; references to filenames such as in the package header have been updated.
 
-3. Removed {deSolve} from dependencies.
+3. Removed _deSolve_ from dependencies.
 
-4. Added {ggdist}, {withr}, {purr} and {tidyr} to Suggests; `CITATION.cff` updated to match.
+4. Added _ggdist_, _withr_, _purr_ and _tidyr_ to Suggests; `CITATION.cff` updated to match.
 
 5. Added basic infrastructure for continuous relative benchmarking (#206).
 
@@ -212,11 +212,11 @@ This release of _epidemics_ includes four model structures supporting a range of
 
 _epidemics_ uses Boost's _odeint_ <https://www.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/overview.html> to treat the deterministic models' ordinary differential equations (ODEs) as initial value problems and solve them.
 
-Model ODEs are defined as `structs` with operators in the package headers, and exposed to R as internal Rcpp functions. The 'default', 'Vacamole', and 'diphtheria' models are ODE models defined in this way. This is intended to help reduce overheads associated with passing ODE systems written in R back and forth from a solver (such as those provided by {deSolve}), and is an easier way to define feature-rich models than writing C code for solvers provided by {deSolve} that accept compiled code.
+Model ODEs are defined as `structs` with operators in the package headers, and exposed to R as internal Rcpp functions. The 'default', 'Vacamole', and 'diphtheria' models are ODE models defined in this way. This is intended to help reduce overheads associated with passing ODE systems written in R back and forth from a solver (such as those provided by _deSolve_), and is an easier way to define feature-rich models than writing C code for solvers provided by _deSolve_ that accept compiled code.
 
 _epidemics_ headers include tools for handling the C++ representations of R objects used in the package (see below), and can be imported by other Rcpp packages.
 
-The 'default' and 'Vacamole' models have equivalent R-only implementations as well which use the {deSolve} package; these are intended to be made unavailable in future releases.
+The 'default' and 'Vacamole' models have equivalent R-only implementations as well which use the _deSolve_ package; these are intended to be made unavailable in future releases.
 
 ## Composable elements as classes
 

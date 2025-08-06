@@ -82,7 +82,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_infections</span><span class="op">(</span><span class="va">data</span>, compartments_from_susceptible <span class="op">=</span> <span class="cn">NULL</span>, by_group <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">new_infections</span><span class="op">(</span><span class="va">data</span>, exclude_compartments <span class="op">=</span> <span class="cn">NULL</span>, by_group <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -94,7 +94,7 @@
 the output of <code><a href="model_default.html">model_default()</a></code> or similar functions.</p></dd>
 
 
-<dt id="arg-compartments-from-susceptible">compartments_from_susceptible<a class="anchor" aria-label="anchor" href="#arg-compartments-from-susceptible"></a></dt>
+<dt id="arg-exclude-compartments">exclude_compartments<a class="anchor" aria-label="anchor" href="#arg-exclude-compartments"></a></dt>
 <dd><p>An optional argument, for a character
 vector of the names of model compartments into which individuals transition
 from the "susceptible" compartment, and which are not related to infection.

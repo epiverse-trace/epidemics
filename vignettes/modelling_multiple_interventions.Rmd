@@ -105,7 +105,7 @@ data_baseline_infections <- new_infections(data_baseline, by_group = TRUE)
 
 We show one instance of the plotting code using the _ggplot2_ package here, with further instances hidden to keep the vignette short.
 
-```{r fig.cap="A model of an infectious disease epidemic, assuming a directly transmitted infection such as influenza, with an $R_0$ of 1.3, an infectious period of 5 days, and a pre-infectious period of 1.5 days."}
+```{r fig.cap="A model of an infectious disease epidemic, assuming a directly transmitted infection such as influenza, with an $R_0$ of 1.3, an infectious period of 7 days, and a pre-infectious period of 2 days."}
 # visualise the spread of the epidemic in terms of new infections
 # plot figure of epidemic curve
 plot_baseline <- ggplot() +

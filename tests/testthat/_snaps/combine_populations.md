@@ -19,7 +19,6 @@
       Population 2_demo_group_2: 19,288,101 (20%)
       Population 2_demo_group_3: 9,673,058 (10%)
       
-       Contact matrix 
                                 Population 1_demo_group_1 Population 1_demo_group_2
       Population 1_demo_group_1                 9.6963190                 2.9509586
       Population 1_demo_group_2                 4.7926192                 4.1782178

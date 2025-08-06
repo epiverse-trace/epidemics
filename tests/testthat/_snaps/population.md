@@ -34,12 +34,12 @@
     Code
       uk_population
     Message
-      <population>object
+      <population> object
     Output
       
-      Populationname:
+       Population name: 
     Message
-      "UKpopulation"
+      "UK population"
     Output
       
       Demography
@@ -55,9 +55,9 @@
       Dem.grp.2:2.95709044.1782182.478450
       Dem.grp.3:0.68637981.2285321.714286
       
-      InitialConditions
-      [,1][,2][,3][,4][,5]
-      [1,]0.99995e-055e-0500
-      [2,]0.99995e-055e-0500
-      [3,]0.99995e-055e-0500
+       Initial Conditions 
+             [,1]  [,2]  [,3] [,4] [,5]
+      [1,] 0.9999 5e-05 5e-05    0    0
+      [2,] 0.9999 5e-05 5e-05    0    0
+      [3,] 0.9999 5e-05 5e-05    0    0
 

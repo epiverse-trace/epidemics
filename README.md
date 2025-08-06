@@ -99,11 +99,11 @@ contact_data <- socialmixr::contact_matrix(
 )
 
 # prepare contact matrix
-contact_matrix <- t(contact_data[["matrix"]])
+contact_matrix <- contact_data[["matrix"]]
 
 # prepare the demography vector
 demography_vector <- contact_data[["demography"]][["population"]]
-names(demography_vector) <- rownames(contact_matrix)
+names(demography_vector) <- colnames(contact_matrix)
 ```
 
 Prepare the initial conditions for the population by age group — here,
@@ -123,7 +123,7 @@ initial_conditions <- rbind(
   initial_conditions,
   initial_conditions
 )
-rownames(initial_conditions) <- rownames(contact_matrix)
+rownames(initial_conditions) <- colnames(contact_matrix)
 ```
 
 Prepare an object of the class `<population>`, using the function
@@ -158,7 +158,8 @@ close_schools <- intervention(
 # view the intervention
 close_schools
 #> 
-#>  Intervention name: 
+#>  Intervention name:
+#> 
 #>  Begins at: 
 #> [1] 200
 #> 

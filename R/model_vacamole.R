@@ -366,6 +366,7 @@ model_vacamole <- function(population, # nolint: cyclocomp_linter.
         types = c("vaccination", "null"), null.ok = TRUE
       )
   )
+  population[["contact_matrix"]] <- t(population[["contact_matrix"]])
 
   # make lists if not lists
   population <- list(population)

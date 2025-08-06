@@ -7,7 +7,7 @@ contact_data <- socialmixr::contact_matrix(
   age.limits = c(0, 40, 65),
   symmetric = TRUE
 )
-contact_matrix <- t(contact_data$matrix)
+contact_matrix <- contact_data[["matrix"]]
 demography_vector <- contact_data$demography$population
 
 # Prepare some initial objects
@@ -105,7 +105,5 @@ test_that("Printing population class with no row or column labels", {
   names(uk_population$demography_vector) <- NULL
   rownames(uk_population$contact_matrix) <- NULL
   skip_on_ci()
-  expect_snapshot(uk_population,
-    transform = function(lines) gsub("\\s", "", lines)
-  ) # format changes in CI
+  expect_snapshot(uk_population)
 })

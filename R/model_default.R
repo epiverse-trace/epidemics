@@ -203,14 +203,14 @@
 #' @importFrom odin odin
 #' @export
 model_default <- function(population,
-                          transmission_rate = 1.3 / 7.0,
-                          infectiousness_rate = 1.0 / 2.0,
-                          recovery_rate = 1.0 / 7.0,
-                          intervention = NULL,
-                          vaccination = NULL,
-                          time_dependence = NULL,
-                          time_end = 100,
-                          increment = 1) {
+                                    transmission_rate = 1.3 / 7.0,
+                                    infectiousness_rate = 1.0 / 2.0,
+                                    recovery_rate = 1.0 / 7.0,
+                                    intervention = NULL,
+                                    vaccination = NULL,
+                                    time_dependence = NULL,
+                                    time_end = 100,
+                                    increment = 1) {
   # get compartment names
   compartments <- c(
     "susceptible", "exposed", "infectious", "recovered", "vaccinated"
@@ -272,7 +272,7 @@ model_default <- function(population,
         types = c("vaccination", "null"), null.ok = TRUE
       )
   )
-
+  population[["contact_matrix"]] <- t(population[["contact_matrix"]])
   # make lists if not lists
   population <- list(population) # NOTE: currently not list, but see issue #181
   if (is_lofints) {

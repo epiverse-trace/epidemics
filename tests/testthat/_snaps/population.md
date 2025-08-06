@@ -16,6 +16,7 @@
       Dem. grp. 2: 19,288,101 (30%)
       Dem. grp. 3: 9,673,058 (20%)
       
+       Contact matrix 
                     contact.age.group
                        [0,40)  [40,65)       65+
         Dem. grp. 1: 9.696319 2.950959 0.6904172

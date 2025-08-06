@@ -105,7 +105,5 @@ test_that("Printing population class with no row or column labels", {
   names(uk_population$demography_vector) <- NULL
   rownames(uk_population$contact_matrix) <- NULL
   skip_on_ci()
-  expect_snapshot(uk_population,
-    transform = function(lines) gsub("\\s", "", lines)
-  ) # format changes in CI
+  expect_snapshot(uk_population)
 })

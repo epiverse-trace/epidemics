@@ -34,29 +34,29 @@
     Code
       uk_population
     Message
-      <population>object
+      <population> object
     Output
       
-      Populationname:
+       Population name: 
     Message
-      "UKpopulation"
+      "UK population"
     Output
       
-      Demography
-      Dem.grp.1:31,325,592(50%)
-      Dem.grp.2:19,288,101(30%)
-      Dem.grp.3:9,673,058(20%)
+       Demography 
+      Dem. grp. 1: 31,325,592 (50%)
+      Dem. grp. 2: 19,288,101 (30%)
+      Dem. grp. 3: 9,673,058 (20%)
       
-      Contactmatrix
-      contact.age.group
-      [0,40)[40,65)65+
-      Dem.grp.1:9.6963192.9509590.6904172
-      Dem.grp.2:4.7926194.1782181.2380907
-      Dem.grp.3:2.2358732.4687561.7142857
+       Contact matrix 
+                    contact.age.group
+                       [0,40)  [40,65)       65+
+        Dem. grp. 1: 9.696319 2.950959 0.6904172
+        Dem. grp. 2: 4.792619 4.178218 1.2380907
+        Dem. grp. 3: 2.235873 2.468756 1.7142857
       
-      InitialConditions
-      [,1][,2][,3][,4][,5]
-      [1,]0.99995e-055e-0500
-      [2,]0.99995e-055e-0500
-      [3,]0.99995e-055e-0500
+       Initial Conditions 
+             [,1]  [,2]  [,3] [,4] [,5]
+      [1,] 0.9999 5e-05 5e-05    0    0
+      [2,] 0.9999 5e-05 5e-05    0    0
+      [3,] 0.9999 5e-05 5e-05    0    0
 

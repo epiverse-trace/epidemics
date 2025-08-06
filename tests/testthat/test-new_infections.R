@@ -38,9 +38,9 @@ data <- model_default(
 test_that("New infections: basic expectations and statistical correctness", {
   # expect run with no conditions
   expect_no_condition(
-    new_infections(data, compartments_from_susceptible = "vaccinated")
+    new_infections(data, exclude_compartments = "vaccinated")
   )
-  data_ <- new_infections(data, compartments_from_susceptible = "vaccinated")
+  data_ <- new_infections(data, exclude_compartments = "vaccinated")
 
   # expect correct number of rows for two demography groups
   expect_identical(

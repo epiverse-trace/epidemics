@@ -290,7 +290,7 @@ data_vax <- model_default(
 # collect data and add scenario
 data_vax_infections <- new_infections(
   data_vax,
-  compartments_from_susceptible = c("exposed", "vaccinated")
+  exclude_compartments = c("exposed", "vaccinated")
 )
 data_vax_infections$scenario <- "vaccination"
 

@@ -340,6 +340,7 @@ model_default <- function(population,
 
     C <- args$contact_matrix
     n_age <- nrow(C)
+    n_demography_prefix <- nchar(as.character(n_age))
 
     contact_intervention_start <- as.numeric(args$npi_time_begin)
     contact_intervention_end <- as.numeric(args$npi_time_end)
@@ -418,7 +419,7 @@ model_default <- function(population,
       compartment <- demography_group <- `:=` <- time <- NULL
 
     age_group_mappings <- paste0( # properly label demography groups
-      seq_len(n_age),
+      formatC(seq_len(n_age), width = n_demography_prefix, flag = "0"),
       c(
         rownames(C),
         names(population[[1]]$demography_vector),
@@ -461,7 +462,7 @@ model_default <- function(population,
       ,
       `:=`( # used as the prefix form to update multiple columns
         # remove prepended numbers from `mapping`
-        demography_group = substring(demography_group, 2L), # e.g. [0,20), ...
+        demography_group = substring(demography_group, n_demography_prefix + 1L), # e.g. [0,20), ...
         compartment = substring(compartment, 2L) # e.g. susceptible, exposed,
       )
     ][ # |> the DT way

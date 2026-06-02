@@ -1,35 +1,35 @@
 
-# {{ packagename }}: Composable epidemic scenario modelling <img src="man/figures/logo.svg" align="right" width="130"/>
+# epidemics: Composable epidemic scenario modelling <img src="man/figures/logo.svg" align="right" width="130"/>
 
 <!-- badges: start -->
 
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit/)
-[![R-CMD-check](https://github.com/%7B%7B%20gh_repo%20%7D%7D/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/%7B%7B%20gh_repo%20%7D%7D/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/%7B%7B%20gh_repo%20%7D%7D/branch/main/graph/badge.svg)](https://app.codecov.io/gh/%7B%7B%20gh_repo%20%7D%7D?branch=main)
+coverage](https://codecov.io/gh/epiverse-trace/epidemics/branch/main/graph/badge.svg)](https://app.codecov.io/gh/epiverse-trace/epidemics?branch=main)
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![CRAN
-status](https://www.r-pkg.org/badges/version/%7B%7B%20packagename%20%7D%7D)](https://CRAN.R-project.org/package=%7B%7B%20packagename%20%7D%7D)
+status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.org/package=epidemics)
 <!-- badges: end -->
 
-*{{ packagename }}* is an R package that provides modular
-representations of populations and public health response measures,
-allowing them to be combined with epidemiological model structures
-curated from the published literature, to conveniently compose and
-compare epidemic scenario models.
+*epidemics* is an R package that provides modular representations of
+populations and public health response measures, allowing them to be
+combined with epidemiological model structures curated from the
+published literature, to conveniently compose and compare epidemic
+scenario models.
 
-The models in *{{ packagename }}* focus on directly transmitted
-infections, and implement methods outlined in Bjørnstad et al.
+The models in *epidemics* focus on directly transmitted infections, and
+implement methods outlined in Bjørnstad et al.
 ([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
-([2020b](#ref-bjornstad2020)). The models in *{{ packagename }}* can
-help provide rough estimates of the course of epidemics, and the
+([2020b](#ref-bjornstad2020)). The models in *epidemics* can help
+provide rough estimates of the course of epidemics, and the
 effectiveness of pharmaceutical and non-pharmaceutical interventions.
 
-*{{ packagename }}* relies on [Eigen](https://gitlab.com/libeigen/eigen)
-via [{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on
+*epidemics* relies on [Eigen](https://gitlab.com/libeigen/eigen) via
+[{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on
 [Boost
 Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html)
 via [{BH}](https://cran.r-project.org/package=BH), and is developed at
@@ -40,12 +40,12 @@ at the London School of Hygiene and Tropical Medicine as part of the
 
 ## Installation
 
-The current development version of *{{ packagename }}* can be installed
-from [GitHub](https://github.com/) using the *pak* package.
+The current development version of *epidemics* can be installed from
+[GitHub](https://github.com/) using the *pak* package.
 
 ``` r
 if(!require("pak")) install.packages("pak")
-pak::pkg_install("{{ gh_repo }}")
+pak::pkg_install("epiverse-trace/epidemics")
 ```
 
 Alternatively, install pre-compiled binaries from [the Epiverse TRACE
@@ -72,9 +72,9 @@ install.packages("epidemics", repos = c("https://epiverse-trace.r-universe.dev",
 
 ## Quick start
 
-Here we show an example of using the default model in *{{ packagename
-}}* to model an epidemic in the U.K. population with an $R_0$ similar to
-that of pandemic influenza, with heterogeneity in social contacts among
+Here we show an example of using the default model in *epidemics* to
+model an epidemic in the U.K. population with an $R_0$ similar to that
+of pandemic influenza, with heterogeneity in social contacts among
 different age groups, and with the implementation of school closures to
 dampen the spread of the infection.
 
@@ -202,14 +202,14 @@ individuals.
 
 ## Package vignettes
 
-More details on how to use *{{ packagename }}* can be found in the
-[online documentation as package
-vignettes](https://epiverse-trace.github.io/%7B%7B%20packagename%20%7D%7D/),
-under “Articles”.
+More details on how to use *epidemics* can be found in the [online
+documentation as package
+vignettes](https://epiverse-trace.github.io/epidemics/), under
+“Articles”.
 
 ## Package models
 
-*{{ packagename }}* provides a convenient interface to a library of
+*epidemics* provides a convenient interface to a library of
 compartmental models that can help to model epidemic scenarios for
 directly transmitted respiratory infections such as influenza or
 Covid-19 as well haemorrhagic fevers such as Ebola virus disease:
@@ -239,10 +239,9 @@ Covid-19 as well haemorrhagic fevers such as Ebola virus disease:
     ([2019](#ref-finger2019)).
 
 More models are planned to be added in the near future. Please get in
-touch if you would like to see your model added to the *{{ packagename
-}}* model library — we are happy to help with translating it into our
-framework, with a special focus on making the model applicable to LMIC
-settings.
+touch if you would like to see your model added to the *epidemics* model
+library — we are happy to help with translating it into our framework,
+with a special focus on making the model applicable to LMIC settings.
 
 ## Related projects
 
@@ -271,33 +270,30 @@ and the following projects may be useful for building your own models:
 ## Help
 
 To report a bug please open an
-[issue](https://github.com/%7B%7B%20gh_repo%20%7D%7D/issues/new/choose).
+[issue](https://github.com/epiverse-trace/epidemics/issues/new/choose).
 
 ## Contribute
 
-Contributions to *{{ packagename }}* are welcomed via [pull
-requests](https://github.com/%7B%7B%20gh_repo%20%7D%7D/pulls).
+Contributions to *epidemics* are welcomed via [pull
+requests](https://github.com/epiverse-trace/epidemics/pulls).
 
 ## Code of conduct
 
-Please note that the *{{ packagename }}* project is released with a
-[Contributor Code of
+Please note that the *epidemics* project is released with a [Contributor
+Code of
 Conduct](https://github.com/epiverse-trace/.github/blob/main/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.
 
 ## References
 
-<div id="refs" class="references csl-bib-body hanging-indent"
-entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-ainslie2022" class="csl-entry">
 
-Ainslie, Kylie E. C., Jantien A. Backer, Pieter T. de Boer, Albert Jan
-van Hoek, Don Klinkenberg, Hester Korthals Altes, Ka Yin Leung, Hester
-de Melker, Fuminari Miura, and Jacco Wallinga. 2022. “A Scenario
-Modelling Analysis to Anticipate the Impact of COVID-19 Vaccination in
-Adolescents and Children on Disease Outcomes in the Netherlands, Summer
-2021.” *Eurosurveillance* 27 (44): 2101090.
+Ainslie, Kylie E. C., Jantien A. Backer, Pieter T. de Boer, et al. 2022.
+“A Scenario Modelling Analysis to Anticipate the Impact of COVID-19
+Vaccination in Adolescents and Children on Disease Outcomes in the
+Netherlands, Summer 2021.” *Eurosurveillance* 27 (44): 2101090.
 <https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090>.
 
 </div>
@@ -305,15 +301,16 @@ Adolescents and Children on Disease Outcomes in the Netherlands, Summer
 <div id="ref-bjornstad2020a" class="csl-entry">
 
 Bjørnstad, Ottar N., Katriona Shea, Martin Krzywinski, and Naomi Altman.
-2020a. “Modeling Infectious Epidemics.” *Nature Methods* 17 (5): 455–56.
+2020a. “Modeling Infectious Epidemics.” *Nature Methods* 17 (5): 5.
 <https://doi.org/10.1038/s41592-020-0822-z>.
 
 </div>
 
 <div id="ref-bjornstad2020" class="csl-entry">
 
-———. 2020b. “The SEIRS Model for Infectious Disease Dynamics.” *Nature
-Methods* 17 (6): 557–58. <https://doi.org/10.1038/s41592-020-0856-2>.
+Bjørnstad, Ottar N., Katriona Shea, Martin Krzywinski, and Naomi Altman.
+2020b. “The SEIRS Model for Infectious Disease Dynamics.” *Nature
+Methods* 17 (6): 6. <https://doi.org/10.1038/s41592-020-0856-2>.
 
 </div>
 
@@ -337,12 +334,11 @@ Analogs of Erlang Epidemic Models.” *Journal of Biological Dynamics* 12
 
 <div id="ref-li2019" class="csl-entry">
 
-Li, Shou-Li, Matthew J. Ferrari, Ottar N. Bjørnstad, Michael C. Runge,
-Christopher J. Fonnesbeck, Michael J. Tildesley, David Pannell, and
-Katriona Shea. 2019. “Concurrent Assessment of Epidemiological and
-Operational Uncertainties for Optimal Outbreak Control: Ebola as a Case
-Study.” *Proceedings of the Royal Society B: Biological Sciences* 286
-(1905): 20190774. <https://doi.org/10.1098/rspb.2019.0774>.
+Li, Shou-Li, Matthew J. Ferrari, Ottar N. Bjørnstad, et al. 2019.
+“Concurrent Assessment of Epidemiological and Operational Uncertainties
+for Optimal Outbreak Control: Ebola as a Case Study.” *Proceedings of
+the Royal Society B: Biological Sciences* 286 (1905): 20190774.
+<https://doi.org/10.1098/rspb.2019.0774>.
 
 </div>
 

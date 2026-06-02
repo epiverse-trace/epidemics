@@ -464,7 +464,9 @@ model_default <- function(population,
       `:=`( # used as the prefix form to update multiple columns
         # remove prepended numbers from `mapping`
         # e.g. [0,20), ...
-        demography_group = substring(demography_group, n_demography_prefix + 1L),
+        demography_group = substring(
+          demography_group, n_demography_prefix + 1L
+        ),
         compartment = substring(compartment, 2L) # e.g. susceptible, exposed,
       )
     ][ # |> the DT way

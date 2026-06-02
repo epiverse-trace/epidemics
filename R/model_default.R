@@ -444,7 +444,7 @@ model_default <- function(population,
       , list(
         time = t, # alternative to using data.table::setnames(dt, "t", "time")
         temp_compartment = substring(temp, 1L, 1L), # e.g. S[1] -> S
-        temp_demography = substring(temp, 3L, 3L), # e.g. S[1] -> 1
+        temp_demography = substring(temp, 3L, nchar(as.character(temp)) - 1L), # e.g. S[10] -> 10
         value
       )
     ][ # |> the DT way (piping the data.table way)

@@ -6,6 +6,8 @@
 \alias{epidemics-package}
 \title{epidemics: Composable Epidemic Scenario Modelling}
 \description{
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
 A library of compartmental epidemic models taken from the published literature, and classes to represent affected populations, public health response measures including non-pharmaceutical interventions on social contacts, non-pharmaceutical and pharmaceutical interventions that affect disease transmissibility, vaccination regimes, and disease seasonality, which can be combined to compose epidemic scenario models.
 }
 \seealso{
@@ -22,6 +24,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Rosalind Eggo \email{rosalind.eggo@lshtm.ac.uk} (\href{https://orcid.org/0000-0002-0362-6717}{ORCID}) [copyright holder]
   \item Pratik Gupte \email{pratik.gupte@lshtm.ac.uk} (\href{https://orcid.org/0000-0001-5294-7819}{ORCID}) [copyright holder]
   \item Edwin Van Leeuwen \email{edwin.vanleeuwen@ukhsa.gov.uk} (\href{https://orcid.org/0000-0002-2383-5305}{ORCID}) [copyright holder]
 }

@@ -1,35 +1,35 @@
 
-# epidemics: Composable epidemic scenario modelling <img src="man/figures/logo.svg" align="right" width="130"/>
+# {{ packagename }}: Composable epidemic scenario modelling <img src="man/figures/logo.svg" align="right" width="130"/>
 
 <!-- badges: start -->
 
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit/)
-[![R-CMD-check](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/epiverse-trace/epidemics/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/%7B%7B%20gh_repo%20%7D%7D/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/%7B%7B%20gh_repo%20%7D%7D/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/epiverse-trace/epidemics/branch/main/graph/badge.svg)](https://app.codecov.io/gh/epiverse-trace/epidemics?branch=main)
+coverage](https://codecov.io/gh/%7B%7B%20gh_repo%20%7D%7D/branch/main/graph/badge.svg)](https://app.codecov.io/gh/%7B%7B%20gh_repo%20%7D%7D?branch=main)
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![CRAN
-status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.org/package=epidemics)
+status](https://www.r-pkg.org/badges/version/%7B%7B%20packagename%20%7D%7D)](https://CRAN.R-project.org/package=%7B%7B%20packagename%20%7D%7D)
 <!-- badges: end -->
 
-*epidemics* is an R package that provides modular representations of
-populations and public health response measures, allowing them to be
-combined with epidemiological model structures curated from the
-published literature, to conveniently compose and compare epidemic
-scenario models.
+*{{ packagename }}* is an R package that provides modular
+representations of populations and public health response measures,
+allowing them to be combined with epidemiological model structures
+curated from the published literature, to conveniently compose and
+compare epidemic scenario models.
 
-The models in *epidemics* focus on directly transmitted infections, and
-implement methods outlined in Bjørnstad et al.
+The models in *{{ packagename }}* focus on directly transmitted
+infections, and implement methods outlined in Bjørnstad et al.
 ([2020a](#ref-bjornstad2020a)) and Bjørnstad et al.
-([2020b](#ref-bjornstad2020)). The models in *epidemics* can help
-provide rough estimates of the course of epidemics, and the
+([2020b](#ref-bjornstad2020)). The models in *{{ packagename }}* can
+help provide rough estimates of the course of epidemics, and the
 effectiveness of pharmaceutical and non-pharmaceutical interventions.
 
-*epidemics* relies on [Eigen](https://gitlab.com/libeigen/eigen) via
-[{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on
+*{{ packagename }}* relies on [Eigen](https://gitlab.com/libeigen/eigen)
+via [{RcppEigen}](https://cran.r-project.org/package=RcppEigen), and on
 [Boost
 Odeint](https://www.boost.org/doc/libs/1_82_0/libs/numeric/odeint/doc/html/index.html)
 via [{BH}](https://cran.r-project.org/package=BH), and is developed at
@@ -40,12 +40,12 @@ at the London School of Hygiene and Tropical Medicine as part of the
 
 ## Installation
 
-The current development version of *epidemics* can be installed from
-[GitHub](https://github.com/) using the *pak* package.
+The current development version of *{{ packagename }}* can be installed
+from [GitHub](https://github.com/) using the *pak* package.
 
 ``` r
 if(!require("pak")) install.packages("pak")
-pak::pkg_install("epiverse-trace/epidemics")
+pak::pkg_install("{{ gh_repo }}")
 ```
 
 Alternatively, install pre-compiled binaries from [the Epiverse TRACE
@@ -72,9 +72,9 @@ install.packages("epidemics", repos = c("https://epiverse-trace.r-universe.dev",
 
 ## Quick start
 
-Here we show an example of using the default model in *epidemics* to
-model an epidemic in the U.K. population with an $R_0$ similar to that
-of pandemic influenza, with heterogeneity in social contacts among
+Here we show an example of using the default model in *{{ packagename
+}}* to model an epidemic in the U.K. population with an $R_0$ similar to
+that of pandemic influenza, with heterogeneity in social contacts among
 different age groups, and with the implementation of school closures to
 dampen the spread of the infection.
 
@@ -94,8 +94,9 @@ polymod <- socialmixr::polymod
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
-  age.limits = c(0, 20, 40),
-  symmetric = TRUE
+  age_limits = c(0, 20, 40),
+  symmetric = TRUE,
+  return_demography = TRUE
 )
 
 # prepare contact matrix
@@ -158,7 +159,8 @@ close_schools <- intervention(
 # view the intervention
 close_schools
 #> 
-#>  Intervention name: 
+#>  Intervention name:
+#> 
 #>  Begins at: 
 #> [1] 200
 #> 
@@ -196,18 +198,18 @@ over model time. Note that these curves represent the number of
 individuals that are infectious, and not the number of newly infectious
 individuals.
 
-<img src="man/figures/README-fig-modelout-1.png" width="100%" />
+<img src="man/figures/README-fig-modelout-1.png" alt="" width="100%" />
 
 ## Package vignettes
 
-More details on how to use *epidemics* can be found in the [online
-documentation as package
-vignettes](https://epiverse-trace.github.io/epidemics/), under
-“Articles”.
+More details on how to use *{{ packagename }}* can be found in the
+[online documentation as package
+vignettes](https://epiverse-trace.github.io/%7B%7B%20packagename%20%7D%7D/),
+under “Articles”.
 
 ## Package models
 
-*epidemics* provides a convenient interface to a library of
+*{{ packagename }}* provides a convenient interface to a library of
 compartmental models that can help to model epidemic scenarios for
 directly transmitted respiratory infections such as influenza or
 Covid-19 as well haemorrhagic fevers such as Ebola virus disease:
@@ -237,9 +239,10 @@ Covid-19 as well haemorrhagic fevers such as Ebola virus disease:
     ([2019](#ref-finger2019)).
 
 More models are planned to be added in the near future. Please get in
-touch if you would like to see your model added to the *epidemics* model
-library — we are happy to help with translating it into our framework,
-with a special focus on making the model applicable to LMIC settings.
+touch if you would like to see your model added to the *{{ packagename
+}}* model library — we are happy to help with translating it into our
+framework, with a special focus on making the model applicable to LMIC
+settings.
 
 ## Related projects
 
@@ -268,17 +271,17 @@ and the following projects may be useful for building your own models:
 ## Help
 
 To report a bug please open an
-[issue](https://github.com/epiverse-trace/epidemics/issues/new/choose).
+[issue](https://github.com/%7B%7B%20gh_repo%20%7D%7D/issues/new/choose).
 
 ## Contribute
 
-Contributions to *epidemics* are welcomed via [pull
-requests](https://github.com/epiverse-trace/epidemics/pulls).
+Contributions to *{{ packagename }}* are welcomed via [pull
+requests](https://github.com/%7B%7B%20gh_repo%20%7D%7D/pulls).
 
 ## Code of conduct
 
-Please note that the *epidemics* project is released with a [Contributor
-Code of
+Please note that the *{{ packagename }}* project is released with a
+[Contributor Code of
 Conduct](https://github.com/epiverse-trace/.github/blob/main/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.
 

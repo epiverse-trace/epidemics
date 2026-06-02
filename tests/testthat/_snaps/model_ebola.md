@@ -26,4 +26,5 @@
       19:     3         full_pop  susceptible 66989         1
       20:     3         full_pop      exposed     8         1
            time demography_group  compartment value replicate
+          <int>           <char>       <char> <num>     <int>
 

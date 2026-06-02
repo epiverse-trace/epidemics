@@ -28,4 +28,5 @@
       23:    55           [0,60) vaccinated_two_dose 1.187179e+05
       24:    55              60+ vaccinated_two_dose 3.199875e+04
            time demography_group         compartment        value
+          <num>           <char>              <char>        <num>
 

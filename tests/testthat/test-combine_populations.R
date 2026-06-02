@@ -5,7 +5,8 @@ contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
   age_limits = c(0, 40, 65),
-  symmetric = TRUE
+  symmetric = TRUE,
+  return_demography = TRUE
 )
 contact_matrix <- t(contact_data$matrix)
 demography_vector <- contact_data$demography$population

@@ -628,3 +628,66 @@ test_that("Default model: errors on vectorised input", {
     regexp = "May only contain the following types: \\{function\\}"
   )
 })
+
+test_that("Default model: demography groups with index >= 10 are labelled correctly", {
+  # Regression for https://github.com/epiverse-trace/epidemics/issues/278
+  # n=4 populations x 3 age groups = 12 demographic groups; before the fix,
+  # substring(temp, 3L, 3L) truncated indices 10-12 to "1", silently merging
+  # their rows with group 1.
+  contact_data_3ag <- socialmixr::contact_matrix(
+    polymod,
+    countries = "United Kingdom",
+    age.limits = c(0, 20, 40),
+    symmetric = TRUE
+  )
+  cm <- t(contact_data_3ag$matrix)
+  dv <- contact_data_3ag$demography$population
+  names(dv) <- rownames(cm)
+
+  n <- 4L
+  n_age <- nrow(cm) # 3
+
+  pops <- vector("list", n)
+  for (i in seq_len(n - 1L)) {
+    pops[[i]] <- population(
+      contact_matrix = cm,
+      demography_vector = dv / 100,
+      initial_conditions = rbind(
+        c(S = 1, E = 0, I = 0, R = 0, V = 0),
+        c(S = 1, E = 0, I = 0, R = 0, V = 0),
+        c(S = 1, E = 0, I = 0, R = 0, V = 0)
+      ),
+      name = paste0("Region ", i)
+    )
+  }
+  pops[[n]] <- population(
+    contact_matrix = cm,
+    demography_vector = dv / 100,
+    initial_conditions = rbind(
+      c(S = 1 - 1e-6, E = 0, I = 1e-6, R = 0, V = 0),
+      c(S = 1 - 1e-6, E = 0, I = 1e-6, R = 0, V = 0),
+      c(S = 1 - 1e-6, E = 0, I = 1e-6, R = 0, V = 0)
+    ),
+    name = paste0("Region ", n)
+  )
+
+  dist_mat <- matrix(
+    150 * abs(rep(seq_len(n), n) - rep(seq_len(n), each = n)),
+    nrow = n
+  )
+
+  combined <- combine_populations(
+    populations = pops,
+    connectivity_matrix = dist_mat,
+    method = "gravity",
+    name = "combine_gravity_n"
+  )
+
+  output <- model_default(population = combined, time_end = 100L, increment = 1.0)
+
+  # expect all 12 unique demography groups (4 regions x 3 age groups)
+  expect_identical(dplyr::n_distinct(output$demography_group), n * n_age)
+
+  # no NA in demography_group — would appear if any index failed to map
+  expect_false(anyNA(output$demography_group))
+})

@@ -56,8 +56,9 @@ polymod <- socialmixr::polymod
 contact_data1 <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
-  age.limits = c(0, 20, 40),
-  symmetric = TRUE
+  age_limits = c(0, 20, 40),
+  symmetric = TRUE,
+  return_demography = TRUE
 )
 
 # prepare contact matrix
@@ -107,8 +108,9 @@ Then, we define the contact data, demography, and initial conditions for the sec
 contact_data2 <- socialmixr::contact_matrix(
   polymod,
   countries = "Germany",
-  age.limits = c(0, 20, 40),
-  symmetric = TRUE
+  age_limits = c(0, 20, 40),
+  symmetric = TRUE,
+  return_demography = TRUE
 )
 contact_matrix2 <- t(contact_data2$matrix)
 demography_vector2 <- contact_data2$demography$population

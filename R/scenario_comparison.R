@@ -49,8 +49,9 @@
 #' contact_data <- socialmixr::contact_matrix(
 #'   polymod,
 #'   countries = "United Kingdom",
-#'   age.limits = c(0, 20, 40),
-#'   symmetric = TRUE
+#'   age_limits = c(0, 20, 40),
+#'   symmetric = TRUE,
+#'   return_demography = TRUE
 #' )
 #'
 #' # prepare contact matrix

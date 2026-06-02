@@ -46,7 +46,6 @@ library(finalsize)
 library(dplyr)
 library(tibble)
 library(tidyr)
-library(socialmixr)
 library(bench)
 ```
 
@@ -90,12 +89,13 @@ Code to prepare model inputs is folded below for brevity. See the ["Get started"
 
 ```{r class.source = 'fold-hide'}
 # load contact and population data from socialmixr::polymod
-polymod <- polymod
-contact_data <- contact_matrix(
+polymod <- socialmixr::polymod
+contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
-  age.limits = c(0, 20, 40),
-  symmetric = TRUE
+  age_limits = c(0, 20, 40),
+  symmetric = TRUE,
+  return_demography = TRUE
 )
 
 # prepare contact matrix

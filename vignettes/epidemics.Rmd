@@ -127,7 +127,7 @@ Plot epidemic over time, showing only the number of individuals in the exposed a
 
 ```{r class.source = 'fold-hide'}
 # plot figure of epidemic curve
-filter(output, compartment %in% c("exposed", "infectious")) %>%
+filter(output, compartment %in% c("exposed", "infectious")) |>
   ggplot(
     aes(
       x = time,

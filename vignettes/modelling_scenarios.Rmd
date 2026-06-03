@@ -259,7 +259,7 @@ epidemic_size_estimates <- mutate(
   size = scales::comma(
     map_dbl(data, epidemic_size, by_group = FALSE, include_deaths = FALSE)
   )
-) %>%
+) |>
   select(scenario, size)
 
 # view the final epidemic sizes
@@ -419,7 +419,7 @@ epidemic_size_estimates <- mutate(
   ),
   r_value = rep(r_values, each = length(intervention_scenarios)),
   scenario = rep(factor(labels, labels), 2)
-) %>%
+) |>
   select(r_value, scenario, size)
 ```
 
@@ -459,8 +459,8 @@ daily_incidence <- mutate(
   r_value = rep(r_values, each = length(intervention_scenarios)),
   scenario = rep(factor(labels, labels), 2),
   incidence_data = map(data, new_infections, by_group = FALSE)
-) %>%
-  select(scenario, r_value, incidence_data) %>%
+) |>
+  select(scenario, r_value, incidence_data) |>
   unnest(incidence_data)
 ```
 

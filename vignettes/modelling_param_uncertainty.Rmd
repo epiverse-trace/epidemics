@@ -198,18 +198,18 @@ We unnest the output's "data" column in order to plot incidence curves for each 
 # select the parameter set and data columns with dplyr::select()
 # add the R value for visualisation
 # calculate new infections, and use tidyr to unnest the data column
-data <- select(output, param_set, transmission_rate, data) %>%
+data <- select(output, param_set, transmission_rate, data) |>
   mutate(
     r_value = r_samples,
     new_infections = map(data, new_infections)
-  ) %>%
-  select(-data) %>%
+  ) |>
+  select(-data) |>
   unnest(new_infections)
 ```
 
 ```{r class.source = 'fold-hide', fig.cap="Incidence curves for the number of new infections on each day of the epidemic given uncertainty in the R estimate; colours indicate $R$ bins. Larger $R$ values lead to shorter epidemics with higher peaks, while lower R values lead to more spread out epidemics with lower peaks. Epidemics with $R$ < 1.0 do not 'take off' and are not clearly visible. Linking incidence curves to their $R$ values in a plot allows a quick visual assessment of the potential outcomes of an epidemic whose $R$ is uncertain."}
 # plot the data
-filter(data) %>%
+filter(data) |>
   ggplot() +
   geom_line(
     aes(time, new_infections, col = r_value, group = param_set),
@@ -297,7 +297,7 @@ head(output)
 
 ```{r message=FALSE, warning=FALSE}
 # calculate the epidemic size to view the mean and SD of sizes
-epidemic_size_estimates <- select(output, param_set, data) %>%
+epidemic_size_estimates <- select(output, param_set, data) |>
   mutate(
     size = map(data, function(x) {
       tibble(
@@ -305,9 +305,9 @@ epidemic_size_estimates <- select(output, param_set, data) %>%
         size = epidemic_size(x)
       )
     })
-  ) %>%
-  select(size) %>%
-  unnest(size) %>%
+  ) |>
+  select(size) |>
+  unnest(size) |>
   summarise(
     across(size, .fns = c(mean = mean, sd = sd)),
     .by = "demography_group"

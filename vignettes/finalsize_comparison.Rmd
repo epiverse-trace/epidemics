@@ -274,18 +274,18 @@ dat1 <- final_size(
 # Final size returns the proportion infected in each susceptibility group
 # (i.e. non vaccinated and vaccinated)
 # here we calculate the proportion of infected for the age group as a whole
-dat3 <- dat1 %>%
+dat3 <- dat1 |>
   select(
     -susceptibility,
     final_size = p_infected
-  ) %>%
-  filter(susc_grp == "unvaccinated") %>%
+  ) |>
+  filter(susc_grp == "unvaccinated") |>
   select(-susc_grp)
 
 fs <- dat3$unvaccinated * p_susceptibility[, "unvaccinated"]
 
-finalsize_dat <- finalsize_dat %>%
-  select(demo_grp = demography_group, seir_v = value) %>%
+finalsize_dat <- finalsize_dat |>
+  select(demo_grp = demography_group, seir_v = value) |>
   left_join(dat3)
 ```
 

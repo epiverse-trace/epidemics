@@ -222,7 +222,7 @@ data_scenarios <- Map(
     # get total deaths per group
     df_$total_deaths <- filter(
       df, time == max(time), compartment == "dead"
-    ) %>% pull(value)
+    ) |> pull(value)
 
     # get total recoveries per group using helper function `epidemic_size()`
     # do not count dead
@@ -314,13 +314,13 @@ peak_hospital_occupancy <- vapply(data_scenarios, function(df) {
       pattern = "hospitalised", x = compartment,
       fixed = TRUE
     )
-  ) %>%
+  ) |>
     # summarise all hospitalised over time, aggregating away age groups
     summarise(
       total_hosp = sum(value), .by = "time"
-    ) %>%
+    ) |>
     # filter for the time point with highest hospital occupancy
-    filter(total_hosp == max(total_hosp)) %>%
+    filter(total_hosp == max(total_hosp)) |>
     # get the value
     pull(total_hosp)
 }, FUN.VALUE = numeric(1))

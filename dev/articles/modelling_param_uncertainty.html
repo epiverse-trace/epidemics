@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Modelling parameter uncertainty • epidemics</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modelling parameter uncertainty">
 <meta name="robots" content="noindex">
@@ -173,8 +173,9 @@ stratified by age.</p>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
-<span>  age.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
-<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
+<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
@@ -266,7 +267,7 @@ samples.</p>
 <span></span>
 <span><span class="co"># Plot output to visualise</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">output_R</span>, <span class="st">"R"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="modelling_param_uncertainty_files/figure-html/unnamed-chunk-4-1.png" width="900"></p>
+<p><img src="modelling_param_uncertainty_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="900"></p>
 </div>
 <div class="section level3">
 <h3 id="passing-a-vector-of-transmission-rates">Passing a vector of transmission rates<a class="anchor" aria-label="anchor" href="#passing-a-vector-of-transmission-rates"></a>
@@ -359,16 +360,16 @@ curves for each transmission rate value.</p>
 <code class="sourceCode R"><span><span class="co"># select the parameter set and data columns with dplyr::select()</span></span>
 <span><span class="co"># add the R value for visualisation</span></span>
 <span><span class="co"># calculate new infections, and use tidyr to unnest the data column</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">param_set</span>, <span class="va">transmission_rate</span>, <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">param_set</span>, <span class="va">transmission_rate</span>, <span class="va">data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    r_value <span class="op">=</span> <span class="va">r_samples</span>,</span>
 <span>    new_infections <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">new_infections</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">new_infections</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot the data</span></span>
-<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">new_infections</span>, col <span class="op">=</span> <span class="va">r_value</span>, group <span class="op">=</span> <span class="va">param_set</span><span class="op">)</span>,</span>
@@ -397,7 +398,7 @@ curves for each transmission rate value.</p>
 <span>    legend.key.height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"mm"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="modelling_param_uncertainty_files/figure-html/unnamed-chunk-8-1.png" alt="Incidence curves for the number of new infections on each day of the epidemic given uncertainty in the R estimate; colours indicate $R$ bins. Larger $R$ values lead to shorter epidemics with higher peaks, while lower R values lead to more spread out epidemics with lower peaks. Epidemics with $R$ &lt; 1.0 do not 'take off' and are not clearly visible. Linking incidence curves to their $R$ values in a plot allows a quick visual assessment of the potential outcomes of an epidemic whose $R$ is uncertain." width="900"><p class="caption">
+<img src="modelling_param_uncertainty_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Incidence curves for the number of new infections on each day of the epidemic given uncertainty in the R estimate; colours indicate $R$ bins. Larger $R$ values lead to shorter epidemics with higher peaks, while lower R values lead to more spread out epidemics with lower peaks. Epidemics with $R$ &lt; 1.0 do not 'take off' and are not clearly visible. Linking incidence curves to their $R$ values in a plot allows a quick visual assessment of the potential outcomes of an epidemic whose $R$ is uncertain." width="900"><p class="caption">
 Incidence curves for the number of new infections on each day of the
 epidemic given uncertainty in the R estimate; colours indicate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
@@ -456,7 +457,7 @@ end).</p>
 <span>    x <span class="op">=</span> <span class="st">"Epidemic duration"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Count"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="modelling_param_uncertainty_files/figure-html/unnamed-chunk-10-1.png" width="900"></p>
+<p><img src="modelling_param_uncertainty_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="900"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># pass the vector of durations to `time_end`</span></span>
 <span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
@@ -496,7 +497,7 @@ each model output will have a potentially distinct number of rows.</p>
 </div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate the epidemic size to view the mean and SD of sizes</span></span>
-<span><span class="va">epidemic_size_estimates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">param_set</span>, <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">epidemic_size_estimates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">param_set</span>, <span class="va">data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    size <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
@@ -504,9 +505,9 @@ each model output will have a potentially distinct number of rows.</p>
 <span>        size <span class="op">=</span> <span class="fu"><a href="../reference/epidemic_size.html">epidemic_size</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span>      <span class="op">)</span></span>
 <span>    <span class="op">}</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="va">size</span>, .fns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="va">mean</span>, sd <span class="op">=</span> <span class="va">sd</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    .by <span class="op">=</span> <span class="st">"demography_group"</span></span>
@@ -520,17 +521,16 @@ each model output will have a potentially distinct number of rows.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-ghani2010" class="csl-entry">
-Ghani, Azra, Marc Baguelin, Jamie Griffin, Stefan Flasche, Albert Jan
-Van Hoek, Simon Cauchemez, Christl Donnelly, et al. 2010. <span>“The
-Early Transmission Dynamics of H1N1pdm Influenza in the United
+Ghani, Azra, Marc Baguelin, Jamie Griffin, et al. 2010. <span>“The Early
+Transmission Dynamics of H1N1pdm Influenza in the United
 Kingdom.”</span> <em>PLoS Currents</em> 1 (June): RRN1130. <a href="https://doi.org/10.1371/currents.RRN1130" class="external-link">https://doi.org/10.1371/currents.RRN1130</a>.
 </div>
 <div id="ref-shea2020" class="csl-entry">
 Shea, Katriona, Ottar N. Bjørnstad, Martin Krzywinski, and Naomi Altman.
 2020. <span>“Uncertainty and the Management of Epidemics.”</span>
-<em>Nature Methods</em> 17 (9): 867–68. <a href="https://doi.org/10.1038/s41592-020-0943-4" class="external-link">https://doi.org/10.1038/s41592-020-0943-4</a>.
+<em>Nature Methods</em> 17 (9): 9. <a href="https://doi.org/10.1038/s41592-020-0943-4" class="external-link">https://doi.org/10.1038/s41592-020-0943-4</a>.
 </div>
 </div>
 </div>
@@ -545,7 +545,7 @@ Shea, Katriona, Ottar N. Bjørnstad, Martin Krzywinski, and Naomi Altman.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

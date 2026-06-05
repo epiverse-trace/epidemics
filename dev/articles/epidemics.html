@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Getting started with epidemic scenario modelling components • epidemics</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting started with epidemic scenario modelling components">
 <meta name="robots" content="noindex">
@@ -150,8 +150,8 @@ to group
 defines contacts to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
 from
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math><span class="citation">(<a href="#ref-wallinga2006">Wallinga, Teunis,
-and Kretzschmar 2006</a>)</span>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math><span class="citation">(<a href="#ref-wallinga2006">Wallinga et al.
+2006</a>)</span>.</p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><msub><mi>M</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>/</mi><msub><mi>n</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">q M_{ij} / n_i</annotation></semantics></math>
 then defines the probability of infection, where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
@@ -172,10 +172,23 @@ before they are used with <em>epidemics</em>.</p>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
-<span>  age.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
-<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
+<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Removing participants that have contacts without age information. To change this behaviour, set the 'missing.contact.age' option</span></span>
+<span><span class="co">#&gt; Warning: Automatic country population lookup in `contact_matrix()` was deprecated in</span></span>
+<span><span class="co">#&gt; socialmixr 0.6.0.</span></span>
+<span><span class="co">#&gt; When `countries` is given (or a `country` column is present) without</span></span>
+<span><span class="co">#&gt; `survey_pop`, contact_matrix() currently calls the soft-deprecated `wpp_age()`</span></span>
+<span><span class="co">#&gt; to look up population data. This automatic lookup will be removed in a future</span></span>
+<span><span class="co">#&gt; release: callers will then have to supply `survey_pop` whenever `symmetric`,</span></span>
+<span><span class="co">#&gt; `split`, `per_capita`, `weigh_age`, or `return_demography` is TRUE.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Pass `survey_pop` explicitly to silence this warning, e.g. `survey_pop =</span></span>
+<span><span class="co">#&gt;   survey_country_population(survey, countries)` or a data frame from the</span></span>
+<span><span class="co">#&gt;   wpp2024 package.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
 <span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
@@ -187,13 +200,13 @@ before they are used with <em>epidemics</em>.</p>
 <span><span class="co"># view contact matrix and demography</span></span>
 <span><span class="va">contact_matrix</span></span>
 <span><span class="co">#&gt;                  age.group</span></span>
-<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40)      40+</span></span>
-<span><span class="co">#&gt;           [0,20)  7.883663 2.794154 1.565665</span></span>
-<span><span class="co">#&gt;           [20,40) 3.120220 4.854839 2.624868</span></span>
-<span><span class="co">#&gt;           40+     3.063895 4.599893 5.005571</span></span>
+<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40) [40,Inf)</span></span>
+<span><span class="co">#&gt;          [0,20)   7.883663 2.794154 1.565665</span></span>
+<span><span class="co">#&gt;          [20,40)  3.120220 4.854839 2.624868</span></span>
+<span><span class="co">#&gt;          [40,Inf) 3.063895 4.599893 5.005571</span></span>
 <span></span>
 <span><span class="va">demography_vector</span></span>
-<span><span class="co">#&gt;   [0,20)  [20,40)      40+ </span></span>
+<span><span class="co">#&gt;   [0,20)  [20,40) [40,Inf) </span></span>
 <span><span class="co">#&gt; 14799290 16526302 28961159</span></span></code></pre></div>
 <p>Prepare initial conditions for each age group.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -215,10 +228,10 @@ before they are used with <em>epidemics</em>.</p>
 <span></span>
 <span><span class="co"># view initial conditions</span></span>
 <span><span class="va">initial_conditions</span></span>
-<span><span class="co">#&gt;                S E     I R V</span></span>
-<span><span class="co">#&gt; [0,20)  0.999999 0 1e-06 0 0</span></span>
-<span><span class="co">#&gt; [20,40) 0.999999 0 1e-06 0 0</span></span>
-<span><span class="co">#&gt; 40+     0.999999 0 1e-06 0 0</span></span></code></pre></div>
+<span><span class="co">#&gt;                 S E     I R V</span></span>
+<span><span class="co">#&gt; [0,20)   0.999999 0 1e-06 0 0</span></span>
+<span><span class="co">#&gt; [20,40)  0.999999 0 1e-06 0 0</span></span>
+<span><span class="co">#&gt; [40,Inf) 0.999999 0 1e-06 0 0</span></span></code></pre></div>
 <p>Prepare a population as a <code>population</code> class object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">uk_population</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/population.html">population</a></span><span class="op">(</span></span>
@@ -237,20 +250,20 @@ before they are used with <em>epidemics</em>.</p>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Demography</span> </span></span>
 <span><span class="co">#&gt; [0,20): 14,799,290 (20%)</span></span>
 <span><span class="co">#&gt; [20,40): 16,526,302 (30%)</span></span>
-<span><span class="co">#&gt; 40+: 28,961,159 (50%)</span></span>
+<span><span class="co">#&gt; [40,Inf): 28,961,159 (50%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Contact matrix</span> </span></span>
 <span><span class="co">#&gt;                  age.group</span></span>
-<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40)      40+</span></span>
-<span><span class="co">#&gt;           [0,20)  7.883663 2.794154 1.565665</span></span>
-<span><span class="co">#&gt;           [20,40) 3.120220 4.854839 2.624868</span></span>
-<span><span class="co">#&gt;           40+     3.063895 4.599893 5.005571</span></span>
+<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40) [40,Inf)</span></span>
+<span><span class="co">#&gt;          [0,20)   7.883663 2.794154 1.565665</span></span>
+<span><span class="co">#&gt;          [20,40)  3.120220 4.854839 2.624868</span></span>
+<span><span class="co">#&gt;          [40,Inf) 3.063895 4.599893 5.005571</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Initial Conditions</span> </span></span>
-<span><span class="co">#&gt;                S E     I R V</span></span>
-<span><span class="co">#&gt; [0,20)  0.999999 0 1e-06 0 0</span></span>
-<span><span class="co">#&gt; [20,40) 0.999999 0 1e-06 0 0</span></span>
-<span><span class="co">#&gt; 40+     0.999999 0 1e-06 0 0</span></span></code></pre></div>
+<span><span class="co">#&gt;                 S E     I R V</span></span>
+<span><span class="co">#&gt; [0,20)   0.999999 0 1e-06 0 0</span></span>
+<span><span class="co">#&gt; [20,40)  0.999999 0 1e-06 0 0</span></span>
+<span><span class="co">#&gt; [40,Inf) 0.999999 0 1e-06 0 0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="run-epidemic-model">Run epidemic model<a class="anchor" aria-label="anchor" href="#run-epidemic-model"></a>
@@ -269,7 +282,7 @@ before they are used with <em>epidemics</em>.</p>
 the exposed and infected compartments.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot figure of epidemic curve</span></span>
-<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">compartment</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exposed"</span>, <span class="st">"infectious"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">output</span>, <span class="va">compartment</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"exposed"</span>, <span class="st">"infectious"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
 <span>      x <span class="op">=</span> <span class="va">time</span>,</span>
@@ -301,12 +314,12 @@ the exposed and infected compartments.</p>
 <span>    linetype <span class="op">=</span> <span class="st">"Compartment"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Individuals"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="epidemics_files/figure-html/unnamed-chunk-6-1.png" width="1200"></p>
+<p><img src="epidemics_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="1200"></p>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-wallinga2006" class="csl-entry">
 Wallinga, Jacco, Peter Teunis, and Mirjam Kretzschmar. 2006.
 <span>“Using Data on Social Contacts to Estimate Age-Specific
@@ -327,7 +340,7 @@ Agents.”</span> <em>American Journal of Epidemiology</em> 164 (10):
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

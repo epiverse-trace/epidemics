@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Modelling a diphtheria outbreak in a humanitarian camp setting • epidemics</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modelling a diphtheria outbreak in a humanitarian camp setting">
 <meta name="robots" content="noindex">
@@ -230,7 +230,7 @@ run the model and plot the outcomes.</p>
 <span>  prop_vaccinated <span class="op">=</span> <span class="va">prop_vaccinated</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"infectious"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"infectious"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">value</span>, colour <span class="op">=</span> <span class="va">demography_group</span><span class="op">)</span></span>
@@ -255,7 +255,7 @@ run the model and plot the outcomes.</p>
 <span>    y <span class="op">=</span> <span class="st">"Individuals infectious"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="model_diphtheria_files/figure-html/unnamed-chunk-3-1.png" alt="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak." width="750"><p class="caption">
+<img src="model_diphtheria_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak." width="750"><p class="caption">
 Model results from a single run showing the number of individuals
 infectious with diphtheria over 100 days of the outbreak.
 </p>
@@ -296,8 +296,8 @@ which is similar to reported values in the Kutupalong camp scenario
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># summarise population change in susceptibles</span></span>
-<span><span class="va">data_pop_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"susceptible"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">data_pop_size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"susceptible"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    total_susceptibles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
@@ -351,7 +351,7 @@ which is similar to reported values in the Kutupalong camp scenario
 <span>    y <span class="op">=</span> <span class="st">"Individuals infectious"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="model_diphtheria_files/figure-html/unnamed-chunk-5-1.png" alt="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak, with an increase in the camp population size. Shaded blue region shows the number of individuals susceptible to infection (right-hand side Y axis)." width="750"><p class="caption">
+<img src="model_diphtheria_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Model results from a single run showing the number of individuals infectious with diphtheria over 100 days of the outbreak, with an increase in the camp population size. Shaded blue region shows the number of individuals susceptible to infection (right-hand side Y axis)." width="750"><p class="caption">
 Model results from a single run showing the number of individuals
 infectious with diphtheria over 100 days of the outbreak, with an
 increase in the camp population size. Shaded blue region shows the
@@ -365,7 +365,7 @@ infection and therefore extend the duration of an outbreak.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-finger2019" class="csl-entry">
 Finger, Flavio, Sebastian Funk, Kate White, M. Ruby Siddiqui, W. John
 Edmunds, and Adam J. Kucharski. 2019. <span>“Real-Time Analysis of the
@@ -385,7 +385,7 @@ Bangladesh.”</span> <em>BMC Medicine</em> 17 (March): 58. <a href="https://doi
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

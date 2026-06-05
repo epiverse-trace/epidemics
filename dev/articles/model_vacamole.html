@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Modelling leaky vaccination and hospitalisation outcomes with Vacamole • epidemics</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modelling leaky vaccination and hospitalisation outcomes with Vacamole">
 <meta name="robots" content="noindex">
@@ -195,8 +195,9 @@ or post infection (I, or H).</p></li>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
-<span>  age.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">65</span><span class="op">)</span>,</span>
-<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">65</span><span class="op">)</span>,</span>
+<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
@@ -375,7 +376,7 @@ epidemic’s final size.</p>
 <span>    <span class="co"># get total deaths per group</span></span>
 <span>    <span class="va">df_</span><span class="op">$</span><span class="va">total_deaths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
 <span>      <span class="va">df</span>, <span class="va">time</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>, <span class="va">compartment</span> <span class="op">==</span> <span class="st">"dead"</span></span>
-<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
 <span></span>
 <span>    <span class="co"># get total recoveries per group using helper function `epidemic_size()`</span></span>
 <span>    <span class="co"># do not count dead</span></span>
@@ -447,7 +448,7 @@ epidemic’s final size.</p>
 <span>    y <span class="op">=</span> <span class="st">"No. of individuals"</span>,</span>
 <span>    title <span class="op">=</span> <span class="st">"Effect of vaccination on deaths and total infections"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="model_vacamole_files/figure-html/unnamed-chunk-10-1.png" width="750"></p>
+<p><img src="model_vacamole_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="750"></p>
 <p>Finally, we can compare the peak of hospital bed occupancy in each
 scenario — this can be a rough indication of how much hospital capacity
 would be required if a pandemic of these characteristics were to occur,
@@ -466,13 +467,13 @@ this requirement.</p>
 <span>      pattern <span class="op">=</span> <span class="st">"hospitalised"</span>, x <span class="op">=</span> <span class="va">compartment</span>,</span>
 <span>      fixed <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># summarise all hospitalised over time, aggregating away age groups</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>      total_hosp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span>, .by <span class="op">=</span> <span class="st">"time"</span></span>
-<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># filter for the time point with highest hospital occupancy</span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">total_hosp</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">total_hosp</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">total_hosp</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">total_hosp</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># get the value</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">total_hosp</span><span class="op">)</span></span>
 <span><span class="op">}</span>, FUN.VALUE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
@@ -494,16 +495,16 @@ a scenario in which no vaccines are deployed.</p>
 <p>The Vacamole ODE system adapted for {epidemics} is:</p>
 <p>Susceptibles who are not vaccinated, or only partially vaccinated
 (considered unprotected) can transition to exposed and vaccinated:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>S</mi><mo>=</mo><mo>−</mo><mi>β</mi><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>ν</mi><mn>1</mn></msub><mi>S</mi></mrow><annotation encoding="application/x-tex">dS = -\beta S(I+I_V) - \nu_1 S</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>S</mi><mo>=</mo><mi>−</mi><mi>β</mi><mi>S</mi><mo stretchy="false" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>−</mo><msub><mi>ν</mi><mn>1</mn></msub><mi>S</mi></mrow><annotation encoding="application/x-tex">dS = -\beta S(I+I_V) - \nu_1 S</annotation></semantics></math></p>
 <p>Two sequential vaccination compartments, with a lower conversion rate
 from two-dose vaccinated individuals (considered to be protected) to
 exposed:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>V</mi><mn>1</mn></msub><mo>=</mo><msub><mi>ν</mi><mn>1</mn></msub><mi>S</mi><mo>−</mo><mi>β</mi><msub><mi>V</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>ν</mi><mn>2</mn></msub><msub><mi>V</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">dV_1 = \nu_1S - \beta V_1(I+I_V) - \nu_2V_1</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>V</mi><mn>2</mn></msub><mo>=</mo><msub><mi>ν</mi><mn>2</mn></msub><msub><mi>V</mi><mn>1</mn></msub><mo>−</mo><msub><mi>β</mi><mi>V</mi></msub><msub><mi>V</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">dV_2 = \nu_2V_1 - \beta_VV_2(I+I_V)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>V</mi><mn>1</mn></msub><mo>=</mo><msub><mi>ν</mi><mn>1</mn></msub><mi>S</mi><mo>−</mo><mi>β</mi><msub><mi>V</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>−</mo><msub><mi>ν</mi><mn>2</mn></msub><msub><mi>V</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">dV_1 = \nu_1S - \beta V_1(I+I_V) - \nu_2V_1</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>V</mi><mn>2</mn></msub><mo>=</mo><msub><mi>ν</mi><mn>2</mn></msub><msub><mi>V</mi><mn>1</mn></msub><mo>−</mo><msub><mi>β</mi><mi>V</mi></msub><msub><mi>V</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">dV_2 = \nu_2V_1 - \beta_VV_2(I+I_V)</annotation></semantics></math></p>
 <p>Two parallel exposed compartments, with similar conversion to
 infectious:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>E</mi><mo>=</mo><mi>β</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>S</mi><mo>+</mo><msub><mi>V</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>σ</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">dE = \beta (S+V_1)(I+I_V) - \sigma E</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>E</mi><mi>V</mi></msub><mo>=</mo><msub><mi>β</mi><mi>V</mi></msub><msub><mi>V</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>σ</mi><msub><mi>E</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">dE_V = \beta_VV_2(I+I_V) - \sigma E_V</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>E</mi><mo>=</mo><mi>β</mi><mo stretchy="false" form="prefix">(</mo><mi>S</mi><mo>+</mo><msub><mi>V</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mi>σ</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">dE = \beta (S+V_1)(I+I_V) - \sigma E</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>E</mi><mi>V</mi></msub><mo>=</mo><msub><mi>β</mi><mi>V</mi></msub><msub><mi>V</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">(</mo><mi>I</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mi>σ</mi><msub><mi>E</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">dE_V = \beta_VV_2(I+I_V) - \sigma E_V</annotation></semantics></math></p>
 <p>Two parallel infectious compartments, with lower hospitalisation and
 mortality rate for vaccinated:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>I</mi><mo>=</mo><mi>σ</mi><mi>E</mi><mo>−</mo><mi>γ</mi><mi>I</mi><mo>−</mo><mi>η</mi><mi>I</mi><mo>−</mo><mi>ω</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">dI = \sigma E - \gamma I - \eta I - \omega I</annotation></semantics></math></p>
@@ -513,21 +514,20 @@ rate for vaccinated:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>H</mi><mo>=</mo><mi>η</mi><mi>I</mi><mo>−</mo><mi>γ</mi><mi>H</mi><mo>−</mo><msub><mi>η</mi><mn>2</mn></msub><mi>H</mi><mo>−</mo><mi>ω</mi><mi>H</mi></mrow><annotation encoding="application/x-tex">dH = \eta I - \gamma H - \eta_2 H - \omega H</annotation></semantics></math></p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>H</mi><mi>V</mi></msub><mo>=</mo><msub><mi>η</mi><mi>V</mi></msub><mi>I</mi><mo>−</mo><mi>γ</mi><msub><mi>H</mi><mi>V</mi></msub><mo>−</mo><msub><mi>ω</mi><mi>V</mi></msub><msub><mi>H</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">dH_V = \eta_{V} I - \gamma H_V - \omega_V H_V</annotation></semantics></math></p>
 <p>Single recovered compartment:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>R</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><mi>H</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo>+</mo><msub><mi>H</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">dR = \gamma(I + H + I_V + H_V)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>R</mi><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>I</mi><mo>+</mo><mi>H</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo>+</mo><msub><mi>H</mi><mi>V</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">dR = \gamma(I + H + I_V + H_V)</annotation></semantics></math></p>
 <p>Single mortality compartment:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>D</mi><mo>=</mo><mi>ω</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mo>+</mo><mi>H</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>ω</mi><mi>V</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>I</mi><mi>V</mi></msub><mo>+</mo><msub><mi>H</mi><mi>V</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">dD = \omega(I + H) + \omega_V(I_V + H_V)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>D</mi><mo>=</mo><mi>ω</mi><mo stretchy="false" form="prefix">(</mo><mi>I</mi><mo>+</mo><mi>H</mi><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msub><mi>ω</mi><mi>V</mi></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>I</mi><mi>V</mi></msub><mo>+</mo><msub><mi>H</mi><mi>V</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">dD = \omega(I + H) + \omega_V(I_V + H_V)</annotation></semantics></math></p>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-ainslie2022" class="csl-entry">
-Ainslie, Kylie E. C., Jantien A. Backer, Pieter T. de Boer, Albert Jan
-van Hoek, Don Klinkenberg, Hester Korthals Altes, Ka Yin Leung, Hester
-de Melker, Fuminari Miura, and Jacco Wallinga. 2022. <span>“A Scenario
-Modelling Analysis to Anticipate the Impact of COVID-19 Vaccination in
-Adolescents and Children on Disease Outcomes in the Netherlands, Summer
-2021.”</span> <em>Eurosurveillance</em> 27 (44): 2101090. <a href="https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090" class="external-link">https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090</a>.
+Ainslie, Kylie E. C., Jantien A. Backer, Pieter T. de Boer, et al. 2022.
+<span>“A Scenario Modelling Analysis to Anticipate the Impact of
+COVID-19 Vaccination in Adolescents and Children on Disease Outcomes in
+the Netherlands, Summer 2021.”</span> <em>Eurosurveillance</em> 27 (44):
+2101090. <a href="https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090" class="external-link">https://doi.org/10.2807/1560-7917.ES.2022.27.44.2101090</a>.
 </div>
 </div>
 </div>
@@ -542,7 +542,7 @@ Adolescents and Children on Disease Outcomes in the Netherlands, Summer
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

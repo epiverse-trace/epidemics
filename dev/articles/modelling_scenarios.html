@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Modelling intervention scenarios • epidemics</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modelling intervention scenarios">
 <meta name="robots" content="noindex">
@@ -218,8 +218,9 @@ modelling components”</a> vignette.</p>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
-<span>  age.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
-<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
+<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
@@ -410,7 +411,7 @@ scenario.</p>
 <span>  size <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/comma.html" class="external-link">comma</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dbl</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">epidemic_size</span>, by_group <span class="op">=</span> <span class="cn">FALSE</span>, include_deaths <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">scenario</span>, <span class="va">size</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># view the final epidemic sizes</span></span>
@@ -561,7 +562,7 @@ set.</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-13-1.png" alt="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates." width="900"><p class="caption">
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="Infections averted relative to no epidemic response by implementing each scenario, while accounting with parameter uncertainty in the transmission rates." width="900"><p class="caption">
 Infections averted relative to no epidemic response by implementing each
 scenario, while accounting with parameter uncertainty in the
 transmission rates.
@@ -579,28 +580,29 @@ by default.</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;     scenario demography_group averted_median averted_lower averted_upper</span></span>
 <span><span class="co">#&gt;        &lt;int&gt;           &lt;char&gt;          &lt;num&gt;         &lt;num&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:        1              40+       584725.9     145892.81     3993655.9</span></span>
-<span><span class="co">#&gt;  2:        1           [0,20)       383171.0     127049.23     3037175.1</span></span>
-<span><span class="co">#&gt;  3:        1          [20,40)       396356.0      98546.05     2932546.7</span></span>
-<span><span class="co">#&gt;  4:        2              40+       261674.1     167791.23     2000556.2</span></span>
-<span><span class="co">#&gt;  5:        2           [0,20)       158910.2      94722.94     1438610.6</span></span>
-<span><span class="co">#&gt;  6:        2          [20,40)       204104.8     146675.38     1441537.8</span></span>
-<span><span class="co">#&gt;  7:        3              40+      6320394.3    1475845.60     7616611.1</span></span>
-<span><span class="co">#&gt;  8:        3           [0,20)      4678799.4     901966.59     6134652.6</span></span>
-<span><span class="co">#&gt;  9:        3          [20,40)      4583922.8     985309.24     5716507.3</span></span>
-<span><span class="co">#&gt; 10:        4              40+       177347.8     151125.36      871724.9</span></span>
-<span><span class="co">#&gt; 11:        4           [0,20)       112115.4      96410.27      608345.6</span></span>
-<span><span class="co">#&gt; 12:        4          [20,40)       118754.2     101979.46      617282.5</span></span>
-<span><span class="co">#&gt; 13:        5              40+      2173081.3     305593.02     6258725.1</span></span>
-<span><span class="co">#&gt; 14:        5           [0,20)      1442121.5     194790.14     5107124.7</span></span>
-<span><span class="co">#&gt; 15:        5          [20,40)      1500221.3     200377.45     4737525.2</span></span>
-<span><span class="co">#&gt; 16:        6              40+       932398.3     200154.87     4925179.7</span></span>
-<span><span class="co">#&gt; 17:        6           [0,20)       592856.0     115273.86     3826790.4</span></span>
-<span><span class="co">#&gt; 18:        6          [20,40)       639981.0     155689.23     3654849.3</span></span>
-<span><span class="co">#&gt; 19:        7              40+      8012047.9    3959960.69     8348571.8</span></span>
-<span><span class="co">#&gt; 20:        7           [0,20)      6246259.3    2586944.09     6633237.2</span></span>
-<span><span class="co">#&gt; 21:        7          [20,40)      5916770.1    2716621.69     6232275.9</span></span>
-<span><span class="co">#&gt;     scenario demography_group averted_median averted_lower averted_upper</span></span></code></pre></div>
+<span><span class="co">#&gt;  1:        1           [0,20)       383171.0     127049.23     3037175.1</span></span>
+<span><span class="co">#&gt;  2:        1          [20,40)       396356.0      98546.05     2932546.7</span></span>
+<span><span class="co">#&gt;  3:        1         [40,Inf)       584725.9     145892.81     3993655.9</span></span>
+<span><span class="co">#&gt;  4:        2           [0,20)       158910.2      94722.94     1438610.6</span></span>
+<span><span class="co">#&gt;  5:        2          [20,40)       204104.8     146675.38     1441537.8</span></span>
+<span><span class="co">#&gt;  6:        2         [40,Inf)       261674.1     167791.23     2000556.2</span></span>
+<span><span class="co">#&gt;  7:        3           [0,20)      4678799.4     901966.59     6134652.6</span></span>
+<span><span class="co">#&gt;  8:        3          [20,40)      4583922.8     985309.24     5716507.3</span></span>
+<span><span class="co">#&gt;  9:        3         [40,Inf)      6320394.3    1475845.60     7616611.1</span></span>
+<span><span class="co">#&gt; 10:        4           [0,20)       112115.4      96410.27      608345.6</span></span>
+<span><span class="co">#&gt; 11:        4          [20,40)       118754.2     101979.46      617282.5</span></span>
+<span><span class="co">#&gt; 12:        4         [40,Inf)       177347.8     151125.36      871724.9</span></span>
+<span><span class="co">#&gt; 13:        5           [0,20)      1442121.5     194790.14     5107124.7</span></span>
+<span><span class="co">#&gt; 14:        5          [20,40)      1500221.3     200377.45     4737525.2</span></span>
+<span><span class="co">#&gt; 15:        5         [40,Inf)      2173081.3     305593.02     6258725.1</span></span>
+<span><span class="co">#&gt; 16:        6           [0,20)       592856.0     115273.86     3826790.4</span></span>
+<span><span class="co">#&gt; 17:        6          [20,40)       639981.0     155689.23     3654849.3</span></span>
+<span><span class="co">#&gt; 18:        6         [40,Inf)       932398.3     200154.87     4925179.7</span></span>
+<span><span class="co">#&gt; 19:        7           [0,20)      6246259.3    2586944.09     6633237.2</span></span>
+<span><span class="co">#&gt; 20:        7          [20,40)      5916770.1    2716621.69     6232275.9</span></span>
+<span><span class="co">#&gt; 21:        7         [40,Inf)      8012047.9    3959960.69     8348571.8</span></span>
+<span><span class="co">#&gt;     scenario demography_group averted_median averted_lower averted_upper</span></span>
+<span><span class="co">#&gt;        &lt;int&gt;           &lt;char&gt;          &lt;num&gt;         &lt;num&gt;         &lt;num&gt;</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -644,7 +646,7 @@ of 1.6 to illustrate the point.</p>
 <span>  <span class="op">)</span>,</span>
 <span>  r_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">r_values</span>, each <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">intervention_scenarios</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">labels</span>, <span class="va">labels</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">r_value</span>, <span class="va">scenario</span>, <span class="va">size</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot the epidemic final size for each scenario for each R</span></span>
@@ -672,7 +674,7 @@ of 1.6 to illustrate the point.</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-16-1.png" alt="Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario." width="900"><p class="caption">
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="Counter-intuitive effects of time-limited interventions on transmission rate at high R values. Scenarios in which multiple interventions are implemented may have a larger final epidemic size than scenarios with fewer interventions, e.g. the 'Close both workplaces and schools' scenario." width="900"><p class="caption">
 Counter-intuitive effects of time-limited interventions on transmission
 rate at high R values. Scenarios in which multiple interventions are
 implemented may have a larger final epidemic size than scenarios with
@@ -691,8 +693,8 @@ gives a fuller picture of why we see this unexpected effect.</p>
 <span>  r_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">r_values</span>, each <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">intervention_scenarios</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">labels</span>, <span class="va">labels</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>  incidence_data <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">new_infections</span>, by_group <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">scenario</span>, <span class="va">r_value</span>, <span class="va">incidence_data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">scenario</span>, <span class="va">r_value</span>, <span class="va">incidence_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">incidence_data</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">daily_incidence</span><span class="op">)</span> <span class="op">+</span></span>
@@ -721,7 +723,7 @@ gives a fuller picture of why we see this unexpected effect.</p>
 <span>    y <span class="op">=</span> <span class="st">"New infections"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="modelling_scenarios_files/figure-html/unnamed-chunk-18-1.png" alt="New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the 'No response' scenario." width="900"><p class="caption">
+<img src="modelling_scenarios_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="New daily infections in each intervention scenario for two values of R. The period in which interventions are active is shown by the area shaded in grey. No interventions are active in the 'No response' scenario." width="900"><p class="caption">
 New daily infections in each intervention scenario for two values of R.
 The period in which interventions are active is shown by the area shaded
 in grey. No interventions are active in the ‘No response’ scenario.
@@ -756,17 +758,15 @@ to counter-intuitively larger final epidemic sizes.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-howerton2023" class="csl-entry">
-Howerton, Emily, Lucie Contamin, Luke C. Mullany, Michelle Qin, Nicholas
-G. Reich, Samantha Bents, Rebecca K. Borchering, et al. 2023.
+Howerton, Emily, Lucie Contamin, Luke C. Mullany, et al. 2023.
 <span>“Evaluation of the US COVID-19 Scenario Modeling Hub for Informing
 Pandemic Response Under Uncertainty.”</span> <em>Nature
 Communications</em> 14 (1): 7260. <a href="https://doi.org/10.1038/s41467-023-42680-x" class="external-link">https://doi.org/10.1038/s41467-023-42680-x</a>.
 </div>
 <div id="ref-prasad2023" class="csl-entry">
-Prasad, Pragati V., Molly K. Steele, Carrie Reed, Lauren Ancel Meyers,
-Zhanwei Du, Remy Pasco, Jorge A. Alfaro-Murillo, et al. 2023.
+Prasad, Pragati V., Molly K. Steele, Carrie Reed, et al. 2023.
 <span>“Multimodeling Approach to Evaluating the Efficacy of Layering
 Pharmaceutical and Nonpharmaceutical Interventions for Influenza
 Pandemics.”</span> <em>Proceedings of the National Academy of
@@ -785,7 +785,7 @@ Sciences</em> 120 (28): e2300590120. <a href="https://doi.org/10.1073/pnas.23005
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

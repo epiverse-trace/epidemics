@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Modelling overlapping and sequential interventions targeting social contacts • epidemics</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modelling overlapping and sequential interventions targeting social contacts">
 <meta name="robots" content="noindex">
@@ -133,8 +133,9 @@ although it can be expanded for reference.</p>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
-<span>  age.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">65</span><span class="op">)</span>,</span>
-<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">65</span><span class="op">)</span>,</span>
+<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
@@ -220,7 +221,7 @@ short.</p>
 <span></span>
 <span><span class="va">plot_baseline</span></span></code></pre></div>
 <div class="figure">
-<img src="modelling_multiple_interventions_files/figure-html/unnamed-chunk-6-1.png" alt="A model of an infectious disease epidemic, assuming a directly transmitted infection such as influenza, with an $R_0$ of 1.3, an infectious period of 5 days, and a pre-infectious period of 1.5 days." width="1500"><p class="caption">
+<img src="modelling_multiple_interventions_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="A model of an infectious disease epidemic, assuming a directly transmitted infection such as influenza, with an $R_0$ of 1.3, an infectious period of 5 days, and a pre-infectious period of 1.5 days." width="1500"><p class="caption">
 A model of an infectious disease epidemic, assuming a directly
 transmitted infection such as influenza, with an
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mn>0</mn></msub><annotation encoding="application/x-tex">R_0</annotation></semantics></math>
@@ -348,7 +349,7 @@ to spread disease incidence out over a longer period.</p>
 <span></span>
 <span><span class="va">plot_noschool</span></span></code></pre></div>
 <div class="figure">
-<img src="modelling_multiple_interventions_files/figure-html/unnamed-chunk-9-1.png" alt="Epidemic model with an intervention that targets infections among children by closing schools for six months, thus reducing children's social contacts." width="1500"><p class="caption">
+<img src="modelling_multiple_interventions_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Epidemic model with an intervention that targets infections among children by closing schools for six months, thus reducing children's social contacts." width="1500"><p class="caption">
 Epidemic model with an intervention that targets infections among
 children by closing schools for six months, thus reducing children’s
 social contacts.
@@ -547,7 +548,7 @@ function, calling the default model outlined in the <a href="epidemics.html">“
 <span></span>
 <span><span class="va">plot_intervention_cases</span></span></code></pre></div>
 <div class="figure">
-<img src="modelling_multiple_interventions_files/figure-html/unnamed-chunk-13-1.png" alt="Epidemic model with two overlapping interventions in the early phase of the outbreak: school closures that target infections among younger people, and workplace closures which target infections among working-age adults." width="1500"><p class="caption">
+<img src="modelling_multiple_interventions_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="Epidemic model with two overlapping interventions in the early phase of the outbreak: school closures that target infections among younger people, and workplace closures which target infections among working-age adults." width="1500"><p class="caption">
 Epidemic model with two overlapping interventions in the early phase of
 the outbreak: school closures that target infections among younger
 people, and workplace closures which target infections among working-age
@@ -673,7 +674,7 @@ function for 600 days as before.</p>
 <span></span>
 <span><span class="va">plot_three_interventions</span></span></code></pre></div>
 <div class="figure">
-<img src="modelling_multiple_interventions_files/figure-html/unnamed-chunk-17-1.png" alt="Epidemic model with two initial, overlapping interventions on schools and workplaces, followed by a later intervention on workplaces." width="1500"><p class="caption">
+<img src="modelling_multiple_interventions_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="Epidemic model with two initial, overlapping interventions on schools and workplaces, followed by a later intervention on workplaces." width="1500"><p class="caption">
 Epidemic model with two initial, overlapping interventions on schools
 and workplaces, followed by a later intervention on workplaces.
 </p>
@@ -700,7 +701,7 @@ previous examples.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

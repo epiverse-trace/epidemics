@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Reducing parameters required for final size estimation • epidemics</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Reducing parameters required for final size estimation">
 <meta name="robots" content="noindex">
@@ -137,7 +137,6 @@ effect of policy decisions made during epidemic response.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/epiforecasts/socialmixr" class="external-link">socialmixr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bench.r-lib.org/" class="external-link">bench</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="different-use-cases-of-finalsize-and-epidemics">Different use cases of <em>finalsize</em> and
@@ -220,12 +219,13 @@ any interventions or vaccination regimes.</p>
 how to prepare these inputs.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
-<span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="va">polymod</span></span>
-<span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
+<span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
+<span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
-<span>  age.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
-<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
+<span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
@@ -267,20 +267,20 @@ how to prepare these inputs.</p>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Demography</span> </span></span>
 <span><span class="co">#&gt; [0,20): 14,799,290 (20%)</span></span>
 <span><span class="co">#&gt; [20,40): 16,526,302 (30%)</span></span>
-<span><span class="co">#&gt; 40+: 28,961,159 (50%)</span></span>
+<span><span class="co">#&gt; [40,Inf): 28,961,159 (50%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Contact matrix</span> </span></span>
 <span><span class="co">#&gt;                  age.group</span></span>
-<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40)      40+</span></span>
-<span><span class="co">#&gt;           [0,20)  7.883663 2.794154 1.565665</span></span>
-<span><span class="co">#&gt;           [20,40) 3.120220 4.854839 2.624868</span></span>
-<span><span class="co">#&gt;           40+     3.063895 4.599893 5.005571</span></span>
+<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40) [40,Inf)</span></span>
+<span><span class="co">#&gt;          [0,20)   7.883663 2.794154 1.565665</span></span>
+<span><span class="co">#&gt;          [20,40)  3.120220 4.854839 2.624868</span></span>
+<span><span class="co">#&gt;          [40,Inf) 3.063895 4.599893 5.005571</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Initial Conditions</span> </span></span>
-<span><span class="co">#&gt;                S E     I R V</span></span>
-<span><span class="co">#&gt; [0,20)  0.999999 0 1e-06 0 0</span></span>
-<span><span class="co">#&gt; [20,40) 0.999999 0 1e-06 0 0</span></span>
-<span><span class="co">#&gt; 40+     0.999999 0 1e-06 0 0</span></span></code></pre></div>
+<span><span class="co">#&gt;                 S E     I R V</span></span>
+<span><span class="co">#&gt; [0,20)   0.999999 0 1e-06 0 0</span></span>
+<span><span class="co">#&gt; [20,40)  0.999999 0 1e-06 0 0</span></span>
+<span><span class="co">#&gt; [40,Inf) 0.999999 0 1e-06 0 0</span></span></code></pre></div>
 <p>We model the spread of influenza with pandemic potential, assuming
 $R_0 = $ 1.5, a pre-infectious period of 3 days, and an infectious
 period of 7 days.</p>
@@ -350,7 +350,7 @@ epidemic. We obtain the ‘final’ epidemic size using
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> [0,20)           0.617</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> [20,40)          0.525</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 40+              0.343</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> [40,Inf)         0.343</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="calculating-individuals-vaccinated-in-epidemic-model">Calculating individuals vaccinated in epidemic model<a class="anchor" aria-label="anchor" href="#calculating-individuals-vaccinated-in-epidemic-model"></a>
@@ -435,18 +435,18 @@ ODE model as in the previous example.</p>
 <span><span class="co"># Final size returns the proportion infected in each susceptibility group</span></span>
 <span><span class="co"># (i.e. non vaccinated and vaccinated)</span></span>
 <span><span class="co"># here we calculate the proportion of infected for the age group as a whole</span></span>
-<span><span class="va">dat3</span> <span class="op">&lt;-</span> <span class="va">dat1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">dat3</span> <span class="op">&lt;-</span> <span class="va">dat1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
 <span>    <span class="op">-</span><span class="va">susceptibility</span>,</span>
 <span>    final_size <span class="op">=</span> <span class="va">p_infected</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">susc_grp</span> <span class="op">==</span> <span class="st">"unvaccinated"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">susc_grp</span> <span class="op">==</span> <span class="st">"unvaccinated"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">susc_grp</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fs</span> <span class="op">&lt;-</span> <span class="va">dat3</span><span class="op">$</span><span class="va">unvaccinated</span> <span class="op">*</span> <span class="va">p_susceptibility</span><span class="op">[</span>, <span class="st">"unvaccinated"</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">finalsize_dat</span> <span class="op">&lt;-</span> <span class="va">finalsize_dat</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>demo_grp <span class="op">=</span> <span class="va">demography_group</span>, seir_v <span class="op">=</span> <span class="va">value</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">finalsize_dat</span> <span class="op">&lt;-</span> <span class="va">finalsize_dat</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>demo_grp <span class="op">=</span> <span class="va">demography_group</span>, seir_v <span class="op">=</span> <span class="va">value</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">dat3</span><span class="op">)</span></span></code></pre></div>
 <p>We can print the data to compare values, which are similar.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -456,7 +456,7 @@ ODE model as in the previous example.</p>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> [0,20)    0.617      0.660</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> [20,40)   0.525      0.543</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 40+       0.343      0.272</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> [40,Inf)  0.343      0.272</span></span></code></pre></div>
 <p>However, note that while <code><a href="../reference/epidemic_size.html">epidemics::epidemic_size()</a></code> can
 be used for any time point in the epidemic,
 <code><a href="https://epiverse-trace.github.io/finalsize/reference/final_size.html" class="external-link">finalsize::final_size()</a></code> only returns the size at the end of
@@ -515,8 +515,8 @@ parameter uncertainty.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">#&gt;   expression        total_time</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.468</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model             10.1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.416</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model             13.2</span></span></code></pre></div>
 <p><strong>Note</strong> that some model runs using <em>epidemics</em>
 that implement more complex compartmental structure, or multiple
 interventions and vaccination regimes are likely to be slower than the
@@ -532,7 +532,7 @@ instead.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-miller2012" class="csl-entry">
 Miller, Joel C. 2012. <span>“A Note on the Derivation of Epidemic Final
 Sizes.”</span> <em>Bulletin of Mathematical Biology</em> 74 (9):
@@ -551,7 +551,7 @@ Sizes.”</span> <em>Bulletin of Mathematical Biology</em> 74 (9):
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

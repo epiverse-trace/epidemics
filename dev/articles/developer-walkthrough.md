@@ -1,0 +1,530 @@
+# Guide to developing epidemics features
+
+This vignette is intended to be a guide to making small, targeted edits
+to features in *epidemics*, and is aimed at current and future
+contributors, and at advanced users who might want to use a slightly
+modified local version of an *epidemics* provided model for specific
+analyses.
+
+**New to developing epidemics?** Please read the [vignette on design
+decisions taken during the development
+process](https://epiverse-trace.github.io/epidemics/dev/articles/design-principles.md),
+and see the concept and architecture diagrams in that vignette.
+
+## Scope
+
+This vignette is structured around use cases of making package
+modifications given the existing package architecture.
+
+Consequently this vignette does not cover major changes that would
+require a substantial rewrite of the package, such as switching the C++
+solver used for ODE models, or switching to using *cpp11* rather than
+*Rcpp*.
+
+This vignette also does not tackle questions around epidemic modelling
+choices - such as which compartmental transitions should be allowed; we
+strongly recommend the involvement of a specialist in such cases.
+
+Finally, this vignette relates only to the deterministic ODE models in
+*epidemics*, as these are expected to be the main starting points for
+most users seeking to create their own models.
+
+**Making substantial changes to a model in epidemics?** Have you
+modified an existing model to cover new use cases or disease types? We
+welcome contributions of new model structures. Examples include models
+targeting vector borne diseases, or diseases with a sylvatic cycle.
+Please get in touch via a [GitHub
+Issue](https://github.com/epiverse-trace/epidemics/issues) or on the
+[Epiverse-TRACE Discussion
+board](https://github.com/orgs/epiverse-trace/discussions)!
+
+## A guide to package structure
+
+A simplified view of the package structure is shown below. Note the
+files indicated by comments in capitals and the associated ‘level’ of
+the code; this roughly corresponds to the level in the call stack.
+
+``` sh
+.
+├── DESCRIPTION
+├── NAMESPACE
+├── R
+│   ├── RcppExports.R           # auto-generated from `src/`
+│   ├── check_args_*.R          # MODEL-SPECIFIC INPUT CROSS-CHECKING FUNC
+│   ├── dummy_elements.R        # functions for empty composable elements
+│   ├── helpers.R               # functions to handle model output
+│   ├── input_check_helpers.R   # functions to construct cross-checking fns
+│   ├── intervention.R          # intervention classes
+│   ├── model_*.R               # USER-FACING MODEL FUNCTION; LEVEL 1
+│   ├── population.R            # population class
+│   ├── tools.R                 # internal utility functions
+│   └── vaccination.R           # vaccination class
+├── epidemics.Rproj
+├── inst
+│   └── include
+│       ├── epidemics.h         # package header, must include all `model_*.h`
+│       ├── intervention.h      # functions to handle interventions in C++
+│       ├── model_*.h           # MODEL ODE SYSTEM; LEVEL 3
+│       ├── ode_tools.h         # definition of the initial state struct
+│       ├── population.h        # functions to handle populations in C++
+│       ├── time_dependence.h   # functions to handle time-dependence in C++
+│       └── vaccination.h       # functions to handle vaccinations in C++
+├── man
+│   └── *.Rd                    # R function documentation
+├── src
+│   ├── Makevars                # UNIX make options for Rcpp
+│   ├── Makevars.win            # Windows make options for Rcpp
+│   ├── RcppExports.cpp         # auto-generated from `src/`
+│   └── model_*.cpp             # MODEL FUNC WRAPPING ODE SYSTEM; LEVEL 2
+│
+├── tests                       # test files
+└── vignettes                   # vignettes
+```
+
+## Adding or removing model parameters
+
+Adding or removing parameters to the ODE models involves working with
+all levels of the model code.
+
+Consider an example of adding a uniform, age-independent, background
+mortality rate $`\omega`$ that is unrelated to the epidemic itself.
+Removing a parameter involves reversing these steps.
+
+1.  Modify the user-facing model function in `R/model_*.R` to accept the
+    mortality rate as an argument; add documentation and input checks,
+    and ensure that it is included in parameter set creation; this is
+    **level 1**, the top level, of the code.
+
+    ``` r
+    #' @export
+    model_new = function(
+      population,
+      <EXISTING PARAMETERS>,
+      mortality_rate,           # <== New parameter added.
+      <OTHER ARGUMENTS>) {}
+    ```
+
+2.  Modify the internal C++ function in `src/model_*.cpp` to accept the
+    mortality rate as an argument of the type `const double`; this also
+    applies to integer-like inputs as the `double` type is better suited
+    for R’s `numeric` type, which most users will be working with. This
+    is **level 2** of the code, one level down.
+
+    ``` cpp
+    // Note this function is exposed to R but not exported from the package
+    //' [[Rcpp::export(name=".model_NAME_cpp")]]    // <== Use model name.
+    Rcpp::List model_NAME_internal(
+      const Eigen::MatrixXd &initial_state,
+      const double &transmission_rate,
+      const double &infectiousness_rate,
+      const double &recovery_rate,
+      const double &mortality_rate,       // <== New parameter added.
+      <OTHER_ARGUMENTS>) {
+        /* model setup and ODE solving */
+      }
+    ```
+
+3.  Add the mortality rate to the `std::unordered_map` of key-value
+    pairs of parameters and their names, in `src/model_*.cpp`; this is
+    used to access the parameters in the ODE solver, as well as enabling
+    rate interventions and time-dependence.
+
+    ``` cpp
+    Rcpp::List model_NAME_internal(
+      const Eigen::MatrixXd &initial_state,
+      const double &transmission_rate,
+      const double &infectiousness_rate,
+      const double &recovery_rate,
+      const double &mortality_rate
+      <OTHER_ARGUMENTS>) {
+
+        // create a map of the model parameters
+        std::unordered_map<std::string, double> model_params{
+            {"transmission_rate", transmission_rate},
+            {"infectiousness_rate", infectiousness_rate},
+            {"recovery_rate", recovery_rate},
+            {"mortality_rate", mortality_rate}    // <== New parameter added.
+          };
+
+        /* ODE solving */
+      }
+    ```
+
+4.  Modify the compartmental transitions in the `FunctionObject` ODE
+    model `inst/include/model_*.h` appropriately to include the
+    mortality rate. This is **level 3** of the code, two levels down.
+
+    ``` cpp
+    namespace epidemics {
+
+    struct epidemic_new {
+      // Model elements as struct members
+      // two maps for the model parameters, one for dynamic modification
+      const std::unordered_map<std::string, double> model_params;
+      std::unordered_map<std::string, double> model_params_temp;
+      <OTHER STRUCT MEMBERS>
+
+      // constructor
+      epidemic_new(<ARGUMENTS>) : <CONSTRUCTOR LIST> {}
+
+      // overloaded operator
+      void operator()(const odetools::state_type& x,    // the current state
+                odetools::state_type& dxdt,             // change in state
+                const double t) {                       // the current time
+        /* dynamic parameter calculation here */
+
+        // implement background mortality rate here
+        // NOTE: compartments are hard-coded as column positions
+        // and demographic groups are rows.
+        // Accessed columns must be converted to arrays for
+        // vectorised operations.
+
+        // For the 0-th column, i.e., susceptibles
+        dxdt.col(0) = <NEW INFECTIONS AND VACCINATIONS> -
+          (
+            model_params_temp.at("mortality_rate") *    // mortality rate *
+              x.col(0).array()                          // susceptibles
+          );
+
+        // and so on for all i columns in x
+      }
+
+    }
+    ```
+
+5.  Write or update unit tests to check for the statistical correctness
+    of the model with the newly added parameter (e.g., for this example,
+    test that a non-zero mortality rate leads to fewer individuals at
+    the end of the model than at the start).
+
+## Modifying compartmental flows without changing compartments
+
+Modifying compartmental flows is straightforward for the ODE models in
+*epidemics*.
+
+**Note that** existing compartmental flows are typically controlled by
+infection parameters, which can be set to zero to disallow specific
+transitions. For example, to simulate a scenario in which
+hospitalisation is not available, the Vacamole model can be run with the
+argument `hospitalisation_rate = 0.0`.
+
+Please check whether setting an infection parameter to zero better suits
+your use case.
+
+This section focuses on adding novel inflows and outflows via some
+illustrative examples. The initial steps are similar to those for adding
+a model parameter, and are summarised here. The section on [adding
+group-specific parameters](#vector-parameters) covers how to add
+parameters with dimensions \> 1.
+
+1.  First, navigate to the end of each model `FunctionObject` defined in
+    `inst/include/model_*.h` and edit the ODEs found there (see examples
+    below). Users can hard-code the parameter values in these files for
+    quick edits, but we recommend taking the next few steps to allow
+    changing these values from R.
+
+2.  Next, modify the C++ function arguments in `src/model_*.cpp` so that
+    any newly added rate parameters can be passed from R to C++.
+    Typically, single parameters should be passed by reference as
+    `const double`.
+
+- If you seek to use time-dependence and rate interventions with the
+  newly added parameters should follow the steps in the section above.
+
+3.  Finally, modify the R code in `R/model_*.R` so that the R function
+    accepts the new parameter as an appropriately checked argument.
+
+4.  When adding parameters such as birth and death rates, make sure that
+    this is accounted for in any unit tests (see especially the current
+    expectation in most models that there is a constant population
+    size).
+
+We will consider a number of modifications to the susceptible
+compartment in the default model, which we assume to be given by
+`dxdt.col(0) = -sToE - sToV; // -β*S*contacts*I - ν`, where $`\beta`$ is
+the transmission rate, $`\nu`$ is the number of vaccinations, and
+$`S, I, V`$ represent the susceptible and infectious compartments,
+respectively.
+
+### Modelling births, immigration, and background mortality
+
+1.  Inflows into the model population may occur into any epidemiological
+    compartment. Here we consider inflows into the susceptible
+    compartment of the default model, denoted by the value `B`. These
+    can be added to the compartmental transition as shown below. Note
+    that `B` represents counts and not the per-capita birth rate $`b`$,
+    in contrast with the background mortality rate below.
+
+    ``` cpp
+    // Add births to S
+    dxdt.col(0) = B -sToE - sToV;  // B -β*S*contacts*I - ν
+    ```
+
+    Outflows attributed to background mortality may occur in all
+    compartments, and can be represented as a fraction $`d`$ of the
+    compartment value as shown below.
+
+    ``` cpp
+    // Following above, add deaths to S, where d is the mortality rate
+    // x.col(0) is the current or initial state of the susceptibles
+    dxdt.col(0) = B -sToE - sToV - (d * x.col(0)).array();  // B -β*S*contacts*I - ν - (dS)
+    ```
+
+    For a model with age stratification, note that `B` and `d * S`
+    ($`d_i S_i`$) have to be of the type `Eigen::ArrayXd`, and of the
+    same length as the number of demographic groups, to represent the
+    flows in to and out of each age group.
+
+2.  To simulate births as the only inflow in an age-stratified model,
+    `B` must have the same length as `N`, with only the first element
+    having a non-zero value. `B` is still required to be a vector for
+    compatibility with other vector/array elements. Setting other values
+    of `B` to be non-zero positive values can be used to model
+    immigration or other long-term processes.
+
+    ``` cpp
+    // where `x` is the current state matrix
+    // get current population size
+    // recall rows are demography groups, columns are compartments
+    const Eigen::ArrayXd demography_vector = x.rowwise().sum();
+
+    // define a per-capita birth rate
+    const double b = 1e-3;
+
+    // calculate total birth rate as per-capita rate * population size
+    double births_ = (b * demography_vector.sum());
+
+    // create the vector `B`
+    Eigen::ArrayXd births(4);  // hardcoded for four age groups
+    // fill all values as 0.0
+    births.fill(0.0);
+    // set the first value to births_, all others are zero
+    births(0) = births_;
+
+    // Replace `B` with `births`
+    dxdt.col(0) = births -sToE - sToV;  // B -β*S*contacts*I - ν
+    ```
+
+3.  To add an immigration component, continue from the example above.
+    Note that ‘immigration’ here is used in the population dynamics
+    sense of the term, and simply means individuals entering the
+    population. See the section of [group-specific model
+    parameters](#vector-parameters) for how to vary the immigration rate
+    per demographic group.
+
+    ``` cpp
+    // a uniform value for the rate of immigration in all age groups
+    const double immigration_rate = SOME_VALUE;
+
+    // calculate immigration as a proportion of each age group
+    const Eigen::ArrayXd immigration = immigration_rate * population_size;
+
+    // sum births and immigration
+    const Eigen::ArrayXd all_inflows = births + immigration;
+
+    // Replace `B` with `all_inflows`
+    dxdt.col(0) = all_inflows -sToE - sToV;  // B -β*S*contacts*I - ν
+    ```
+
+4.  Deaths from each compartment can be similarly included. Background
+    mortality, i.e., not related to the epidemic can be modelled as a
+    vector of mortality rates `d` multiplied by the size of each
+    demographic group $`i`$ in any compartment $`X`$, as either
+    $`-dX_i`$ for uniform background mortality, or $`-d_i X_i`$ for
+    age-specific mortality.
+
+### Modelling sources of infectious individuals such as from zoonotic spillover_rate
+
+Define a uniform spillover rate and add this to the $`S \rightarrow I`$
+transition.
+
+``` cpp
+// define a uniform spillover rate from contact with animals
+const double spillover_rate = SOME_VALUE;
+
+// include this additional S -> E transition
+// note x.col(0).array() is the vector of age-specific susceptibles
+// each model header file 
+const Eigen::ArrayXd zoonotic_infection = spillover_rate * x.col(0).array();
+
+dxdt.col(0) = -sToE - sToV - zoonotic_infection;  // -β*S*contacts*I - ν - zoonotic infection
+```
+
+### Modelling waning immunity
+
+Similar to previous examples, define a uniform waning rate for the
+immunity of recovered individuals and modify the appropriate
+compartmental transitions.
+
+``` cpp
+// define an age-specific waning rate
+const double waning_rate = SOME_VALUE;
+
+// include this new R -> S transition
+// note x.col(3).array() is the vector of age-specific recovereds
+const Eigen::ArrayXd re_susceptibles = waning_rate * x.col(3).array();
+
+// add individuals with renewed susceptibility
+dxdt.col(0) = -sToE - sToV + re_susceptibles;  // -β*S*contacts*I - ν - re_susceptibles
+```
+
+## Modifying which parameters can be time dependent
+
+Making the infection parameters of existing models time-dependent is
+straightforward using the `time_dependence` argument to model functions.
+Currently, all models support time-dependence on most infection
+parameters. This *does not include* the vaccination rate (see more on
+that below).
+
+See the [vignette on
+time-dependence](https://epiverse-trace.github.io/epidemics/dev/articles/modelling_time_dependence.md)
+for how this functionality currently works.
+
+To modify which parameters of new or existing models can be made
+(optionally) time-dependent using the existing functionality:
+
+1.  For **ODE models**, first modify the `std::unordered_map` named
+    `model_params` in the corresponding model source file,
+    `src/model_*.cpp`, to add or remove a key-value pair. Adding a
+    parameter to this map automatically enables both time-dependence as
+    well as rate interventions; removing a parameter from this map means
+    disallowing both.
+
+2.  Next, modify the model functions and the argument cross-checking
+    functions to ensure that the model allows time-dependence and rate
+    interventions on the correct set of infection parameters.
+
+    - The vector of allowed targets for time-dependence is an argument
+      to the function
+      [`.cross_check_timedep()`](https://epiverse-trace.github.io/epidemics/dev/reference/cross_checking_inputs.md)
+      called in `model_*()` from `R/model_*.R`, while the vector of
+      allowed targets for rate interventions is a similar argument to
+      the function
+      [`.cross_check_intervention()`](https://epiverse-trace.github.io/epidemics/dev/reference/cross_checking_inputs.md)
+      called in `.check_prepare_args_*()` from `R/check_args_*.R`; in
+      all cases `*` refers to the model name.
+
+    - This initial cross-checking is required to prevent errors in the
+      C++ code (typically, a key-not-found error) which may be difficult
+      for users to understand and fix.
+
+3.  Finally, ODE model code can be simplified to remove time-dependence
+    (and rate interventions, or one of them) entirely by deleting the
+    call to `time_dependence::apply_time_dependence` in the ODE model
+    `FunctionObject` in `inst/include/model_*.h`. This will not affect
+    upstream code, and may be one way of gaining a small improvement in
+    model performance, so long as time-dependence is not required.
+
+4.  For the **stochastic Ebola model**, infection parameters are held in
+    a named list called `parameters`. The elements of this list that are
+    targeted for time-dependence are modified within the model loop.
+
+    - Adding parameters to the list allows them to be be targeted by
+      inbuilt time-dependence functionality.
+
+    - *However*, removing parameters from the list will lead to errors
+      as they are needed for compartmental transitions. Instead, add
+      input checks on the arguments `intervention` and `time_dependence`
+      to prevent these elements from being modified.
+
+    - Remove the appropriate code from within the loop to completely
+      disallow time-dependence and rate interventions without affecting
+      upstream code.
+
+    - *Note that* the Ebola model does support modifying the
+      infectiousness rate or the removal rate, as these are used to
+      calculate the number of sub-compartments (representing days) in
+      each epidemiological compartment; these values must remain fixed
+      throughout the model’s run time.
+
+## Group-specific infection parameters
+
+*epidemics* ODE models can be modified to support group-specific
+infection parameters instead of uniform, population-wide parameters.
+This is essentially how vaccinations are implemented. Note that the
+Ebola model does not support age-stratification and is not discussed
+here.
+
+Since *epidemics* focuses on general models for use within the first 100
+days of a pandemic, it does not currently support groups-specific
+parameters. Supporting these parameters in the ODE models would require
+a substantial rewrite of how *epidemics* is vectorised.
+
+1.  First, in the C++ function signature in `src/model_*.cpp` change the
+    type of the parameter to `Eigen::ArrayXd`.
+
+2.  Next, in `src/model_*.cpp`, remove the parameter from inclusion in
+    the `std::unordered_map` of parameters to prevent initialisation
+    errors (as the map types are `std::string` and `double`). This means
+    time-dependence and rate interventions cannot be applied to this
+    parameter.
+
+3.  Modify the model ODE `struct` constructor in
+    `inst/include/model_*.h` to require an `Eigen::ArrayXd` for the
+    group-specific parameter, and define the parameter as a `struct`
+    member (initialised from the constructor).
+
+4.  Modify ODEs to use the parameter vector/array as appropriate, by
+    simply replacing the single parameter with the parameter vector in
+    the ODE code.
+
+5.  Ensure that all R wrapper code – especially input checking and
+    cross-checking code – is updated to reflect that one or more
+    infection parameters are now vectors.
+
+## Adding epidemiological compartments
+
+Adding epidemiological compartments is similar to modifying
+compartmental transitions, but requires a few extra steps.
+
+1.  Add and modify model ODEs as appropriate in `inst/include/model_*.h`
+    (see sections above).
+
+2.  Modify the `compartments` vector in `R/model_*.R` to include the
+    name of the new compartment. This is used both in checking that the
+    input `<population>` has the correct number of compartments in its
+    initial state matrix, as well as for formatting the output data.
+
+## Changing vaccination rates over time
+
+*epidemics* treats vaccination as special process that requires a
+composable element in the form of an S3 class, `<vaccination>`, which
+allows defining time-limited, group-specific vaccination rates for
+multiple vaccination doses if necessary.
+
+Vaccination is only strictly allowed in the ODE models ‘default’ and
+‘Vacamole’, and these are covered here. Begin by dismantling the model
+code to remove any functionality related to the `<vaccination>` class.
+
+1.  Modify `R/model_*.R` to remove `vaccination` from the function
+    arguments, and any input checking on the `vaccination` argument.
+    Also remove the inclusion of `vaccination` in the model arguments
+    `<data.table>`.
+
+2.  Remove any cross-checking of the `vaccination` against the
+    `population` in `R/check_args_*.R`, and remove the inclusion of
+    `vax_time_begin`, `vax_time_end`, and `vax_nu` from the return of
+    the function `.check_prepare_args_*()`.
+
+3.  Remove the `vax_time_begin`, `vax_time_end`, and `vax_nu` arguments
+    from the model ODE `struct` constructor in `inst/include/model_*.h`;
+    also remove these from the model object initialisation in
+    `src/model_*.cpp`. Remove any code related to calculating current
+    vaccination rates from the model ODE code.
+
+4.  At this stage, the ODE model does not support vaccination using a
+    `<vaccination>`, and any existing “vaccinated” compartment is
+    essentially isolated from the other compartments, as the value of
+    `current_nu`
+
+5.  Next, follow the steps described above to re-establish compartmental
+    transitions from the appropriate compartments to the vaccinated
+    compartment, using either a single population-wide vaccination rate,
+    or an age-specific rate.
+
+6.  **Note that** the number of individuals vaccinated should be
+    calculated as counts, and not a rate, when used in compartmental
+    transitions. This is because the rate of vaccination is typically
+    specified as a proportion of the total population, or of age groups,
+    and should be dependent on the number of individuals available to
+    vaccinate.

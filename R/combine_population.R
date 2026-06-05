@@ -98,7 +98,7 @@ combine_populations <- function(populations, connectivity_matrix,
     demography_vector = combined_demography_vector,
     initial_conditions = combined_initial_condition)
 
-  return(combined_populations)
+  combined_populations
 }
 
 #' Extract demography vector from a `<population>` object

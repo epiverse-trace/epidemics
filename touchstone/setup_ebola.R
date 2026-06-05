@@ -1,5 +1,4 @@
 library("epidemics")
-library(withr)
 
 #### Set up population characteristics ####
 # for Guinea

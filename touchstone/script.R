@@ -12,7 +12,7 @@ touchstone::branch_install()
 # Default model
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source(file.paht("touchstone", "setup_ode.R"),
+    source(file.path("touchstone", "setup_ode.R"),
            local = TRUE)
   },
   default_ode = {
@@ -27,7 +27,7 @@ touchstone::benchmark_run(
 # Default model with parameter vectors
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source(file.paht("touchstone", "setup_ode.R"),
+    source(file.path("touchstone", "setup_ode.R"),
            local = TRUE)
   },
   default_ode_param_vec = {
@@ -43,7 +43,7 @@ touchstone::benchmark_run(
 # Default model with intervention scenarios
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source(file.paht("touchstone", "setup_ode.R"),
+    source(file.path("touchstone", "setup_ode.R"),
            local = TRUE)
   },
   default_ode_interventions = {
@@ -59,7 +59,7 @@ touchstone::benchmark_run(
 # Default model with parameter vector and intervention scenarios
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source(file.paht("touchstone", "setup_ode.R"),
+    source(file.path("touchstone", "setup_ode.R"),
            local = TRUE)
   },
   default_ode_paramvec_intervs = {

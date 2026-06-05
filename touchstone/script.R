@@ -13,7 +13,8 @@ touchstone::branch_install()
 # Default model
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source(file.paht("touchstone", "setup_ode.R"))
+    source(file.paht("touchstone", "setup_ode.R"),
+           local = TRUE)
   },
   default_ode = {
     model_default(
@@ -27,7 +28,8 @@ touchstone::benchmark_run(
 # Default model with parameter vectors
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source(file.paht("touchstone", "setup_ode.R"))
+    source(file.paht("touchstone", "setup_ode.R"),
+           local = TRUE)
   },
   default_ode_param_vec = {
     model_default(
@@ -42,7 +44,8 @@ touchstone::benchmark_run(
 # Default model with intervention scenarios
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source(file.paht("touchstone", "setup_ode.R"))
+    source(file.paht("touchstone", "setup_ode.R"),
+           local = TRUE)
   },
   default_ode_interventions = {
     model_default(
@@ -57,7 +60,8 @@ touchstone::benchmark_run(
 # Default model with parameter vector and intervention scenarios
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source(file.paht("touchstone", "setup_ode.R"))
+    source(file.paht("touchstone", "setup_ode.R"),
+           local = TRUE)
   },
   default_ode_paramvec_intervs = {
     model_default(
@@ -73,7 +77,8 @@ touchstone::benchmark_run(
 # Ebola model
 touchstone::benchmark_run(
   expr_before_benchmark = {
-    source(file.path("touchstone", "setup_ebola.R"))
+    source(file.path("touchstone", "setup_ebola.R"),
+           local = TRUE)
   },
   ebola = {
     withr::with_seed(

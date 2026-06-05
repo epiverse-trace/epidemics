@@ -201,11 +201,11 @@ validate_vaccination <- function(object) {
   # vaccination intervals are not allowed
   stopifnot(
     "`nu` should have positive or zero values" =
-      all(object$nu >= 0.0),
+      object$nu >= 0.0,
     "`time_begin` should have positive or zero values" =
-      all(object$time_begin >= 0.0),
+      object$time_begin >= 0.0,
     "`time_end` should have values greater-than or equal-to `time_begin`" =
-      all(object$time_end >= object$time_begin)
+      object$time_end >= object$time_begin
   )
 
   # message if any vaccinations' intervals are badly formed

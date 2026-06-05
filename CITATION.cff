@@ -60,7 +60,7 @@ references:
   - family-names: FitzJohn
     given-names: Rich
     email: rich.fitzjohn@gmail.com
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.odin
 - type: software
   title: checkmate
@@ -73,7 +73,7 @@ references:
     given-names: Michel
     email: michellang@gmail.com
     orcid: https://orcid.org/0000-0001-9754-0393
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.checkmate
 - type: software
   title: cli
@@ -85,7 +85,7 @@ references:
   - family-names: Csárdi
     given-names: Gábor
     email: gabor@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.cli
 - type: software
   title: data.table
@@ -106,11 +106,14 @@ references:
     email: asrini@pm.me
   - family-names: Gorecki
     given-names: Jan
+    email: j.gorecki@wit.edu.pl
   - family-names: Chirico
     given-names: Michael
+    email: michaelchirico4@gmail.com
     orcid: https://orcid.org/0000-0003-0787-087X
   - family-names: Hocking
     given-names: Toby
+    email: toby.hocking@r-project.org
     orcid: https://orcid.org/0000-0002-3146-0865
   - family-names: Schwendinger
     given-names: Benjamin
@@ -119,7 +122,7 @@ references:
     given-names: Ivan
     email: ikrylov@disroot.org
     orcid: https://orcid.org/0000-0002-0172-3812
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.data.table
 - type: software
   title: glue
@@ -135,7 +138,7 @@ references:
     given-names: Jennifer
     email: jenny@posit.co
     orcid: https://orcid.org/0000-0002-6983-2759
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.glue
 - type: software
   title: stats
@@ -143,20 +146,26 @@ references:
   notes: Imports
   authors:
   - name: R Core Team
+    website: https://ror.org/02zz1nj61
   institution:
     name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
     address: Vienna, Austria
-  year: '2025'
+  year: '2026'
+  doi: 10.32614/R.manuals
 - type: software
   title: utils
   abstract: 'R: A Language and Environment for Statistical Computing'
   notes: Imports
   authors:
   - name: R Core Team
+    website: https://ror.org/02zz1nj61
   institution:
     name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
     address: Vienna, Austria
-  year: '2025'
+  year: '2026'
+  doi: 10.32614/R.manuals
 - type: software
   title: withr
   abstract: 'withr: Run Code ''With'' Temporarily Modified Global State'
@@ -180,7 +189,7 @@ references:
     email: hadley@posit.co
   - family-names: Chang
     given-names: Winston
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.withr
 - type: software
   title: bench
@@ -194,7 +203,7 @@ references:
   - family-names: Vaughan
     given-names: Davis
     email: davis@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.bench
 - type: software
   title: bookdown
@@ -207,7 +216,7 @@ references:
     given-names: Yihui
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.bookdown
 - type: software
   title: colorspace
@@ -247,7 +256,7 @@ references:
     given-names: Achim
     email: Achim.Zeileis@R-project.org
     orcid: https://orcid.org/0000-0003-0918-3766
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.colorspace
 - type: software
   title: dplyr
@@ -272,7 +281,7 @@ references:
     given-names: Davis
     email: davis@posit.co
     orcid: https://orcid.org/0000-0003-4777-038X
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.dplyr
 - type: software
   title: EpiEstim
@@ -285,7 +294,7 @@ references:
     given-names: Anne
     email: a.cori@imperial.ac.uk
     orcid: https://orcid.org/0000-0002-8443-9162
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.EpiEstim
 - type: software
   title: finalsize
@@ -306,7 +315,7 @@ references:
     given-names: Adam
     email: adam.kucharski@lshtm.ac.uk
     orcid: https://orcid.org/0000-0001-8814-9421
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.finalsize
 - type: software
   title: ggdist
@@ -318,7 +327,7 @@ references:
   - family-names: Kay
     given-names: Matthew
     email: mjskay@northwestern.edu
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.ggdist
 - type: software
   title: ggplot2
@@ -358,7 +367,7 @@ references:
     given-names: Teun
     name-particle: van den
     orcid: https://orcid.org/0000-0002-9335-7468
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.ggplot2
 - type: software
   title: knitr
@@ -371,7 +380,7 @@ references:
     given-names: Yihui
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.knitr
 - type: software
   title: purrr
@@ -387,7 +396,7 @@ references:
   - family-names: Henry
     given-names: Lionel
     email: lionel@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.purrr
 - type: software
   title: rmarkdown
@@ -431,7 +440,7 @@ references:
     given-names: Richard
     email: rich@posit.co
     orcid: https://orcid.org/0000-0003-3925-190X
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.rmarkdown
 - type: software
   title: scales
@@ -449,7 +458,7 @@ references:
     orcid: https://orcid.org/0000-0002-5147-4711
   - family-names: Seidel
     given-names: Dana
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.scales
 - type: software
   title: socialmixr
@@ -465,7 +474,11 @@ references:
     given-names: Lander
   - family-names: Gruson
     given-names: Hugo
-  year: '2025'
+  - family-names: Tierney
+    given-names: Nicholas
+    email: nicholas.tierney@gmail.com
+    orcid: https://orcid.org/0000-0003-1460-8722
+  year: '2026'
   doi: 10.32614/CRAN.package.socialmixr
 - type: software
   title: spelling
@@ -481,7 +494,7 @@ references:
   - family-names: Hester
     given-names: Jim
     email: james.hester@rstudio.com
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.spelling
 - type: software
   title: testthat
@@ -493,7 +506,7 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.testthat
   version: '>= 3.0.0'
 - type: software
@@ -510,7 +523,7 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@rstudio.com
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.tibble
 - type: software
   title: tidyr
@@ -527,7 +540,7 @@ references:
     email: davis@posit.co
   - family-names: Girlich
     given-names: Maximilian
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.tidyr
 - type: software
   title: BH
@@ -545,7 +558,7 @@ references:
   - family-names: Kane
     given-names: Michael J.
     orcid: https://orcid.org/0000-0003-1899-6662
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.BH
 - type: software
   title: Rcpp
@@ -580,7 +593,7 @@ references:
     orcid: https://orcid.org/0000-0001-8316-9503
   - family-names: Chambers
     given-names: John
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.Rcpp
 - type: software
   title: RcppEigen
@@ -603,6 +616,6 @@ references:
   - family-names: Qiu
     given-names: Yixuan
     orcid: https://orcid.org/0000-0003-0109-6692
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.RcppEigen
 

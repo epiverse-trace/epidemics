@@ -385,11 +385,9 @@ c.vaccination <- function(x, ...) {
   # of vaccination rates --- these are identical to dims of start and end times
   stopifnot(
     "All <vaccination>s must have identical dimensions for Nu, start, and end" =
-      all(
         vapply(multi_vacc, function(vx) {
           identical(nrow(vx$nu), nrow(x$nu))
         }, FUN.VALUE = logical(1))
-      )
   )
 
   # strip class and `name` member from `multi_vacc`

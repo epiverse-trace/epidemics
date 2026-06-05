@@ -10,7 +10,7 @@ knitr::opts_chunk[["set"]](
   comment = "#>",
   message = FALSE,
   warning = FALSE,
-  fig.path = "man/figures/README-",
+  fig.path = file.path("man", "figures", "README-"),
   out.width = "100%",
   dpi = 150
 )
@@ -150,7 +150,7 @@ output <- model_default(
 Visualise the development of individuals in the "infectious" compartment over model time. Note that these curves represent the number of individuals that are infectious, and not the number of newly infectious individuals.
 
 ```{r fig-modelout, echo=FALSE}
-filter(output, compartment == "infectious") %>%
+filter(output, compartment == "infectious") |>
   ggplot() +
   geom_vline(
     xintercept = c(close_schools[["time_begin"]], close_schools[["time_end"]]),

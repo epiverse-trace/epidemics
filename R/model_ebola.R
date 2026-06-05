@@ -34,7 +34,7 @@ prob_discrete_erlang <- function(shape, rate) {
     utils::tail(one_sub_cumulative_probs, -1)
   density_prob <- density_prob / cumulative_prob
 
-  return(density_prob)
+ density_prob
 }
 
 #' @title Model an Ebola virus disease epidemic

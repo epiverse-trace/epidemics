@@ -14,6 +14,11 @@
 1.  Added a `modelling-populations` vignette on how to combine
     age-structured populations.
 
+### Package
+
+1.  Added `dependabot.yml` to `.github/` to automate updating GitHub
+    actions workflow versions.
+
 ## epidemics 0.4.0
 
 Maintainer is changing to [@rozeggo](https://github.com/rozeggo).

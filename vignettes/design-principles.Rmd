@@ -71,7 +71,7 @@ The notes here refer to broad decisions and not to individual models -- see indi
 
 ### ODE systems and models
 
-- A common method for defining and solving ODEs in R is to write the ODE system in R and pass it to solvers such as `deSolve::lsoda()` from the [_deSolve_ package](https://cran.r-project.org/package=deSolve). We have adapted this approach to use the R package [_odin_](https://cran.r-project.org/web/packages/odin/index.html). The advantage of _odin_ is that it generates systems of ordinary differential equations (ODE) and integrate them, using a domain specific language (DSL). The DSL uses R's syntax, but compiles to C in order to efficiently solve the system using deSolve.
+- A common method for defining and solving ODEs in R is to write the ODE system in R and pass it to solvers such as `deSolve::lsoda()` from the [_deSolve_ package](https://cran.r-project.org/package=deSolve). We have adapted this approach to use the R package [_odin_](https://cran.r-project.org/web/packages/odin/index.html). The advantage of _odin_ is that it generates systems of ordinary differential equations (ODE) and integrates them, using a domain-specific language (DSL). The DSL uses R's syntax, but compiles to C in order to efficiently solve the system using deSolve.
 
 ### Stochastic models
 
@@ -151,7 +151,7 @@ The aim is to restrict the number of hard dependencies while maintaining user-fr
 - [_checkmate_](https://CRAN.R-project.org/package=checkmate): a useful input-checking package used across Epiverse packages;
 - [_cli_](https://CRAN.R-project.org/package=cli) and [_glue_](https://CRAN.R-project.org/package=glue): convenience packages for pretty printing methods; these could be reconsidered to lighten package dependencies;
 - [_data.table_](https://CRAN.R-project.org/package=data.table): a lightweight dependency to handle data from model outputs, and especially used for nested list column functionality.
-- [_odin_](https://CRAN.R-project.org/package=odin): provides a domain-specific language (DSL) for defining ODE systems, and is used to implement the ODE models in _epidemics_.;
+- [_odin_](https://CRAN.R-project.org/package=odin): provides a domain-specific language (DSL) for defining ODE systems, and is used to implement the ODE models in _epidemics_.
 - [_withr_](https://CRAN.R-project.org/package=withr): for seed management;
 - _stats_ and _utils_: already installed with R, and used only in the Ebola model, and hence liable to be removed in the future.
 

@@ -692,3 +692,37 @@ test_that("Vacamole: errors on vectorised input", {
     regexp = "(May only contain the following types:)*(function)"
   )
 })
+
+test_that("Diphtheria model: demography groups with index >= 10 are labelled correctly", {
+  # Regression for https://github.com/epiverse-trace/epidemics/issues/278
+  # With >= 10 demographic groups the reshaping code truncated the group index
+  # (e.g. "S[10]" -> "1"), silently merging groups 10+ into lower-indexed
+  # groups. See the equivalent fix and test for model_default().
+  n_groups <- 12L
+  cm <- matrix(0.1, n_groups, n_groups)
+  diag(cm) <- 1
+  group_names <- sprintf("group_%02i", seq_len(n_groups))
+  dimnames(cm) <- list(group_names, group_names)
+  dv <- rep(1000, n_groups)
+  names(dv) <- group_names
+
+  # 5 diphtheria compartments (S, E, I, H, R); rows must sum to 1
+  ic <- matrix(0, n_groups, 5L)
+  ic[, 1] <- 1 - 1e-3 # S
+  ic[, 3] <- 1e-3 # I
+
+  pop <- population(
+    contact_matrix = cm,
+    demography_vector = dv,
+    initial_conditions = ic
+  )
+
+  output <- model_diphtheria(population = pop, time_end = 20L, increment = 1.0)
+
+  # all 12 groups present, none dropped or merged, and no NA labels
+  expect_identical(dplyr::n_distinct(output$demography_group), n_groups)
+  expect_false(anyNA(output$demography_group))
+  expect_setequal(unique(output$demography_group), group_names)
+  # every group has the same number of rows (none merged into another)
+  expect_identical(length(unique(table(output$demography_group))), 1L)
+})

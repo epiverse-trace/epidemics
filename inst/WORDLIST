@@ -105,6 +105,7 @@ epiparameter
 epirecipes
 erroring
 etc
+favicons
 finalsize
 frac
 geq
@@ -124,6 +125,7 @@ packagename
 pak
 param
 pkg
+pkgdown
 recyclability
 rightarrow
 rmarkdown

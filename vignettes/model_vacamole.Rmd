@@ -364,7 +364,7 @@ Two parallel hospitalisation compartments, with a lower mortality rate for vacci
 
 $$dH = \eta I - \gamma H - \omega H$$
 
-$$dH_V = \eta_{V} I - \gamma H_V - \omega_V H_V$$
+$$dH_V = \eta_{V} I_V - \gamma H_V - \omega_V H_V$$
 
 Single recovered compartment:
 

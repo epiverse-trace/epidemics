@@ -4,6 +4,10 @@
 
 1. Added the `combine_populations()` function to combine age-structured populations into a new population object.
 
+## Bug fixes
+
+1. Fixed `model_default()`, `model_vacamole()`, and `model_diphtheria()` silently dropping or merging demographic groups in their output when a model had 10 or more demographic groups (e.g. when combining four or more populations), caused by the demography group index being truncated to a single digit while reshaping model output (#278, @avallecam).
+
 ## Documentation
 
 1. Added a `modelling-populations` vignette on how to combine age-structured populations.

@@ -12,6 +12,8 @@
 
 1. Added a `modelling-populations` vignette on how to combine age-structured populations.
 
+2. Set the pkgdown website `development: mode` to `unreleased` so that the single website matches the development version of the package installed by most users, and added website favicons (#275, @joshwlambert).
+
 ## Package
 
 1. Added `dependabot.yml` to `.github/` to automate updating GitHub actions workflow versions.

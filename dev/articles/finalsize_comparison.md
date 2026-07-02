@@ -465,8 +465,8 @@ select(as_tibble(benchmark), expression, total_time)
 #> # A tibble: 2 × 2
 #>   expression        total_time
 #>   <bch:expr>             <dbl>
-#> 1 analytical_method      0.469
-#> 2 ode_model             12.0
+#> 1 analytical_method      0.468
+#> 2 ode_model             12.1
 ```
 
 **Note** that some model runs using *epidemics* that implement more

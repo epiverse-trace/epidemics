@@ -91,7 +91,7 @@ vaccinate_elders <- vaccination(
   name = "vaccinate elders",
   time_begin = matrix(100, nrow(contact_matrix)),
   time_end = matrix(250, nrow(contact_matrix)),
-  nu = matrix(c(0.0001, 0, 0))
+  nu = matrix(c(0, 0, 0.0001))
 )
 
 # view vaccination object
@@ -115,9 +115,9 @@ vaccinate_elders
 #> 
 #>  Vaccination rate: 
 #>      dose_1
-#> [1,]  1e-04
+#> [1,]  0e+00
 #> [2,]  0e+00
-#> [3,]  0e+00
+#> [3,]  1e-04
 ```
 
 **Note that** when the vaccination rate is high, the number of

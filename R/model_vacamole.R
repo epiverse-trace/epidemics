@@ -201,7 +201,7 @@
 #' - Infectiousness rate (\eqn{\sigma}, `infectiousness_rate`): 0.5, assuming
 #' a pre-infectious period of 2 days.
 #'
-#' - Hospitalisation rate (\eqn{\eta}, `hospitalistion_rate`): 1.0 / 1000,
+#' - Hospitalisation rate (\eqn{\eta}, `hospitalisation_rate`): 1.0 / 1000,
 #' assuming that one in every thousand infectious individuals is hospitalised.
 #' The hospitalisation rate of doubly vaccinated individuals (\eqn{\eta_v}) is
 #' 80% of \eqn{\eta}, 0.8 / 1000.

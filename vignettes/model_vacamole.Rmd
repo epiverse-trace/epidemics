@@ -174,7 +174,7 @@ First, we run the model with no vaccination. This is the default behaviour, and 
 
  - Infectiousness rate ($\sigma$, `infectiousness_rate`): 0.5, assuming a pre-infectious period of 2 days, given that $\sigma = 1 / \text{pre-infectious period}$.
 
- - Hospitalisation rate ($\eta$, `hospitalistion_rate`): 1.0 / 1000, assuming that one in every thousand infectious individuals is hospitalised.
+ - Hospitalisation rate ($\eta$, `hospitalisation_rate`): 1.0 / 1000, assuming that one in every thousand infectious individuals is hospitalised.
  
  - Mortality rate ($\omega$, `mortality_rate`): 1.0 / 1000, assuming that one in every thousand infectious and hospitalised individuals dies.
 

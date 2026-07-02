@@ -175,7 +175,7 @@ any other vector.
 - Infectiousness rate (\\\sigma\\, `infectiousness_rate`): 0.5, assuming
   a pre-infectious period of 2 days.
 
-- Hospitalisation rate (\\\eta\\, `hospitalistion_rate`): 1.0 / 1000,
+- Hospitalisation rate (\\\eta\\, `hospitalisation_rate`): 1.0 / 1000,
   assuming that one in every thousand infectious individuals is
   hospitalised. The hospitalisation rate of doubly vaccinated
   individuals (\\\eta_v\\) is 80% of \\\eta\\, 0.8 / 1000.

@@ -322,7 +322,7 @@ of 2 days, given that
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi><mo>=</mo><mn>1</mn><mi>/</mi><mtext mathvariant="normal">pre-infectious period</mtext></mrow><annotation encoding="application/x-tex">\sigma = 1 / \text{pre-infectious period}</annotation></semantics></math>.</p></li>
 <li><p>Hospitalisation rate
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>,
-<code>hospitalistion_rate</code>): 1.0 / 1000, assuming that one in
+<code>hospitalisation_rate</code>): 1.0 / 1000, assuming that one in
 every thousand infectious individuals is hospitalised.</p></li>
 <li><p>Mortality rate
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ω</mi><annotation encoding="application/x-tex">\omega</annotation></semantics></math>,
@@ -511,8 +511,8 @@ mortality rate for vaccinated:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>I</mi><mi>V</mi></msub><mo>=</mo><mi>σ</mi><msub><mi>E</mi><mi>V</mi></msub><mo>−</mo><mi>γ</mi><msub><mi>I</mi><mi>V</mi></msub><mo>−</mo><msub><mi>η</mi><mi>V</mi></msub><msub><mi>I</mi><mi>V</mi></msub><mo>−</mo><msub><mi>ω</mi><mi>V</mi></msub><msub><mi>I</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">dI_V = \sigma E_V - \gamma I_V - \eta_{V} I_V - \omega_V I_V</annotation></semantics></math></p>
 <p>Two parallel hospitalisation compartments, with a lower mortality
 rate for vaccinated:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>H</mi><mo>=</mo><mi>η</mi><mi>I</mi><mo>−</mo><mi>γ</mi><mi>H</mi><mo>−</mo><msub><mi>η</mi><mn>2</mn></msub><mi>H</mi><mo>−</mo><mi>ω</mi><mi>H</mi></mrow><annotation encoding="application/x-tex">dH = \eta I - \gamma H - \eta_2 H - \omega H</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>H</mi><mi>V</mi></msub><mo>=</mo><msub><mi>η</mi><mi>V</mi></msub><mi>I</mi><mo>−</mo><mi>γ</mi><msub><mi>H</mi><mi>V</mi></msub><mo>−</mo><msub><mi>ω</mi><mi>V</mi></msub><msub><mi>H</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">dH_V = \eta_{V} I - \gamma H_V - \omega_V H_V</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>H</mi><mo>=</mo><mi>η</mi><mi>I</mi><mo>−</mo><mi>γ</mi><mi>H</mi><mo>−</mo><mi>ω</mi><mi>H</mi></mrow><annotation encoding="application/x-tex">dH = \eta I - \gamma H - \omega H</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><msub><mi>H</mi><mi>V</mi></msub><mo>=</mo><msub><mi>η</mi><mi>V</mi></msub><msub><mi>I</mi><mi>V</mi></msub><mo>−</mo><mi>γ</mi><msub><mi>H</mi><mi>V</mi></msub><mo>−</mo><msub><mi>ω</mi><mi>V</mi></msub><msub><mi>H</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">dH_V = \eta_{V} I_V - \gamma H_V - \omega_V H_V</annotation></semantics></math></p>
 <p>Single recovered compartment:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>R</mi><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>I</mi><mo>+</mo><mi>H</mi><mo>+</mo><msub><mi>I</mi><mi>V</mi></msub><mo>+</mo><msub><mi>H</mi><mi>V</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">dR = \gamma(I + H + I_V + H_V)</annotation></semantics></math></p>
 <p>Single mortality compartment:</p>

@@ -218,7 +218,7 @@ be included. The model’s default parameters are:
   a pre-infectious period of 2 days, given that
   $`\sigma = 1 / \text{pre-infectious period}`$.
 
-- Hospitalisation rate ($`\eta`$, `hospitalistion_rate`): 1.0 / 1000,
+- Hospitalisation rate ($`\eta`$, `hospitalisation_rate`): 1.0 / 1000,
   assuming that one in every thousand infectious individuals is
   hospitalised.
 
@@ -454,11 +454,11 @@ Two parallel hospitalisation compartments, with a lower mortality rate
 for vaccinated:
 
 ``` math
-dH = \eta I - \gamma H - \eta_2 H - \omega H
+dH = \eta I - \gamma H - \omega H
 ```
 
 ``` math
-dH_V = \eta_{V} I - \gamma H_V - \omega_V H_V
+dH_V = \eta_{V} I_V - \gamma H_V - \omega_V H_V
 ```
 
 Single recovered compartment:

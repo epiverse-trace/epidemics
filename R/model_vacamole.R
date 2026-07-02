@@ -544,8 +544,12 @@ model_vacamole <- function(population, # nolint: cyclocomp_linter.
     temp <- value <- temp_compartment <- temp_demography <-
       compartment <- demography_group <- `:=` <- time <- NULL
 
+    # width of the zero-padded numeric prefix used to label and sort demography
+    # groups; must accommodate the largest group index (e.g. 10-12 need 2 chars)
+    n_demography_prefix <- nchar(as.character(n_age))
+
     age_group_mappings <- paste0( # properly label demography groups
-      seq_len(n_age),
+      formatC(seq_len(n_age), width = n_demography_prefix, flag = "0"),
       c(
         rownames(C),
         names(population[[1]]$demography_vector),
@@ -575,10 +579,9 @@ model_vacamole <- function(population, # nolint: cyclocomp_linter.
       , list(
         time = t, # alternative to using data.table::setnames(dt, "t", "time")
         temp_compartment = sub("\\[.*", "", temp), # e.g. S[1] -> S
-        temp_demography = substring(
-          temp, nchar(as.character(temp)) - 1,
-          nchar(as.character(temp)) - 1
-        ), # e.g. S[1] -> 1
+        # e.g. V1[10] -> 10 (compartment names vary in length, so extract the
+        # index between the square brackets)
+        temp_demography = sub(".*\\[([0-9]+)\\]$", "\\1", temp),
         value
       )
     ][ # |> the DT way (piping the data.table way)
@@ -595,7 +598,10 @@ model_vacamole <- function(population, # nolint: cyclocomp_linter.
       ,
       `:=`( # used as the prefix form to update multiple columns
         # remove prepended numbers from `mapping`
-        demography_group = substring(demography_group, 2L), # e.g. [0,20), ...
+        # e.g. [0,20), ...
+        demography_group = substring(
+          demography_group, n_demography_prefix + 1L
+        ),
         compartment = substring(compartment, 3L) # e.g. susceptible, exposed,
       )
     ][ # |> the DT way

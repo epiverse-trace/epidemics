@@ -5,7 +5,7 @@ template:
     font_weight_base : 300
   package: epiversetheme
 development:
-  mode: auto
+  mode: unreleased
 articles:
 - title: Modelling interventions
   navbar: Modelling interventions

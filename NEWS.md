@@ -189,7 +189,7 @@ No substantial changes to classes; small additions of input checking to `<popula
 
 3. Removed _deSolve_ from dependencies.
 
-4. Added _ggdist_, _withr_, _purr_ and _tidyr_ to Suggests; `CITATION.cff` updated to match.
+4. Added _ggdist_, _withr_, _purrr_ and _tidyr_ to Suggests; `CITATION.cff` updated to match.
 
 5. Added basic infrastructure for continuous relative benchmarking (#206).
 

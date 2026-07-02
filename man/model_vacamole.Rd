@@ -141,7 +141,7 @@ for doubly vaccinated individuals (\eqn{\beta_v}) is 80\% of \eqn{\beta},
 0.1488.
 \item Infectiousness rate (\eqn{\sigma}, \code{infectiousness_rate}): 0.5, assuming
 a pre-infectious period of 2 days.
-\item Hospitalisation rate (\eqn{\eta}, \code{hospitalistion_rate}): 1.0 / 1000,
+\item Hospitalisation rate (\eqn{\eta}, \code{hospitalisation_rate}): 1.0 / 1000,
 assuming that one in every thousand infectious individuals is hospitalised.
 The hospitalisation rate of doubly vaccinated individuals (\eqn{\eta_v}) is
 80\% of \eqn{\eta}, 0.8 / 1000.

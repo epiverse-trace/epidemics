@@ -120,7 +120,7 @@ model](https://github.com/orgs/epiverse-trace/projects/36)
     ([\#211](https://github.com/epiverse-trace/epidemics/issues/211)).
 
 2.  [`.model_ebola_internal()`](https://epiverse-trace.github.io/epidemics/dev/reference/dot-model_ebola_internal.md)
-    relies on functionality from the {withr} package to preserve the
+    relies on functionality from the *withr* package to preserve the
     random number seed between parameter set-scenario combinations, and
     to ensure that each $`i`$-th replicate of each scenario starts with
     the same random number stream.
@@ -198,7 +198,7 @@ model](https://github.com/orgs/epiverse-trace/projects/36)
 
 ### Package
 
-1.  {withr} moved from Suggests to Imports due to use in seed
+1.  *withr* moved from Suggests to Imports due to use in seed
     management.
 
 2.  Added [@bahadzie](https://github.com/bahadzie) as contributor and
@@ -263,7 +263,7 @@ This release focuses on the ODE models in *epidemics*.
   this minor version.**
   ([\#176](https://github.com/epiverse-trace/epidemics/issues/176))
 
-- ODE model functions take on {data.table} to make combinations of
+- ODE model functions take on *data.table* to make combinations of
   interventions and vaccinations (together called a ‘scenario’), and
   infection parameter sets to run each scenario for each parameter set
   ([\#176](https://github.com/epiverse-trace/epidemics/issues/176)).
@@ -369,9 +369,9 @@ No substantial changes to classes; small additions of input checking to
     `inst/include/model_default.h`; references to filenames such as in
     the package header have been updated.
 
-3.  Removed {deSolve} from dependencies.
+3.  Removed *deSolve* from dependencies.
 
-4.  Added {ggdist}, {withr}, {purr} and {tidyr} to Suggests;
+4.  Added *ggdist*, *withr*, *purrr* and *tidyr* to Suggests;
     `CITATION.cff` updated to match.
 
 5.  Added basic infrastructure for continuous relative benchmarking
@@ -437,8 +437,8 @@ headers, and exposed to R as internal Rcpp functions. The ‘default’,
 ‘Vacamole’, and ‘diphtheria’ models are ODE models defined in this way.
 This is intended to help reduce overheads associated with passing ODE
 systems written in R back and forth from a solver (such as those
-provided by {deSolve}), and is an easier way to define feature-rich
-models than writing C code for solvers provided by {deSolve} that accept
+provided by *deSolve*), and is an easier way to define feature-rich
+models than writing C code for solvers provided by *deSolve* that accept
 compiled code.
 
 *epidemics* headers include tools for handling the C++ representations
@@ -446,7 +446,7 @@ of R objects used in the package (see below), and can be imported by
 other Rcpp packages.
 
 The ‘default’ and ‘Vacamole’ models have equivalent R-only
-implementations as well which use the {deSolve} package; these are
+implementations as well which use the *deSolve* package; these are
 intended to be made unavailable in future releases.
 
 ### Composable elements as classes

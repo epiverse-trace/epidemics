@@ -131,7 +131,7 @@
 <div class="section level3">
 <h3 id="model-functions-0-3-0">Model functions<a class="anchor" aria-label="anchor" href="#model-functions-0-3-0"></a></h3>
 <ol style="list-style-type: decimal"><li><p>The Ebola model code has been split into a two-level structure similar to the ODE models. The user facing function <code><a href="../reference/model_ebola.html">model_ebola()</a></code> now handles input checking and some cross-checking, and makes combinations of infection parameter sets and scenarios, and handles output. The internal model function <code><a href="../reference/dot-model_ebola_internal.html">.model_ebola_internal()</a></code> is now called over combinations of parameters and scenario elements (<a href="https://github.com/epiverse-trace/epidemics/issues/211" class="external-link">#211</a>).</p></li>
-<li><p><code><a href="../reference/dot-model_ebola_internal.html">.model_ebola_internal()</a></code> relies on functionality from the {withr} package to preserve the random number seed between parameter set-scenario combinations, and to ensure that each <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>-th replicate of each scenario starts with the same random number stream.</p></li>
+<li><p><code><a href="../reference/dot-model_ebola_internal.html">.model_ebola_internal()</a></code> relies on functionality from the <em>withr</em> package to preserve the random number seed between parameter set-scenario combinations, and to ensure that each <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>-th replicate of each scenario starts with the same random number stream.</p></li>
 </ol></div>
 <div class="section level3">
 <h3 id="model-structures-0-3-0">Model structures<a class="anchor" aria-label="anchor" href="#model-structures-0-3-0"></a></h3>
@@ -165,7 +165,7 @@
 </ol></div>
 <div class="section level3">
 <h3 id="package-0-3-0">Package<a class="anchor" aria-label="anchor" href="#package-0-3-0"></a></h3>
-<ol style="list-style-type: decimal"><li><p>{withr} moved from Suggests to Imports due to use in seed management.</p></li>
+<ol style="list-style-type: decimal"><li><p><em>withr</em> moved from Suggests to Imports due to use in seed management.</p></li>
 <li><p>Added <a href="https://github.com/bahadzie" class="external-link">@bahadzie</a> as contributor and <a href="https://github.com/jamesmbaazam" class="external-link">@jamesmbaazam</a> as reviewer.</p></li>
 <li><p>Updates to the GitHub Actions workflows and linter config file.</p></li>
 <li><p>Updates the license year to 2024 in all files with the year.</p></li>
@@ -186,7 +186,7 @@
 <div class="section level3">
 <h3 id="model-functions-0-2-0">Model functions<a class="anchor" aria-label="anchor" href="#model-functions-0-2-0"></a></h3>
 <ul><li><p>ODE model functions can now be passed numeric vectors of infection parameters, and lists of intervention sets (a list of <code>&lt;intervention&gt;</code>s), and lists of <code>&lt;vaccination&gt;</code> to the <code>intervention</code> and <code>vaccination</code> argument respectively. This is the <strong>main change in this minor version.</strong> (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>)</p></li>
-<li><p>ODE model functions take on {data.table} to make combinations of interventions and vaccinations (together called a ‘scenario’), and infection parameter sets to run each scenario for each parameter set (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
+<li><p>ODE model functions take on <em>data.table</em> to make combinations of interventions and vaccinations (together called a ‘scenario’), and infection parameter sets to run each scenario for each parameter set (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
 <li><p>ODE model functions all return <code>&lt;data.table&gt;</code>s - these may be nested with the model arguments as identity columns if vectors of parameters or multiple scenarios are passed. A simple, unnested <code>&lt;data.table&gt;</code> is passed if the model function is called with scalar arguments (<a href="https://github.com/epiverse-trace/epidemics/issues/176" class="external-link">#176</a>).</p></li>
 </ul></div>
 <div class="section level3">
@@ -219,8 +219,8 @@
 <h3 id="package-0-2-0">Package<a class="anchor" aria-label="anchor" href="#package-0-2-0"></a></h3>
 <ol style="list-style-type: decimal"><li><p>All ODE model functions have received a more extensive and more standardised (as much as possible) test suite.</p></li>
 <li><p>Filenames have been standardised to show which files are related, e.g. <code>R/model_default.R</code>, <code>src/model_default.cpp</code>, and <code>inst/include/model_default.h</code>; references to filenames such as in the package header have been updated.</p></li>
-<li><p>Removed {deSolve} from dependencies.</p></li>
-<li><p>Added {ggdist}, {withr}, {purr} and {tidyr} to Suggests; <code>CITATION.cff</code> updated to match.</p></li>
+<li><p>Removed <em>deSolve</em> from dependencies.</p></li>
+<li><p>Added <em>ggdist</em>, <em>withr</em>, <em>purrr</em> and <em>tidyr</em> to Suggests; <code>CITATION.cff</code> updated to match.</p></li>
 <li><p>Added basic infrastructure for continuous relative benchmarking (<a href="https://github.com/epiverse-trace/epidemics/issues/206" class="external-link">#206</a>).</p></li>
 </ol></div>
 </div>
@@ -240,9 +240,9 @@
 <h3 id="solving-ode-systems-using-boost-odeint-0-1-0">Solving ODE systems using Boost <em>odeint</em>
 <a class="anchor" aria-label="anchor" href="#solving-ode-systems-using-boost-odeint-0-1-0"></a></h3>
 <p><em>epidemics</em> uses Boost’s <em>odeint</em> <a href="https://www.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/overview.html" class="external-link uri">https://www.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/overview.html</a> to treat the deterministic models’ ordinary differential equations (ODEs) as initial value problems and solve them.</p>
-<p>Model ODEs are defined as <code>structs</code> with operators in the package headers, and exposed to R as internal Rcpp functions. The ‘default’, ‘Vacamole’, and ‘diphtheria’ models are ODE models defined in this way. This is intended to help reduce overheads associated with passing ODE systems written in R back and forth from a solver (such as those provided by {deSolve}), and is an easier way to define feature-rich models than writing C code for solvers provided by {deSolve} that accept compiled code.</p>
+<p>Model ODEs are defined as <code>structs</code> with operators in the package headers, and exposed to R as internal Rcpp functions. The ‘default’, ‘Vacamole’, and ‘diphtheria’ models are ODE models defined in this way. This is intended to help reduce overheads associated with passing ODE systems written in R back and forth from a solver (such as those provided by <em>deSolve</em>), and is an easier way to define feature-rich models than writing C code for solvers provided by <em>deSolve</em> that accept compiled code.</p>
 <p><em>epidemics</em> headers include tools for handling the C++ representations of R objects used in the package (see below), and can be imported by other Rcpp packages.</p>
-<p>The ‘default’ and ‘Vacamole’ models have equivalent R-only implementations as well which use the {deSolve} package; these are intended to be made unavailable in future releases.</p>
+<p>The ‘default’ and ‘Vacamole’ models have equivalent R-only implementations as well which use the <em>deSolve</em> package; these are intended to be made unavailable in future releases.</p>
 </div>
 <div class="section level3">
 <h3 id="composable-elements-as-classes-0-1-0">Composable elements as classes<a class="anchor" aria-label="anchor" href="#composable-elements-as-classes-0-1-0"></a></h3>

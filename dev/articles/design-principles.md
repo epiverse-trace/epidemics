@@ -20,9 +20,8 @@ user-friendliness, and maintainability**.
   as affected populations and model events.
 
 - *epidemics* attempts to balance performance and maintainability
-  through minimum sufficient use of C++, and not attempting to write a
-  domain-specific language (such as
-  [*odin*](https://cran.r-project.org/package=odin)).
+  through defining models using a domain-specific language
+  ([*odin*](https://cran.r-project.org/package=odin)).
 
 - To be more broadly applicable, *epidemics* provides a ‘library’ of
   compartmental models which are adapted from the published literature.
@@ -55,15 +54,14 @@ efficacy of response strategies.
 ![](../reference/figures/epidemics_architecture.png)
 
 **Fig. 2:** *epidemics* package architecture, and the ODE model stack.
-*epidemics* includes multiple internal functions in both R and C++ which
-check that inputs are suitable for each model, and to cross-check that
-inputs are compatible with each other. Function names indicate their
-behaviour (e.g. `assert_*()`), but not all similarly named functions are
-called at similar places in model function bodies. Partly, this reflects
-the privileged positions of some model components (such as the
-`population`, against which other components are checked), but also that
-some composable elements (such as time-dependence) may not be
-vectorised.
+*epidemics* includes multiple internal functions in R which check that
+inputs are suitable for each model, and to cross-check that inputs are
+compatible with each other. Function names indicate their behaviour
+(e.g. `assert_*()`), but not all similarly named functions are called at
+similar places in model function bodies. Partly, this reflects the
+privileged positions of some model components (such as the `population`,
+against which other components are checked), but also that some
+composable elements (such as time-dependence) may not be vectorised.
 
 ## Design decisions
 
@@ -76,7 +74,7 @@ decisions.
 - There are two broad types of models:
 
   - Deterministic models implemented as solutions to systems of ordinary
-    different equations (ODEs),
+    differential equations (ODEs),
 
   - Stochastic models with discrete timesteps where individuals move
     between compartments probabilistically.
@@ -114,81 +112,12 @@ decisions.
   system in R and pass it to solvers such as
   [`deSolve::lsoda()`](https://rdrr.io/pkg/deSolve/man/lsoda.html) from
   the [*deSolve* package](https://cran.r-project.org/package=deSolve).
-  We have opted against this approach (referred to as ‘R-deSolve’).
-
-- It is possible to write ODE compartmental transitions in C++, and
-  expose the C++ code to R, eventually passing this ODE system to
-  deSolve solvers (referred to as ‘Rcpp-deSolve’). We have also opted
-  against this approach, as it involves substantial interconversion of
-  more complex objects such as structured lists (the model composable
-  elements) from R to C++ in each solver timestep, reducing performance.
-
-- ODE systems are written in C++, and solved using the [Boost *odeint*
-  solvers](https://www.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/index.html)
-  with *fixed step sizes*. This means that within each call to
-  `model_*()`, R objects are converted for use by C++ only once (in the
-  scalar arguments case), and are not passed back and forth multiple
-  times.
-
-- *odeint* is provided by the package [BH (Boost
-  Headers)](https://cran.r-project.org/package=BH), making it convenient
-  to use in Rcpp packages. The [*r2sundials*
-  package](https://cran.r-project.org/package=r2sundials) provides an
-  Rcpp-friendly interface to the [SUNDIALS ODE
-  solvers](https://computing.llnl.gov/projects/sundials), but the
-  documentation is less clear overall, and seems to recommend the use of
-  [*RcppArmadillo*](https://cran.r-project.org/package=RcppArmadillo)
-  and
-  [*RcppXPtrUtils*](https://cran.r-project.org/package=RcppXPtrUtils);
-  these have not been evaluated for use.
-
-- *odeint* imposes certain constraints on ODE systems. There is no
-  functionality to easily define ‘events’ (also called ‘callbacks’) and
-  combine them with the ODE system. This means that the ODE systems have
-  to encapsulate information on the timing of events (such as
-  interventions) and the effect.
-
-- Equations describing **the right-hand side of model ODE systems**
-  $`x' = f(x)`$ are thus written as
-  [`structs`](https://cplusplus.com/doc/tutorial/structures/) with an
-  [overloaded function call
-  operator](https://en.cppreference.com/w/cpp/language/operators) that
-  makes them [`FunctionObject`
-  types](https://en.cppreference.com/w/cpp/named_req/FunctionObject).
-  The `struct` thus holds epidemiological parameters and composable
-  elements, which are passed by reference in any operations, reducing
-  copying. [See this simple example from the Boost
-  documentation.](https://live.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/short_example.html)
-  It can be passed as a function to a solver, and the epidemiological
-  parameters are calculated in each solver timestep as **some function
-  of time and the composable elements** (as applicable).
-
-- *epidemics* relies on the Eigen C++ library provided by RcppEigen to
-  represent matrices of initial conditions. Eigen matrices are among the
-  types accepted as initial states by *odeint* solvers. Alternatives
-  include Boost Basic Linear Algebra Library (uBLAS) and standard
-  library arrays and vectors; [a partial list - which does not include
-  Eigen - is provided by
-  Boost](https://live.boost.org/doc/libs/1_84_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/overview.html),
-  and Armadillo matrices may also be supported. We use Eigen matrices as
-  Eigen offers broad and well documented support for matrix operations,
-  easy conversion between Rcpp types, and also conforms to previous use
-  of Eigen in
-  [*finalsize*](https://cran.r-project.org/package=finalsize).
-
-- The models’ C++ code is in two levels that underlie the R source
-  code - the C++ source code and the C++ headers. This is to make the
-  header code (the model ODEs and helper functions) shareable so that
-  they can be re-used in other Rcpp packages and [this is explored more
-  in this blog post.](https://epiverse-trace.github.io/posts/share-cpp/)
-
-- *epidemics* defines C++ namespaces in the package headers to more
-  clearly indicate where certain functionalities sit. All model
-  structures are in the namespace `epidemics`, while the namespaces
-  `vaccination`, `intervention`, and `time_dependence` contain C++ code
-  to handle these composable elements (such as calculating the effect of
-  cumulative interventions). The namespace `odetools` defines the
-  initial state type, which is an `Eigen::MatrixXd`.
+  We have adapted this approach to use the R package
+  [*odin*](https://cran.r-project.org/web/packages/odin/index.html). The
+  advantage of *odin* is that it generates systems of ordinary
+  differential equations (ODE) and integrates them, using a
+  domain-specific language (DSL). The DSL uses R’s syntax, but compiles
+  to C in order to efficiently solve the system using deSolve.
 
 ### Stochastic models
 
@@ -282,13 +211,6 @@ implementations could see them being revisited.
   using *Rcpp*; though old, we have benchmarked a minimal example using
   *Boost* and found that this information is still valid.
 
-  - One possible reason to switch at least part of the Ebola model
-    implementation to C++ is to make use of more efficient random number
-    generation from the GNU Scientific Library via
-    [*RcppGSL*](https://CRAN.R-project.org/package=RcppGSL), although
-    there may be [issues for users trying to compile from source on
-    Windows](https://stackoverflow.com/questions/55976547/linking-gsl-libraries-to-rcppgsl-in-windows-10).
-
 ### Classes
 
 - The major composable elements are bundled into custom S3 classes that
@@ -298,10 +220,6 @@ implementations could see them being revisited.
   the form of named, structured lists. These are not defined as classes
   because they are expected to be less used, or used by more advanced
   modellers who are comfortable working with lists directly.
-
-- A key element of composable elements being or inheriting from lists is
-  that they can be easily handled within the C++ code as **they are
-  interpreted as Rcpp lists**.
 
 - All matrix objects referring to demography-group coefficients follow
   the ‘demography-in-rows’ pattern from *finalsize*, where rows
@@ -318,10 +236,9 @@ implementations could see them being revisited.
   option open of unifying these classes into a single concrete type in
   the future.
 
-- All composable elements except the `population` are optional. Model
+- All composable elements except `population` are optional. Model
   functions internally generate dummy values for the other composable
-  elements allowed for each model, as these are required for the C++
-  code.
+  elements allowed for each model.
 
 - `<intervention>` and `<vaccination>` objects may be combined with
   objects of the same (sub)-class using the
@@ -380,14 +297,6 @@ modelling](https://epiverse-trace.github.io/epidemics/dev/articles/modelling_sce
 
 ## Miscellaneous decisions
 
-- *epidemics* follows the *finalsize* example in following [Google’s C++
-  code style](https://google.github.io/styleguide/cppguide.html), and in
-  using [Cpplint](https://github.com/cpplint/cpplint) and
-  [Cppcheck](https://cppcheck.sourceforge.io/) for static code analysis
-  as options such as Clang-tidy do not work well with Rcpp code; [see
-  this blog post](https://epiverse-trace.github.io/posts/lint-rcpp/) for
-  more.
-
 - Function naming: Function names aim to contain verbs that indicate the
   function behaviour. Internal input checking functions follow the
   *checkmate* naming style (e.g. `assert_*()`).
@@ -412,12 +321,9 @@ user-friendliness.
 - [*data.table*](https://CRAN.R-project.org/package=data.table): a
   lightweight dependency to handle data from model outputs, and
   especially used for nested list column functionality.
-- [*Rcpp*](https://CRAN.R-project.org/package=Rcpp): provides linking
-  between C++ and R;
-- [*RcppEigen*](https://CRAN.R-project.org/package=RcppEigen): provides
-  matrix classes suitable for use with Boost *odeint*;
-- [*BH*](https://CRAN.R-project.org/package=BH): provides the Boost
-  *odeint* ODE solvers;
+- [*odin*](https://CRAN.R-project.org/package=odin): provides a
+  domain-specific language (DSL) for defining ODE systems, and is used
+  to implement the ODE models in *epidemics*.
 - [*withr*](https://CRAN.R-project.org/package=withr): for seed
   management;
 - *stats* and *utils*: already installed with R, and used only in the
@@ -441,6 +347,7 @@ vignettes more user-friendly.
 - [*finalsize*](https://CRAN.R-project.org/package=finalsize): for
   comparison against *epidemics* in a vignette;
 - [*ggplot2*](https://CRAN.R-project.org/package=ggplot2),
+  [*ggdist*](https://CRAN.R-project.org/package=ggdist),
   [*scales*](https://CRAN.R-project.org/package=scales),
   [*colorspace*](https://CRAN.R-project.org/package=colorspace):
   packages for plotting;

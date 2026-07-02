@@ -71,7 +71,7 @@ The notes here refer to broad decisions and not to individual models -- see indi
 
 ### ODE systems and models
 
-- A common method for defining and solving ODEs in R is to write the ODE system in R and pass it to solvers such as `deSolve::lsoda()` from the [_deSolve_ package](https://cran.r-project.org/package=deSolve). We have adapted this approach to use the _odin_. The advantage of _odin_ is that it [generates systems of ordinary differential equations (ODE) and integrate them, using a domain specific language (DSL). The DSL uses R's syntax, but compiles to C in order to efficiently solve the system](https://cran.r-project.org/web/packages/odin/index.html) using deSolve.
+- A common method for defining and solving ODEs in R is to write the ODE system in R and pass it to solvers such as `deSolve::lsoda()` from the [_deSolve_ package](https://cran.r-project.org/package=deSolve). We have adapted this approach to use the R package [_odin_](https://cran.r-project.org/web/packages/odin/index.html). The advantage of _odin_ is that it generates systems of ordinary differential equations (ODE) and integrate them, using a domain specific language (DSL). The DSL uses R's syntax, but compiles to C in order to efficiently solve the system using deSolve.
 
 ### Stochastic models
 
@@ -118,7 +118,7 @@ Some modelling decisions are explained here, while recognising that adding more 
 
 - Interventions may be of the `<contacts_intervention>` or `<rate_intervention>` class, which inherit from the abstract super-class `<intervention>`. This inheritance structure was chosen to maintain coherence between the intervention types, and to keep the option open of unifying these classes into a single concrete type in the future.
 
-- All composable elements except the `population` are optional. Model functions internally generate dummy values for the other composable elements allowed for each model.
+- All composable elements except `population` are optional. Model functions internally generate dummy values for the other composable elements allowed for each model.
 
 - `<intervention>` and `<vaccination>` objects may be combined with objects of the same (sub)-class using the `c()` method for each (sub)-class, and resulting in an object of the same (sub)-class. The interpretation for each class is however slightly different:
 

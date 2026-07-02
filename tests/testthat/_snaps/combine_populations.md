@@ -43,12 +43,11 @@
       Population 2_[65,Inf)           1.22853242            1.71428571
       
        Initial Conditions 
-                              [,1]  [,2]  [,3] [,4] [,5]
-      Population 1_[0,40)   0.9999 5e-05 5e-05    0    0
-      Population 1_[40,65)  0.9999 5e-05 5e-05    0    0
-      Population 1_[65,Inf) 0.9999 5e-05 5e-05    0    0
-      Population 2_[0,40)   0.9999 5e-05 5e-05    0    0
-      Population 2_[40,65)  0.9999 5e-05 5e-05    0    0
-      Population 2_[65,Inf) 0.9999 5e-05 5e-05    0    0
-
+                             [,1]  [,2]  [,3] [,4] [,5]
+      Population 1_[0,40)  0.9999 5e-05 5e-05    0    0
+      Population 1_[40,65) 0.9999 5e-05 5e-05    0    0
+      Population 1_65+     0.9999 5e-05 5e-05    0    0
+      Population 2_[0,40)  0.9999 5e-05 5e-05    0    0
+      Population 2_[40,65) 0.9999 5e-05 5e-05    0    0
+      Population 2_65+     0.9999 5e-05 5e-05    0    0
 

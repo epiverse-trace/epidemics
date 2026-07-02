@@ -138,12 +138,12 @@ plot_baseline
 
 ![A model of an infectious disease epidemic, assuming a directly
 transmitted infection such as influenza, with an \$R_0\$ of 1.3, an
-infectious period of 5 days, and a pre-infectious period of 1.5
+infectious period of 7 days, and a pre-infectious period of 2
 days.](modelling_multiple_interventions_files/figure-html/unnamed-chunk-6-1.png)
 
 A model of an infectious disease epidemic, assuming a directly
 transmitted infection such as influenza, with an $`R_0`$ of 1.3, an
-infectious period of 5 days, and a pre-infectious period of 1.5 days.
+infectious period of 7 days, and a pre-infectious period of 2 days.
 
 In the baseline scenario, the epidemic would continue for approximately
 400 days, or more than one year, with a peak in new infections between

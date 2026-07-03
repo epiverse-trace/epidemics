@@ -11,8 +11,6 @@ coverage](https://codecov.io/gh/epiverse-trace/epidemics/branch/main/graph/badge
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/epidemics)](https://CRAN.R-project.org/package=epidemics)
 <!-- badges: end -->
 
 *epidemics* is an R package that provides modular representations of
@@ -204,8 +202,7 @@ individuals.
 
 More details on how to use *epidemics* can be found in the [online
 documentation as package
-vignettes](https://epiverse-trace.github.io/epidemics/), under
-“Articles”.
+vignettes](https://epiverse-trace.github.io/epidemics/articles/).
 
 ## Package models
 

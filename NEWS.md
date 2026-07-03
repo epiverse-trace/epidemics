@@ -18,6 +18,8 @@
 
 1. Added `dependabot.yml` to `.github/` to automate updating GitHub actions workflow versions.
 
+2. Updated all uses of _socialmixr_ across tests, vignettes, examples and the README to pass `survey_pop` explicitly to `socialmixr::contact_matrix()` (via `socialmixr::survey_country_population()`), removing deprecation warnings introduced in _socialmixr_ 0.6.0; the minimum _socialmixr_ version is now 0.6.0 (#281).
+
 # epidemics 0.4.0
 
 Maintainer is changing to @rozeggo.

@@ -199,8 +199,7 @@ individuals.
 
 More details on how to use *epidemics* can be found in the [online
 documentation as package
-vignettes](https://epiverse-trace.github.io/epidemics/), under
-“Articles”.
+vignettes](https://epiverse-trace.github.io/epidemics/articles/).
 
 ## Package models
 

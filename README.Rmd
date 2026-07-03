@@ -190,7 +190,6 @@ filter(output, compartment == "infectious") |>
 
 More details on how to use _{{ packagename }}_ can be found in the [online documentation as package vignettes](https://epiverse-trace.github.io/{{ packagename }}/articles/).
 
-
 ## Package models
 
 _{{ packagename }}_ provides a convenient interface to a library of compartmental models that can help to model epidemic scenarios for directly transmitted respiratory infections such as influenza or Covid-19 as well haemorrhagic fevers such as Ebola virus disease:

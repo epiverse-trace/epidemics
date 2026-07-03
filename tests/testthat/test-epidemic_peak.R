@@ -5,6 +5,10 @@ test_data_default_model <- function() {
   contact_data <- socialmixr::contact_matrix(
     polymod,
     countries = "United Kingdom",
+    survey_pop = socialmixr::survey_country_population(
+      polymod,
+      countries = "United Kingdom"
+    ),
     age_limits = c(0, 20, 40),
     symmetric = TRUE,
     return_demography = TRUE

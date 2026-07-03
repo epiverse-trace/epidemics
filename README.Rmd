@@ -188,7 +188,8 @@ filter(output, compartment == "infectious") |>
 
 ## Package vignettes
 
-More details on how to use _{{ packagename }}_ can be found in the [online documentation as package vignettes](https://epiverse-trace.github.io/{{ packagename }}/), under "Articles".
+More details on how to use _{{ packagename }}_ can be found in the [online documentation as package vignettes](https://epiverse-trace.github.io/{{ packagename }}/articles/).
+
 
 ## Package models
 

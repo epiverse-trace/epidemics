@@ -46,7 +46,7 @@ Prepare arguments to \code{\link[=model_vacamole]{model_vacamole()}}.
 }
 \details{
 \code{.check_prepare_args_vacamole()} prepares arguments for
-model_vacamole(), which is the odin based C function that solves the
+model_vacamole(), which is the \emph{odin} based C function that solves the
 Vacamole ODE system.
 }
 \keyword{internal}

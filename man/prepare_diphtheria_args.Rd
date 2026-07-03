@@ -46,7 +46,7 @@ Prepare arguments to \code{\link[=model_diphtheria]{model_diphtheria()}}.
 }
 \details{
 \code{.check_prepare_args_diphtheria()} prepares arguments for
-model_diphtheria(), which uses an odin C function to solve the
+model_diphtheria(), which uses an \emph{odin} C function to solve the
 ODE system.
 }
 \keyword{internal}

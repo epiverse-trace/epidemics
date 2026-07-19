@@ -37,7 +37,8 @@ _epidemics_ expects social contacts matrices $M_{ij}$ to represent contacts to $
 
 Social contacts matrices provided by the [_socialmixr_](https://CRAN.R-project.org/package=socialmixr) package follow the opposite convention, where $M_{ij}$ represents [contacts from group $i$ to group $j$](https://epiforecasts.io/socialmixr/articles/socialmixr.html#usage).
 
-Thus social contact matrices from _socialmixr_ need to be transposed (using `t()`) before they are used with _epidemics_.
+_epidemics_ reconciles the two conventions for you: the model functions transpose the contact matrix internally.
+Matrices from _socialmixr_ can therefore be passed to `population()` exactly as they are returned, with no call to `t()`.
 :::
 
 ```{r}

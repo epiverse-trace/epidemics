@@ -80,9 +80,18 @@ Prepare population and contact data.
 
 # load contact and population data from socialmixr::polymod
 polymod <- socialmixr::polymod
+
+# demography data from the wpp2024 package
+data("popAge1dt", package = "wpp2024")
+uk_pop <- popAge1dt |>
+  dplyr::filter(name == "United Kingdom", year == 2006) |>
+  dplyr::select(lower.age.limit = age, population = pop) |>
+  dplyr::mutate(population = population * 1000)
+
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
+  survey_pop = uk_pop,
   age_limits = c(0, 20, 65),
   symmetric = TRUE,
   return_demography = TRUE
@@ -398,7 +407,7 @@ names(peak_hospital_occupancy) <- c("No vaccination", "Vaccination")
 # show peak hospital occupancy in a readable format
 format(peak_hospital_occupancy, big.mark = ",", digits = 1)
 #> No vaccination    Vaccination 
-#>        "1,813"        "   12"
+#>        "1,841"        "   12"
 ```
 
 This example demonstrates that implementing vaccination can

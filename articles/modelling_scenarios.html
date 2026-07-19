@@ -219,9 +219,18 @@ modelling components”</a> vignette.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
 <span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
+<span></span>
+<span><span class="co"># demography data from the wpp2024 package</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"popAge1dt"</span>, package <span class="op">=</span> <span class="st">"wpp2024"</span><span class="op">)</span></span>
+<span><span class="va">uk_pop</span> <span class="op">&lt;-</span> <span class="va">popAge1dt</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">==</span> <span class="st">"United Kingdom"</span>, <span class="va">year</span> <span class="op">==</span> <span class="fl">2006</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>lower.age.limit <span class="op">=</span> <span class="va">age</span>, population <span class="op">=</span> <span class="va">pop</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>population <span class="op">=</span> <span class="va">population</span> <span class="op">*</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
+<span>  survey_pop <span class="op">=</span> <span class="va">uk_pop</span>,</span>
 <span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
 <span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -422,13 +431,13 @@ scenario.</p>
 <span><span class="va">epidemic_size_estimates</span></span>
 <span><span class="co">#&gt;                    scenario       size</span></span>
 <span><span class="co">#&gt;                      &lt;char&gt;     &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:            Close schools 21,506,900</span></span>
-<span><span class="co">#&gt; 2:         Close workplaces 22,426,935</span></span>
-<span><span class="co">#&gt; 3:               Close both  6,703,825</span></span>
-<span><span class="co">#&gt; 4:             Mask mandate 22,713,914</span></span>
-<span><span class="co">#&gt; 5:    Masks + close schools 17,267,407</span></span>
-<span><span class="co">#&gt; 6: Masks + close workplaces 20,585,324</span></span>
-<span><span class="co">#&gt; 7:       Masks + close both  2,082,890</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:            Close schools 21,821,867</span></span>
+<span><span class="co">#&gt; 2:         Close workplaces 22,760,749</span></span>
+<span><span class="co">#&gt; 3:               Close both  6,797,673</span></span>
+<span><span class="co">#&gt; 4:             Mask mandate 23,052,587</span></span>
+<span><span class="co">#&gt; 5:    Masks + close schools 17,509,255</span></span>
+<span><span class="co">#&gt; 6: Masks + close workplaces 20,892,009</span></span>
+<span><span class="co">#&gt; 7:       Masks + close both  2,112,057</span></span></code></pre></div>
 <p>This example shows how implementing interventions that reduce
 transmission can reduce the size of an epidemic.</p>
 <div class="section level3 alert alert-info">
@@ -584,27 +593,27 @@ by default.</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;     scenario demography_group averted_median averted_lower averted_upper</span></span>
 <span><span class="co">#&gt;        &lt;int&gt;           &lt;char&gt;          &lt;num&gt;         &lt;num&gt;         &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:        1           [0,20)       383171.0     127049.23     3037175.1</span></span>
-<span><span class="co">#&gt;  2:        1          [20,40)       396356.0      98546.05     2932546.7</span></span>
-<span><span class="co">#&gt;  3:        1         [40,Inf)       584725.9     145892.81     3993655.9</span></span>
-<span><span class="co">#&gt;  4:        2           [0,20)       158910.2      94722.94     1438610.6</span></span>
-<span><span class="co">#&gt;  5:        2          [20,40)       204104.8     146675.38     1441537.8</span></span>
-<span><span class="co">#&gt;  6:        2         [40,Inf)       261674.1     167791.23     2000556.2</span></span>
-<span><span class="co">#&gt;  7:        3           [0,20)      4678799.4     901966.59     6134652.6</span></span>
-<span><span class="co">#&gt;  8:        3          [20,40)      4583922.8     985309.24     5716507.3</span></span>
-<span><span class="co">#&gt;  9:        3         [40,Inf)      6320394.3    1475845.60     7616611.1</span></span>
-<span><span class="co">#&gt; 10:        4           [0,20)       112115.4      96410.27      608345.6</span></span>
-<span><span class="co">#&gt; 11:        4          [20,40)       118754.2     101979.46      617282.5</span></span>
-<span><span class="co">#&gt; 12:        4         [40,Inf)       177347.8     151125.36      871724.9</span></span>
-<span><span class="co">#&gt; 13:        5           [0,20)      1442121.5     194790.14     5107124.7</span></span>
-<span><span class="co">#&gt; 14:        5          [20,40)      1500221.3     200377.45     4737525.2</span></span>
-<span><span class="co">#&gt; 15:        5         [40,Inf)      2173081.3     305593.02     6258725.1</span></span>
-<span><span class="co">#&gt; 16:        6           [0,20)       592856.0     115273.86     3826790.4</span></span>
-<span><span class="co">#&gt; 17:        6          [20,40)       639981.0     155689.23     3654849.3</span></span>
-<span><span class="co">#&gt; 18:        6         [40,Inf)       932398.3     200154.87     4925179.7</span></span>
-<span><span class="co">#&gt; 19:        7           [0,20)      6246259.3    2586944.09     6633237.2</span></span>
-<span><span class="co">#&gt; 20:        7          [20,40)      5916770.1    2716621.69     6232275.9</span></span>
-<span><span class="co">#&gt; 21:        7         [40,Inf)      8012047.9    3959960.69     8348571.8</span></span>
+<span><span class="co">#&gt;  1:        1           [0,20)       386536.5     127819.07     3061966.5</span></span>
+<span><span class="co">#&gt;  2:        1          [20,40)       407554.1     101199.65     3002753.2</span></span>
+<span><span class="co">#&gt;  3:        1         [40,Inf)       596332.6     148542.02     4060694.6</span></span>
+<span><span class="co">#&gt;  4:        2           [0,20)       160142.1      95543.82     1446110.8</span></span>
+<span><span class="co">#&gt;  5:        2          [20,40)       209376.0     150699.64     1473332.5</span></span>
+<span><span class="co">#&gt;  6:        2         [40,Inf)       266541.6     171019.46     2029850.6</span></span>
+<span><span class="co">#&gt;  7:        3           [0,20)      4711421.4     908047.91     6180484.1</span></span>
+<span><span class="co">#&gt;  8:        3          [20,40)      4690675.4    1011735.77     5842660.9</span></span>
+<span><span class="co">#&gt;  9:        3         [40,Inf)      6421400.8    1502555.62     7734353.8</span></span>
+<span><span class="co">#&gt; 10:        4           [0,20)       112868.5      97089.00      612107.6</span></span>
+<span><span class="co">#&gt; 11:        4          [20,40)       121876.6     104666.98      631833.8</span></span>
+<span><span class="co">#&gt; 12:        4         [40,Inf)       180456.6     153814.15      885609.2</span></span>
+<span><span class="co">#&gt; 13:        5           [0,20)      1453917.6     196357.24     5146654.6</span></span>
+<span><span class="co">#&gt; 14:        5          [20,40)      1540137.2     206199.87     4842663.3</span></span>
+<span><span class="co">#&gt; 15:        5         [40,Inf)      2213232.2     311731.80     6356221.2</span></span>
+<span><span class="co">#&gt; 16:        6           [0,20)       595964.4     116125.98     3850967.5</span></span>
+<span><span class="co">#&gt; 17:        6          [20,40)       655572.4     159951.82     3734287.6</span></span>
+<span><span class="co">#&gt; 18:        6         [40,Inf)       947368.5     203914.03     4998238.2</span></span>
+<span><span class="co">#&gt; 19:        7           [0,20)      6292289.2    2603669.20     6682314.8</span></span>
+<span><span class="co">#&gt; 20:        7          [20,40)      6049147.6    2785039.47     6371420.8</span></span>
+<span><span class="co">#&gt; 21:        7         [40,Inf)      8138073.9    4027135.12     8478391.9</span></span>
 <span><span class="co">#&gt;     scenario demography_group averted_median averted_lower averted_upper</span></span>
 <span><span class="co">#&gt;        &lt;int&gt;           &lt;char&gt;          &lt;num&gt;         &lt;num&gt;         &lt;num&gt;</span></span></code></pre></div>
 </div>
@@ -789,7 +798,7 @@ Sciences</em> 120 (28): e2300590120. <a href="https://doi.org/10.1073/pnas.23005
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

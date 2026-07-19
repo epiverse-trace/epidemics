@@ -137,26 +137,21 @@
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
 <span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
 <span></span>
+<span><span class="co"># demography data from the wpp2024 package</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"popAge1dt"</span>, package <span class="op">=</span> <span class="st">"wpp2024"</span><span class="op">)</span></span>
+<span><span class="va">uk_pop</span> <span class="op">&lt;-</span> <span class="va">popAge1dt</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">==</span> <span class="st">"United Kingdom"</span>, <span class="va">year</span> <span class="op">==</span> <span class="fl">2006</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>lower.age.limit <span class="op">=</span> <span class="va">age</span>, population <span class="op">=</span> <span class="va">pop</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>population <span class="op">=</span> <span class="va">population</span> <span class="op">*</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">contact_data1</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
+<span>  survey_pop <span class="op">=</span> <span class="va">uk_pop</span>,</span>
 <span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
 <span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Automatic country population lookup in `contact_matrix()` was deprecated in</span></span>
-<span><span class="co">#&gt; socialmixr 0.6.0.</span></span>
-<span><span class="co">#&gt; When `countries` is given (or a `country` column is present) without</span></span>
-<span><span class="co">#&gt; `survey_pop`, contact_matrix() currently calls the soft-deprecated `wpp_age()`</span></span>
-<span><span class="co">#&gt; to look up population data. This automatic lookup will be removed in a future</span></span>
-<span><span class="co">#&gt; release: callers will then have to supply `survey_pop` whenever `symmetric`,</span></span>
-<span><span class="co">#&gt; `split`, `per_capita`, `weigh_age`, or `return_demography` is TRUE.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Pass `survey_pop` explicitly to silence this warning, e.g. `survey_pop =</span></span>
-<span><span class="co">#&gt;   survey_country_population(survey, countries)` or a data frame from the</span></span>
-<span><span class="co">#&gt;   wpp2024 package.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
 <span><span class="va">contact_matrix1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data1</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
@@ -169,13 +164,13 @@
 <span><span class="va">contact_matrix1</span></span>
 <span><span class="co">#&gt;                  age.group</span></span>
 <span><span class="co">#&gt; contact.age.group   [0,20)  [20,40) [40,Inf)</span></span>
-<span><span class="co">#&gt;          [0,20)   7.883663 2.794154 1.565665</span></span>
-<span><span class="co">#&gt;          [20,40)  3.120220 4.854839 2.624868</span></span>
-<span><span class="co">#&gt;          [40,Inf) 3.063895 4.599893 5.005571</span></span>
+<span><span class="co">#&gt;          [0,20)   7.883663 2.764179 1.557728</span></span>
+<span><span class="co">#&gt;          [20,40)  3.157024 4.854839 2.636148</span></span>
+<span><span class="co">#&gt;          [40,Inf) 3.084747 4.570735 5.005571</span></span>
 <span></span>
 <span><span class="va">demography_vector1</span></span>
 <span><span class="co">#&gt;   [0,20)  [20,40) [40,Inf) </span></span>
-<span><span class="co">#&gt; 14799290 16526302 28961159</span></span></code></pre></div>
+<span><span class="co">#&gt; 14865748 16978469 29438434</span></span></code></pre></div>
 </details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># initial conditions</span></span>
 <span><span class="va">initial_i</span> <span class="op">&lt;-</span> <span class="fl">1e-6</span></span>
@@ -201,9 +196,15 @@
 <span><span class="op">)</span></span></code></pre></div>
 </details><p>Then, we define the contact data, demography, and initial conditions for the second population, and create the corresponding population object.</p>
 <details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">contact_data2</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">germany_pop</span> <span class="op">&lt;-</span> <span class="va">popAge1dt</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">==</span> <span class="st">"Germany"</span>, <span class="va">year</span> <span class="op">==</span> <span class="fl">2006</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>lower.age.limit <span class="op">=</span> <span class="va">age</span>, population <span class="op">=</span> <span class="va">pop</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>population <span class="op">=</span> <span class="va">population</span> <span class="op">*</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">contact_data2</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"Germany"</span>,</span>
+<span>  survey_pop <span class="op">=</span> <span class="va">germany_pop</span>,</span>
 <span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
 <span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -249,19 +250,19 @@
 <span><span class="op">)</span></span>
 <span><span class="va">tot_population</span><span class="op">$</span><span class="va">contact_matrix</span></span>
 <span><span class="co">#&gt;                  UK_[0,20) UK_[20,40) UK_[40,Inf) Germany_[0,20)</span></span>
-<span><span class="co">#&gt; UK_[0,20)        7.8836634  2.7941543  1.56566491     0.21987654</span></span>
-<span><span class="co">#&gt; UK_[20,40)       3.1202198  4.8548387  2.62486789     0.09659556</span></span>
-<span><span class="co">#&gt; UK_[40,Inf)      3.0638950  4.5998927  5.00557103     0.12694135</span></span>
-<span><span class="co">#&gt; Germany_[0,20)   0.3941832  0.1397077  0.07828325     4.39753086</span></span>
-<span><span class="co">#&gt; Germany_[20,40)  0.1560110  0.2427419  0.13124339     1.93191115</span></span>
-<span><span class="co">#&gt; Germany_[40,Inf) 0.1531947  0.2299946  0.25027855     2.53882710</span></span>
+<span><span class="co">#&gt; UK_[0,20)        7.8836634  2.7641785   1.5577281     0.21987654</span></span>
+<span><span class="co">#&gt; UK_[20,40)       3.1570238  4.8548387   2.6361484     0.09597109</span></span>
+<span><span class="co">#&gt; UK_[40,Inf)      3.0847473  4.5707349   5.0055710     0.12991787</span></span>
+<span><span class="co">#&gt; Germany_[0,20)   0.3941832  0.1382089   0.0778864     4.39753086</span></span>
+<span><span class="co">#&gt; Germany_[20,40)  0.1578512  0.2427419   0.1318074     1.91942171</span></span>
+<span><span class="co">#&gt; Germany_[40,Inf) 0.1542374  0.2285367   0.2502786     2.59835740</span></span>
 <span><span class="co">#&gt;                  Germany_[20,40) Germany_[40,Inf)</span></span>
-<span><span class="co">#&gt; UK_[0,20)              0.0745734       0.04774997</span></span>
-<span><span class="co">#&gt; UK_[20,40)             0.2112342       0.08052045</span></span>
-<span><span class="co">#&gt; UK_[40,Inf)            0.1652582       0.20370036</span></span>
-<span><span class="co">#&gt; Germany_[0,20)         1.4914680       0.95499934</span></span>
-<span><span class="co">#&gt; Germany_[20,40)        4.2246835       1.61040905</span></span>
-<span><span class="co">#&gt; Germany_[40,Inf)       3.3051642       4.07400722</span></span></code></pre></div>
+<span><span class="co">#&gt; UK_[0,20)             0.07529881       0.04678915</span></span>
+<span><span class="co">#&gt; UK_[20,40)            0.21123418       0.07848854</span></span>
+<span><span class="co">#&gt; UK_[40,Inf)           0.17099275       0.20370036</span></span>
+<span><span class="co">#&gt; Germany_[0,20)        1.50597616       0.93578298</span></span>
+<span><span class="co">#&gt; Germany_[20,40)       4.22468354       1.56977082</span></span>
+<span><span class="co">#&gt; Germany_[40,Inf)      3.41985500       4.07400722</span></span></code></pre></div>
 </details><p>The object <code>tot_population</code> contains 6 groups: UK population aged 0-20 years old, 20-40 year old, and &gt;40 years old; and German population aged 0-20 years old, 20-40 year old, and &gt;40 years old.</p>
 <p>We now use <code>model_default</code> to simulate the epidemic on the combined population for 700 days, with transmission starting in the United Kingdom.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -329,19 +330,19 @@
 <span></span>
 <span><span class="va">gravity_population</span><span class="op">$</span><span class="va">contact_matrix</span></span>
 <span><span class="co">#&gt;                   UK_[0,20) UK_[20,40) UK_[40,Inf) Germany_[0,20)</span></span>
-<span><span class="co">#&gt; UK_[0,20)        7.88366337 2.79415430 1.565664914    0.016230489</span></span>
-<span><span class="co">#&gt; UK_[20,40)       3.12021981 4.85483871 2.624867887    0.007130334</span></span>
-<span><span class="co">#&gt; UK_[40,Inf)      3.06389499 4.59989272 5.005571031    0.009370351</span></span>
-<span><span class="co">#&gt; Germany_[0,20)   0.02909717 0.01031272 0.005778585    4.397530864</span></span>
-<span><span class="co">#&gt; Germany_[20,40)  0.01151617 0.01791833 0.009687912    1.931911151</span></span>
-<span><span class="co">#&gt; Germany_[40,Inf) 0.01130828 0.01697737 0.018474655    2.538827098</span></span>
+<span><span class="co">#&gt; UK_[0,20)        7.88366337 2.76417854 1.557728085    0.016556089</span></span>
+<span><span class="co">#&gt; UK_[20,40)       3.15702376 4.85483871 2.636148384    0.007226354</span></span>
+<span><span class="co">#&gt; UK_[40,Inf)      3.08474726 4.57073487 5.005571031    0.009782452</span></span>
+<span><span class="co">#&gt; Germany_[0,20)   0.02968089 0.01040675 0.005864629    4.397530864</span></span>
+<span><span class="co">#&gt; Germany_[20,40)  0.01188575 0.01827779 0.009924730    1.919421706</span></span>
+<span><span class="co">#&gt; Germany_[40,Inf) 0.01161364 0.01720818 0.018845275    2.598357398</span></span>
 <span><span class="co">#&gt;                  Germany_[20,40) Germany_[40,Inf)</span></span>
-<span><span class="co">#&gt; UK_[0,20)            0.005504738      0.003524729</span></span>
-<span><span class="co">#&gt; UK_[20,40)           0.015592541      0.005943728</span></span>
-<span><span class="co">#&gt; UK_[40,Inf)          0.012198762      0.015036422</span></span>
-<span><span class="co">#&gt; Germany_[0,20)       1.491467979      0.954999336</span></span>
-<span><span class="co">#&gt; Germany_[20,40)      4.224683544      1.610409054</span></span>
-<span><span class="co">#&gt; Germany_[40,Inf)     3.305164225      4.074007220</span></span></code></pre></div>
+<span><span class="co">#&gt; UK_[0,20)             0.00566979      0.003523092</span></span>
+<span><span class="co">#&gt; UK_[20,40)            0.01590534      0.005909968</span></span>
+<span><span class="co">#&gt; UK_[40,Inf)           0.01287528      0.015338068</span></span>
+<span><span class="co">#&gt; Germany_[0,20)        1.50597616      0.935782978</span></span>
+<span><span class="co">#&gt; Germany_[20,40)       4.22468354      1.569770820</span></span>
+<span><span class="co">#&gt; Germany_[40,Inf)      3.41985500      4.074007220</span></span></code></pre></div>
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run an epidemic model</span></span>
 <span><span class="va">output_gravity</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
@@ -517,7 +518,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

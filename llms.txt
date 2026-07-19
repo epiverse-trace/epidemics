@@ -57,6 +57,14 @@ install.packages("epidemics", repos = c("https://epiverse-trace.r-universe.dev",
     *RTools*](https://cran.r-project.org/bin/windows/Rtools/) for your
     version of R.
 
+3.  The examples in this README and in the package vignettes build a
+    social contact matrix from demography data in
+    [*wpp2024*](https://github.com/PPgp/wpp2024), which is not on CRAN
+    and so is not installed alongside the other suggested packages;
+    install it with `pak::pkg_install("PPgp/wpp2024")`. You only need it
+    to run the documentation examples, as *epidemics* itself does not
+    use *wpp2024* at runtime.
+
 ## Quick start
 
 Here we show an example of using the default model in *epidemics* to
@@ -80,9 +88,18 @@ population), divided into three age groups: 0 – 19, 20 – 39, and 40+.
 
 # load contact and population data from socialmixr::polymod
 polymod <- socialmixr::polymod
+
+# demography data from the wpp2024 package
+data("popAge1dt", package = "wpp2024")
+uk_pop <- popAge1dt |>
+  dplyr::filter(name == "United Kingdom", year == 2006) |>
+  dplyr::select(lower.age.limit = age, population = pop) |>
+  dplyr::mutate(population = population * 1000)
+
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
+  survey_pop = uk_pop,
   age_limits = c(0, 20, 40),
   symmetric = TRUE,
   return_demography = TRUE

@@ -146,23 +146,22 @@ the effect of initial conditions on differences in outcomes.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># demography data from the wpp2024 package</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"popAge1dt"</span>, package <span class="op">=</span> <span class="st">"wpp2024"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">uk_pop</span> <span class="op">&lt;-</span> <span class="va">popAge1dt</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">==</span> <span class="st">"United Kingdom"</span>, <span class="va">year</span> <span class="op">==</span> <span class="fl">2006</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>lower.age.limit <span class="op">=</span> <span class="va">age</span>, population <span class="op">=</span> <span class="va">pop</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>population <span class="op">=</span> <span class="va">population</span> <span class="op">*</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">polymod</span>,</span></span>
 <span class="r-in"><span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span></span>
+<span class="r-in"><span>  survey_pop <span class="op">=</span> <span class="va">uk_pop</span>,</span></span>
 <span class="r-in"><span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Automatic country population lookup in `contact_matrix()` was deprecated in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> socialmixr 0.6.0.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> When `countries` is given (or a `country` column is present) without</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> `survey_pop`, contact_matrix() currently calls the soft-deprecated `wpp_age()`</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> to look up population data. This automatic lookup will be removed in a future</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> release: callers will then have to supply `survey_pop` whenever `symmetric`,</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> `split`, `per_capita`, `weigh_age`, or `return_demography` is TRUE.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Pass `survey_pop` explicitly to silence this warning, e.g. `survey_pop =</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>   survey_country_population(survey, countries)` or a data frame from the</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>   wpp2024 package.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># prepare contact matrix</span></span></span>
 <span class="r-in"><span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span></span>
@@ -250,12 +249,12 @@ the effect of initial conditions on differences in outcomes.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    scenario demography_group averted_median averted_lower averted_upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;int&gt;           &lt;char&gt;          &lt;num&gt;         &lt;num&gt;         &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:        1           [0,20)       821.4310      501.3149     1314.9918</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:        1          [20,40)       609.9044      362.8535      996.3781</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:        1         [40,Inf)       731.7277      433.9860     1198.3892</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4:        2           [0,20)       560.9640      332.7719      918.8973</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5:        2          [20,40)       533.9183      326.5801      853.6345</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6:        2         [40,Inf)       597.1504      357.3972      971.1120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:        1           [0,20)       829.9967      506.5290     1328.7327</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:        1          [20,40)       623.0231      370.6588     1017.8077</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:        1         [40,Inf)       743.5036      440.9730     1217.6682</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:        2           [0,20)       566.5367      336.0829      928.0147</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5:        2          [20,40)       545.0385      333.3880      871.4016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6:        2         [40,Inf)       606.2716      362.8546      985.9503</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Set summarise = FALSE to get raw difference data</span></span></span>
 <span class="r-in"><span><span class="fu">outcomes_averted</span><span class="op">(</span></span></span>
@@ -265,17 +264,17 @@ the effect of initial conditions on differences in outcomes.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      scenario param_set demography_group outcomes_averted</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;int&gt;     &lt;int&gt;           &lt;char&gt;            &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:        1         1           [0,20)         668.7940</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2:        1         1          [20,40)         491.6037</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3:        1         1         [40,Inf)         589.0750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4:        1         2           [0,20)         837.4592</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5:        1         2          [20,40)         622.3674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1:        1         1           [0,20)         675.7607</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2:        1         1          [20,40)         502.1781</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3:        1         1         [40,Inf)         598.5565</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4:        1         2           [0,20)         846.1922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5:        1         2          [20,40)         635.7537</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 596:        2        99          [20,40)         368.9478</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 597:        2        99         [40,Inf)         406.1099</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 598:        2       100           [0,20)         472.3195</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 599:        2       100          [20,40)         453.8384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 600:        2       100         [40,Inf)         504.1885</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 596:        2        99          [20,40)         376.6372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 597:        2        99         [40,Inf)         412.3118</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 598:        2       100           [0,20)         477.0138</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 599:        2       100          [20,40)         463.2933</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 600:        2       100         [40,Inf)         511.8890</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -287,7 +286,7 @@ the effect of initial conditions on differences in outcomes.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer></div>

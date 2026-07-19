@@ -224,9 +224,18 @@ how to prepare these inputs.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
 <span><span class="va">polymod</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="va"><a href="https://epiforecasts.io/socialmixr/reference/polymod.html" class="external-link">polymod</a></span></span>
+<span></span>
+<span><span class="co"># demography data from the wpp2024 package</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"popAge1dt"</span>, package <span class="op">=</span> <span class="st">"wpp2024"</span><span class="op">)</span></span>
+<span><span class="va">uk_pop</span> <span class="op">&lt;-</span> <span class="va">popAge1dt</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">==</span> <span class="st">"United Kingdom"</span>, <span class="va">year</span> <span class="op">==</span> <span class="fl">2006</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>lower.age.limit <span class="op">=</span> <span class="va">age</span>, population <span class="op">=</span> <span class="va">pop</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>population <span class="op">=</span> <span class="va">population</span> <span class="op">*</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">contact_data</span> <span class="op">&lt;-</span> <span class="fu">socialmixr</span><span class="fu">::</span><span class="fu"><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">contact_matrix</a></span><span class="op">(</span></span>
 <span>  <span class="va">polymod</span>,</span>
 <span>  countries <span class="op">=</span> <span class="st">"United Kingdom"</span>,</span>
+<span>  survey_pop <span class="op">=</span> <span class="va">uk_pop</span>,</span>
 <span>  age_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>,</span>
 <span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -269,16 +278,16 @@ how to prepare these inputs.</p>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Population name: </span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Demography</span> </span></span>
-<span><span class="co">#&gt; [0,20): 14,799,290 (20%)</span></span>
-<span><span class="co">#&gt; [20,40): 16,526,302 (30%)</span></span>
-<span><span class="co">#&gt; [40,Inf): 28,961,159 (50%)</span></span>
+<span><span class="co">#&gt; [0,20): 14,865,748 (20%)</span></span>
+<span><span class="co">#&gt; [20,40): 16,978,469 (30%)</span></span>
+<span><span class="co">#&gt; [40,Inf): 29,438,434 (50%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Contact matrix</span> </span></span>
 <span><span class="co">#&gt;                  age.group</span></span>
 <span><span class="co">#&gt; contact.age.group   [0,20)  [20,40) [40,Inf)</span></span>
-<span><span class="co">#&gt;          [0,20)   7.883663 2.794154 1.565665</span></span>
-<span><span class="co">#&gt;          [20,40)  3.120220 4.854839 2.624868</span></span>
-<span><span class="co">#&gt;          [40,Inf) 3.063895 4.599893 5.005571</span></span>
+<span><span class="co">#&gt;          [0,20)   7.883663 2.764179 1.557728</span></span>
+<span><span class="co">#&gt;          [20,40)  3.157024 4.854839 2.636148</span></span>
+<span><span class="co">#&gt;          [40,Inf) 3.084747 4.570735 5.005571</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Initial Conditions</span> </span></span>
 <span><span class="co">#&gt;                 S E     I R V</span></span>
@@ -352,8 +361,8 @@ epidemic. We obtain the ‘final’ epidemic size using
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 2</span></span></span>
 <span><span class="co">#&gt;   demography_group value</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> [0,20)           0.617</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> [20,40)          0.525</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> [0,20)           0.619</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> [20,40)          0.522</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> [40,Inf)         0.343</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -458,8 +467,8 @@ ODE model as in the previous example.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
 <span><span class="co">#&gt;   demo_grp seir_v final_size</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> [0,20)    0.617      0.660</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> [20,40)   0.525      0.543</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> [0,20)    0.619      0.664</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> [20,40)   0.522      0.536</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> [40,Inf)  0.343      0.272</span></span></code></pre></div>
 <p>However, note that while <code><a href="../reference/epidemic_size.html">epidemics::epidemic_size()</a></code> can
 be used for any time point in the epidemic,
@@ -470,11 +479,11 @@ temporal dynamics.</p>
 <code class="sourceCode R"><span><span class="co"># note that epidemic_size() returns the absolute values</span></span>
 <span><span class="co"># epidemic size after 10% of the epidemic model run</span></span>
 <span><span class="fu"><a href="../reference/epidemic_size.html">epidemic_size</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">output</span>, stage <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 574.5195 488.4438 585.7900</span></span>
+<span><span class="co">#&gt; [1] 580.1948 498.9043 595.0609</span></span>
 <span></span>
 <span><span class="co"># epidemic size at 50%</span></span>
 <span><span class="fu"><a href="../reference/epidemic_size.html">epidemic_size</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">output</span>, stage <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 5569912 4894521 5262117</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5615114 5001899 5343768</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -519,8 +528,8 @@ parameter uncertainty.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">#&gt;   expression        total_time</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.482</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model             13.0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.398</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model             13.6</span></span></code></pre></div>
 <p><strong>Note</strong> that some model runs using <em>epidemics</em>
 that implement more complex compartmental structure, or multiple
 interventions and vaccination regimes are likely to be slower than the
@@ -555,7 +564,7 @@ Sizes.”</span> <em>Bulletin of Mathematical Biology</em> 74 (9):
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer>

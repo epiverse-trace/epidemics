@@ -41,26 +41,22 @@ Thus social contact matrices from *socialmixr* need to be transposed
 
 # load contact and population data from socialmixr::polymod
 polymod <- socialmixr::polymod
+
+# demography data from the wpp2024 package
+data("popAge1dt", package = "wpp2024")
+uk_pop <- popAge1dt |>
+  dplyr::filter(name == "United Kingdom", year == 2006) |>
+  dplyr::select(lower.age.limit = age, population = pop) |>
+  dplyr::mutate(population = population * 1000)
+
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
+  survey_pop = uk_pop,
   age_limits = c(0, 20, 40),
   symmetric = TRUE,
   return_demography = TRUE
 )
-#> Warning: Automatic country population lookup in `contact_matrix()` was deprecated in
-#> socialmixr 0.6.0.
-#> When `countries` is given (or a `country` column is present) without
-#> `survey_pop`, contact_matrix() currently calls the soft-deprecated `wpp_age()`
-#> to look up population data. This automatic lookup will be removed in a future
-#> release: callers will then have to supply `survey_pop` whenever `symmetric`,
-#> `split`, `per_capita`, `weigh_age`, or `return_demography` is TRUE.
-#> ℹ Pass `survey_pop` explicitly to silence this warning, e.g. `survey_pop =
-#>   survey_country_population(survey, countries)` or a data frame from the
-#>   wpp2024 package.
-#> This warning is displayed once per session.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 
 # prepare contact matrix
 contact_matrix <- t(contact_data$matrix)

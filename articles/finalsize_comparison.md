@@ -124,9 +124,18 @@ vignette for an explanation of how to prepare these inputs.
 
 # load contact and population data from socialmixr::polymod
 polymod <- socialmixr::polymod
+
+# demography data from the wpp2024 package
+data("popAge1dt", package = "wpp2024")
+uk_pop <- popAge1dt |>
+  dplyr::filter(name == "United Kingdom", year == 2006) |>
+  dplyr::select(lower.age.limit = age, population = pop) |>
+  dplyr::mutate(population = population * 1000)
+
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
+  survey_pop = uk_pop,
   age_limits = c(0, 20, 40),
   symmetric = TRUE,
   return_demography = TRUE
@@ -172,16 +181,16 @@ uk_population
 #>  Population name: 
 #> 
 #>  Demography 
-#> [0,20): 14,799,290 (20%)
-#> [20,40): 16,526,302 (30%)
-#> [40,Inf): 28,961,159 (50%)
+#> [0,20): 14,865,748 (20%)
+#> [20,40): 16,978,469 (30%)
+#> [40,Inf): 29,438,434 (50%)
 #> 
 #>  Contact matrix 
 #>                  age.group
 #> contact.age.group   [0,20)  [20,40) [40,Inf)
-#>          [0,20)   7.883663 2.794154 1.565665
-#>          [20,40)  3.120220 4.854839 2.624868
-#>          [40,Inf) 3.063895 4.599893 5.005571
+#>          [0,20)   7.883663 2.764179 1.557728
+#>          [20,40)  3.157024 4.854839 2.636148
+#>          [40,Inf) 3.084747 4.570735 5.005571
 #> 
 #>  Initial Conditions 
 #>                 S E     I R V
@@ -265,8 +274,8 @@ finalsize_dat
 #> # A tibble: 3 × 2
 #>   demography_group value
 #>   <chr>            <dbl>
-#> 1 [0,20)           0.617
-#> 2 [20,40)          0.525
+#> 1 [0,20)           0.619
+#> 2 [20,40)          0.522
 #> 3 [40,Inf)         0.343
 ```
 
@@ -393,8 +402,8 @@ finalsize_dat
 #> # A tibble: 3 × 3
 #>   demo_grp seir_v final_size
 #>   <chr>     <dbl>      <dbl>
-#> 1 [0,20)    0.617      0.660
-#> 2 [20,40)   0.525      0.543
+#> 1 [0,20)    0.619      0.664
+#> 2 [20,40)   0.522      0.536
 #> 3 [40,Inf)  0.343      0.272
 ```
 
@@ -410,11 +419,11 @@ only returns the size at the end of the epidemic, showing how
 # note that epidemic_size() returns the absolute values
 # epidemic size after 10% of the epidemic model run
 epidemic_size(data = output, stage = 0.1)
-#> [1] 574.5195 488.4438 585.7900
+#> [1] 580.1948 498.9043 595.0609
 
 # epidemic size at 50%
 epidemic_size(data = output, stage = 0.5)
-#> [1] 5569912 4894521 5262117
+#> [1] 5615114 5001899 5343768
 ```
 
 ## Consideration of computational speed
@@ -465,8 +474,8 @@ select(as_tibble(benchmark), expression, total_time)
 #> # A tibble: 2 × 2
 #>   expression        total_time
 #>   <bch:expr>             <dbl>
-#> 1 analytical_method      0.482
-#> 2 ode_model             13.0
+#> 1 analytical_method      0.398
+#> 2 ode_model             13.6
 ```
 
 **Note** that some model runs using *epidemics* that implement more

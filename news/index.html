@@ -92,7 +92,8 @@
 </ol></div>
 <div class="section level3">
 <h3 id="package-development-version">Package<a class="anchor" aria-label="anchor" href="#package-development-version"></a></h3>
-<ol style="list-style-type: decimal"><li>Added <code>dependabot.yml</code> to <code>.github/</code> to automate updating GitHub actions workflow versions.</li>
+<ol style="list-style-type: decimal"><li><p>Added <code>dependabot.yml</code> to <code>.github/</code> to automate updating GitHub actions workflow versions.</p></li>
+<li><p>Updated all uses of <em>socialmixr</em> across tests, vignettes, examples and the README to pass <code>survey_pop</code> explicitly to <code><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">socialmixr::contact_matrix()</a></code>, removing deprecation warnings introduced in <em>socialmixr</em> 0.6.0; the minimum <em>socialmixr</em> version is now 0.6.0 (<a href="https://github.com/epiverse-trace/epidemics/issues/281" class="external-link">#281</a>, <a href="https://github.com/joshwlambert" class="external-link">@joshwlambert</a>). Demography data is now taken from the <em>wpp2024</em> package (added to <code>Suggests</code> and <code>Remotes</code>, installed from GitHub) rather than from the deprecated <code><a href="https://epiforecasts.io/socialmixr/reference/survey_country_population.html" class="external-link">socialmixr::survey_country_population()</a></code>, which is backed by the outdated <em>wpp2017</em> data. The population year is 2006, matching the year in which the <em>socialmixr</em> POLYMOD participants were surveyed; previously <em>socialmixr</em> used 2005, as <em>wpp2017</em> only provides population estimates at five-year intervals. Demography vectors and symmetric contact matrices in examples, vignettes and tests therefore change slightly (by up to ~1%) relative to previous releases, reflecting the revised UN estimates for 2006.</p></li>
 </ol></div>
 </div>
     <div class="section level2">
@@ -300,7 +301,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1. Theme provided by <a href="https://github.com/epiverse-trace/epiversetheme" class="external-link">epiversetheme</a> 0.1.0.</p>
 </div>
 
     </footer></div>

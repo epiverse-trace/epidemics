@@ -74,23 +74,22 @@ outcomes.
 
 ``` r
 polymod <- socialmixr::polymod
+
+# demography data from the wpp2024 package
+data("popAge1dt", package = "wpp2024")
+uk_pop <- popAge1dt |>
+  dplyr::filter(name == "United Kingdom", year == 2006) |>
+  dplyr::select(lower.age.limit = age, population = pop) |>
+  dplyr::mutate(population = population * 1000)
+
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
+  survey_pop = uk_pop,
   age_limits = c(0, 20, 40),
   symmetric = TRUE,
   return_demography = TRUE
 )
-#> Warning: Automatic country population lookup in `contact_matrix()` was deprecated in
-#> socialmixr 0.6.0.
-#> When `countries` is given (or a `country` column is present) without
-#> `survey_pop`, contact_matrix() currently calls the soft-deprecated `wpp_age()`
-#> to look up population data. This automatic lookup will be removed in a future
-#> release: callers will then have to supply `survey_pop` whenever `symmetric`,
-#> `split`, `per_capita`, `weigh_age`, or `return_demography` is TRUE.
-#> ℹ Pass `survey_pop` explicitly to silence this warning, e.g. `survey_pop =
-#>   survey_country_population(survey, countries)` or a data frame from the
-#>   wpp2024 package.
 
 # prepare contact matrix
 contact_matrix <- t(contact_data$matrix)
@@ -178,12 +177,12 @@ outcomes_averted(
 )
 #>    scenario demography_group averted_median averted_lower averted_upper
 #>       <int>           <char>          <num>         <num>         <num>
-#> 1:        1           [0,20)       821.4310      501.3149     1314.9918
-#> 2:        1          [20,40)       609.9044      362.8535      996.3781
-#> 3:        1         [40,Inf)       731.7277      433.9860     1198.3892
-#> 4:        2           [0,20)       560.9640      332.7719      918.8973
-#> 5:        2          [20,40)       533.9183      326.5801      853.6345
-#> 6:        2         [40,Inf)       597.1504      357.3972      971.1120
+#> 1:        1           [0,20)       829.9967      506.5290     1328.7327
+#> 2:        1          [20,40)       623.0231      370.6588     1017.8077
+#> 3:        1         [40,Inf)       743.5036      440.9730     1217.6682
+#> 4:        2           [0,20)       566.5367      336.0829      928.0147
+#> 5:        2          [20,40)       545.0385      333.3880      871.4016
+#> 6:        2         [40,Inf)       606.2716      362.8546      985.9503
 
 # Set summarise = FALSE to get raw difference data
 outcomes_averted(
@@ -193,15 +192,15 @@ outcomes_averted(
 )
 #>      scenario param_set demography_group outcomes_averted
 #>         <int>     <int>           <char>            <num>
-#>   1:        1         1           [0,20)         668.7940
-#>   2:        1         1          [20,40)         491.6037
-#>   3:        1         1         [40,Inf)         589.0750
-#>   4:        1         2           [0,20)         837.4592
-#>   5:        1         2          [20,40)         622.3674
+#>   1:        1         1           [0,20)         675.7607
+#>   2:        1         1          [20,40)         502.1781
+#>   3:        1         1         [40,Inf)         598.5565
+#>   4:        1         2           [0,20)         846.1922
+#>   5:        1         2          [20,40)         635.7537
 #>  ---                                                     
-#> 596:        2        99          [20,40)         368.9478
-#> 597:        2        99         [40,Inf)         406.1099
-#> 598:        2       100           [0,20)         472.3195
-#> 599:        2       100          [20,40)         453.8384
-#> 600:        2       100         [40,Inf)         504.1885
+#> 596:        2        99          [20,40)         376.6372
+#> 597:        2        99         [40,Inf)         412.3118
+#> 598:        2       100           [0,20)         477.0138
+#> 599:        2       100          [20,40)         463.2933
+#> 600:        2       100         [40,Inf)         511.8890
 ```

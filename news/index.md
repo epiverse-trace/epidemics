@@ -39,6 +39,25 @@
 1.  Added `dependabot.yml` to `.github/` to automate updating GitHub
     actions workflow versions.
 
+2.  Updated all uses of *socialmixr* across tests, vignettes, examples
+    and the README to pass `survey_pop` explicitly to
+    [`socialmixr::contact_matrix()`](https://epiforecasts.io/socialmixr/reference/contact_matrix.html),
+    removing deprecation warnings introduced in *socialmixr* 0.6.0; the
+    minimum *socialmixr* version is now 0.6.0
+    ([\#281](https://github.com/epiverse-trace/epidemics/issues/281),
+    [@joshwlambert](https://github.com/joshwlambert)). Demography data
+    is now taken from the *wpp2024* package (added to `Suggests` and
+    `Remotes`, installed from GitHub) rather than from the deprecated
+    [`socialmixr::survey_country_population()`](https://epiforecasts.io/socialmixr/reference/survey_country_population.html),
+    which is backed by the outdated *wpp2017* data. The population year
+    is 2006, matching the year in which the *socialmixr* POLYMOD
+    participants were surveyed; previously *socialmixr* used 2005, as
+    *wpp2017* only provides population estimates at five-year intervals.
+    Demography vectors and symmetric contact matrices in examples,
+    vignettes and tests therefore change slightly (by up to ~1%)
+    relative to previous releases, reflecting the revised UN estimates
+    for 2006.
+
 ## epidemics 0.4.0
 
 Maintainer is changing to [@rozeggo](https://github.com/rozeggo).

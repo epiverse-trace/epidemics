@@ -58,5 +58,5 @@ named list consisting of:
 ## Details
 
 `.check_prepare_args_diphtheria()` prepares arguments for
-model_diphtheria(), which uses an odin C function to solve the ODE
+model_diphtheria(), which uses an *odin* C function to solve the ODE
 system.

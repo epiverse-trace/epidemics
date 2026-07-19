@@ -62,26 +62,22 @@ For consistency with this notation, social contact matrices from
 
 # load contact and population data from socialmixr::polymod
 polymod <- socialmixr::polymod
+
+# demography data from the wpp2024 package
+data("popAge1dt", package = "wpp2024")
+uk_pop <- popAge1dt |>
+  dplyr::filter(name == "United Kingdom", year == 2006) |>
+  dplyr::select(lower.age.limit = age, population = pop) |>
+  dplyr::mutate(population = population * 1000)
+
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
+  survey_pop = uk_pop,
   age_limits = c(0, 20, 40),
   symmetric = TRUE,
   return_demography = TRUE
 )
-#> Warning: Automatic country population lookup in `contact_matrix()` was deprecated in
-#> socialmixr 0.6.0.
-#> When `countries` is given (or a `country` column is present) without
-#> `survey_pop`, contact_matrix() currently calls the soft-deprecated `wpp_age()`
-#> to look up population data. This automatic lookup will be removed in a future
-#> release: callers will then have to supply `survey_pop` whenever `symmetric`,
-#> `split`, `per_capita`, `weigh_age`, or `return_demography` is TRUE.
-#> ℹ Pass `survey_pop` explicitly to silence this warning, e.g. `survey_pop =
-#>   survey_country_population(survey, countries)` or a data frame from the
-#>   wpp2024 package.
-#> This warning is displayed once per session.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 
 # prepare contact matrix
 contact_matrix <- t(contact_data$matrix)
@@ -94,13 +90,13 @@ names(demography_vector) <- rownames(contact_matrix)
 contact_matrix
 #>                  age.group
 #> contact.age.group   [0,20)  [20,40) [40,Inf)
-#>          [0,20)   7.883663 2.794154 1.565665
-#>          [20,40)  3.120220 4.854839 2.624868
-#>          [40,Inf) 3.063895 4.599893 5.005571
+#>          [0,20)   7.883663 2.764179 1.557728
+#>          [20,40)  3.157024 4.854839 2.636148
+#>          [40,Inf) 3.084747 4.570735 5.005571
 
 demography_vector
 #>   [0,20)  [20,40) [40,Inf) 
-#> 14799290 16526302 28961159
+#> 14865748 16978469 29438434
 ```
 
 Prepare initial conditions for each age group.
@@ -149,16 +145,16 @@ uk_population
 #> "UK"
 #> 
 #>  Demography 
-#> [0,20): 14,799,290 (20%)
-#> [20,40): 16,526,302 (30%)
-#> [40,Inf): 28,961,159 (50%)
+#> [0,20): 14,865,748 (20%)
+#> [20,40): 16,978,469 (30%)
+#> [40,Inf): 29,438,434 (50%)
 #> 
 #>  Contact matrix 
 #>                  age.group
 #> contact.age.group   [0,20)  [20,40) [40,Inf)
-#>          [0,20)   7.883663 2.794154 1.565665
-#>          [20,40)  3.120220 4.854839 2.624868
-#>          [40,Inf) 3.063895 4.599893 5.005571
+#>          [0,20)   7.883663 2.764179 1.557728
+#>          [20,40)  3.157024 4.854839 2.636148
+#>          [40,Inf) 3.084747 4.570735 5.005571
 #> 
 #>  Initial Conditions 
 #>                 S E     I R V

@@ -107,9 +107,18 @@ vignette.
 
 # load contact and population data from socialmixr::polymod
 polymod <- socialmixr::polymod
+
+# demography data from the wpp2024 package
+data("popAge1dt", package = "wpp2024")
+uk_pop <- popAge1dt |>
+  dplyr::filter(name == "United Kingdom", year == 2006) |>
+  dplyr::select(lower.age.limit = age, population = pop) |>
+  dplyr::mutate(population = population * 1000)
+
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
+  survey_pop = uk_pop,
   age_limits = c(0, 20, 40),
   symmetric = TRUE,
   return_demography = TRUE
@@ -322,13 +331,13 @@ epidemic_size_estimates <- mutate(
 epidemic_size_estimates
 #>                    scenario       size
 #>                      <char>     <char>
-#> 1:            Close schools 21,506,900
-#> 2:         Close workplaces 22,426,935
-#> 3:               Close both  6,703,825
-#> 4:             Mask mandate 22,713,914
-#> 5:    Masks + close schools 17,267,407
-#> 6: Masks + close workplaces 20,585,324
-#> 7:       Masks + close both  2,082,890
+#> 1:            Close schools 21,821,867
+#> 2:         Close workplaces 22,760,749
+#> 3:               Close both  6,797,673
+#> 4:             Mask mandate 23,052,587
+#> 5:    Masks + close schools 17,509,255
+#> 6: Masks + close workplaces 20,892,009
+#> 7:       Masks + close both  2,112,057
 ```
 
 This example shows how implementing interventions that reduce
@@ -499,27 +508,27 @@ outcomes_averted(
 )
 #>     scenario demography_group averted_median averted_lower averted_upper
 #>        <int>           <char>          <num>         <num>         <num>
-#>  1:        1           [0,20)       383171.0     127049.23     3037175.1
-#>  2:        1          [20,40)       396356.0      98546.05     2932546.7
-#>  3:        1         [40,Inf)       584725.9     145892.81     3993655.9
-#>  4:        2           [0,20)       158910.2      94722.94     1438610.6
-#>  5:        2          [20,40)       204104.8     146675.38     1441537.8
-#>  6:        2         [40,Inf)       261674.1     167791.23     2000556.2
-#>  7:        3           [0,20)      4678799.4     901966.59     6134652.6
-#>  8:        3          [20,40)      4583922.8     985309.24     5716507.3
-#>  9:        3         [40,Inf)      6320394.3    1475845.60     7616611.1
-#> 10:        4           [0,20)       112115.4      96410.27      608345.6
-#> 11:        4          [20,40)       118754.2     101979.46      617282.5
-#> 12:        4         [40,Inf)       177347.8     151125.36      871724.9
-#> 13:        5           [0,20)      1442121.5     194790.14     5107124.7
-#> 14:        5          [20,40)      1500221.3     200377.45     4737525.2
-#> 15:        5         [40,Inf)      2173081.3     305593.02     6258725.1
-#> 16:        6           [0,20)       592856.0     115273.86     3826790.4
-#> 17:        6          [20,40)       639981.0     155689.23     3654849.3
-#> 18:        6         [40,Inf)       932398.3     200154.87     4925179.7
-#> 19:        7           [0,20)      6246259.3    2586944.09     6633237.2
-#> 20:        7          [20,40)      5916770.1    2716621.69     6232275.9
-#> 21:        7         [40,Inf)      8012047.9    3959960.69     8348571.8
+#>  1:        1           [0,20)       386536.5     127819.07     3061966.5
+#>  2:        1          [20,40)       407554.1     101199.65     3002753.2
+#>  3:        1         [40,Inf)       596332.6     148542.02     4060694.6
+#>  4:        2           [0,20)       160142.1      95543.82     1446110.8
+#>  5:        2          [20,40)       209376.0     150699.64     1473332.5
+#>  6:        2         [40,Inf)       266541.6     171019.46     2029850.6
+#>  7:        3           [0,20)      4711421.4     908047.91     6180484.1
+#>  8:        3          [20,40)      4690675.4    1011735.77     5842660.9
+#>  9:        3         [40,Inf)      6421400.8    1502555.62     7734353.8
+#> 10:        4           [0,20)       112868.5      97089.00      612107.6
+#> 11:        4          [20,40)       121876.6     104666.98      631833.8
+#> 12:        4         [40,Inf)       180456.6     153814.15      885609.2
+#> 13:        5           [0,20)      1453917.6     196357.24     5146654.6
+#> 14:        5          [20,40)      1540137.2     206199.87     4842663.3
+#> 15:        5         [40,Inf)      2213232.2     311731.80     6356221.2
+#> 16:        6           [0,20)       595964.4     116125.98     3850967.5
+#> 17:        6          [20,40)       655572.4     159951.82     3734287.6
+#> 18:        6         [40,Inf)       947368.5     203914.03     4998238.2
+#> 19:        7           [0,20)      6292289.2    2603669.20     6682314.8
+#> 20:        7          [20,40)      6049147.6    2785039.47     6371420.8
+#> 21:        7         [40,Inf)      8138073.9    4027135.12     8478391.9
 #>     scenario demography_group averted_median averted_lower averted_upper
 #>        <int>           <char>          <num>         <num>         <num>
 ```

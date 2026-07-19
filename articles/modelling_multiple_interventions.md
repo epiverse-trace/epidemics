@@ -31,9 +31,18 @@ and is hidden here, although it can be expanded for reference.
 
 # load contact and population data from socialmixr::polymod
 polymod <- socialmixr::polymod
+
+# demography data from the wpp2024 package
+data("popAge1dt", package = "wpp2024")
+uk_pop <- popAge1dt |>
+  dplyr::filter(name == "United Kingdom", year == 2006) |>
+  dplyr::select(lower.age.limit = age, population = pop) |>
+  dplyr::mutate(population = population * 1000)
+
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
+  survey_pop = uk_pop,
   age_limits = c(0, 20, 65),
   symmetric = TRUE,
   return_demography = TRUE
@@ -291,7 +300,7 @@ approximately 600 days, or more than one and a half years, with more
 than 10,000 daily new infections for over one year.
 
 In this scenario, the epidemic is expected to have a final size of
-around 22 million individuals infected overall.
+around 23 million individuals infected overall.
 
 ### Workplace closures
 

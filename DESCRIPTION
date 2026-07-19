@@ -61,7 +61,10 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     tibble,
-    tidyr
+    tidyr,
+    wpp2024
+Remotes:
+    PPgp/wpp2024
 LinkingTo: 
     BH,
     Rcpp,

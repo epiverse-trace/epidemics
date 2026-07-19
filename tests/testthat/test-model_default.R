@@ -650,9 +650,9 @@ test_that("Default model: demography groups with index >= 10 are labelled correc
     age_limits = c(0, 20, 40),
     symmetric = TRUE
   )
-  cm <- t(contact_data_3ag$matrix)
+  cm <- contact_data_3ag$matrix
   dv <- contact_data_3ag$demography$population
-  names(dv) <- rownames(cm)
+  names(dv) <- colnames(cm)
 
   n <- 4L
   n_age <- nrow(cm) # 3

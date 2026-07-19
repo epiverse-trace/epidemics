@@ -68,6 +68,14 @@ install.packages("epidemics", repos = c("https://epiverse-trace.r-universe.dev",
     *RTools*](https://cran.r-project.org/bin/windows/Rtools/) for your
     version of R.
 
+3.  The examples in this README and in the package vignettes build a
+    social contact matrix from demography data in
+    [*wpp2024*](https://github.com/PPgp/wpp2024), which is not on CRAN
+    and so is not installed alongside the other suggested packages;
+    install it with `pak::pkg_install("PPgp/wpp2024")`. You only need it
+    to run the documentation examples, as *epidemics* itself does not
+    use *wpp2024* at runtime.
+
 ## Quick start
 
 Here we show an example of using the default model in *epidemics* to

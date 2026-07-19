@@ -3,6 +3,10 @@
 #' @param name Optional string for the population name.
 #' @param contact_matrix A matrix giving the contacts between the demographic
 #' groups in the population. Must be a square matrix.
+#' Contact matrices returned by `socialmixr::contact_matrix()` should be passed
+#' as they are, without transposing them: model functions transpose the matrix
+#' internally to the convention used by the model ODEs, in which
+#' \eqn{M_{ij}} represents contacts to group \eqn{i} from group \eqn{j}.
 #' @param demography_vector A vector of the sizes of each demographic group.
 #' Must have the same length as the dimensions of the contact matrix.
 #' @param initial_conditions Matrix representing the initial proportions of each
@@ -36,6 +40,10 @@ new_population <- function(name = NA_character_,
 #' @param name Optional string for the population name.
 #' @param contact_matrix A matrix giving the contacts between the demographic
 #' groups in the population. Must be a square matrix.
+#' Contact matrices returned by `socialmixr::contact_matrix()` should be passed
+#' as they are, without transposing them: model functions transpose the matrix
+#' internally to the convention used by the model ODEs, in which
+#' \eqn{M_{ij}} represents contacts to group \eqn{i} from group \eqn{j}.
 #' @param demography_vector A vector of the sizes of each demographic group.
 #' Must have the same length as the dimensions of the contact matrix.
 #' @param initial_conditions Matrix representing the initial proportions of each

@@ -18,7 +18,7 @@
 
 1. Added `dependabot.yml` to `.github/` to automate updating GitHub actions workflow versions.
 
-2. Updated all uses of _socialmixr_ across tests, vignettes, examples and the README to pass `survey_pop` explicitly to `socialmixr::contact_matrix()` (via `socialmixr::survey_country_population()`), removing deprecation warnings introduced in _socialmixr_ 0.6.0; the minimum _socialmixr_ version is now 0.6.0 (#281).
+2. Updated all uses of _socialmixr_ across tests, vignettes, examples and the README to pass `survey_pop` explicitly to `socialmixr::contact_matrix()`, removing deprecation warnings introduced in _socialmixr_ 0.6.0; the minimum _socialmixr_ version is now 0.6.0 (#281, @joshwlambert). Demography data is now taken from the _wpp2024_ package (added to `Suggests` and `Remotes`, installed from GitHub) rather than from the deprecated `socialmixr::survey_country_population()`, which is backed by the outdated _wpp2017_ data. The population year is 2006, matching the year in which the _socialmixr_ POLYMOD participants were surveyed; previously _socialmixr_ used 2005, as _wpp2017_ only provides population estimates at five-year intervals. Demography vectors and symmetric contact matrices in examples, vignettes and tests therefore change slightly (by up to ~1%) relative to previous releases, reflecting the revised UN estimates for 2006.
 
 # epidemics 0.4.0
 

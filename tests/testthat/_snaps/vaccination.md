@@ -89,7 +89,7 @@
           <num>           <char>      <char>     <num>
        1:     0           [0,40)  vaccinated    0.0000
        2:     0          [40,65)  vaccinated    0.0000
-       3:     0              65+  vaccinated    0.0000
+       3:     0         [65,Inf)  vaccinated    0.0000
        4:     1           [0,40)  vaccinated    0.0000
        5:     1          [40,65)  vaccinated    0.0000
        6:     1         [65,Inf)  vaccinated  975.6203

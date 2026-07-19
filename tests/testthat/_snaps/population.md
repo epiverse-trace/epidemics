@@ -17,11 +17,11 @@
       [65,Inf): 9,756,203 (20%)
       
        Contact matrix 
-                       age.group
-      contact.age.group    [0,40)  [40,65) [65,Inf)
-               [0,40)   9.6963190 4.784327 2.240342
-               [40,65)  2.9570904 4.178218 2.478450
-               [65,Inf) 0.6863798 1.228532 1.714286
+                contact.age.group
+      age.group    [0,40)  [40,65)  [65,Inf)
+        [0,40)   9.696319 2.957090 0.6863798
+        [40,65)  4.784327 4.178218 1.2285324
+        [65,Inf) 2.240342 2.478450 1.7142857
       
        Initial Conditions 
              [,1]  [,2]  [,3] [,4] [,5]
@@ -42,18 +42,17 @@
       "UK population"
     Output
       
-      Demography
-      Dem.grp.1:31,844,217(50%)
-      Dem.grp.2:19,682,231(30%)
-      Dem.grp.3:9,756,203(20%)
+       Demography 
+      Dem. grp. 1: 31,844,217 (50%)
+      Dem. grp. 2: 19,682,231 (30%)
+      Dem. grp. 3: 9,756,203 (20%)
       
-      Contactmatrix
-
-      age.group
-      contact.age.group[0,40)[40,65)[65,Inf)
-      Dem.grp.1:9.69631904.7843272.240342
-      Dem.grp.2:2.95709044.1782182.478450
-      Dem.grp.3:0.68637981.2285321.714286
+       Contact matrix 
+                    contact.age.group
+      age.group        [0,40)  [40,65)  [65,Inf)
+        Dem. grp. 1: 9.696319 2.957090 0.6863798
+        Dem. grp. 2: 4.784327 4.178218 1.2285324
+        Dem. grp. 3: 2.240342 2.478450 1.7142857
       
        Initial Conditions 
              [,1]  [,2]  [,3] [,4] [,5]

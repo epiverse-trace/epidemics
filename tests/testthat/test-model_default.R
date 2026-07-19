@@ -1,13 +1,18 @@
 #### Tests for the default model ####
 # Prepare contact matrix and demography vector
 polymod <- socialmixr::polymod
+
+# demography data from the wpp2024 package
+data("popAge1dt", package = "wpp2024")
+uk_pop <- popAge1dt |>
+  dplyr::filter(name == "United Kingdom", year == 2006) |>
+  dplyr::select(lower.age.limit = age, population = pop) |>
+  dplyr::mutate(population = population * 1000)
+
 contact_data <- socialmixr::contact_matrix(
   polymod,
   countries = "United Kingdom",
-  survey_pop = socialmixr::survey_country_population(
-    polymod,
-    countries = "United Kingdom"
-  ),
+  survey_pop = uk_pop,
   age_limits = c(0, 60),
   symmetric = TRUE,
   return_demography = TRUE
@@ -641,10 +646,7 @@ test_that("Default model: demography groups with index >= 10 are labelled correc
   contact_data_3ag <- socialmixr::contact_matrix(
     polymod,
     countries = "United Kingdom",
-    survey_pop = socialmixr::survey_country_population(
-      polymod,
-      countries = "United Kingdom"
-    ),
+    survey_pop = uk_pop,
     age_limits = c(0, 20, 40),
     symmetric = TRUE
   )

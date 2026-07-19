@@ -480,6 +480,7 @@ references:
     orcid: https://orcid.org/0000-0003-1460-8722
   year: '2026'
   doi: 10.32614/CRAN.package.socialmixr
+  version: '>= 0.6.0'
 - type: software
   title: spelling
   abstract: 'spelling: Tools for Spell Checking in R'
@@ -542,6 +543,15 @@ references:
     given-names: Maximilian
   year: '2026'
   doi: 10.32614/CRAN.package.tidyr
+- type: software
+  title: wpp2024
+  abstract: 'wpp2024: World Population Prospects 2024'
+  notes: Suggests
+  url: http://population.un.org/wpp
+  authors:
+  - family-names: Division
+    given-names: United Nations Population
+  year: '2026'
 - type: software
   title: BH
   abstract: 'BH: Boost C++ Header Files'

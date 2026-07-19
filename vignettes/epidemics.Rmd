@@ -48,7 +48,8 @@ However, epidemic models traditionally adopt the notation that $M_{ij}$ defines 
 $q M_{ij} / n_i$ then defines the probability of infection, where $q$ is a scaling factor dependent on $R_0$ (or another measure of infection transmissibility), and $n_i$ is the population proportion of group $i$.
 The ODEs in _epidemics_ also follow this convention.
 
-For consistency with this notation, social contact matrices from _socialmixr_ need to be transposed (using `t()`) before they are used with _epidemics_.
+_epidemics_ reconciles the two conventions for you: the model functions transpose the contact matrix internally.
+Matrices from _socialmixr_ can therefore be passed to `population()` exactly as they are returned, with no call to `t()`.
 :::
 
 ```{r}

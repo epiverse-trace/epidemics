@@ -242,11 +242,11 @@ how to prepare these inputs.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
-<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
+<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span></span>
 <span></span>
 <span><span class="co"># prepare the demography vector</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># initial conditions: one in every 1 million is infected</span></span>
 <span><span class="va">initial_i</span> <span class="op">&lt;-</span> <span class="fl">1e-6</span></span>
@@ -260,7 +260,7 @@ how to prepare these inputs.</p>
 <span>  <span class="va">initial_conditions</span>,</span>
 <span>  <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># prepare the population to model as affected by the epidemic</span></span>
 <span><span class="co"># the contact_matrix, demography_vector, and initial_conditions</span></span>
@@ -283,11 +283,11 @@ how to prepare these inputs.</p>
 <span><span class="co">#&gt; [40,Inf): 29,438,434 (50%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Contact matrix</span> </span></span>
-<span><span class="co">#&gt;                  age.group</span></span>
-<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40) [40,Inf)</span></span>
-<span><span class="co">#&gt;          [0,20)   7.883663 2.764179 1.557728</span></span>
-<span><span class="co">#&gt;          [20,40)  3.157024 4.854839 2.636148</span></span>
-<span><span class="co">#&gt;          [40,Inf) 3.084747 4.570735 5.005571</span></span>
+<span><span class="co">#&gt;           contact.age.group</span></span>
+<span><span class="co">#&gt; age.group    [0,20)  [20,40) [40,Inf)</span></span>
+<span><span class="co">#&gt;   [0,20)   7.883663 3.157024 3.084747</span></span>
+<span><span class="co">#&gt;   [20,40)  2.764179 4.854839 4.570735</span></span>
+<span><span class="co">#&gt;   [40,Inf) 1.557728 2.636148 5.005571</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Initial Conditions</span> </span></span>
 <span><span class="co">#&gt;                 S E     I R V</span></span>
@@ -434,12 +434,12 @@ ODE model as in the previous example.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define population in each age group</span></span>
 <span><span class="va">scalar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/eigen.html" class="external-link">eigen</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span><span class="op">$</span><span class="va">values</span><span class="op">)</span></span>
-<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span> <span class="op">/</span> <span class="va">demography_vector</span><span class="op">)</span> <span class="op">/</span> <span class="va">scalar</span></span></code></pre></div>
+<span><span class="va">finalsize_contact_matrix</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span> <span class="op">/</span> <span class="va">demography_vector</span><span class="op">)</span> <span class="op">/</span> <span class="va">scalar</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate the proportion of individuals infected in each age group</span></span>
 <span><span class="va">dat1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://epiverse-trace.github.io/finalsize/reference/final_size.html" class="external-link">final_size</a></span><span class="op">(</span></span>
 <span>  r0 <span class="op">=</span> <span class="fl">1.5</span>,</span>
-<span>  contact_matrix <span class="op">=</span> <span class="va">contact_matrix</span>,</span>
+<span>  contact_matrix <span class="op">=</span> <span class="va">finalsize_contact_matrix</span>,</span>
 <span>  demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
 <span>  susceptibility <span class="op">=</span> <span class="va">susceptibility</span>,</span>
 <span>  p_susceptibility <span class="op">=</span> <span class="va">p_susceptibility</span></span>
@@ -503,7 +503,7 @@ parameter uncertainty.</p>
 <span><span class="va">benchmark</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span><span class="op">(</span></span>
 <span>  analytical_method <span class="op">=</span> <span class="fu"><a href="https://epiverse-trace.github.io/finalsize/reference/final_size.html" class="external-link">final_size</a></span><span class="op">(</span></span>
 <span>    r0 <span class="op">=</span> <span class="fl">1.5</span>,</span>
-<span>    contact_matrix <span class="op">=</span> <span class="va">contact_matrix</span>,</span>
+<span>    contact_matrix <span class="op">=</span> <span class="va">finalsize_contact_matrix</span>,</span>
 <span>    demography_vector <span class="op">=</span> <span class="va">demography_vector</span>,</span>
 <span>    susceptibility <span class="op">=</span> <span class="va">susceptibility</span>,</span>
 <span>    p_susceptibility <span class="op">=</span> <span class="va">p_susceptibility</span></span>
@@ -528,7 +528,7 @@ parameter uncertainty.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">#&gt;   expression        total_time</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.398</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> analytical_method      0.396</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ode_model             13.6</span></span></code></pre></div>
 <p><strong>Note</strong> that some model runs using <em>epidemics</em>
 that implement more complex compartmental structure, or multiple
@@ -560,7 +560,7 @@ Sizes.”</span> <em>Bulletin of Mathematical Biology</em> 74 (9):
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen.</p>
+  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen, Bankole Ahadzie.</p>
 </div>
 
 <div class="pkgdown-footer-right">

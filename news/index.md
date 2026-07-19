@@ -2,6 +2,28 @@
 
 ## epidemics (development version)
 
+### Breaking changes
+
+1.  Social contact matrices from *socialmixr* must no longer be
+    transposed before use.
+    [`model_default()`](https://epiverse-trace.github.io/epidemics/reference/model_default.md)
+    and
+    [`model_vacamole()`](https://epiverse-trace.github.io/epidemics/reference/model_vacamole.md)
+    now transpose the contact matrix internally, so matrices should be
+    passed to
+    [`population()`](https://epiverse-trace.github.io/epidemics/reference/population.md)
+    exactly as
+    [`socialmixr::contact_matrix()`](https://epiforecasts.io/socialmixr/reference/contact_matrix.html)
+    returns them
+    ([\#259](https://github.com/epiverse-trace/epidemics/issues/259),
+    [@bahadzie](https://github.com/bahadzie)). Existing code that calls
+    [`t()`](https://rdrr.io/r/base/t.html) on the contact matrix will
+    continue to run without error, but will silently give incorrect
+    results because the matrix is then transposed twice; remove the
+    [`t()`](https://rdrr.io/r/base/t.html) call when upgrading.
+    Vignettes, examples, tests and the README have been updated
+    accordingly.
+
 ### Helper functions
 
 1.  Added the

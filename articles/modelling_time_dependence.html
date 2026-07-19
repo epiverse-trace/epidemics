@@ -159,7 +159,7 @@ as climate data.</p>
 <span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
+<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">[[</span><span class="st">"matrix"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
 <span></span>
 <span><span class="co"># Prepare some initial objects</span></span>
@@ -522,7 +522,7 @@ health.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen.</p>
+  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen, Bankole Ahadzie.</p>
 </div>
 
 <div class="pkgdown-footer-right">

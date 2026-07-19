@@ -154,19 +154,19 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
-<span><span class="va">contact_matrix1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data1</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
+<span><span class="va">contact_matrix1</span> <span class="op">&lt;-</span> <span class="va">contact_data1</span><span class="op">[[</span><span class="st">"matrix"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># prepare the demography vector</span></span>
 <span><span class="va">demography_vector1</span> <span class="op">&lt;-</span> <span class="va">contact_data1</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># view contact matrix and demography</span></span>
 <span><span class="va">contact_matrix1</span></span>
-<span><span class="co">#&gt;                  age.group</span></span>
-<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40) [40,Inf)</span></span>
-<span><span class="co">#&gt;          [0,20)   7.883663 2.764179 1.557728</span></span>
-<span><span class="co">#&gt;          [20,40)  3.157024 4.854839 2.636148</span></span>
-<span><span class="co">#&gt;          [40,Inf) 3.084747 4.570735 5.005571</span></span>
+<span><span class="co">#&gt;           contact.age.group</span></span>
+<span><span class="co">#&gt; age.group    [0,20)  [20,40) [40,Inf)</span></span>
+<span><span class="co">#&gt;   [0,20)   7.883663 3.157024 3.084747</span></span>
+<span><span class="co">#&gt;   [20,40)  2.764179 4.854839 4.570735</span></span>
+<span><span class="co">#&gt;   [40,Inf) 1.557728 2.636148 5.005571</span></span>
 <span></span>
 <span><span class="va">demography_vector1</span></span>
 <span><span class="co">#&gt;   [0,20)  [20,40) [40,Inf) </span></span>
@@ -186,7 +186,7 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># assign rownames for clarity</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix1</span><span class="op">)</span></span></code></pre></div>
 </details><details class="chunk-details"><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">population1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/population.html">population</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"UK"</span>,</span>
@@ -209,9 +209,9 @@
 <span>  symmetric <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  return_demography <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">contact_matrix2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data2</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
+<span><span class="va">contact_matrix2</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">contact_data2</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
 <span><span class="va">demography_vector2</span> <span class="op">&lt;-</span> <span class="va">contact_data2</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># build for all age groups</span></span>
 <span><span class="va">initial_condition2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -250,19 +250,19 @@
 <span><span class="op">)</span></span>
 <span><span class="va">tot_population</span><span class="op">$</span><span class="va">contact_matrix</span></span>
 <span><span class="co">#&gt;                  UK_[0,20) UK_[20,40) UK_[40,Inf) Germany_[0,20)</span></span>
-<span><span class="co">#&gt; UK_[0,20)        7.8836634  2.7641785   1.5577281     0.21987654</span></span>
-<span><span class="co">#&gt; UK_[20,40)       3.1570238  4.8548387   2.6361484     0.09597109</span></span>
-<span><span class="co">#&gt; UK_[40,Inf)      3.0847473  4.5707349   5.0055710     0.12991787</span></span>
-<span><span class="co">#&gt; Germany_[0,20)   0.3941832  0.1382089   0.0778864     4.39753086</span></span>
-<span><span class="co">#&gt; Germany_[20,40)  0.1578512  0.2427419   0.1318074     1.91942171</span></span>
-<span><span class="co">#&gt; Germany_[40,Inf) 0.1542374  0.2285367   0.2502786     2.59835740</span></span>
+<span><span class="co">#&gt; UK_[0,20)        7.8836634  3.1570238   3.0847473     0.21987654</span></span>
+<span><span class="co">#&gt; UK_[20,40)       2.7641785  4.8548387   4.5707349     0.07529881</span></span>
+<span><span class="co">#&gt; UK_[40,Inf)      1.5577281  2.6361484   5.0055710     0.04678915</span></span>
+<span><span class="co">#&gt; Germany_[0,20)   0.3941832  0.1578512   0.1542374     4.39753086</span></span>
+<span><span class="co">#&gt; Germany_[20,40)  0.1382089  0.2427419   0.2285367     1.50597616</span></span>
+<span><span class="co">#&gt; Germany_[40,Inf) 0.0778864  0.1318074   0.2502786     0.93578298</span></span>
 <span><span class="co">#&gt;                  Germany_[20,40) Germany_[40,Inf)</span></span>
-<span><span class="co">#&gt; UK_[0,20)             0.07529881       0.04678915</span></span>
-<span><span class="co">#&gt; UK_[20,40)            0.21123418       0.07848854</span></span>
-<span><span class="co">#&gt; UK_[40,Inf)           0.17099275       0.20370036</span></span>
-<span><span class="co">#&gt; Germany_[0,20)        1.50597616       0.93578298</span></span>
-<span><span class="co">#&gt; Germany_[20,40)       4.22468354       1.56977082</span></span>
-<span><span class="co">#&gt; Germany_[40,Inf)      3.41985500       4.07400722</span></span></code></pre></div>
+<span><span class="co">#&gt; UK_[0,20)             0.09597109        0.1299179</span></span>
+<span><span class="co">#&gt; UK_[20,40)            0.21123418        0.1709928</span></span>
+<span><span class="co">#&gt; UK_[40,Inf)           0.07848854        0.2037004</span></span>
+<span><span class="co">#&gt; Germany_[0,20)        1.91942171        2.5983574</span></span>
+<span><span class="co">#&gt; Germany_[20,40)       4.22468354        3.4198550</span></span>
+<span><span class="co">#&gt; Germany_[40,Inf)      1.56977082        4.0740072</span></span></code></pre></div>
 </details><p>The object <code>tot_population</code> contains 6 groups: UK population aged 0-20 years old, 20-40 year old, and &gt;40 years old; and German population aged 0-20 years old, 20-40 year old, and &gt;40 years old.</p>
 <p>We now use <code>model_default</code> to simulate the epidemic on the combined population for 700 days, with transmission starting in the United Kingdom.</p>
 <details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -329,20 +329,20 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gravity_population</span><span class="op">$</span><span class="va">contact_matrix</span></span>
-<span><span class="co">#&gt;                   UK_[0,20) UK_[20,40) UK_[40,Inf) Germany_[0,20)</span></span>
-<span><span class="co">#&gt; UK_[0,20)        7.88366337 2.76417854 1.557728085    0.016556089</span></span>
-<span><span class="co">#&gt; UK_[20,40)       3.15702376 4.85483871 2.636148384    0.007226354</span></span>
-<span><span class="co">#&gt; UK_[40,Inf)      3.08474726 4.57073487 5.005571031    0.009782452</span></span>
-<span><span class="co">#&gt; Germany_[0,20)   0.02968089 0.01040675 0.005864629    4.397530864</span></span>
-<span><span class="co">#&gt; Germany_[20,40)  0.01188575 0.01827779 0.009924730    1.919421706</span></span>
-<span><span class="co">#&gt; Germany_[40,Inf) 0.01161364 0.01720818 0.018845275    2.598357398</span></span>
+<span><span class="co">#&gt;                    UK_[0,20) UK_[20,40) UK_[40,Inf) Germany_[0,20)</span></span>
+<span><span class="co">#&gt; UK_[0,20)        7.883663366 3.15702376  3.08474726    0.016556089</span></span>
+<span><span class="co">#&gt; UK_[20,40)       2.764178544 4.85483871  4.57073487    0.005669790</span></span>
+<span><span class="co">#&gt; UK_[40,Inf)      1.557728085 2.63614838  5.00557103    0.003523092</span></span>
+<span><span class="co">#&gt; Germany_[0,20)   0.029680891 0.01188575  0.01161364    4.397530864</span></span>
+<span><span class="co">#&gt; Germany_[20,40)  0.010406746 0.01827779  0.01720818    1.505976160</span></span>
+<span><span class="co">#&gt; Germany_[40,Inf) 0.005864629 0.00992473  0.01884528    0.935782978</span></span>
 <span><span class="co">#&gt;                  Germany_[20,40) Germany_[40,Inf)</span></span>
-<span><span class="co">#&gt; UK_[0,20)             0.00566979      0.003523092</span></span>
-<span><span class="co">#&gt; UK_[20,40)            0.01590534      0.005909968</span></span>
-<span><span class="co">#&gt; UK_[40,Inf)           0.01287528      0.015338068</span></span>
-<span><span class="co">#&gt; Germany_[0,20)        1.50597616      0.935782978</span></span>
-<span><span class="co">#&gt; Germany_[20,40)       4.22468354      1.569770820</span></span>
-<span><span class="co">#&gt; Germany_[40,Inf)      3.41985500      4.074007220</span></span></code></pre></div>
+<span><span class="co">#&gt; UK_[0,20)            0.007226354      0.009782452</span></span>
+<span><span class="co">#&gt; UK_[20,40)           0.015905343      0.012875276</span></span>
+<span><span class="co">#&gt; UK_[40,Inf)          0.005909968      0.015338068</span></span>
+<span><span class="co">#&gt; Germany_[0,20)       1.919421706      2.598357398</span></span>
+<span><span class="co">#&gt; Germany_[20,40)      4.224683544      3.419855003</span></span>
+<span><span class="co">#&gt; Germany_[40,Inf)     1.569770820      4.074007220</span></span></code></pre></div>
 </details><details class="chunk-details" open><summary class="chunk-summary"><span class="chunk-summary-text">Code</span></summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run an epidemic model</span></span>
 <span><span class="va">output_gravity</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_default.html">model_default</a></span><span class="op">(</span></span>
@@ -514,7 +514,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen.</p>
+  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen, Bankole Ahadzie.</p>
 </div>
 
 <div class="pkgdown-footer-right">

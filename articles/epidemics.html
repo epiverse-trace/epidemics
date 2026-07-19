@@ -166,9 +166,10 @@ is a scaling factor dependent on
 is the population proportion of group
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>.
 The ODEs in <em>epidemics</em> also follow this convention.</p>
-<p>For consistency with this notation, social contact matrices from
-<em>socialmixr</em> need to be transposed (using <code><a href="https://rdrr.io/r/base/t.html" class="external-link">t()</a></code>)
-before they are used with <em>epidemics</em>.</p>
+<p><em>epidemics</em> reconciles the two conventions for you: the model
+functions transpose the contact matrix internally. Matrices from
+<em>socialmixr</em> can therefore be passed to <code><a href="../reference/population.html">population()</a></code>
+exactly as they are returned, with no call to <code><a href="https://rdrr.io/r/base/t.html" class="external-link">t()</a></code>.</p>
 </div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load contact and population data from socialmixr::polymod</span></span>
@@ -191,19 +192,19 @@ before they are used with <em>epidemics</em>.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
-<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
+<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">[[</span><span class="st">"matrix"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># prepare the demography vector</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># view contact matrix and demography</span></span>
 <span><span class="va">contact_matrix</span></span>
-<span><span class="co">#&gt;                  age.group</span></span>
-<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40) [40,Inf)</span></span>
-<span><span class="co">#&gt;          [0,20)   7.883663 2.764179 1.557728</span></span>
-<span><span class="co">#&gt;          [20,40)  3.157024 4.854839 2.636148</span></span>
-<span><span class="co">#&gt;          [40,Inf) 3.084747 4.570735 5.005571</span></span>
+<span><span class="co">#&gt;           contact.age.group</span></span>
+<span><span class="co">#&gt; age.group    [0,20)  [20,40) [40,Inf)</span></span>
+<span><span class="co">#&gt;   [0,20)   7.883663 3.157024 3.084747</span></span>
+<span><span class="co">#&gt;   [20,40)  2.764179 4.854839 4.570735</span></span>
+<span><span class="co">#&gt;   [40,Inf) 1.557728 2.636148 5.005571</span></span>
 <span></span>
 <span><span class="va">demography_vector</span></span>
 <span><span class="co">#&gt;   [0,20)  [20,40) [40,Inf) </span></span>
@@ -224,7 +225,7 @@ before they are used with <em>epidemics</em>.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># assign rownames for clarity</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># view initial conditions</span></span>
 <span><span class="va">initial_conditions</span></span>
@@ -253,11 +254,11 @@ before they are used with <em>epidemics</em>.</p>
 <span><span class="co">#&gt; [40,Inf): 29,438,434 (50%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Contact matrix</span> </span></span>
-<span><span class="co">#&gt;                  age.group</span></span>
-<span><span class="co">#&gt; contact.age.group   [0,20)  [20,40) [40,Inf)</span></span>
-<span><span class="co">#&gt;          [0,20)   7.883663 2.764179 1.557728</span></span>
-<span><span class="co">#&gt;          [20,40)  3.157024 4.854839 2.636148</span></span>
-<span><span class="co">#&gt;          [40,Inf) 3.084747 4.570735 5.005571</span></span>
+<span><span class="co">#&gt;           contact.age.group</span></span>
+<span><span class="co">#&gt; age.group    [0,20)  [20,40) [40,Inf)</span></span>
+<span><span class="co">#&gt;   [0,20)   7.883663 3.157024 3.084747</span></span>
+<span><span class="co">#&gt;   [20,40)  2.764179 4.854839 4.570735</span></span>
+<span><span class="co">#&gt;   [40,Inf) 1.557728 2.636148 5.005571</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  <span style="color: #0000BB;">Initial Conditions</span> </span></span>
 <span><span class="co">#&gt;                 S E     I R V</span></span>
@@ -336,7 +337,7 @@ Agents.”</span> <em>American Journal of Epidemiology</em> 164 (10):
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen.</p>
+  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen, Bankole Ahadzie.</p>
 </div>
 
 <div class="pkgdown-footer-right">

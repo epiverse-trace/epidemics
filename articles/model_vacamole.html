@@ -214,11 +214,11 @@ or post infection (I, or H).</p></li>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
-<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">$</span><span class="va">matrix</span><span class="op">)</span></span>
+<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">[[</span><span class="st">"matrix"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># prepare the demography vector</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">$</span><span class="va">demography</span><span class="op">$</span><span class="va">population</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
 <p>Prepare initial conditions for each age group. The Vacamole model has
 11 compartments and therefore requires a matrix with 11 columns.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -551,7 +551,7 @@ the Netherlands, Summer 2021.”</span> <em>Eurosurveillance</em> 27 (44):
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen.</p>
+  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen, Bankole Ahadzie.</p>
 </div>
 
 <div class="pkgdown-footer-right">

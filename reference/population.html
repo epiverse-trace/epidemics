@@ -105,7 +105,11 @@ Check whether an object is a &amp;lt;population&amp;gt;"><meta property="og:imag
 
 <dt id="arg-contact-matrix">contact_matrix<a class="anchor" aria-label="anchor" href="#arg-contact-matrix"></a></dt>
 <dd><p>A matrix giving the contacts between the demographic
-groups in the population. Must be a square matrix.</p></dd>
+groups in the population. Must be a square matrix.
+Contact matrices returned by <code><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">socialmixr::contact_matrix()</a></code> should be passed
+as they are, without transposing them: model functions transpose the matrix
+internally to the convention used by the model ODEs, in which
+\(M_{ij}\) represents contacts to group \(i\) from group \(j\).</p></dd>
 
 
 <dt id="arg-demography-vector">demography_vector<a class="anchor" aria-label="anchor" href="#arg-demography-vector"></a></dt>
@@ -174,7 +178,7 @@ proportion of individuals of demographic group \(i\) in compartment \(j\)
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen.</p>
+  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen, Bankole Ahadzie.</p>
 </div>
 
 <div class="pkgdown-footer-right">

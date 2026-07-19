@@ -142,11 +142,11 @@ contact_data <- socialmixr::contact_matrix(
 )
 
 # prepare contact matrix
-contact_matrix <- t(contact_data$matrix)
+contact_matrix <- contact_data$matrix
 
 # prepare the demography vector
 demography_vector <- contact_data$demography$population
-names(demography_vector) <- rownames(contact_matrix)
+names(demography_vector) <- colnames(contact_matrix)
 
 # initial conditions: one in every 1 million is infected
 initial_i <- 1e-6
@@ -160,7 +160,7 @@ initial_conditions <- rbind(
   initial_conditions,
   initial_conditions
 )
-rownames(initial_conditions) <- rownames(contact_matrix)
+rownames(initial_conditions) <- colnames(contact_matrix)
 ```
 
 ``` r
@@ -186,11 +186,11 @@ uk_population
 #> [40,Inf): 29,438,434 (50%)
 #> 
 #>  Contact matrix 
-#>                  age.group
-#> contact.age.group   [0,20)  [20,40) [40,Inf)
-#>          [0,20)   7.883663 2.764179 1.557728
-#>          [20,40)  3.157024 4.854839 2.636148
-#>          [40,Inf) 3.084747 4.570735 5.005571
+#>           contact.age.group
+#> age.group    [0,20)  [20,40) [40,Inf)
+#>   [0,20)   7.883663 3.157024 3.084747
+#>   [20,40)  2.764179 4.854839 4.570735
+#>   [40,Inf) 1.557728 2.636148 5.005571
 #> 
 #>  Initial Conditions 
 #>                 S E     I R V
@@ -362,7 +362,7 @@ We need to scale the contact matrix appropriately.
 
 # Define population in each age group
 scalar <- max(eigen(contact_data$matrix)$values)
-contact_matrix <- (contact_data$matrix / demography_vector) / scalar
+finalsize_contact_matrix <- (contact_data$matrix / demography_vector) / scalar
 ```
 
 ``` r
@@ -370,7 +370,7 @@ contact_matrix <- (contact_data$matrix / demography_vector) / scalar
 # Calculate the proportion of individuals infected in each age group
 dat1 <- final_size(
   r0 = 1.5,
-  contact_matrix = contact_matrix,
+  contact_matrix = finalsize_contact_matrix,
   demography_vector = demography_vector,
   susceptibility = susceptibility,
   p_susceptibility = p_susceptibility
@@ -449,7 +449,7 @@ parameter uncertainty.
 benchmark <- mark(
   analytical_method = final_size(
     r0 = 1.5,
-    contact_matrix = contact_matrix,
+    contact_matrix = finalsize_contact_matrix,
     demography_vector = demography_vector,
     susceptibility = susceptibility,
     p_susceptibility = p_susceptibility
@@ -474,7 +474,7 @@ select(as_tibble(benchmark), expression, total_time)
 #> # A tibble: 2 × 2
 #>   expression        total_time
 #>   <bch:expr>             <dbl>
-#> 1 analytical_method      0.398
+#> 1 analytical_method      0.396
 #> 2 ode_model             13.6
 ```
 

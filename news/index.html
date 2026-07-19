@@ -78,6 +78,10 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="epidemics-development-version">epidemics (development version)<a class="anchor" aria-label="anchor" href="#epidemics-development-version"></a></h2>
 <div class="section level3">
+<h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
+<ol style="list-style-type: decimal"><li>Social contact matrices from <em>socialmixr</em> must no longer be transposed before use. <code><a href="../reference/model_default.html">model_default()</a></code> and <code><a href="../reference/model_vacamole.html">model_vacamole()</a></code> now transpose the contact matrix internally, so matrices should be passed to <code><a href="../reference/population.html">population()</a></code> exactly as <code><a href="https://epiforecasts.io/socialmixr/reference/contact_matrix.html" class="external-link">socialmixr::contact_matrix()</a></code> returns them (<a href="https://github.com/epiverse-trace/epidemics/issues/259" class="external-link">#259</a>, <a href="https://github.com/bahadzie" class="external-link">@bahadzie</a>). Existing code that calls <code><a href="https://rdrr.io/r/base/t.html" class="external-link">t()</a></code> on the contact matrix will continue to run without error, but will silently give incorrect results because the matrix is then transposed twice; remove the <code><a href="https://rdrr.io/r/base/t.html" class="external-link">t()</a></code> call when upgrading. Vignettes, examples, tests and the README have been updated accordingly.</li>
+</ol></div>
+<div class="section level3">
 <h3 id="helper-functions-development-version">Helper functions<a class="anchor" aria-label="anchor" href="#helper-functions-development-version"></a></h3>
 <ol style="list-style-type: decimal"><li>Added the <code><a href="../reference/combine_populations.html">combine_populations()</a></code> function to combine age-structured populations into a new population object.</li>
 </ol></div>
@@ -297,7 +301,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen.</p>
+  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen, Bankole Ahadzie.</p>
 </div>
 
 <div class="pkgdown-footer-right">

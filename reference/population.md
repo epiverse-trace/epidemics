@@ -26,7 +26,12 @@ is_population(x)
 - contact_matrix:
 
   A matrix giving the contacts between the demographic groups in the
-  population. Must be a square matrix.
+  population. Must be a square matrix. Contact matrices returned by
+  [`socialmixr::contact_matrix()`](https://epiforecasts.io/socialmixr/reference/contact_matrix.html)
+  should be passed as they are, without transposing them: model
+  functions transpose the matrix internally to the convention used by
+  the model ODEs, in which \\M\_{ij}\\ represents contacts to group
+  \\i\\ from group \\j\\.
 
 - demography_vector:
 

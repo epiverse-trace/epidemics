@@ -33,6 +33,8 @@ Authors:
 - Edwin Van Leeuwen <edwin.vanleeuwen@ukhsa.gov.uk>
   ([ORCID](https://orcid.org/0000-0002-2383-5305)) \[copyright holder\]
 
+- Bankole Ahadzie <bankole.ahadzie@lshtm.ac.uk>
+
 Other contributors:
 
 - Adam Kucharski <adam.kucharski@lshtm.ac.uk>
@@ -42,8 +44,6 @@ Other contributors:
 - Tim Taylor <tim.taylor@hiddenelephants.co.uk>
   ([ORCID](https://orcid.org/0000-0002-8587-7113)) \[contributor,
   reviewer\]
-
-- Banky Ahadzie <bahadzie@gmail.com> \[contributor\]
 
 - Alexis Robert <alexis.robert@lshtm.ac.uk>
   ([ORCID](https://orcid.org/0000-0002-4516-2965)) \[contributor\]

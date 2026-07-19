@@ -66,19 +66,19 @@ contact_data1 <- socialmixr::contact_matrix(
 )
 
 # prepare contact matrix
-contact_matrix1 <- t(contact_data1$matrix)
+contact_matrix1 <- contact_data1[["matrix"]]
 
 # prepare the demography vector
 demography_vector1 <- contact_data1$demography$population
-names(demography_vector1) <- rownames(contact_matrix1)
+names(demography_vector1) <- colnames(contact_matrix1)
 
 # view contact matrix and demography
 contact_matrix1
-#>                  age.group
-#> contact.age.group   [0,20)  [20,40) [40,Inf)
-#>          [0,20)   7.883663 2.764179 1.557728
-#>          [20,40)  3.157024 4.854839 2.636148
-#>          [40,Inf) 3.084747 4.570735 5.005571
+#>           contact.age.group
+#> age.group    [0,20)  [20,40) [40,Inf)
+#>   [0,20)   7.883663 3.157024 3.084747
+#>   [20,40)  2.764179 4.854839 4.570735
+#>   [40,Inf) 1.557728 2.636148 5.005571
 
 demography_vector1
 #>   [0,20)  [20,40) [40,Inf) 
@@ -103,7 +103,7 @@ initial_conditions1 <- rbind(
 )
 
 # assign rownames for clarity
-rownames(initial_conditions1) <- rownames(contact_matrix1)
+rownames(initial_conditions1) <- colnames(contact_matrix1)
 ```
 
 Code
@@ -138,9 +138,9 @@ contact_data2 <- socialmixr::contact_matrix(
   symmetric = TRUE,
   return_demography = TRUE
 )
-contact_matrix2 <- t(contact_data2$matrix)
+contact_matrix2 <- (contact_data2$matrix)
 demography_vector2 <- contact_data2$demography$population
-names(demography_vector2) <- rownames(contact_matrix2)
+names(demography_vector2) <- colnames(contact_matrix2)
 
 # build for all age groups
 initial_condition2 <- c(
@@ -209,19 +209,19 @@ tot_population <- combine_populations(
 )
 tot_population$contact_matrix
 #>                  UK_[0,20) UK_[20,40) UK_[40,Inf) Germany_[0,20)
-#> UK_[0,20)        7.8836634  2.7641785   1.5577281     0.21987654
-#> UK_[20,40)       3.1570238  4.8548387   2.6361484     0.09597109
-#> UK_[40,Inf)      3.0847473  4.5707349   5.0055710     0.12991787
-#> Germany_[0,20)   0.3941832  0.1382089   0.0778864     4.39753086
-#> Germany_[20,40)  0.1578512  0.2427419   0.1318074     1.91942171
-#> Germany_[40,Inf) 0.1542374  0.2285367   0.2502786     2.59835740
+#> UK_[0,20)        7.8836634  3.1570238   3.0847473     0.21987654
+#> UK_[20,40)       2.7641785  4.8548387   4.5707349     0.07529881
+#> UK_[40,Inf)      1.5577281  2.6361484   5.0055710     0.04678915
+#> Germany_[0,20)   0.3941832  0.1578512   0.1542374     4.39753086
+#> Germany_[20,40)  0.1382089  0.2427419   0.2285367     1.50597616
+#> Germany_[40,Inf) 0.0778864  0.1318074   0.2502786     0.93578298
 #>                  Germany_[20,40) Germany_[40,Inf)
-#> UK_[0,20)             0.07529881       0.04678915
-#> UK_[20,40)            0.21123418       0.07848854
-#> UK_[40,Inf)           0.17099275       0.20370036
-#> Germany_[0,20)        1.50597616       0.93578298
-#> Germany_[20,40)       4.22468354       1.56977082
-#> Germany_[40,Inf)      3.41985500       4.07400722
+#> UK_[0,20)             0.09597109        0.1299179
+#> UK_[20,40)            0.21123418        0.1709928
+#> UK_[40,Inf)           0.07848854        0.2037004
+#> Germany_[0,20)        1.91942171        2.5983574
+#> Germany_[20,40)       4.22468354        3.4198550
+#> Germany_[40,Inf)      1.56977082        4.0740072
 ```
 
 The object `tot_population` contains 6 groups: UK population aged 0-20
@@ -324,20 +324,20 @@ gravity_population <- combine_populations(
 )
 
 gravity_population$contact_matrix
-#>                   UK_[0,20) UK_[20,40) UK_[40,Inf) Germany_[0,20)
-#> UK_[0,20)        7.88366337 2.76417854 1.557728085    0.016556089
-#> UK_[20,40)       3.15702376 4.85483871 2.636148384    0.007226354
-#> UK_[40,Inf)      3.08474726 4.57073487 5.005571031    0.009782452
-#> Germany_[0,20)   0.02968089 0.01040675 0.005864629    4.397530864
-#> Germany_[20,40)  0.01188575 0.01827779 0.009924730    1.919421706
-#> Germany_[40,Inf) 0.01161364 0.01720818 0.018845275    2.598357398
+#>                    UK_[0,20) UK_[20,40) UK_[40,Inf) Germany_[0,20)
+#> UK_[0,20)        7.883663366 3.15702376  3.08474726    0.016556089
+#> UK_[20,40)       2.764178544 4.85483871  4.57073487    0.005669790
+#> UK_[40,Inf)      1.557728085 2.63614838  5.00557103    0.003523092
+#> Germany_[0,20)   0.029680891 0.01188575  0.01161364    4.397530864
+#> Germany_[20,40)  0.010406746 0.01827779  0.01720818    1.505976160
+#> Germany_[40,Inf) 0.005864629 0.00992473  0.01884528    0.935782978
 #>                  Germany_[20,40) Germany_[40,Inf)
-#> UK_[0,20)             0.00566979      0.003523092
-#> UK_[20,40)            0.01590534      0.005909968
-#> UK_[40,Inf)           0.01287528      0.015338068
-#> Germany_[0,20)        1.50597616      0.935782978
-#> Germany_[20,40)       4.22468354      1.569770820
-#> Germany_[40,Inf)      3.41985500      4.074007220
+#> UK_[0,20)            0.007226354      0.009782452
+#> UK_[20,40)           0.015905343      0.012875276
+#> UK_[40,Inf)          0.005909968      0.015338068
+#> Germany_[0,20)       1.919421706      2.598357398
+#> Germany_[20,40)      4.224683544      3.419855003
+#> Germany_[40,Inf)     1.569770820      4.074007220
 ```
 
 Code

@@ -33,9 +33,12 @@ follow the opposite convention, where $`M_{ij}`$ represents [contacts
 from group $`i`$ to group
 $`j`$](https://epiforecasts.io/socialmixr/articles/socialmixr.html#usage).
 
-Thus social contact matrices from *socialmixr* need to be transposed
-(using [`t()`](https://rdrr.io/r/base/t.html)) before they are used with
-*epidemics*.
+*epidemics* reconciles the two conventions for you: the model functions
+transpose the contact matrix internally. Matrices from *socialmixr* can
+therefore be passed to
+[`population()`](https://epiverse-trace.github.io/epidemics/reference/population.md)
+exactly as they are returned, with no call to
+[`t()`](https://rdrr.io/r/base/t.html).
 
 ``` r
 
@@ -59,11 +62,11 @@ contact_data <- socialmixr::contact_matrix(
 )
 
 # prepare contact matrix
-contact_matrix <- t(contact_data$matrix)
+contact_matrix <- contact_data[["matrix"]]
 
 # prepare the demography vector
 demography_vector <- contact_data$demography$population
-names(demography_vector) <- rownames(contact_matrix)
+names(demography_vector) <- colnames(contact_matrix)
 ```
 
 Prepare initial conditions for each age group.
@@ -84,7 +87,7 @@ initial_conditions <- rbind(
 )
 
 # assign rownames for clarity
-rownames(initial_conditions) <- rownames(contact_matrix)
+rownames(initial_conditions) <- colnames(contact_matrix)
 ```
 
 Prepare a population as a `population` class object.

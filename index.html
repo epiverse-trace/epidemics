@@ -162,11 +162,11 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># prepare contact matrix</span></span>
-<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">contact_data</span><span class="op">[[</span><span class="st">"matrix"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">contact_matrix</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">[[</span><span class="st">"matrix"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># prepare the demography vector</span></span>
 <span><span class="va">demography_vector</span> <span class="op">&lt;-</span> <span class="va">contact_data</span><span class="op">[[</span><span class="st">"demography"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"population"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">demography_vector</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
 <p>Prepare the initial conditions for the population by age group — here, one in every million individuals is infected at the start of the epidemic (for a total of about 60 infections).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># initial conditions: one in every 1 million is infected</span></span>
@@ -181,7 +181,7 @@
 <span>  <span class="va">initial_conditions</span>,</span>
 <span>  <span class="va">initial_conditions</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">initial_conditions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">contact_matrix</span><span class="op">)</span></span></code></pre></div>
 <p>Prepare an object of the class <code>&lt;population&gt;</code>, using the function <code><a href="reference/population.html">population()</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># prepare the population to model as affected by the epidemic</span></span>
@@ -339,6 +339,7 @@ Li, Shou-Li, Matthew J. Ferrari, Ottar N. Bjørnstad, et al. 2019. “Concurren
 <li>Pratik Gupte <br><small class="roles"> Author, copyright holder </small> <a href="https://orcid.org/0000-0001-5294-7819" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Rosalind Eggo <br><small class="roles"> Author, copyright holder, maintainer </small> <a href="https://orcid.org/0000-0002-0362-6717" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Edwin Van Leeuwen <br><small class="roles"> Author, copyright holder </small> <a href="https://orcid.org/0000-0002-2383-5305" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Bankole Ahadzie <br><small class="roles"> Author </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -358,7 +359,7 @@ Li, Shou-Li, Matthew J. Ferrari, Ottar N. Bjørnstad, et al. 2019. “Concurren
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen.</p>
+  <p>Developed by Pratik Gupte, Rosalind Eggo, Edwin Van Leeuwen, Bankole Ahadzie.</p>
 </div>
 
 <div class="pkgdown-footer-right">

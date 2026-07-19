@@ -53,10 +53,12 @@ $`q`$ is a scaling factor dependent on $`R_0`$ (or another measure of
 infection transmissibility), and $`n_i`$ is the population proportion of
 group $`i`$. The ODEs in *epidemics* also follow this convention.
 
-For consistency with this notation, social contact matrices from
-*socialmixr* need to be transposed (using
-[`t()`](https://rdrr.io/r/base/t.html)) before they are used with
-*epidemics*.
+*epidemics* reconciles the two conventions for you: the model functions
+transpose the contact matrix internally. Matrices from *socialmixr* can
+therefore be passed to
+[`population()`](https://epiverse-trace.github.io/epidemics/reference/population.md)
+exactly as they are returned, with no call to
+[`t()`](https://rdrr.io/r/base/t.html).
 
 ``` r
 
@@ -80,19 +82,19 @@ contact_data <- socialmixr::contact_matrix(
 )
 
 # prepare contact matrix
-contact_matrix <- t(contact_data$matrix)
+contact_matrix <- contact_data[["matrix"]]
 
 # prepare the demography vector
 demography_vector <- contact_data$demography$population
-names(demography_vector) <- rownames(contact_matrix)
+names(demography_vector) <- colnames(contact_matrix)
 
 # view contact matrix and demography
 contact_matrix
-#>                  age.group
-#> contact.age.group   [0,20)  [20,40) [40,Inf)
-#>          [0,20)   7.883663 2.764179 1.557728
-#>          [20,40)  3.157024 4.854839 2.636148
-#>          [40,Inf) 3.084747 4.570735 5.005571
+#>           contact.age.group
+#> age.group    [0,20)  [20,40) [40,Inf)
+#>   [0,20)   7.883663 3.157024 3.084747
+#>   [20,40)  2.764179 4.854839 4.570735
+#>   [40,Inf) 1.557728 2.636148 5.005571
 
 demography_vector
 #>   [0,20)  [20,40) [40,Inf) 
@@ -117,7 +119,7 @@ initial_conditions <- rbind(
 )
 
 # assign rownames for clarity
-rownames(initial_conditions) <- rownames(contact_matrix)
+rownames(initial_conditions) <- colnames(contact_matrix)
 
 # view initial conditions
 initial_conditions
@@ -150,11 +152,11 @@ uk_population
 #> [40,Inf): 29,438,434 (50%)
 #> 
 #>  Contact matrix 
-#>                  age.group
-#> contact.age.group   [0,20)  [20,40) [40,Inf)
-#>          [0,20)   7.883663 2.764179 1.557728
-#>          [20,40)  3.157024 4.854839 2.636148
-#>          [40,Inf) 3.084747 4.570735 5.005571
+#>           contact.age.group
+#> age.group    [0,20)  [20,40) [40,Inf)
+#>   [0,20)   7.883663 3.157024 3.084747
+#>   [20,40)  2.764179 4.854839 4.570735
+#>   [40,Inf) 1.557728 2.636148 5.005571
 #> 
 #>  Initial Conditions 
 #>                 S E     I R V

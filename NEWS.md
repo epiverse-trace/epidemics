@@ -1,5 +1,9 @@
 # epidemics (development version)
 
+## Breaking changes
+
+1. Social contact matrices from _socialmixr_ must no longer be transposed before use. `model_default()` and `model_vacamole()` now transpose the contact matrix internally, so matrices should be passed to `population()` exactly as `socialmixr::contact_matrix()` returns them (#259, @bahadzie). Existing code that calls `t()` on the contact matrix will continue to run without error, but will silently give incorrect results because the matrix is then transposed twice; remove the `t()` call when upgrading. Vignettes, examples, tests and the README have been updated accordingly.
+
 ## Helper functions
 
 1. Added the `combine_populations()` function to combine age-structured populations into a new population object.

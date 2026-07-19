@@ -33,6 +33,8 @@ License: MIT + file LICENSE
 URL: https://github.com/epiverse-trace/epidemics,
     https://epiverse-trace.github.io/epidemics/
 BugReports: https://github.com/epiverse-trace/epidemics/issues
+Depends:
+    R (>= 4.1)
 Imports:
     odin,
     checkmate,

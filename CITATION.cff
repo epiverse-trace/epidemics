@@ -27,6 +27,9 @@ authors:
   given-names: Edwin
   email: edwin.vanleeuwen@ukhsa.gov.uk
   orcid: https://orcid.org/0000-0002-2383-5305
+- family-names: Ahadzie
+  given-names: Bankole
+  email: bankole.ahadzie@lshtm.ac.uk
 repository-code: https://github.com/epiverse-trace/epidemics
 url: https://epiverse-trace.github.io/epidemics/
 contact:

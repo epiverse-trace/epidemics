@@ -32,7 +32,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/epiverse-trace/epidemics/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/epiverse-trace/epidemics/blob/v0.5.0/DESCRIPTION)
 
 Gupte P, Eggo R, Van Leeuwen E, Ahadzie B (2026). *epidemics: Composable
 Epidemic Scenario Modelling*. R package version 0.5.0,

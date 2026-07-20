@@ -1,12 +1,22 @@
-# epidemics (development version)
+# epidemics 0.5.0
 
 ## Breaking changes
 
 1. Social contact matrices from _socialmixr_ must no longer be transposed before use. `model_default()` and `model_vacamole()` now transpose the contact matrix internally, so matrices should be passed to `population()` exactly as `socialmixr::contact_matrix()` returns them (#259, @bahadzie). Existing code that calls `t()` on the contact matrix will continue to run without error, but will silently give incorrect results because the matrix is then transposed twice; remove the `t()` call when upgrading. Vignettes, examples, tests and the README have been updated accordingly.
 
+2. The `new_infections()` argument `compartments_from_susceptible` has been renamed to `exclude_compartments` (#272, @bahadzie). Code that passes this argument by name must be updated.
+
+## Model functions
+
+1. The compiled code underlying the ODE models has been migrated from Rcpp/C++ to _odin_ (#263, @bahadzie, @alxsrobert). The 'default', 'Vacamole' and 'diphtheria' ODE systems are now declared as _odin_ models under `inst/odin/`, _odin_ has been added to `Imports`, and the previous C++ sources, their _Rcpp_ bindings and the C++ linting workflow have been removed.
+
+## Classes
+
+1. `print()` on a `<population>` object now also displays the initial conditions matrix (#269, @bahadzie).
+
 ## Helper functions
 
-1. Added the `combine_populations()` function to combine age-structured populations into a new population object.
+1. Added the `combine_populations()` function to combine age-structured populations into a new population object (#262, @alxsrobert).
 
 ## Bug fixes
 
@@ -14,15 +24,33 @@
 
 ## Documentation
 
-1. Added a `modelling-populations` vignette on how to combine age-structured populations.
+1. Added a `modelling-populations` vignette on how to combine age-structured populations (#262, @alxsrobert).
 
-2. Set the pkgdown website `development: mode` to `unreleased` so that the single website matches the development version of the package installed by most users, and added website favicons (#275, @joshwlambert).
+2. Corrected the equations documented for `model_vacamole()` in the function documentation and the 'Modelling a two-dose vaccination campaign' vignette (#273, @bahadzie).
+
+3. Corrected the vaccination rate used in the 'Modelling vaccination' vignette (#268, @bahadzie).
+
+4. Corrected the Figure 1 caption in the 'Modelling multiple interventions' vignette (#270, @bahadzie).
+
+5. Fixed rendering of equations on the pkgdown website for pkgdown >= 2.1.0 (#249, @Bisaloo).
+
+6. Fixed broken links in the README (#293, @joshwlambert).
+
+7. Updated the documentation of the internal argument-preparation helpers for the 'Vacamole' and 'diphtheria' models (#274, @bahadzie).
+
+8. Set the pkgdown website `development: mode` to `unreleased` so that the single website matches the development version of the package installed by most users, and added website favicons (#275, @joshwlambert).
 
 ## Package
 
-1. Added `dependabot.yml` to `.github/` to automate updating GitHub actions workflow versions.
+1. Added `dependabot.yml` to `.github/` to automate updating GitHub actions workflow versions (#283, @joshwlambert).
 
-2. Updated all uses of _socialmixr_ across tests, vignettes, examples and the README to pass `survey_pop` explicitly to `socialmixr::contact_matrix()`, removing deprecation warnings introduced in _socialmixr_ 0.6.0; the minimum _socialmixr_ version is now 0.6.0 (#281, @joshwlambert). Demography data is now taken from the _wpp2024_ package (added to `Suggests` and `Remotes`, installed from GitHub) rather than from the deprecated `socialmixr::survey_country_population()`, which is backed by the outdated _wpp2017_ data. The population year is 2006, matching the year in which the _socialmixr_ POLYMOD participants were surveyed; previously _socialmixr_ used 2005, as _wpp2017_ only provides population estimates at five-year intervals. Demography vectors and symmetric contact matrices in examples, vignettes and tests therefore change slightly (by up to ~1%) relative to previous releases, reflecting the revised UN estimates for 2006.
+2. The minimum required R version is now 4.1.0, as the package's examples, vignettes and tests use the base R pipe (`|>`).
+
+3. Updated calls to `socialmixr::contact_matrix()` to use the renamed `age_limits` argument, replacing the defunct `age.limits`, and accepted the resulting snapshot changes (#280, @avallecam).
+
+4. Fixed the `codecov/codecov-action` variables in the test coverage workflow (#289, @joshwlambert), added `persist-credentials: false` to fix the `update-citation-cff` workflow (#290, @joshwlambert), and removed an unused workflow inherited from the package template (#244, @pratikunterwegs).
+
+5. Updated all uses of _socialmixr_ across tests, vignettes, examples and the README to pass `survey_pop` explicitly to `socialmixr::contact_matrix()`, removing deprecation warnings introduced in _socialmixr_ 0.6.0; the minimum _socialmixr_ version is now 0.6.0 (#281, @joshwlambert). Demography data is now taken from the _wpp2024_ package (added to `Suggests` and `Remotes`, installed from GitHub) rather than from the deprecated `socialmixr::survey_country_population()`, which is backed by the outdated _wpp2017_ data. The population year is 2006, matching the year in which the _socialmixr_ POLYMOD participants were surveyed; previously _socialmixr_ used 2005, as _wpp2017_ only provides population estimates at five-year intervals. Demography vectors and symmetric contact matrices in examples, vignettes and tests therefore change slightly (by up to ~1%) relative to previous releases, reflecting the revised UN estimates for 2006.
 
 # epidemics 0.4.0
 

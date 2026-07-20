@@ -8,7 +8,7 @@ message: 'To cite package "epidemics" in publications use:'
 type: software
 license: MIT
 title: 'epidemics: Composable Epidemic Scenario Modelling'
-version: 0.4.0.9000
+version: 0.5.0
 abstract: A library of compartmental epidemic models taken from the published literature,
   and classes to represent affected populations, public health response measures including
   non-pharmaceutical interventions on social contacts, non-pharmaceutical and pharmaceutical
@@ -53,6 +53,20 @@ keywords:
 - scenario-analysis
 - vaccination
 references:
+- type: software
+  title: 'R: A Language and Environment for Statistical Computing'
+  notes: Depends
+  url: https://www.R-project.org/
+  authors:
+  - name: R Core Team
+    website: https://ror.org/02zz1nj61
+  institution:
+    name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
+    address: Vienna, Austria
+  year: '2026'
+  doi: 10.32614/R.manuals
+  version: '>= 4.1.0'
 - type: software
   title: odin
   abstract: 'odin: ODE Generation and Integration'

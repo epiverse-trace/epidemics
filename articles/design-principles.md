@@ -39,7 +39,7 @@ classes - is yet to be fixed. The eventual stable output type must allow
 users to conveniently access the epidemic trajectory data, identify and
 filter intervention scenarios for comparisons among them, and allow
 interoperability with data science tools such as the
-[Tidyverse](https://www.tidyverse.org/).
+[Tidyverse](https://tidyverse.org/).
 
 ## Package architecture
 
@@ -113,11 +113,11 @@ decisions.
   [`deSolve::lsoda()`](https://rdrr.io/pkg/deSolve/man/lsoda.html) from
   the [*deSolve* package](https://cran.r-project.org/package=deSolve).
   We have adapted this approach to use the R package
-  [*odin*](https://cran.r-project.org/web/packages/odin/index.html). The
-  advantage of *odin* is that it generates systems of ordinary
-  differential equations (ODE) and integrates them, using a
-  domain-specific language (DSL). The DSL uses R’s syntax, but compiles
-  to C in order to efficiently solve the system using deSolve.
+  [*odin*](https://CRAN.R-project.org/package=odin). The advantage of
+  *odin* is that it generates systems of ordinary differential equations
+  (ODE) and integrates them, using a domain-specific language (DSL). The
+  DSL uses R’s syntax, but compiles to C in order to efficiently solve
+  the system using deSolve.
 
 ### Stochastic models
 

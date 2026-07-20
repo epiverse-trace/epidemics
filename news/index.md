@@ -1,6 +1,6 @@
 # Changelog
 
-## epidemics (development version)
+## epidemics 0.5.0
 
 ### Breaking changes
 
@@ -24,12 +24,41 @@
     Vignettes, examples, tests and the README have been updated
     accordingly.
 
+2.  The
+    [`new_infections()`](https://epiverse-trace.github.io/epidemics/reference/new_infections.md)
+    argument `compartments_from_susceptible` has been renamed to
+    `exclude_compartments`
+    ([\#272](https://github.com/epiverse-trace/epidemics/issues/272),
+    [@bahadzie](https://github.com/bahadzie)). Code that passes this
+    argument by name must be updated.
+
+### Model functions
+
+1.  The compiled code underlying the ODE models has been migrated from
+    Rcpp/C++ to *odin*
+    ([\#263](https://github.com/epiverse-trace/epidemics/issues/263),
+    [@bahadzie](https://github.com/bahadzie),
+    [@alxsrobert](https://github.com/alxsrobert)). The ‘default’,
+    ‘Vacamole’ and ‘diphtheria’ ODE systems are now declared as *odin*
+    models under `inst/odin/`, *odin* has been added to `Imports`, and
+    the previous C++ sources, their *Rcpp* bindings and the C++ linting
+    workflow have been removed.
+
+### Classes
+
+1.  [`print()`](https://rdrr.io/r/base/print.html) on a `<population>`
+    object now also displays the initial conditions matrix
+    ([\#269](https://github.com/epiverse-trace/epidemics/issues/269),
+    [@bahadzie](https://github.com/bahadzie)).
+
 ### Helper functions
 
 1.  Added the
     [`combine_populations()`](https://epiverse-trace.github.io/epidemics/reference/combine_populations.md)
     function to combine age-structured populations into a new population
-    object.
+    object
+    ([\#262](https://github.com/epiverse-trace/epidemics/issues/262),
+    [@alxsrobert](https://github.com/alxsrobert)).
 
 ### Bug fixes
 
@@ -48,9 +77,42 @@
 ### Documentation
 
 1.  Added a `modelling-populations` vignette on how to combine
-    age-structured populations.
+    age-structured populations
+    ([\#262](https://github.com/epiverse-trace/epidemics/issues/262),
+    [@alxsrobert](https://github.com/alxsrobert)).
 
-2.  Set the pkgdown website `development: mode` to `unreleased` so that
+2.  Corrected the equations documented for
+    [`model_vacamole()`](https://epiverse-trace.github.io/epidemics/reference/model_vacamole.md)
+    in the function documentation and the ‘Modelling a two-dose
+    vaccination campaign’ vignette
+    ([\#273](https://github.com/epiverse-trace/epidemics/issues/273),
+    [@bahadzie](https://github.com/bahadzie)).
+
+3.  Corrected the vaccination rate used in the ‘Modelling vaccination’
+    vignette
+    ([\#268](https://github.com/epiverse-trace/epidemics/issues/268),
+    [@bahadzie](https://github.com/bahadzie)).
+
+4.  Corrected the Figure 1 caption in the ‘Modelling multiple
+    interventions’ vignette
+    ([\#270](https://github.com/epiverse-trace/epidemics/issues/270),
+    [@bahadzie](https://github.com/bahadzie)).
+
+5.  Fixed rendering of equations on the pkgdown website for pkgdown \>=
+    2.1.0
+    ([\#249](https://github.com/epiverse-trace/epidemics/issues/249),
+    [@Bisaloo](https://github.com/Bisaloo)).
+
+6.  Fixed broken links in the README
+    ([\#293](https://github.com/epiverse-trace/epidemics/issues/293),
+    [@joshwlambert](https://github.com/joshwlambert)).
+
+7.  Updated the documentation of the internal argument-preparation
+    helpers for the ‘Vacamole’ and ‘diphtheria’ models
+    ([\#274](https://github.com/epiverse-trace/epidemics/issues/274),
+    [@bahadzie](https://github.com/bahadzie)).
+
+8.  Set the pkgdown website `development: mode` to `unreleased` so that
     the single website matches the development version of the package
     installed by most users, and added website favicons
     ([\#275](https://github.com/epiverse-trace/epidemics/issues/275),
@@ -59,9 +121,33 @@
 ### Package
 
 1.  Added `dependabot.yml` to `.github/` to automate updating GitHub
-    actions workflow versions.
+    actions workflow versions
+    ([\#283](https://github.com/epiverse-trace/epidemics/issues/283),
+    [@joshwlambert](https://github.com/joshwlambert)).
 
-2.  Updated all uses of *socialmixr* across tests, vignettes, examples
+2.  The minimum required R version is now 4.1.0, as the package’s
+    examples, vignettes and tests use the base R pipe (`|>`).
+
+3.  Updated calls to
+    [`socialmixr::contact_matrix()`](https://epiforecasts.io/socialmixr/reference/contact_matrix.html)
+    to use the renamed `age_limits` argument, replacing the defunct
+    `age.limits`, and accepted the resulting snapshot changes
+    ([\#280](https://github.com/epiverse-trace/epidemics/issues/280),
+    [@avallecam](https://github.com/avallecam)).
+
+4.  Fixed the `codecov/codecov-action` variables in the test coverage
+    workflow
+    ([\#289](https://github.com/epiverse-trace/epidemics/issues/289),
+    [@joshwlambert](https://github.com/joshwlambert)), added
+    `persist-credentials: false` to fix the `update-citation-cff`
+    workflow
+    ([\#290](https://github.com/epiverse-trace/epidemics/issues/290),
+    [@joshwlambert](https://github.com/joshwlambert)), and removed an
+    unused workflow inherited from the package template
+    ([\#244](https://github.com/epiverse-trace/epidemics/issues/244),
+    [@pratikunterwegs](https://github.com/pratikunterwegs)).
+
+5.  Updated all uses of *socialmixr* across tests, vignettes, examples
     and the README to pass `survey_pop` explicitly to
     [`socialmixr::contact_matrix()`](https://epiforecasts.io/socialmixr/reference/contact_matrix.html),
     removing deprecation warnings introduced in *socialmixr* 0.6.0; the

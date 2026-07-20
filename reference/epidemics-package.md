@@ -46,16 +46,15 @@ Other contributors:
   reviewer\]
 
 - Alexis Robert <alexis.robert@lshtm.ac.uk>
-  ([ORCID](https://orcid.org/0000-0002-4516-2965)) \[contributor\]
+  ([ORCID](https://orcid.org/0000-0002-4516-2965)) \[contributor,
+  reviewer\]
 
 - Hugo Gruson <hugo.gruson@data.org>
   ([ORCID](https://orcid.org/0000-0002-4094-1476)) \[reviewer\]
 
 - Joshua W. Lambert <joshua.lambert@lshtm.ac.uk>
-  ([ORCID](https://orcid.org/0000-0001-5218-3046)) \[reviewer\]
+  ([ORCID](https://orcid.org/0000-0001-5218-3046)) \[contributor,
+  reviewer\]
 
 - James M. Azam <james.azam@lshtm.ac.uk>
   ([ORCID](https://orcid.org/0000-0001-5782-7330)) \[reviewer\]
-
-- Alexis Robert <alexis.robert@lshtm.ac.uk>
-  ([ORCID](https://orcid.org/0000-0002-4516-2965)) \[reviewer\]

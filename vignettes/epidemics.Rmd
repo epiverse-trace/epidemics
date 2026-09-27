@@ -45,11 +45,23 @@ Prepare population and contact data.
 
 However, epidemic models traditionally adopt the notation that $M_{ij}$ defines contacts to $i$ from $j$ [@wallinga2006].
 
-$q M_{ij} / n_i$ then defines the probability of infection, where $q$ is a scaling factor dependent on $R_0$ (or another measure of infection transmissibility), and $n_i$ is the population proportion of group $i$.
+$q M_{ij} / n_i$ then defines the probability of infection, where $q$ is a scaling factor dependent on $R_0$ (or another measure of infection transmissibility), and $n_i$ is the population size of group $i$.
 The ODEs in _epidemics_ also follow this convention.
 
 _epidemics_ reconciles the two conventions for you: the model functions transpose the contact matrix internally.
 Matrices from _socialmixr_ can therefore be passed to `population()` exactly as they are returned, with no call to `t()`.
+
+Two further transformations are applied to the contact matrix inside the model functions, and neither of them appears in the model equations.
+
+First, the matrix is divided by its largest real eigenvalue. This is the scaling factor $q$ above, and it lets `transmission_rate` ($\beta$) be specified directly as $R_0$ divided by the infectious period, independently of the scale of the contact data.
+
+Second, the matrix is divided by the demography vector. This is the step that makes transmission **frequency dependent** rather than density dependent: the force of infection on a group depends on the *proportion* of each other group that is infectious, not on the *number*. Doubling the size of every group while holding the proportion infectious fixed leaves the per-capita rate of infection unchanged.
+
+The transpose and this division work together, which is why neither is easy to interpret alone. In R, dividing a matrix by a vector divides row $i$ by element $i$, whereas frequency dependence requires dividing by the size of the group the infection comes *from*. After the transpose, element $(i,j)$ holds $M_{ji} / n_i$, and contact reciprocity, $n_i M_{ij} = n_j M_{ji}$, reduces this to $M_{ij} / n_j$, so that
+
+$$(\mathbf{M}\mathbf{I})_i = \sum_j M_{ij} \frac{I_j}{n_j}$$
+
+which is the per-capita form. Reading `model_default()` on its own, where the susceptible-to-exposed term is $\beta S (\mathbf{M}\mathbf{I})$ with no division by population size, the model looks density dependent. The division has already happened while the population was being prepared.
 :::
 
 ```{r}
